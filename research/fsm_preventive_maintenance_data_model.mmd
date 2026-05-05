@@ -1,0 +1,82 @@
+erDiagram
+    ACCOUNT ||--o{ ASSOCIATED_LOCATION : "has"
+    LOCATION ||--o{ ASSOCIATED_LOCATION : "has"
+    ACCOUNT ||--o{ SERVICE_CONTRACT : "has"
+    ACCOUNT ||--o{ ASSET : "owns"
+    ACCOUNT ||--o{ MAINTENANCE_PLAN : "covered by"
+    LOCATION ||--o{ ASSET : "location of"
+    LOCATION ||--o{ MAINTENANCE_PLAN : "location of"
+    SERVICE_CONTRACT ||--o{ CONTRACT_LINE_ITEM : "has"
+    SERVICE_CONTRACT ||--o{ MAINTENANCE_PLAN : "governs"
+    ASSET ||--o{ CONTRACT_LINE_ITEM : "covered in"
+    ASSET ||--o{ MAINTENANCE_ASSET : "tracked as"
+    CONTRACT_LINE_ITEM ||--o{ MAINTENANCE_ASSET : "associated with"
+    MAINTENANCE_PLAN ||--o{ MAINTENANCE_ASSET : "covers"
+    MAINTENANCE_PLAN ||--o{ WORK_ORDER : "generates"
+    MAINTENANCE_ASSET ||--o{ MAINTENANCE_WORK_RULE : "has"
+    MAINTENANCE_ASSET ||--o{ WORK_ORDER : "triggers"
+    WORK_TYPE ||--o{ MAINTENANCE_PLAN : "applied to"
+    WORK_TYPE ||--o{ MAINTENANCE_ASSET : "applied to"
+    WORK_TYPE ||--o{ MAINTENANCE_WORK_RULE : "applied to"
+    WORK_TYPE ||--o{ WORK_ORDER : "applied to"
+    WORK_TYPE ||--o{ WORK_ORDER_LINE_ITEM : "applied to"
+    WORK_ORDER ||--o{ SERVICE_APPOINTMENT : "scheduled as"
+    WORK_ORDER ||--o{ WORK_ORDER_LINE_ITEM : "has"
+
+    ACCOUNT {
+        string Name
+    }
+    ASSOCIATED_LOCATION {
+        ref Account
+        ref Location
+    }
+    LOCATION {
+        string Name
+    }
+    SERVICE_CONTRACT {
+        ref Account
+    }
+    ASSET {
+        ref Account
+        ref Contact
+        ref Location
+        ref Product
+    }
+    CONTRACT_LINE_ITEM {
+        ref ServiceContract
+        ref Asset
+        ref Product
+    }
+    MAINTENANCE_PLAN {
+        ref Account
+        ref ServiceContract
+        ref Location
+        ref WorkType
+    }
+    MAINTENANCE_ASSET {
+        ref Asset
+        ref MaintenancePlan
+        ref ContractLineItem
+        ref WorkType
+    }
+    MAINTENANCE_WORK_RULE {
+        ref MaintenanceAsset
+        ref WorkType
+    }
+    WORK_TYPE {
+        string Name
+        number Duration
+    }
+    WORK_ORDER {
+        ref Account
+        ref Asset
+        ref WorkType
+    }
+    WORK_ORDER_LINE_ITEM {
+        ref WorkOrder
+        ref Asset
+        ref WorkType
+    }
+    SERVICE_APPOINTMENT {
+        ref ParentRecord
+    }
