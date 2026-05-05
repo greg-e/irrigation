@@ -18,7 +18,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 | Asset | Individual irrigation component at the property |
 | Work Order / Work Order Line Item | Scopes the repair or maintenance job |
 | Service Appointment | Scheduled visit; linked to asset and work type |
-| Quote / Estimate | Customer-facing cost breakdown tied to the work order |
+| ExtraWork (custom app) | Estimating, customer-facing quotes, and digital approval workflow |
 
 ## Workflow Summary
 
@@ -26,7 +26,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 2. Irrigation components are cataloged as **Assets** under that Account.
 3. A service need is identified → **Work Order** created with irrigation work type.
 4. A **Service Appointment** is scheduled and linked to the relevant Asset(s).
-5. Technician documents scope → **Estimate** generated from the work order.
+5. Technician documents scope → **Estimate** generated in **ExtraWork** from the work order and asset context.
 6. Customer receives estimate and provides **digital approval**.
 7. Approval triggers crew dispatch and work completion tracking.
 
@@ -74,7 +74,8 @@ The following irrigation components must be cataloged as discrete Assets under t
 - Attach photos to the Property Account and/or individual Asset records; categorized by type (install, condition, damage, repair)
 
 #### Damage
-- Log damage events against a specific Asset with date, description, cause, and photo attachments
+- Log damage events via **Case** (intake and triage) and a structured `Asset_Damage_Event__c` record for analytics and repeat-failure tracking
+- Attach date, description, cause, and photos to the damage record
 
 #### Repair
 - Log repair history against a specific Asset with date, technician, work performed, parts used, and linked Service Appointment

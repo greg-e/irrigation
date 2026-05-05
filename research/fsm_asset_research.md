@@ -71,14 +71,16 @@ The `Asset` object represents a product or item of commercial value that a custo
 ---
 
 ## 3. FSM Pricing Data Model — Estimate Path
+## 3. FSM Pricing Data Model — Reference Only
+
+> **Decision:** Estimating is handled by the **ExtraWork custom app**, not native Salesforce pricing. This section documents the native pricing data model for reference — it explains why Work Orders and Work Order Line Items have Price Book fields that ExtraWork will reference or populate.
 
 **Source:** [Field Service Pricing Data Model — Developer Guide (Spring '26)](https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_pricing.htm)
 
-- Work Orders support a **Price Book lookup** — associate a price book with the job
+- Work Orders support a **Price Book lookup** — ExtraWork will associate a price book with the job
 - Work Order Line Items link to **Price Book Entries** (products/services from the catalog)
 - Each line item holds: product, list price, discount, quantity
 - The Asset lookup on WO Line Items ties each billable line to the specific component being repaired
-
 ### Estimate Solution — ExtraWork Custom App
 Estimating will be handled by a **ExtraWork custom app**. The FSM Work Order and Asset records will serve as the source of truth for what work needs to be done and against which components. The ExtraWork app will consume that context to generate estimates and manage the customer approval workflow.
 

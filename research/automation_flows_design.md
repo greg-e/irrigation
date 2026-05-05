@@ -53,11 +53,11 @@ Automatically flip `Asset.Status` based on repair callout activity and Work Orde
 
 **Trigger**
 - Object: `WorkOrderLineItem`
-- Trigger type: Record-Triggered Flow — After Save (insert and update)
+- Trigger type: Record-Triggered Flow — After Save (insert only)
 - Entry criteria:
   - `Callout_Status__c = 'New'`
   - `AssetId != null`
-- Run when: Record is created or updated and meets conditions
+- Run when: Record is created and meets conditions
 
 **Actions**
 1. Get the related Asset record

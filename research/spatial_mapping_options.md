@@ -126,7 +126,7 @@ All three options require lat/long coordinates on each Asset record. The `Asset`
 
 ## Open Questions
 
-- [ ] Is lat/long capture feasible during the initial asset audit phase using FSM Mobile GPS?
+- [x] Is lat/long capture feasible during the initial asset audit phase using FSM Mobile GPS? **→ Yes — GPS capture will be built at launch. Custom LWC screen flow writes device GPS to Asset Latitude/Longitude fields during field audit. (Decided in irrigationcheckups_analysis.md)**
 - [ ] Does the org have an existing Google Maps API key or ArcGIS license?
 - [ ] What is the primary user for the within-property map — office admin, dispatcher, or field tech?
 - [ ] Does the LWC need to work offline in the FSM Mobile app?

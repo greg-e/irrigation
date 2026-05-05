@@ -89,10 +89,12 @@ Pricing: $79/mo PRO (unlimited checkups, up to 250 zones/controller, e-signature
 #### 1. Repair Callout Object
 IrrigationCheckups has a structured "Repair Callout" concept — a discrete issue flagged at a specific zone or component during a checkup, with notes, photos, and an auto-linked quote item.
 
-In our design, this is partially covered by Work Order Line Items, but a **dedicated Repair Callout record** during an active inspection is not modeled. We need:
-- A lightweight `Repair_Callout__c` custom object (or Work Order Line Item variant) that a tech creates while walking a zone
-- Fields: Zone/Asset, Issue Type (picklist), Notes, Photo attachment, Status (New / Quoted / Approved / Completed)
-- Direct linkage to ExtraWork estimate line items
+**Decision:** Repair Callouts are modeled as **Work Order Line Items with extended custom fields** — no separate custom object. Schema defined in [fsm_asset_architecture.md](fsm_asset_architecture.md):
+- `Issue_Type__c` — Picklist (Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overspray / Clog / Other)
+- `Callout_Status__c` — Picklist (New / Quoted / Approved / Completed)
+- `Callout_Notes__c` — Long Text Area
+- `Callout_Photo__c` — Files attachment reference
+- `ExtraWork_Estimate_Line_Ref__c` — Reference to linked ExtraWork estimate line
 
 #### 2. Structured Inspection / Checkup Record
 IrrigationCheckups treats each site visit as a discrete "Checkup" record — not just a work order. A checkup captures the full system state snapshot at a point in time (program settings, zone conditions, repair callouts).
