@@ -1,0 +1,151 @@
+---
+title: Irrigation Inspection — Recommended Data Model
+---
+erDiagram
+    ACCOUNT ||--o{ SERVICE_CONTRACT : "has"
+    ACCOUNT ||--o{ ASSET : "owns"
+    SERVICE_CONTRACT ||--o{ WORK_ORDER : "generates"
+    WORK_ORDER ||--o{ WORK_ORDER_LINE_ITEM : "contains"
+    WORK_ORDER ||--o{ SERVICE_APPOINTMENT : "scheduled as"
+    WORK_TYPE ||--o{ WORK_ORDER : "categorizes"
+    WORK_TYPE ||--o{ INSPECTION_QUESTION_SET : "drives form variant"
+
+    ASSET ||--o{ ASSET : "parent (Account → Controller → Zone → Head)"
+    ASSET ||--o{ IRRIGATION_PROGRAM : "controller has programs A-D"
+    ASSET ||--o{ INSPECTION_RESPONSE : "asset-scoped responses"
+    ASSET ||--o{ WORK_ORDER_LINE_ITEM : "callouts target asset"
+
+    SERVICE_APPOINTMENT ||--o{ INSPECTION_RESPONSE : "M-D parent"
+    SERVICE_APPOINTMENT ||--o{ IRRIGATION_PROGRAM : "snapshot at visit"
+    SERVICE_APPOINTMENT ||--o{ CONTENT_DOC_LINK : "photos via Files"
+
+    INSPECTION_QUESTION_SET ||--o{ INSPECTION_QUESTION_SET_MEMBER : "membership"
+    INSPECTION_QUESTION ||--o{ INSPECTION_QUESTION_SET_MEMBER : "in sets"
+    INSPECTION_QUESTION ||--o{ INSPECTION_RESPONSE : "answered as"
+    INSPECTION_QUESTION ||--o{ INSPECTION_QUESTION : "branching parent"
+
+    INSPECTION_RESPONSE ||--o{ WORK_ORDER_LINE_ITEM : "failed → suggested callout"
+    INSPECTION_RESPONSE ||--o{ CONTENT_DOC_LINK : "per-question photo"
+    WORK_ORDER_LINE_ITEM ||--o{ CONTENT_DOC_LINK : "callout photo"
+
+    ACCOUNT {
+        string Name
+        string Type "Property"
+    }
+    SERVICE_CONTRACT {
+        date StartDate
+        date EndDate
+    }
+    WORK_TYPE {
+        string Name "Irrigation - Quarterly / Winterization / etc."
+    }
+    WORK_ORDER {
+        string Status
+        Id WorkTypeId
+        Id AssetId
+    }
+    WORK_ORDER_LINE_ITEM {
+        Id AssetId
+        string Subject
+        picklist Issue_Type__c "Broken Head / Valve Fault / Leak / etc."
+        picklist Callout_Status__c "New / Quoted / Approved / Completed"
+        longtext Callout_Notes__c
+        lookup Source_Inspection_Response__c "FK → Inspection_Response__c"
+        string ExtraWork_Estimate_Line_Ref__c
+    }
+    SERVICE_APPOINTMENT {
+        string Status
+        datetime Inspection_Started_At__c
+        datetime Inspection_Completed_At__c
+        picklist Inspection_Reason__c
+        picklist Inspection_Type__c
+        picklist Location_Scope__c
+        geo Inspection_GPS_Lat_Lng__c
+        lookup Controller_Asset__c
+        string Controller_Type__c
+        number Controller_Total_Zones__c
+        picklist Controller_Power_State__c "On/Off"
+        picklist Backflow_State__c "On/Off"
+        picklist Meter_State__c "On/Off"
+        bool Rain_Freeze_Sensor_Working__c
+        bool Repairs_Needed__c
+        picklist Overall_System_Status__c
+        longtext Internal_Notes__c
+        longtext Customer_Facing_Notes__c
+        picklist Inspection_Completion_Status__c
+        datetime Internal_PDF_Generated_At__c
+        datetime Customer_PDF_Generated_At__c
+        bool BV_Connect_Published__c
+    }
+    ASSET {
+        string Name
+        Id ParentId "hierarchy via AssetLevel"
+        picklist Asset_Type__c "Controller / Zone / Backflow / Head / Pump / Sensor"
+        decimal Latitude
+        decimal Longitude
+        picklist ConsequenceOfFailure
+        picklist Status "Operational / Needs Repair"
+    }
+    IRRIGATION_PROGRAM {
+        lookup Controller_Asset__c
+        lookup Service_Appointment__c "snapshot context"
+        picklist Program_Letter__c "A / B / C / D"
+        time Start_Time_1__c
+        time Start_Time_2__c
+        time Start_Time_3__c
+        time Start_Time_4__c
+        bool Water_Day_Mon__c
+        bool Water_Day_Tue__c
+        bool Water_Day_Wed__c
+        bool Water_Day_Thu__c
+        bool Water_Day_Fri__c
+        bool Water_Day_Sat__c
+        bool Water_Day_Sun__c
+        number Budget_Percent__c
+        bool Active__c
+    }
+    INSPECTION_RESPONSE {
+        masterdetail Service_Appointment__c
+        lookup Question__c
+        lookup Asset__c "when asset-scoped"
+        string Question_Text_Snapshot__c
+        picklist Response_Type__c
+        bool Response_Boolean__c
+        string Response_Picklist__c
+        decimal Response_Number__c
+        longtext Response_Text__c
+        bool Failed_Inspection__c
+        bool Photo_Required__c
+        longtext Voice_Note_Transcript__c
+    }
+    INSPECTION_QUESTION {
+        string Name
+        string Question_Text__c
+        picklist Response_Type__c
+        longtext Picklist_Values__c
+        string Default_Failed_Value__c
+        bool Asset_Scoped__c
+        lookup Branching_Parent__c
+        string Branching_Trigger_Value__c
+        bool Active__c
+        number Version__c
+        multipicklist Region__c
+    }
+    INSPECTION_QUESTION_SET {
+        string Name
+        lookup Work_Type__c
+        picklist Inspection_Type__c
+        date Effective_Start__c
+        date Effective_End__c
+        bool Active__c
+    }
+    INSPECTION_QUESTION_SET_MEMBER {
+        masterdetail Question_Set__c
+        lookup Question__c
+        number Display_Order__c
+        bool Required__c
+    }
+    CONTENT_DOC_LINK {
+        Id LinkedEntityId "polymorphic SA / Response / WOLI / Asset"
+        Id ContentDocumentId
+    }
