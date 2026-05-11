@@ -195,6 +195,58 @@
             <li data-stage="COMPLETED">Completed</li>
           </ol>
         </article>
+
+        <article class="panel panel-feedback nav-panel" data-panel="feedback">
+          <h3>Feedback</h3>
+          <p class="panel-subtitle">Capture quick tester feedback while using this prototype.</p>
+          <form id="feedback-form" class="inline-form">
+            <label>
+              Tester Name
+              <input id="feedback-name" type="text" placeholder="Name" />
+            </label>
+            <label>
+              Persona
+              <select id="feedback-persona">
+                <option value="Technician">Technician</option>
+                <option value="Dispatcher">Dispatcher</option>
+                <option value="Account Manager">Account Manager</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label>
+              Area
+              <select id="feedback-area">
+                <option value="Map">Map</option>
+                <option value="Checklist">Checklist</option>
+                <option value="Callouts">Callouts</option>
+                <option value="Checkout">Checkout</option>
+                <option value="Assets">Assets</option>
+              </select>
+            </label>
+            <label>
+              Rating
+              <select id="feedback-rating">
+                <option value="5">5 - Great</option>
+                <option value="4">4 - Good</option>
+                <option value="3" selected>3 - Okay</option>
+                <option value="2">2 - Needs Work</option>
+                <option value="1">1 - Poor</option>
+              </select>
+            </label>
+            <label>
+              Comments
+              <textarea id="feedback-comments" rows="3" placeholder="What worked or what needs to change?"></textarea>
+            </label>
+            <button class="btn btn-brand" type="submit">Save Feedback</button>
+          </form>
+          <div class="feedback-actions">
+            <button id="copy-feedback" class="btn btn-neutral" type="button">Copy Feedback JSON</button>
+            <button id="clear-feedback" class="btn btn-destructive" type="button">Clear Feedback</button>
+          </div>
+          <p id="feedback-status" class="status-line">No feedback submitted yet.</p>
+          <ul id="feedback-list" class="feedback-list"></ul>
+        </article>
       </section>
 
       <nav class="bottom-nav" aria-label="FSM mobile navigation">
@@ -213,6 +265,10 @@
         <button class="nav-btn" data-tab="checkout" type="button">
           <span class="nav-icon" aria-hidden="true">▣</span>
           <span>Checkout</span>
+        </button>
+        <button class="nav-btn" data-tab="feedback" type="button">
+          <span class="nav-icon" aria-hidden="true">✎</span>
+          <span>Feedback</span>
         </button>
       </nav>
     </section>

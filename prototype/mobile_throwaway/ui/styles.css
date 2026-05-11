@@ -539,6 +539,49 @@ body {
   color: var(--ink);
 }
 
+.panel-feedback textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  resize: vertical;
+}
+
+.feedback-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.feedback-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.feedback-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.feedback-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+
+.feedback-item strong {
+  color: var(--ink);
+}
+
 .bottom-nav {
   position: absolute;
   left: 10px;
@@ -549,7 +592,7 @@ body {
   padding: 6px;
   background: rgba(255, 255, 255, 0.95);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 6px;
   box-shadow: 0 8px 20px rgba(1, 45, 96, 0.16);
 }
@@ -559,7 +602,7 @@ body {
   border-radius: 10px;
   background: #f4f8fc;
   color: var(--ink-soft);
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   font-weight: 700;
   padding: 8px 4px;
   display: grid;
@@ -575,7 +618,7 @@ body {
 }
 
 .nav-icon {
-  font-size: 0.96rem;
+  font-size: 0.86rem;
 }
 
 @media (max-width: 700px) {

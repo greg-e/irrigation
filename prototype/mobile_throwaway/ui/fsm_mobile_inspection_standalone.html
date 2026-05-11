@@ -1,3 +1,933 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSM Mobile Inspection Prototype</title>
+  <style>
+:root {
+  --bg: #eaf3fb;
+  --surface: #ffffff;
+  --surface-soft: #f7fbff;
+  --ink: #032d60;
+  --ink-soft: #5c6f82;
+  --line: #c9d8e6;
+  --brand: #0176d3;
+  --brand-deep: #014486;
+  --ok: #2e844a;
+  --warn: #ba0517;
+  --amber: #8f4b00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Salesforce Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 10% 5%, rgba(1, 118, 211, 0.16), transparent 38%),
+    linear-gradient(145deg, #edf4fc 0%, #dcecf8 52%, #f6fbff 100%);
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.phone-shell {
+  width: min(430px, 100%);
+  min-height: 880px;
+  margin: 0 auto;
+  padding: 12px 12px 96px;
+  border: 1px solid #a7bfdb;
+  border-radius: 34px;
+  background: linear-gradient(180deg, #f8fcff 0%, #eef6fd 100%);
+  box-shadow:
+    0 20px 50px rgba(1, 45, 96, 0.18),
+    inset 0 0 0 6px #f5fbff;
+  position: relative;
+}
+
+.phone-notch {
+  width: 140px;
+  height: 26px;
+  background: #0c243f;
+  border-radius: 0 0 16px 16px;
+  margin: -12px auto 10px;
+}
+
+.global-header {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(120deg, #ffffff 0%, #f2f8ff 100%);
+  box-shadow: 0 8px 24px rgba(1, 68, 134, 0.08);
+  margin-bottom: 12px;
+}
+
+.brand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--brand-deep);
+  font-weight: 700;
+}
+
+.sync-pill {
+  border-radius: 999px;
+  background: #daf5e4;
+  color: #075e2d;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+.global-header h1 {
+  margin: 8px 0 2px;
+  font-size: 1.4rem;
+}
+
+.global-header p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.context-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.context-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.context-label {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.context-value {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chip {
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 10px;
+}
+
+.chip-blue {
+  background: #d8ecff;
+  color: #014486;
+}
+
+.chip-neutral {
+  background: #eef3f7;
+  color: #2e3e4e;
+}
+
+.chip-positive {
+  background: #daf5e4;
+  color: #075e2d;
+}
+
+.chip-warning {
+  background: #fef1d5;
+  color: var(--amber);
+}
+
+.chip-danger {
+  background: #fde7e9;
+  color: var(--warn);
+}
+
+.viewport {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  background:
+    linear-gradient(0deg, rgba(1, 68, 134, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(1, 68, 134, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 3px 12px rgba(1, 68, 134, 0.06);
+}
+
+.nav-panel {
+  display: none;
+}
+
+.nav-panel.active {
+  display: block;
+}
+
+.panel-map {
+  display: none;
+}
+
+.panel-map.active {
+  display: block;
+}
+
+.system-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.filter-row {
+  margin-top: 8px;
+}
+
+.filter-field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+
+.filter-field select {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+.system-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.system-card h4 {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.system-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: 0.84rem;
+}
+
+.legend-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.legend-pill {
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.legend-ok {
+  background: #e8f7ee;
+  color: #0e5a2d;
+}
+
+.legend-alert {
+  background: #fff1d6;
+  color: #8f4b00;
+}
+
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.zone {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 8px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.76rem;
+  text-align: left;
+}
+
+.zone small {
+  display: block;
+  margin-top: 4px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.zone-ok {
+  background: #e8f7ee;
+  border-color: #94d3aa;
+  color: #0e5a2d;
+}
+
+.zone-alert {
+  background: #fff1d6;
+  border-color: #f1be6a;
+  color: #8f4b00;
+}
+
+.panel-assets {
+  background: linear-gradient(120deg, #ffffff 0%, #f5fbff 100%);
+}
+
+.asset-manager {
+  border-top: 1px solid var(--line);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.asset-manager h4 {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.zone-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0 0 8px;
+}
+
+.panel-subtitle {
+  margin: 0 0 10px;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.context-hint {
+  margin: 0 0 10px;
+  border: 1px solid #c6def3;
+  border-radius: 8px;
+  background: #edf6ff;
+  color: #014486;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px;
+}
+
+.meter {
+  height: 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #edf3fa;
+  overflow: hidden;
+}
+
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #1798f2 0%, #0176d3 100%);
+  border-radius: 999px;
+  transition: width 240ms ease;
+}
+
+.meter-wrap p {
+  margin: 8px 0 10px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.required-list,
+.callout-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.required-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.required-item label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.required-item input[type="checkbox"] {
+  accent-color: var(--brand);
+}
+
+.callout-item {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--amber);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.callout-item.confirmed {
+  border-left-color: var(--ok);
+}
+
+.callout-meta {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+}
+
+.callout-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.inline-form {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.inline-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.inline-form select,
+.inline-form input,
+.am-select-wrap select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actions.wrap {
+  align-items: end;
+}
+
+.am-select-wrap {
+  min-width: 180px;
+  display: grid;
+  gap: 4px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.status-line {
+  margin: 8px 0 0;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.btn {
+  border: 1px solid transparent;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn-brand {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn-brand:hover {
+  background: var(--brand-deep);
+}
+
+.btn-neutral {
+  border-color: var(--line);
+  background: #fff;
+  color: var(--ink);
+}
+
+.btn-destructive {
+  border-color: #f4c0c5;
+  background: #fff5f6;
+  color: var(--warn);
+}
+
+.submit-result {
+  margin-top: 10px;
+  font-weight: 700;
+  min-height: 24px;
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.timeline li {
+  border-left: 3px solid #c3d6ea;
+  padding-left: 10px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.timeline li.done {
+  border-left-color: var(--ok);
+  color: #0b5a2b;
+}
+
+.timeline li.active {
+  border-left-color: var(--brand);
+  color: var(--ink);
+}
+
+.panel-feedback textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  background: #fff;
+  resize: vertical;
+}
+
+.feedback-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.feedback-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.feedback-item {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.feedback-item p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+
+.feedback-item strong {
+  color: var(--ink);
+}
+
+.bottom-nav {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  box-shadow: 0 8px 20px rgba(1, 45, 96, 0.16);
+}
+
+.nav-btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #f4f8fc;
+  color: var(--ink-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 8px 4px;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  background: #e3f1ff;
+  color: var(--brand-deep);
+  border-color: #9ecbf4;
+}
+
+.nav-icon {
+  font-size: 0.86rem;
+}
+
+@media (max-width: 700px) {
+  .phone-shell {
+    width: 100%;
+    border-radius: 20px;
+    min-height: 100dvh;
+  }
+
+  .context-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .context-value {
+    text-align: left;
+  }
+
+  .map-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .system-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .zone-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+</style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="phone-shell" aria-label="iPhone style mobile frame">
+      <div class="phone-notch" aria-hidden="true"></div>
+
+      <header class="global-header">
+        <div class="brand-row">
+          <p class="brand-kicker">Field Service</p>
+          <span class="sync-pill">Synced</span>
+        </div>
+        <h1>Irrigation Service Appointment</h1>
+        <p>FSM-style mobile prototype for technician checkup and checkout.</p>
+      </header>
+
+      <section class="context-card" aria-label="Service appointment context">
+        <div class="context-row">
+          <p class="context-label">Account</p>
+          <p class="context-value">Oak Ridge HOA Campus - Northeast</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">Work Type</p>
+          <p class="context-value">Irrigation - Quarterly</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">Appointment</p>
+          <p class="context-value">SA-004281 / In Progress</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">System Scope</p>
+          <p id="system-scope" class="context-value">0 controllers / 0 backflows / 0 zones</p>
+        </div>
+        <div class="chip-row">
+          <span class="chip chip-blue">NE</span>
+          <span class="chip chip-neutral">Quarterly</span>
+          <span id="stage-chip" class="chip chip-blue">INSPECTING</span>
+        </div>
+      </section>
+
+      <section id="viewport" class="viewport map-canvas">
+        <article class="panel panel-map nav-panel active" data-panel="map">
+          <h2>Property Coverage Map</h2>
+          <p id="map-caption" class="panel-subtitle">Tap zones to represent inspected coverage and issue hotspots.</p>
+          <div class="filter-row">
+            <label class="filter-field">
+              Clock Filter
+              <select id="clock-filter"></select>
+            </label>
+          </div>
+          <div class="system-cards">
+            <section class="system-card">
+              <h4>Controllers</h4>
+              <ul id="controller-list"></ul>
+            </section>
+            <section class="system-card">
+              <h4>Backflows</h4>
+              <ul id="backflow-list"></ul>
+            </section>
+          </div>
+          <div class="legend-row" aria-label="Map legend">
+            <span class="legend-pill legend-ok">Stable</span>
+            <span class="legend-pill legend-alert">Follow-up</span>
+          </div>
+          <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
+        </article>
+
+        <article class="panel panel-assets nav-panel" data-panel="map">
+          <h3>Asset Snapshot</h3>
+          <p id="asset-snapshot" class="panel-subtitle">0 zones flagged. 0 confirmed callouts.</p>
+          <section class="asset-manager">
+            <h4>Add Asset</h4>
+            <form id="asset-form" class="inline-form">
+              <label>
+                Asset Type
+                <select id="asset-type">
+                  <option value="zone">Zone</option>
+                  <option value="controller">Controller</option>
+                  <option value="backflow">Backflow</option>
+                </select>
+              </label>
+              <label>
+                Asset Name
+                <input id="asset-name" type="text" placeholder="Zone 25 / Controller D / Backflow East" />
+              </label>
+              <label>
+                Description
+                <input id="asset-description" type="text" placeholder="Short field description" />
+              </label>
+              <div id="zone-links" class="zone-links">
+                <label>
+                  Zone Clock
+                  <select id="zone-controller"></select>
+                </label>
+                <label>
+                  Zone Backflow
+                  <select id="zone-backflow"></select>
+                </label>
+              </div>
+              <button class="btn btn-brand" type="submit">Add Asset</button>
+            </form>
+
+            <h4>Edit Description</h4>
+            <form id="description-form" class="inline-form">
+              <label>
+                Asset
+                <select id="description-asset"></select>
+              </label>
+              <label>
+                Description
+                <input id="description-input" type="text" placeholder="Update asset description" />
+              </label>
+              <button class="btn btn-neutral" type="submit">Save Description</button>
+            </form>
+          </section>
+        </article>
+
+        <article class="panel panel-a nav-panel" data-panel="checklist">
+          <h2>Required Inspection Questions</h2>
+          <div class="meter-wrap">
+            <div class="meter">
+              <div id="meter-fill" class="meter-fill"></div>
+            </div>
+            <p id="meter-label">0 of 6 answered</p>
+          </div>
+          <ul id="required-list" class="required-list"></ul>
+        </article>
+
+        <article class="panel panel-b nav-panel" data-panel="callouts">
+          <h3>Suggested Repair Callouts</h3>
+          <p class="panel-subtitle">Create and confirm repair recommendations from failed responses.</p>
+          <p id="callout-context-hint" class="context-hint">Select a zone on the map to prefill this form.</p>
+          <ul id="callout-list" class="callout-list"></ul>
+          <form id="callout-form" class="inline-form">
+            <label>
+              Asset
+              <select id="asset-input"></select>
+            </label>
+            <label>
+              Issue
+              <input id="issue-input" type="text" value="Broken Head" required />
+            </label>
+            <label>
+              Severity
+              <select id="severity-input">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </label>
+            <button class="btn btn-brand" type="submit">Add Callout</button>
+          </form>
+        </article>
+
+        <article class="panel panel-c nav-panel" data-panel="checkout">
+          <h3>Approvals</h3>
+          <div class="actions wrap">
+            <label class="am-select-wrap">
+              Account Manager
+              <select id="am-name">
+                <option value="">Select AM</option>
+                <option value="Jamie Rivers">Jamie Rivers</option>
+                <option value="Alex Patel">Alex Patel</option>
+                <option value="Morgan Chen">Morgan Chen</option>
+              </select>
+            </label>
+            <button id="toggle-am" class="btn btn-neutral" type="button">Assign / Clear AM</button>
+          </div>
+          <p id="am-status" class="status-line">AM not assigned.</p>
+        </article>
+
+        <article class="panel panel-d nav-panel" data-panel="checkout">
+          <h3>Checkout</h3>
+          <div class="actions">
+            <button id="open-review" class="btn btn-neutral" type="button">Open Review</button>
+            <button id="simulate-submit" class="btn btn-brand" type="button">Submit Inspection</button>
+            <button id="reset-flow" class="btn btn-destructive" type="button">Reset</button>
+          </div>
+          <p id="submit-result" class="submit-result">Waiting for action.</p>
+        </article>
+
+        <article class="panel panel-e nav-panel" data-panel="checkout">
+          <h3>Stage Timeline</h3>
+          <ol id="timeline" class="timeline">
+            <li data-stage="RESOLVED">Resolved</li>
+            <li data-stage="BOOTSTRAP">Bootstrap</li>
+            <li data-stage="INSPECTING" class="active">Inspecting</li>
+            <li data-stage="REVIEW">Review</li>
+            <li data-stage="COMPLETED">Completed</li>
+          </ol>
+        </article>
+
+        <article class="panel panel-feedback nav-panel" data-panel="feedback">
+          <h3>Feedback</h3>
+          <p class="panel-subtitle">Capture quick tester feedback while using this prototype.</p>
+          <form id="feedback-form" class="inline-form">
+            <label>
+              Tester Name
+              <input id="feedback-name" type="text" placeholder="Name" />
+            </label>
+            <label>
+              Persona
+              <select id="feedback-persona">
+                <option value="Technician">Technician</option>
+                <option value="Dispatcher">Dispatcher</option>
+                <option value="Account Manager">Account Manager</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label>
+              Area
+              <select id="feedback-area">
+                <option value="Map">Map</option>
+                <option value="Checklist">Checklist</option>
+                <option value="Callouts">Callouts</option>
+                <option value="Checkout">Checkout</option>
+                <option value="Assets">Assets</option>
+              </select>
+            </label>
+            <label>
+              Rating
+              <select id="feedback-rating">
+                <option value="5">5 - Great</option>
+                <option value="4">4 - Good</option>
+                <option value="3" selected>3 - Okay</option>
+                <option value="2">2 - Needs Work</option>
+                <option value="1">1 - Poor</option>
+              </select>
+            </label>
+            <label>
+              Comments
+              <textarea id="feedback-comments" rows="3" placeholder="What worked or what needs to change?"></textarea>
+            </label>
+            <button class="btn btn-brand" type="submit">Save Feedback</button>
+          </form>
+          <div class="feedback-actions">
+            <button id="copy-feedback" class="btn btn-neutral" type="button">Copy Feedback JSON</button>
+            <button id="clear-feedback" class="btn btn-destructive" type="button">Clear Feedback</button>
+          </div>
+          <p id="feedback-status" class="status-line">No feedback submitted yet.</p>
+          <ul id="feedback-list" class="feedback-list"></ul>
+        </article>
+      </section>
+
+      <nav class="bottom-nav" aria-label="FSM mobile navigation">
+        <button class="nav-btn active" data-tab="map" type="button">
+          <span class="nav-icon" aria-hidden="true">◎</span>
+          <span>Map</span>
+        </button>
+        <button class="nav-btn" data-tab="checklist" type="button">
+          <span class="nav-icon" aria-hidden="true">✓</span>
+          <span>Checklist</span>
+        </button>
+        <button class="nav-btn" data-tab="callouts" type="button">
+          <span class="nav-icon" aria-hidden="true">⚑</span>
+          <span>Callouts</span>
+        </button>
+        <button class="nav-btn" data-tab="checkout" type="button">
+          <span class="nav-icon" aria-hidden="true">▣</span>
+          <span>Checkout</span>
+        </button>
+        <button class="nav-btn" data-tab="feedback" type="button">
+          <span class="nav-icon" aria-hidden="true">✎</span>
+          <span>Feedback</span>
+        </button>
+      </nav>
+    </section>
+  </main>
+
+  <script>
 const state = {
   stage: "INSPECTING",
   controllers: [
@@ -812,3 +1742,8 @@ setSubmitMessage("Complex campus system loaded.", "warn");
 zoneLinks.style.display = "grid";
 setActiveTab("map");
 renderAll();
+
+</script>
+</body>
+</html>
+
