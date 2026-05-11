@@ -1,0 +1,81 @@
+---
+title: Irrigation Inspection — Runtime Sequence
+---
+sequenceDiagram
+    autonumber
+    actor Dispatcher
+    actor Tech
+    participant FSM as Salesforce FSM
+    participant LWC as Inspection LWC
+    participant Resolver as Question Set Resolver
+    participant QL as Question Library
+    participant Stage as Asset Change Staging
+    participant Suggest as Suggested Repair Engine
+    participant Flow as Checkout/Completion Flows
+    participant AM as Account Manager
+    participant EW as ExtraWork
+
+    Dispatcher->>FSM: Schedule Service Appointment
+    Tech->>LWC: Check in to appointment
+    LWC->>FSM: Capture GPS and set In Progress
+
+    LWC->>Resolver: Resolve set(region + season/type + work type)
+    Resolver->>QL: Query published sets
+    alt Exactly one match
+        QL-->>Resolver: Set Id + Version
+        Resolver-->>LWC: Resolved set
+        LWC->>FSM: Snapshot Resolved_Question_Set + Version on SA
+    else No match
+        Resolver-->>LWC: No match
+        LWC-->>Tech: Fail loudly with admin next steps
+    end
+
+    LWC->>FSM: Check required asset types for selected set
+    alt Missing required assets
+        LWC-->>Tech: Enter bootstrap mode
+        Tech->>LWC: Create/edit minimum assets for this scope
+        LWC->>Stage: Stage field-level before/after changes
+        Stage-->>LWC: Pending asset change records
+    else Assets present
+        LWC-->>Tech: Continue inspection
+    end
+
+    loop During form completion
+        Tech->>LWC: Answer question
+        LWC->>FSM: Upsert Inspection_Response__c
+        LWC->>Suggest: Evaluate failed-value rules
+        Suggest->>FSM: Upsert deduped suggestion (Inspection + Asset + IssueType)
+    end
+
+    Tech->>LWC: Start checkout
+    LWC->>FSM: Validate required questions answered
+    alt Missing required answers
+        LWC-->>Tech: Block checkout and highlight gaps
+    else Complete
+        LWC->>FSM: Load suggested repairs
+        Tech->>LWC: Confirm/edit/dismiss suggestions
+        LWC->>FSM: Create pending WOLIs for confirmed items
+        Note over LWC,FSM: Severity + structured description required; AM required
+        Tech->>LWC: Submit inspection
+        LWC->>Flow: Trigger completion automations
+
+        Flow->>Stage: Apply staged asset changes
+        alt Apply successful
+            Stage-->>Flow: Success
+        else Apply failure
+            Stage-->>Flow: Failure detail
+            Flow->>FSM: Create asset sync exception
+            Note over Flow,FSM: Keep inspection completed
+        end
+
+        Flow->>FSM: Generate internal and customer PDFs
+        Flow->>FSM: Stamp completion tracking fields
+    end
+
+    AM->>FSM: Review pending WOLIs
+    alt Quote needed
+        AM->>EW: Build ExtraWork estimate
+        EW-->>FSM: Save estimate line reference
+    else In-contract repair
+        AM->>FSM: Route to repair scheduling
+    end

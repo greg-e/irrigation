@@ -30,23 +30,37 @@ flowchart TD
         direction TB
         SA --> CHKIN["Tech checks in<br/>Status = In Progress"]:::mobile
         CHKIN --> GPS["LocationService LWC<br/>captures GPS<br/>→ SA + Asset lat/lng"]:::mobile
-        GPS --> LOAD["Inspection LWC loads<br/>Question Set by Work Type<br/>(Quarterly / Winterization / NE-variant / etc.)"]:::mobile
+        GPS --> RESOLVE["Resolve published Question Set<br/>by Region + Inspection Type/Season + Work Type"]:::mobile
+        class RESOLVE decision
+        RESOLVE -->|one match| SNAP["Snapshot selected set version<br/>on Service Appointment"]:::sf
+        RESOLVE -->|no match| FAILSET["Fail loudly<br/>show admin error + next steps"]:::decision
+
+        SNAP --> BOOT{"Required asset types exist<br/>for selected set?"}:::decision
+        BOOT -->|no| BOOTSTRAP["Bootstrap mode<br/>create/edit minimum required assets<br/>for this inspection scope"]:::mobile
+        BOOT -->|yes| LOAD["Load inspection sections"]:::mobile
+        BOOTSTRAP --> STAGE["Stage asset changes in pending-change object<br/>(field-level before/after)"]:::sf
+        STAGE --> LOAD
 
         LOAD --> HDR["Section 1-3 Header<br/>controller state, backflow, meter,<br/>rain/freeze sensor, restrictions"]:::mobile
         HDR --> ZONELOOP["Section 6 — per-Zone loop<br/>distribution, runtime, 13 failure modes,<br/>photos, voice-to-text notes"]:::mobile
         ZONELOOP --> PROG["Section 9 — Programs A-D<br/>start times, water days, budget %<br/>→ Irrigation_Program__c records"]:::mobile
         PROG --> FOOT["Section 8 Footer<br/>recommendations, customer notes,<br/>internal notes, overall status"]:::mobile
 
-        FOOT --> OFFLINE{"Offline-first sync<br/>queues all writes"}:::mobile
+        FOOT --> SUGGGEN["Generate suggested repairs continuously<br/>de-dupe by Inspection + Asset + Issue Type"]:::mobile
+        SUGGGEN --> OFFLINE{"Offline-first sync<br/>queues all writes"}:::mobile
     end
     class FIELD phase
 
     %% ==== CHECKOUT ====
-    OFFLINE --> SUGG["Pattern C 'Suggested Repairs' Review<br/>Failed Inspection_Response__c rows<br/>surface as draft WOLIs"]:::mobile
+    OFFLINE --> REQCHK{"All required questions answered?"}:::decision
+    REQCHK -->|no| BLOCK["Block checkout<br/>show unanswered required items"]:::decision
+    REQCHK -->|yes| SUGG["Suggested Repairs Review<br/>tech confirms/edit quantity, severity, notes"]:::mobile
     class SUGG decision
-    SUGG -->|tech confirms| WOLI["WorkOrderLineItem created<br/>Issue_Type__c, Asset__c,<br/>Source_Inspection_Response__c,<br/>Callout_Photo__c"]:::sf
+    SUGG --> AMREQ{"AM assigned?"}:::decision
+    AMREQ -->|no| BLOCKAM["Block checkout<br/>AM is required"]:::decision
+    AMREQ -->|yes| WOLI["WorkOrderLineItem created as pending<br/>Issue_Type__c, Asset__c,<br/>severity + structured description,<br/>Source_Inspection_Response__c"]:::sf
     SUGG -->|tech dismisses| DISMISS["Response flagged failed<br/>but no callout created"]:::sf
-    SUGG -->|tech merges| WOLIM["Multiple responses → 1 WOLI"]:::sf
+    SUGG -->|tech merges| WOLIM["Multiple responses → 1 pending WOLI"]:::sf
 
     WOLI --> CHKOUT["Tech submits inspection<br/>SA status → Completed"]:::mobile
     DISMISS --> CHKOUT
@@ -58,7 +72,11 @@ flowchart TD
         CHKOUT --> VAL["Validation rules fire<br/>require completion fields"]:::sf
         VAL --> FLOW1["Record-Triggered Flow<br/>on SA completion"]:::sf
 
-        FLOW1 --> PDF1["Internal PDF generated<br/>(full detail incl. internal notes)"]:::sf
+        FLOW1 --> APPLYCHG["Apply staged asset changes"]:::sf
+        APPLYCHG --> APPLYOK{"Asset apply success?"}:::decision
+        APPLYOK -->|yes| PDF1["Internal PDF generated<br/>(full detail incl. internal notes)"]:::sf
+        APPLYOK -->|no| EXC["Create asset-sync exception<br/>mark sync failed; keep inspection complete"]:::decision
+        EXC --> PDF1
         FLOW1 --> PDF2["Customer-facing PDF generated<br/>(no internal notes / pricing)"]:::sf
         FLOW1 --> ASSET["Asset Status updated<br/>→ 'Needs Repair' for any callout"]:::sf
 
@@ -70,7 +88,7 @@ flowchart TD
     %% ==== DOWNSTREAM ====
     subgraph DOWN["4. Downstream — Repair / Approval"]
         direction TB
-        WOLI --> AM{"AM review<br/>quotable?"}:::decision
+        WOLI --> AM{"AM review pending callouts<br/>quotable?"}:::decision
         AM -->|yes| EWQ["ExtraWork estimate<br/>line linked via<br/>ExtraWork_Estimate_Line_Ref__c"]:::ext
         AM -->|no, in-contract| SCHEDR["Schedule repair WO<br/>Work Type = Irrigation - Repair"]:::sf
         EWQ --> CUSTAPPR{"Customer approves?"}:::decision
@@ -84,6 +102,7 @@ flowchart TD
     %% ==== REPORTING ====
     BV --> RPT["Power BI nightly extract<br/>SA + Inspection_Response + WOLI<br/>→ irrigation manager dashboard"]:::ext
     EMAIL1 --> RPT
+    EXC --> RPT
     class RPT done
 
     %% ==== ASSET HISTORY ====

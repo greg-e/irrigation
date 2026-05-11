@@ -1,11 +1,51 @@
 # Stakeholder Follow-Up Questions — Mike, Alex, James
 
-Targeted follow-up question set per stakeholder, derived from the recommended path forward (custom-object schema, Pattern C "Suggested Repairs", standardized question library, FSM Mobile LWC, controller program A–D model, region-specific Question Set variants).
+Targeted follow-up question set per stakeholder, updated after May 11 design lock-ins (custom-object question library, immutable published versions, deterministic set resolution, required-question checkout gate, suggested-repair confirmation flow, AM-required handoff, staged asset-change apply with exception handling).
 
 **Date:** May 11, 2026
-**Use:** Send/walk through with each individual before locking the inspection LWC user-story backlog. Each question is tied to a specific design decision so we can show why we're asking.
+**Use:** Run live on a stakeholder call before final story slicing and pilot branch selection. Questions focus on unresolved policy/operational details, not decisions already locked.
 
-> Format: each question references the design artifact it validates. Aim for short async replies first; reserve a 30-min call only if anything comes back ambiguous.
+> Call format: use this as a facilitator script. Capture explicit decisions, owners, and due dates in real time.
+
+---
+
+## Call Runbook (60 minutes)
+
+### Suggested agenda
+1. 0-5 min: Frame scope and confirm locked decisions (no re-open unless new evidence).
+2. 5-15 min: Cross-cutting decisions (severity, AM policy, required-answer gate, offline/photo baseline).
+3. 15-35 min: Region-specific decisions (Mike -> James -> Alex).
+4. 35-50 min: Pilot branch nominations and adoption risks.
+5. 50-60 min: Confirm decision log, owners, due dates, and document update assignments.
+
+### Facilitation rules
+1. Ask one decision question at a time; force a clear outcome: Yes / No / Depends.
+2. If "Depends," capture the exact dependency and owner.
+3. Park non-blocking ideas in a parking lot; do not derail decision flow.
+4. End each section by reading back the decision and getting verbal confirmation.
+
+### Decision capture shorthand
+
+Use these tags during live note-taking:
+
+- `[DECIDED]` final decision reached
+- `[FOLLOW-UP]` unresolved; owner + due date assigned
+- `[PARKED]` out of scope for this call
+
+---
+
+## What Is Already Locked (Do Not Re-open)
+
+Use this list to avoid re-litigating decisions in follow-up calls.
+
+1. Custom-object library path is final (no Salesforce Assessments path). *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §10)*
+2. Published questions and sets are immutable; new versions are append-only. *([requirements/inspection_question_library.md](inspection_question_library.md) Locked Governance Decisions)*
+3. Runtime set selection is deterministic by Region + Inspection Type/Season + Work Type, with hard fail on no match. *([requirements/diagrams/process_flow.mmd](diagrams/process_flow.mmd))*
+4. Question-set version is snapshotted at inspection start and remains locked in-flight. *([requirements/diagrams/inspection_sequence.mmd](diagrams/inspection_sequence.mmd))*
+5. Checkout is blocked until required questions are answered.
+6. Suggested repairs are generated continuously and explicitly confirmed at checkout.
+7. AM assignment is required before submit when confirmed callouts exist.
+8. Staged asset changes apply on completion; apply failures create exceptions without losing inspection completion.
 
 ---
 
@@ -13,28 +53,28 @@ Targeted follow-up question set per stakeholder, derived from the recommended pa
 
 **Context:** Mike already uses a digital form in FL. He's the closest to "production user" of any of our inputs. We have his field list mapped in [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §7a.
 
-### A. Form content / question library
-1. Walk us through your current FL digital form end-to-end on a real recent inspection — anything we mapped wrong in §7a? *(validates field-level mapping)*
-2. Q6.11 "Overspray" is on your form but **not** on James's West Coast grid. Is overspray a region-specific issue (FL turf/landscape) or should it be national? *([requirements/inspection_question_library.md](inspection_question_library.md) §6 + open question)*
-3. Logic-driven expanders ("if Yes, ask…"): list any that exist in your current form so we get the branching captured in `Inspection_Question__c.Branching_Parent__c`.
-4. Are drip-specific questions worth their own sub-section, or is conditional rendering inside Section 6 acceptable? *([requirements/inspection_question_library.md](inspection_question_library.md) Open Q)*
+### A. Form content / regional deltas
+1. Walk us through your current FL digital form on one real recent inspection. Anything in our FL mapping still wrong in §7a? *(validates field-level mapping)*
+2. Q6.11 "Overspray" appears in FL but not West Coast. Should this be a national baseline question or an FL-only delta? *([requirements/inspection_question_library.md](inspection_question_library.md))*
+3. List your must-have conditional expanders ("if Yes, ask...") so we can finalize branching structures before publish.
+4. Drip-specific content: separate subsection or conditional questions in Section 6?
 
-### C. Notes & PDFs
-5. Internal vs Customer-Facing notes split — does that match how you actually work today, or are you writing one set of notes and the AM filters?
-6. Customer-facing PDF — show us a "good" example you'd want every region to copy.
-7. The transcript captured your customer feedback that "we don't see any comments, no feedback, no suggestion." Is the new `Recommendations__c` field enough, or does the customer want more?
+### B. Notes, photos, and customer output
+5. Internal vs customer-facing note split: does this match your actual workflow, or are you still writing one blended note set today?
+6. What is the minimum customer-facing narrative needed in the PDF so customers no longer say "no comments/no suggestions"?
+7. Photo expectations for FL: minimum evidence per inspection (none/targeted/high-volume) and whether captions are sufficient.
 
-### D. Scheduling & ops dashboard (your big ask)
-8. The monthly calendar with hours-per-day capacity and drag-and-drop - Does the existing Dispatch Console and Crew Calendar meet this requirement? Greg leaned BI; Rohit could see a hybrid.
-9. Preferred-resource-per-property continuity: when a property's preferred tech is unavailable, what's your fallback rule? (Ranked list? Geo-nearest qualified? Manager picks?)
+### C. Scheduling and pilot operations
+8. Monthly capacity planning: can Dispatch Console + Crew Calendar satisfy your requirement, or do you still need a custom planning layer?
+9. Preferred tech continuity fallback rule: ranked backup list, nearest qualified, or manager discretion?
 
-### E. BV Connect & customer experience
-10. Your point about BV Connect "empty boxes" — is the recommendation to **gate** Phase 2 publishing on the property having site maps / rotation maps, or just **flag** it for the AM?
-11. For customers **not** subscribed to BV Connect, do you want the inspection PDF emailed directly, or just left as an internal artifact?
+### D. BV Connect and completion policy
+10. BV Connect "empty boxes": should missing map artifacts block publish, or create a post-completion exception/flag only?
+11. For non-BV-Connect customers, should customer PDF distribution be auto-email, manual-send, or no distribution by default?
 
-### F. Adoption / change management
-12. Which FL branch should be Phase 2 pilot? (Sanford was mentioned as enthusiastic.)
-13. Top 3 things that would make a tech reject the new tool on day one?
+### E. Adoption and pilot
+12. Which FL branch should be first pilot branch (still Sanford, or changed)?
+13. Top 3 day-one rejection risks from field techs, and what mitigation you want in pilot training.
 
 ---
 
@@ -43,34 +83,34 @@ Targeted follow-up question set per stakeholder, derived from the recommended pa
 **Context:** James gave us the actual Excel "Irrigation Preventative Monthly Inspection Report." He's also a national-level training resource. Section 6 + Section 9 are now mirrored to his form. He explicitly offered help — "phone call, e-mail or text away." The workbook sample includes repeated controller blocks and zone rows extending to at least 96, with a partially filled example property ("City of Grapevine").
 
 ### A. Form content / completeness
-1. Section 6 now mirrors all 13 of your failure-mode columns. Anything **else** on the report that we haven't captured (e.g., footer fields not pictured in the column-mapping table)? *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §7b)*
-2. Your form does **not** have an "Overspray" column. Is that intentional (West Coast turf/spray pattern) or just left off? Should we still capture overspray nationally?
-3. Programs A–D in your footer — is **4** the universal cap, or do some of your controllers run 6/8/16 programs? `Irrigation_Program__c` allows N rows per controller, but the LWC UI currently assumes 4. *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §5b)*
-4. Per-zone grid is 32 rows × 18 columns on your form. On a tablet/phone, we can't show that as a wide grid. Would a **per-zone "card" pattern** (one zone at a time, expandable) be acceptable, or do you specifically need the all-zones-on-one-screen view?
-5. The header has "Rain/Freeze Working Y/N" as one combined item. Do you ever need to separate "rain sensor working" from "freeze sensor working" — or is the combined Y/N enough? *(currently one Boolean: `Rain_Freeze_Sensor_Working__c`)*
-6. Backflow / Meter / Controller On-Off — do you want any audit trail of *who* turned them off mid-inspection vs found-them-off?
-7. We see one section using "Broken drip line" and another using "Leaking Seal" in that same failure-mode position. Which label is authoritative for the national question library?
+1. Section 6 mirrors your 13 failure-mode columns. What is still missing from your report that must be in v1? *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §7b)*
+2. Overspray absent in your sheet: intentional regional difference or missing item?
+3. Programs A-D: is 4 programs enough for v1 UI, or must we support >4 at go-live?
+4. Mobile UX for per-zone capture: acceptable to use one-zone-at-a-time card workflow instead of wide grid?
+5. Rain/freeze as single Y/N: acceptable or must be split into separate fields?
+6. Do you need an explicit action audit for operator-controlled toggles (backflow/meter/controller on-off)?
+7. "Broken drip line" vs "Leaking Seal" label conflict: which canonical wording should library use?
 
-### B. National standardization (your stated mission)
-8. Who in the org should own the question library (national irrigation lead role)? Is that a James-owned function or someone else?
-9. How often do you expect the library to change (annual review per the transcript — but mid-year hot-fix path)?
-10. For training: should the standardized form drive your training curriculum, or vice-versa?
+### B. Governance ownership (critical unresolved)
+8. Who is the named owner of publish authority for national question/set versions?
+9. What is the approved change cadence: annual major, quarterly minor, and emergency hot-fix path?
+10. Training alignment: does training conform to library versions, or can training lead library changes?
 
 ### C. Reclaimed water / pump stations / compliance
-11. Reclaimed (purple-pipe) systems are common on the West Coast. Do they need their own Question Set variant or just additional questions inside the standard one? *([requirements/inspection_question_library.md](inspection_question_library.md) Open Q)*
-12. Pump stations — do they need a Section 10 (separate from controllers)? *([requirements/inspection_question_library.md](inspection_question_library.md) Open Q)*
-13. Backflow test certificate — should this be a Compliance custom object with expiry tracking, or just a photo attachment? *([requirements/inspection_question_library.md](inspection_question_library.md) Open Q)*
-14. CA / OR / WA state-level water-board reporting requirements — anything we need to capture *in the form* to feed downstream reporting?
+11. Reclaimed (purple-pipe) systems: separate variant or conditional block inside base set?
+12. Pump station checks: new dedicated section now, or defer to post-v1 extension?
+13. Backflow certificate: compliance object with expiry tracking, or attachment-only at v1?
+14. CA/OR/WA reporting fields: what must be captured in form versus derived downstream?
 
 ### D. Tech-level attribution (your specific ask)
-15. You wanted tech-level revenue attribution. Is `Inspected_By__c` on the SA enough, or do you need it denormalized onto every resulting WOLI/Estimate? *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) Open Q)*
+15. Is SA-level tech attribution enough, or do you require denormalized tech attribution on every callout and estimate line?
 
 ### E. Adoption / pilot
-16. Which West Coast branch is the right pilot for the standardized form?
-17. What's the biggest objection you expect from a senior West Coast tech who's been using the Excel form for years?
+16. Which West Coast branch should pilot first?
+17. Biggest objection expected from long-tenured techs, and which product behavior must be preserved to reduce pushback?
 
 ### F. Northeast / region coordination
-18. Have you worked with the Northeast irrigation managers? They're not represented in our discovery and they use IrrigationCheckups.com. Can you broker an intro? *([requirements/northeast_discovery_plan.md](northeast_discovery_plan.md))*
+18. Can you broker Northeast intros this week so we can validate content deltas before national publish? *([requirements/northeast_discovery_plan.md](northeast_discovery_plan.md))*
 
 ---
 
@@ -78,35 +118,35 @@ Targeted follow-up question set per stakeholder, derived from the recommended pa
 
 **Context:** Alex's workbook is now in discovery. It includes a summary tab and controller tabs (A-E) with a repair-price catalog and totals. One controller sample appears partially filled (site/address "intuitive # 109", controller name "node", inspection date 2/5/2026), while most controller metadata fields remain blank.
 
-### A. Artifact walkthrough (now that we have it)
-1. Confirm this is the current California production sheet, not a draft/training copy.
-2. Which fields are truly required for tech completion vs optional in practice? (Many metadata fields appear blank in sample tabs.)
-3. Is one workbook intended per property visit, or does one workbook persist across multiple visits?
+### A. Artifact validity / workflow intent
+1. Confirm this is your current production sheet (not a draft/training copy).
+2. Which fields are truly required at completion versus optional in day-to-day practice?
+3. Is workbook lifecycle per visit, per month, or persistent across seasons?
 
-### B. Header/data quality rules
-4. Should Site Name and Irrigation Tech on the Summary tab be mandatory before submit?
-5. Controller-level metadata (serial, make/model, location, water type, backflow spec) is mostly blank in the sample. Do techs usually skip these, or is this just an incomplete sample?
-6. "Controller has remote harness" and "Controller has Map" look like yes/no prompts. Should those be required booleans in the mobile form?
-7. Are controller totals expected to be non-zero on most visits, or are many visits true "inspection only/no repair" outcomes?
+### B. Data quality and required-field policy
+4. Should Site Name and Irrigation Tech be hard-required before checkout?
+5. Controller metadata mostly blank in sample: intentional optional capture, or a compliance gap we must enforce?
+6. "Controller has remote harness" and "Controller has map": required booleans or optional annotations?
+7. Expected distribution of visits: inspection-only versus repairs-recommended versus immediate in-contract repair.
 
 ### C. Repair catalog and pricing governance
-8. The controller tabs include a large fixed repair catalog with unit costs. Who owns these prices and how often do they change?
-9. Do you need region-level price books (NorCal vs SoCal) or one statewide standard price list?
-10. When techs identify issues not in the catalog, do they add free-text lines, or should we add an "Other repair" pattern?
+8. Who owns the repair catalog prices and update approval?
+9. One CA statewide list or separate NorCal/SoCal pricing variants?
+10. For uncatalogued issues, should we support controlled "Other" callout categories or unrestricted free text?
 
-### D. Workflow / cadence
-11. Is CA flow more like Mike's (per-property quarterly) or James's (per-controller monthly)?
-12. How should A-E controller tabs map to Salesforce records: one parent inspection with child controller inspections, or separate service appointments per controller?
-13. Do you need separate completion states for "inspected, no repairs" vs "inspected, repairs recommended"?
+### D. Workflow / cadence and data shape
+11. Is CA cadence closer to per-property quarterly or per-controller monthly?
+12. Preferred Salesforce mapping: one SA with child controller scope, or one SA per controller?
+13. Do you need separate completion outcomes for "no repairs" and "repairs recommended"?
 
-### E. CA-specific compliance
-14. Which CA water-restriction or agency compliance fields are missing from this workbook but required for operations/reporting (MWELO, city utility mandates, drought stage)?
-15. Recycled/purple-pipe systems: should this be a dedicated Question Set variant or conditional questions in the standard CA set?
-16. Smart-controller ecosystem in CA portfolio (Hydrawise, Rain Bird IQ4, Weathermatic, Calsense, etc.): which platforms must we explicitly capture in the data model?
+### E. CA-specific compliance and platform profile
+14. Which CA compliance fields are mandatory for operations/reporting but missing from current workbook (MWELO, utility mandates, drought stage)?
+15. Recycled/purple-pipe: dedicated variant or conditional branch in CA base set?
+16. Which smart-controller platforms must be explicitly captured in v1 data model?
 
 ### F. Adoption / pilot
-17. Can we schedule a 30-minute Alex-led walkthrough of a fully completed real inspection using this sheet?
-18. Which CA branch should pilot the FSM Mobile version first?
+17. Can we schedule a 30-minute walkthrough using a fully completed real inspection sample?
+18. Which CA branch should run first pilot?
 
 ---
 
@@ -127,28 +167,63 @@ Evidence from the newly added form files, used to prioritize follow-up questions
 4. Failure-mode labels are not fully consistent across repeated sections (for example, one section uses "Broken drip line" while another uses "Leaking Seal" in a comparable slot).
 
 ### Design implication
-1. Current workbook evidence supports a "template + occasional partial completion" usage pattern, so required-field policy, prefill rules, and controller-level completion gates should be explicitly decided before finalizing LWC validation logic.
+1. Current workbook evidence suggests "template + partial completion" behavior. Required-field policy, prefill strategy, and controller-level completion gates need explicit stakeholder sign-off before LWC validation is finalized.
 
 ---
 
 ## Cross-cutting questions (ask all three)
 
-These shouldn't go in three separate emails — package them once and walk through together if possible.
+Run this block first while everyone is on the line.
 
-1. **Pattern C confirmation.** "Suggested Repairs" review screen at checkout — failed responses surface as draft WOLIs that the tech confirms / dismisses / merges. Mark agree / disagree / depends. *([requirements/diagrams/process_flow.mmd](diagrams/process_flow.mmd))*
-2. **Voice-to-text** — in your region, is this actually used or do techs type? Drives how much we invest in the LWC voice UX.
-3. **Photo capture frequency** — typical photos per inspection in your region (helps size offline-storage budget).
-4. **Offline reality** — what % of your visits hit poor/no signal? (West Coast canyons, FL rural, CA central valley all have dead zones.)
-5. **Acceptance criteria for "this replaces my old tool"** — give us your top 3 must-haves and top 3 deal-breakers.
-6. **Pilot branch nomination** — if Phase 2 launches in your region, which one branch should pilot?
-7. **What hasn't anyone asked about yet that's going to bite us?**
+1. **Required-answer gate tolerance.** Are you comfortable hard-blocking checkout when required answers are incomplete, including in high-volume field days?
+2. **Suggested repair review UX.** Is confirm/dismiss/merge enough, or do you need additional queue actions in review?
+3. **Severity taxonomy.** Can we standardize to a single severity set across all regions?
+4. **AM assignment policy.** Should AM assignment be account-default with override, branch-default with override, or always manual?
+5. **Photo baseline.** Region minimum: none, one-per-callout, or documented evidence set.
+6. **Offline reality.** Percent of jobs with poor/no signal and expected offline session duration.
+7. **Replacement acceptance criteria.** Top 3 must-haves and top 3 deal-breakers to replace current process.
+8. **Pilot branch nomination.** One branch per region for Phase 2 pilot.
+9. **Unknown unknowns.** What are we still not asking that creates the highest rollout risk?
+
+---
+
+## Suggested Talk Track (Facilitator Prompts)
+
+Use these to keep the call moving and avoid ambiguity.
+
+1. "We are not reopening locked architecture decisions unless there is net-new evidence. Agreed?"
+2. "For each question, I need a decision, not just discussion. If unresolved, we assign owner and due date before we move on."
+3. "When answers vary by region, we will treat that as a delta decision, not a blocker to national baseline."
+4. "Before we leave each section, I will read back what we decided and who owns follow-through."
+
+---
+
+## Live Decision Log (Use During Call)
+
+Paste updates into this table in real time.
+
+| Topic | Stakeholder(s) | Decision (Yes/No/Depends) | Notes / Dependency | Owner | Due Date |
+|---|---|---|---|---|---|
+| Required-answer gate tolerance | All |  |  |  |  |
+| Severity taxonomy standard | All |  |  |  |  |
+| AM assignment policy default | All |  |  |  |  |
+| Photo evidence baseline | All |  |  |  |  |
+| Offline expected duration | All |  |  |  |  |
+| FL overspray national vs delta | Mike |  |  |  |  |
+| West program count limit (>4?) | James |  |  |  |  |
+| CA SA mapping model | Alex |  |  |  |  |
+| Pilot branches (FL/West/CA) | All |  |  |  |  |
 
 ---
 
 ## Tracking
 
-Use the table below to log replies. Update [requirements/inspection_question_library.md](inspection_question_library.md) "Open Questions" and [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §10 once each item is resolved.
+After the call, update the source docs within 24 hours:
 
-| Q# | Stakeholder | Sent | Replied | Resolution | Doc Updated |
-|---|---|---|---|---|---|
-| | | | | | |
+1. [requirements/inspection_question_library.md](inspection_question_library.md) (remaining open questions and governance ownership)
+2. [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §11 (remaining open questions)
+3. [stories/build_backlog.md](../stories/build_backlog.md) (story acceptance criteria deltas)
+
+| Q# | Stakeholder | Topic | Decision | Owner | Due Date | Doc Updated |
+|---|---|---|---|---|---|---|
+| | | | | | | |

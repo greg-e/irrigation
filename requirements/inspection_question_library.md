@@ -269,3 +269,16 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 ## Notes on Variant Lock
 
 Once stakeholders sign off, each Question Set should be locked with a `Version__c` value. Future revisions create new Question Set records (e.g., "Quarterly Inspection — National v2") so historical responses remain interpretable. Reporting joins `Inspection_Response__c.Question_Text_Snapshot__c` rather than the live question text.
+
+### Locked Governance Decisions (May 11, 2026)
+
+- Custom-object library path is final (no Salesforce Assessments path).
+- Published questions are immutable; edits create new versions.
+- Published question sets are immutable; membership/order changes create new set versions.
+- Published sets pin exact question versions at publish time.
+- Regional model uses pinned base version plus explicit deltas (add/override/remove markers).
+- Regional and seasonal overrides can change membership/order and surface behavior only; no response-type or branching-structure changes.
+- Seasonal forms are separate question-set variants derived from pinned regional variants.
+- Runtime selection is deterministic by region + inspection type/season + work type, with exactly one published match.
+- Inspection start snapshots the selected published set version; in-flight inspections remain locked.
+- Checkout is blocked until all required questions are answered.

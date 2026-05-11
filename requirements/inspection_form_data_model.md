@@ -197,6 +197,82 @@ Groups questions into a form definition tied to a Work Type and/or season. Allow
 
 ---
 
+## 4b. Irrigation Asset Type Model (Canonical)
+
+This section defines the required irrigation asset taxonomy and minimum fields by type. It is the canonical model used by bootstrap mode, asset-scoped question rendering, and callout linkage.
+
+### 4b.1 Asset Taxonomy and Record Types
+
+Use standard `Asset` with irrigation record types and `Asset_Type__c` as a controlled picklist:
+
+| Record Type / Asset Type | Parent Required | Used In Inspection Sections | Notes |
+|---|---|---|---|
+| `Controller` | Account | 5, 9 | Parent for Zone assets; stores controller identity and capacity |
+| `Zone` | Controller | 6 | Primary inspection loop target |
+| `Backflow` | Account (or Controller site grouping) | 4 | Compliance and leak/test flows |
+| `Head` | Zone | Optional detail for advanced mapping | Not required for baseline go-live |
+| `Valve` | Zone | Optional detail for advanced mapping | Can be represented as zone-level finding at go-live |
+| `Drip_Line` | Zone | 6 (conditional) | Optional dedicated type; otherwise model via zone responses |
+| `Pump` | Account | 3 (conditional) | Required only when site has pump-based system |
+| `Sensor` | Controller | 5 (conditional) | Rain/freeze/flow sensor tracking |
+
+### 4b.2 Common Fields (all irrigation asset types)
+
+| Field API Name | Type | Required | Purpose |
+|---|---|---|---|
+| `Asset_Type__c` | Picklist | Yes | Canonical type discriminator |
+| `Irrigation_System_Key__c` | Text(80) | No | Groups assets belonging to same irrigation system |
+| `Install_Date__c` | Date | No | Lifecycle reporting |
+| `Location_Description__c` | Text(255) | No | Human-readable location guidance |
+| `Latitude__c` | Number(10,7) | No | Spatial context |
+| `Longitude__c` | Number(10,7) | No | Spatial context |
+| `Is_Placeholder__c` | Checkbox | Yes (default false) | Marks temporary bootstrap records |
+| `Normalization_Status__c` | Picklist | Yes | Pending / Normalized / Retired |
+| `Last_Inspected_At__c` | DateTime | No | Updated on completed inspections |
+| `Last_Inspected_SA__c` | Lookup -> ServiceAppointment | No | Last inspection pointer |
+
+### 4b.3 Minimum Bootstrap Fields by Asset Type
+
+These are the minimum required fields when tech creates assets in bootstrap mode.
+
+| Asset Type | Minimum Required Fields at Bootstrap |
+|---|---|
+| `Controller` | `Name`, `Asset_Type__c`, `Controller_Label__c`, `Controller_Total_Zones__c` |
+| `Zone` | `Name`, `Asset_Type__c`, `Zone_Number__c`, `ParentId` (Controller) |
+| `Backflow` | `Name`, `Asset_Type__c`, `Backflow_Type__c` |
+| `Pump` | `Name`, `Asset_Type__c` |
+| `Sensor` | `Name`, `Asset_Type__c`, `Sensor_Type__c`, `ParentId` (Controller) |
+
+### 4b.4 Managed Fields by Asset Type (non-exhaustive)
+
+| Asset Type | Field API Name | Type | Required | Notes |
+|---|---|---|---|---|
+| Controller | `Controller_Label__c` | Text(80) | Yes | Human-friendly id shown to tech |
+| Controller | `Controller_Model__c` | Text(80) | No | Make/model |
+| Controller | `Controller_Total_Zones__c` | Number(3,0) | Yes | Capacity |
+| Controller | `Smart_Controller__c` | Checkbox | No | Weather-based controller flag |
+| Controller | `Flow_Sensor_Functional__c` | Checkbox | No | Used in Section 5 |
+| Zone | `Zone_Number__c` | Number(3,0) | Yes | Primary zone key |
+| Zone | `Distribution_Method__c` | Picklist | No | Spray / Rotor / Bubbler / Drip |
+| Zone | `Landscape_Type__c` | Picklist | No | Turf / Bed / Color |
+| Zone | `Default_Runtime_Minutes__c` | Number(5,2) | No | Planning baseline |
+| Zone | `Is_Placeholder__c` | Checkbox | Yes | Placeholder allowed per locked decision |
+| Backflow | `Backflow_Type__c` | Picklist | Yes | RPZ / DCV / PVB / Other |
+| Backflow | `Last_Test_Date__c` | Date | No | Compliance tracking |
+| Backflow | `Compliance_Status__c` | Picklist | No | Compliant / Due / Failed |
+| Pump | `Pump_Pressure_PSI__c` | Number(6,2) | No | Optional capture |
+| Sensor | `Sensor_Type__c` | Picklist | Yes | Rain / Freeze / Flow |
+| Sensor | `Functional__c` | Checkbox | No | Current observed state |
+
+### 4b.5 Asset Type Resolution Rules
+
+1. Asset-scoped sections can render only for asset types included in the resolved and snapshotted question set.
+2. If required asset types are missing, bootstrap mode creates minimal records first.
+3. Placeholder zones can be used to complete inspection and must set property normalization flag on completion.
+4. Callouts (`WorkOrderLineItem`) must reference a concrete asset record (including placeholder assets until normalized).
+
+---
+
 ## 5. Repair Callout — `WorkOrderLineItem` (Existing — Reference Only)
 
 Already defined in [research/fsm_asset_architecture.md](../research/fsm_asset_architecture.md). Listed here for completeness — **no schema changes proposed**.
@@ -379,17 +455,40 @@ Annotations / comments per photo: use the `Title` and `Description` fields on `C
 
 Cross-reference with [research/automation_flows_design.md](../research/automation_flows_design.md). New flows implied:
 
-1. **On `Inspection_Response__c` insert with `Failed_Inspection__c = true`** → optionally auto-create a `WorkOrderLineItem` callout pre-populated with the response context. (User decision: auto-create vs prompt-tech-to-create.)
+1. **On `Inspection_Response__c` insert with `Failed_Inspection__c = true`** → create/update a *suggested repair* record (no WOLI yet). Suggestions are generated continuously, de-duplicated by `(Inspection, Asset, Issue Type)`, and editable for quantity/severity/notes at checkout review.
 2. **On `ServiceAppointment` checkout (Status → Completed) for irrigation Work Type** → generate internal PDF, generate customer PDF, set `Internal_PDF_Generated_At__c` / `Customer_PDF_Generated_At__c`, queue BV Connect publish if customer is subscribed.
 3. **On `WorkOrderLineItem` insert with `Issue_Type__c` populated and `AssetId` set** → set `Asset.Status = Needs Repair` (existing Flow 2a in `automation_flows_design.md`).
 
+4. **On checkout review confirm** → convert confirmed suggested repairs into AM-owned pending callout WOLIs (not pushed to ExtraWork yet). Require structured description and standardized severity on each confirmed callout.
+
+5. **On checkout complete** → apply staged asset changes from pending-change records. If any apply fails, complete inspection data, mark asset-sync as failed, and raise a clear exception for follow-up.
+
 ---
 
-## 10. Open Questions
+## 10. Locked Decisions (May 11, 2026)
 
-- [ ] Auto-create callout WOLI from a failed `Inspection_Response__c`, or require tech to explicitly create it? Auto-create reduces friction but risks duplicate/garbage callouts.
-- [ ] Should `Inspection_Question_Set__c` be replaced by Salesforce **Assessment Tasks** / **Assessment Indicator Definitions** (Industries Common Layer)? If the org licenses include it, that may be a lower-code path. Validate license availability.
-- [ ] How are seasonal variants modeled — separate Question Sets per season, or active-date filters on questions within one set?
+1. **Question library architecture:** Use custom objects, not Salesforce Assessments.
+2. **Versioning:** Published questions and question sets are immutable. New versions are append-only.
+3. **Set composition:** Question sets pin exact question versions at publish time.
+4. **Regional model:** Regional base library with pinned base version + explicit deltas (add/override/remove markers).
+5. **Allowed overrides:** Membership/order and surface behavior only; no response-type or branching-structure changes in overrides.
+6. **Season model:** Separate seasonal variants derived from pinned regional variants.
+7. **Runtime resolution:** Deterministic match by region + inspection type/season + work type, with exactly one published match.
+8. **No match behavior:** Fail loudly with clear admin-facing error and next steps.
+9. **Snapshot timing:** Selected question-set version is snapshotted at inspection start and remains locked in-flight.
+10. **Asset handling in inspection:** Inline create/edit allowed via staged pending-change records; apply on completion.
+11. **Asset apply failures:** Do not lose inspection. Mark asset-sync failure and create actionable exception.
+12. **Bootstrap behavior:** If required assets are missing, run lightweight bootstrap based on resolved question set and inspection type.
+13. **Placeholder zones:** Allowed during inspection; completion allowed with follow-up normalization flag.
+14. **Callout generation:** Suggested repairs generated continuously, explicitly confirmed at checkout.
+15. **Callout dedupe key:** `(Inspection, Asset, Issue Type)`.
+16. **Callout evidence:** Photos optional; structured description and standardized severity required.
+17. **AM flow:** Confirmed callouts are pending in Salesforce; AM creates ExtraWork estimate.
+18. **AM assignment:** Required at checkout; tech may reassign from valid AM list.
+19. **Checkout quality gate:** Block checkout until all required questions are answered.
+
+## 11. Remaining Open Questions
+
 - [ ] Photo annotation depth — caption only, or freehand markup? Freehand markup requires a richer LWC and storage approach.
 - [ ] Where does the question library live for editing — pure admin UI, or a custom LWC editor for the national irrigation lead?
 - [ ] Multi-zone inspection: does each zone get its own SA, or one SA with N zone-scoped responses? Recommend: one SA with N responses to keep scheduling simple.
@@ -397,7 +496,7 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 
 ---
 
-## 11. Out of Scope (this draft)
+## 12. Out of Scope (this draft)
 
 - Conservation audit / water savings calculator (deferred per `irrigationcheckups_analysis.md`)
 - E-signature on inspection summary (ExtraWork owns signatures)

@@ -106,6 +106,8 @@ Validation matrix for the irrigation inspection workflow against actual Salesfor
 
 ## 7. Out-of-the-Box Alternative: Salesforce Assessments
 
+Status: evaluated and not selected for this project. The team has locked on a custom-object question library path.
+
 Worth a serious look as an alternative to building `Inspection_Question__c` / `Inspection_Response__c` from scratch. Salesforce ships standard objects that match this pattern:
 
 | Standard Object | Maps To Our Concept |
@@ -128,7 +130,7 @@ Worth a serious look as an alternative to building `Inspection_Question__c` / `I
 - Less common in the FSM-only ecosystem; fewer reference implementations
 
 ### Recommendation
-**Validate license availability before committing.** If Assessments are available, switch the question library design to use them and shed `Inspection_Question__c` / `Inspection_Response__c` / `Inspection_Question_Set__c` from the custom build. If not available, the custom-object design in [requirements/inspection_form_data_model.md](inspection_form_data_model.md) stands.
+Do not pursue the Assessments path for Phase 2. Continue with the custom-object design in [requirements/inspection_form_data_model.md](inspection_form_data_model.md): `Inspection_Question__c`, `Inspection_Question_Set__c`, `Inspection_Response__c`, and related versioning/variant governance.
 
 ---
 
@@ -184,7 +186,7 @@ Key FSM-capability implications if NE workflow differs materially:
 3. PDF generation pipeline
 4. Question library admin UX
 
-Before locking the design, prioritize the spikes in Section 9 — especially **Assessment objects (license)** and **PDF generation path**. Both could materially change the design.
+Before locking the build plan, prioritize the spikes in Section 9 — especially **PDF generation path**.
 
 ---
 
