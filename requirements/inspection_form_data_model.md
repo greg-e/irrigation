@@ -75,7 +75,7 @@ Added to standard `ServiceAppointment`. Populated by the guided checkout flow on
 | `Water_Restrictions_In_Place__c` | Checkbox | Yes | Drives compliance reporting |
 | `Water_Restriction_Notes__c` | Text(255) | Conditional | When checkbox = true |
 | `Weather_Conditions__c` | Picklist | No | Sunny / Cloudy / Light Rain / Heavy Rain / Wind |
-| `Web_Check_Performed__c` | Checkbox | No | "Wet check" — irrigation system run during inspection |
+| `Wet_Check_Performed__c` | Checkbox | No | "Wet check" — irrigation system run during inspection |
 
 ### 1c. Findings Summary
 
@@ -299,7 +299,7 @@ Annotations / comments per photo: use the `Title` and `Description` fields on `C
 | Time and date stamp | `Inspection_Started_At__c` / `Inspection_Completed_At__c` |
 | Inspector name (checkbox) | `Inspected_By__c` |
 | Reason for inspection | `Inspection_Reason__c` |
-| Wet check Y/N | `Web_Check_Performed__c` |
+| Wet check Y/N | `Wet_Check_Performed__c` |
 | Hotspots / lateral line breaks / mainline washouts | `Hotspots_Identified__c` / `Lateral_Line_Breaks__c` / `Mainline_Issues__c` |
 | Controller number | `Controller_Number__c` + `Controller_Asset__c` |
 | Zone number | Per-zone `Inspection_Response__c` rows with `Asset__c` → Zone |
