@@ -1,927 +1,941 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FSM Mobile Inspection Prototype</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
   <style>
-:root {
-  --bg: #eaf3fb;
-  --surface: #ffffff;
-  --surface-soft: #f7fbff;
-  --ink: #032d60;
-  --ink-soft: #5c6f82;
-  --line: #c9d8e6;
-  --brand: #0176d3;
-  --brand-deep: #014486;
-  --ok: #2e844a;
-  --warn: #ba0517;
-  --amber: #8f4b00;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: "Salesforce Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  color: var(--ink);
-  background:
-    radial-gradient(circle at 10% 5%, rgba(1, 118, 211, 0.16), transparent 38%),
-    linear-gradient(145deg, #edf4fc 0%, #dcecf8 52%, #f6fbff 100%);
-  min-height: 100vh;
-}
-
-.app-shell {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.phone-shell {
-  width: min(430px, 100%);
-  min-height: 880px;
-  margin: 0 auto;
-  padding: 12px 12px 96px;
-  border: 1px solid #a7bfdb;
-  border-radius: 34px;
-  background: linear-gradient(180deg, #f8fcff 0%, #eef6fd 100%);
-  box-shadow:
-    0 20px 50px rgba(1, 45, 96, 0.18),
-    inset 0 0 0 6px #f5fbff;
-  position: relative;
-}
-
-.phone-notch {
-  width: 140px;
-  height: 26px;
-  background: #0c243f;
-  border-radius: 0 0 16px 16px;
-  margin: -12px auto 10px;
-}
-
-.global-header {
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: linear-gradient(120deg, #ffffff 0%, #f2f8ff 100%);
-  box-shadow: 0 8px 24px rgba(1, 68, 134, 0.08);
-  margin-bottom: 12px;
-}
-
-.brand-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.brand-kicker {
-  margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--brand-deep);
-  font-weight: 700;
-}
-
-.sync-pill {
-  border-radius: 999px;
-  background: #daf5e4;
-  color: #075e2d;
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 4px 10px;
-}
-
-.global-header h1 {
-  margin: 8px 0 2px;
-  font-size: 1.4rem;
-}
-
-.global-header p {
-  margin: 0;
-  color: var(--ink-soft);
-}
-
-.context-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  margin-bottom: 12px;
-}
-
-.context-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 4px 0;
-}
-
-.context-label {
-  margin: 0;
-  color: var(--ink-soft);
-}
-
-.context-value {
-  margin: 0;
-  font-weight: 700;
-  text-align: right;
-}
-
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.chip {
-  border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 700;
-  padding: 4px 10px;
-}
-
-.chip-blue {
-  background: #d8ecff;
-  color: #014486;
-}
-
-.chip-neutral {
-  background: #eef3f7;
-  color: #2e3e4e;
-}
-
-.chip-positive {
-  background: #daf5e4;
-  color: #075e2d;
-}
-
-.chip-warning {
-  background: #fef1d5;
-  color: var(--amber);
-}
-
-.chip-danger {
-  background: #fde7e9;
-  color: var(--warn);
-}
-
-.viewport {
-  display: grid;
-  gap: 10px;
-  margin-top: 10px;
-  background:
-    linear-gradient(0deg, rgba(1, 68, 134, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(1, 68, 134, 0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
-  border-radius: 12px;
-  padding: 10px;
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 3px 12px rgba(1, 68, 134, 0.06);
-}
-
-.nav-panel {
-  display: none;
-}
-
-.nav-panel.active {
-  display: block;
-}
-
-.panel-map {
-  display: none;
-}
-
-.panel-map.active {
-  display: block;
-}
-
-.system-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.filter-row {
-  margin-top: 8px;
-}
-
-.filter-field {
-  display: grid;
-  gap: 4px;
-  font-size: 0.86rem;
-  color: var(--ink-soft);
-}
-
-.filter-field select {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px;
-  font: inherit;
-  color: var(--ink);
-  background: #fff;
-}
-
-.system-card {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface-soft);
-  padding: 8px;
-}
-
-.system-card h4 {
-  margin: 0 0 6px;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-}
-
-.system-card ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
-  font-size: 0.84rem;
-}
-
-.legend-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.legend-pill {
-  border-radius: 999px;
-  padding: 3px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.legend-ok {
-  background: #e8f7ee;
-  color: #0e5a2d;
-}
-
-.legend-alert {
-  background: #fff1d6;
-  color: #8f4b00;
-}
-
-.map-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.zone {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px 8px;
-  font-weight: 700;
-  cursor: pointer;
-  background: #fff;
-  color: var(--ink);
-  font-size: 0.76rem;
-  text-align: left;
-}
-
-.zone small {
-  display: block;
-  margin-top: 4px;
-  font-weight: 600;
-  opacity: 0.85;
-}
-
-.zone-ok {
-  background: #e8f7ee;
-  border-color: #94d3aa;
-  color: #0e5a2d;
-}
-
-.zone-alert {
-  background: #fff1d6;
-  border-color: #f1be6a;
-  color: #8f4b00;
-}
-
-.panel-assets {
-  background: linear-gradient(120deg, #ffffff 0%, #f5fbff 100%);
-}
-
-.asset-manager {
-  border-top: 1px solid var(--line);
-  margin-top: 10px;
-  padding-top: 10px;
-}
-
-.asset-manager h4 {
-  margin: 0 0 8px;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--ink-soft);
-}
-
-.zone-links {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.panel h2,
-.panel h3 {
-  margin: 0 0 8px;
-}
-
-.panel-subtitle {
-  margin: 0 0 10px;
-  color: var(--ink-soft);
-  font-size: 0.92rem;
-}
-
-.context-hint {
-  margin: 0 0 10px;
-  border: 1px solid #c6def3;
-  border-radius: 8px;
-  background: #edf6ff;
-  color: #014486;
-  font-size: 0.84rem;
-  font-weight: 600;
-  padding: 8px;
-}
-
-.meter {
-  height: 14px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #edf3fa;
-  overflow: hidden;
-}
-
-.meter-fill {
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, #1798f2 0%, #0176d3 100%);
-  border-radius: 999px;
-  transition: width 240ms ease;
-}
-
-.meter-wrap p {
-  margin: 8px 0 10px;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-}
-
-.required-list,
-.callout-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.required-item {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface-soft);
-  padding: 8px;
-}
-
-.required-item label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-}
-
-.required-item input[type="checkbox"] {
-  accent-color: var(--brand);
-}
-
-.callout-item {
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--amber);
-  border-radius: 8px;
-  background: var(--surface-soft);
-  padding: 8px;
-}
-
-.callout-item.confirmed {
-  border-left-color: var(--ok);
-}
-
-.callout-meta {
-  margin: 4px 0 0;
-  color: var(--ink-soft);
-  font-size: 0.84rem;
-}
-
-.callout-actions {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px;
-}
-
-.inline-form {
-  margin-top: 10px;
-  display: grid;
-  gap: 8px;
-}
-
-.inline-form label {
-  display: grid;
-  gap: 4px;
-  font-size: 0.9rem;
-  color: var(--ink-soft);
-}
-
-.inline-form select,
-.inline-form input,
-.am-select-wrap select {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px;
-  font: inherit;
-  color: var(--ink);
-  background: #fff;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.actions.wrap {
-  align-items: end;
-}
-
-.am-select-wrap {
-  min-width: 180px;
-  display: grid;
-  gap: 4px;
-  color: var(--ink-soft);
-  font-size: 0.9rem;
-}
-
-.status-line {
-  margin: 8px 0 0;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-
-.btn {
-  border: 1px solid transparent;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-weight: 700;
-  font: inherit;
-  cursor: pointer;
-}
-
-.btn-brand {
-  background: var(--brand);
-  color: #fff;
-}
-
-.btn-brand:hover {
-  background: var(--brand-deep);
-}
-
-.btn-neutral {
-  border-color: var(--line);
-  background: #fff;
-  color: var(--ink);
-}
-
-.btn-destructive {
-  border-color: #f4c0c5;
-  background: #fff5f6;
-  color: var(--warn);
-}
-
-.submit-result {
-  margin-top: 10px;
-  font-weight: 700;
-  min-height: 24px;
-}
-
-.timeline {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.timeline li {
-  border-left: 3px solid #c3d6ea;
-  padding-left: 10px;
-  color: var(--ink-soft);
-  font-weight: 600;
-}
-
-.timeline li.done {
-  border-left-color: var(--ok);
-  color: #0b5a2b;
-}
-
-.timeline li.active {
-  border-left-color: var(--brand);
-  color: var(--ink);
-}
-
-.panel-feedback textarea {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 8px;
-  font: inherit;
-  color: var(--ink);
-  background: #fff;
-  resize: vertical;
-}
-
-.feedback-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.feedback-list {
-  list-style: none;
-  margin: 10px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.feedback-item {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface-soft);
-  padding: 8px;
-}
-
-.feedback-item p {
-  margin: 0;
-  font-size: 0.84rem;
-  color: var(--ink-soft);
-}
-
-.feedback-item strong {
-  color: var(--ink);
-}
-
-.bottom-nav {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: 12px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.95);
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  box-shadow: 0 8px 20px rgba(1, 45, 96, 0.16);
-}
-
-.nav-btn {
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: #f4f8fc;
-  color: var(--ink-soft);
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 8px 4px;
-  display: grid;
-  gap: 2px;
-  justify-items: center;
-  cursor: pointer;
-}
-
-.nav-btn.active {
-  background: #e3f1ff;
-  color: var(--brand-deep);
-  border-color: #9ecbf4;
-}
-
-.nav-icon {
-  font-size: 0.86rem;
-}
-
-@media (max-width: 700px) {
-  .phone-shell {
-    width: 100%;
-    border-radius: 20px;
-    min-height: 100dvh;
-  }
-
-  .context-row {
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .context-value {
-    text-align: left;
-  }
-
-  .map-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .system-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .zone-links {
-    grid-template-columns: 1fr;
-  }
-}
-
-</style>
+    body {
+      margin: 0;
+      background: #111214;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: #f3f4f6;
+    }
+
+    .app-shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+      font-family: inherit;
+    }
+
+    .phone-shell {
+      width: min(430px, 100%);
+      min-height: 880px;
+      margin: 0 auto;
+      border: 1px solid #2e3138;
+      border-radius: 0;
+      background: #1c1f25;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-bar {
+      background: #1d1f24;
+      color: #f4f4f4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px 8px;
+      font-size: 1.02rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .mobile-page-header {
+      background: #1d1f24;
+      color: #fff;
+      flex-shrink: 0;
+      padding: 0 0 8px;
+      border-bottom: 1px solid #0176d3;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px 12px;
+      gap: 10px;
+    }
+
+    .header-back {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .header-title {
+      text-align: center;
+      flex: 1;
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+
+    .header-meta {
+      padding: 6px 18px 10px;
+    }
+
+    .header-meta .meta-title {
+      margin: 0;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.82);
+      font-weight: 500;
+    }
+
+    .header-meta .meta-sub {
+      margin: 4px 0 0;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .header-kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .header-kpi {
+      background: #272a31;
+      border: 1px solid #383c46;
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .header-kpi p {
+      margin: 0;
+      color: #b9bec8;
+      font-size: 0.72rem;
+      letter-spacing: 0.01em;
+    }
+
+    .header-kpi strong {
+      display: block;
+      margin-top: 3px;
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .app-tabs {
+      flex-shrink: 0;
+      background: #1d1f24;
+      border-top: 1px solid #2f333d;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .nav-btn {
+      border: none;
+      border-bottom: 4px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 11px 2px 9px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-btn.active {
+      color: #fff;
+      border-bottom-color: #f4f4f4;
+    }
+
+    .divider-green {
+      height: 6px;
+      background: #262a31;
+    }
+
+    #viewport {
+      padding: 8px;
+      overflow-y: auto;
+      flex: 1;
+      background: #2a2c32;
+    }
+
+    .slds-card,
+    .slds-box,
+    .slds-theme_shade {
+      background: #23262d !important;
+      border-color: #3b4049 !important;
+      color: #f4f4f4 !important;
+      box-shadow: none !important;
+    }
+
+    .slds-card__header {
+      border-bottom: 1px solid #3a3e48;
+    }
+
+    .slds-card__body {
+      background: transparent !important;
+    }
+
+    .slds-card__header-title,
+    .slds-item_detail,
+    .slds-text-title,
+    .slds-form-element__label,
+    .slds-button,
+    .slds-list_dotted li,
+    .slds-item {
+      color: #f1f2f4 !important;
+    }
+
+    .slds-text-body_small,
+    .slds-text-color_weak,
+    .slds-form-element__help,
+    .inspection-timeline li {
+      color: #aeb4bf !important;
+    }
+
+    .slds-card__header-title {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .slds-input,
+    .slds-select,
+    .slds-textarea {
+      background: #1b1d22 !important;
+      border-color: #4a505c !important;
+      color: #f4f4f4 !important;
+      -webkit-text-fill-color: #f4f4f4 !important;
+      caret-color: #f4f4f4;
+      font-family: inherit !important;
+    }
+
+    .slds-input:focus,
+    .slds-select:focus,
+    .slds-textarea:focus {
+      border-color: #8fc7ff !important;
+      box-shadow: 0 0 0 1px #8fc7ff inset !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+      -webkit-text-fill-color: #f4f4f4 !important;
+      box-shadow: 0 0 0 1000px #1b1d22 inset !important;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    .slds-input::placeholder,
+    .slds-textarea::placeholder {
+      color: #8f96a3 !important;
+    }
+
+    .nav-panel { display: none; }
+    .nav-panel.active { display: block; }
+
+    /* Zone map */
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .zone {
+      border: 1px solid #4a505c;
+      border-radius: 8px;
+      padding: 10px 6px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.72rem;
+      text-align: left;
+      font-family: inherit;
+      line-height: 1.3;
+      background: #1f2228;
+      color: #f4f4f6;
+    }
+
+    .zone small {
+      display: block;
+      margin-top: 3px;
+      font-weight: 500;
+      opacity: 0.85;
+      font-size: 0.66rem;
+    }
+
+    .zone-ok  { background: #1d2b22; border-color: #2e844a; color: #d8f5e2; }
+    .zone-alert { background: #312519; border-color: #f1be6a; color: #ffe3a8; }
+
+    /* System cards */
+    .system-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .actions-tray {
+      flex-shrink: 0;
+      background: #24272d;
+      border-top: 1px solid #393d45;
+      text-align: center;
+      padding: 12px 10px 10px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .actions-handle {
+      width: 74px;
+      height: 9px;
+      border-radius: 999px;
+      background: #6b707a;
+      margin: 0 auto 10px;
+    }
+
+    .actions-label {
+      color: #0176d3;
+      font-size: 0.86rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .actions-icon {
+      width: 10px;
+      height: 16px;
+      display: inline-block;
+      background: currentColor;
+      clip-path: polygon(45% 0, 100% 0, 62% 40%, 100% 40%, 26% 100%, 40% 56%, 0 56%);
+    }
+
+    .bottom-nav {
+      flex-shrink: 0;
+      border-top: 1px solid #393d45;
+      padding: 8px 10px;
+      background: #090a0c;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    .device-nav-btn {
+      border: none;
+      background: transparent;
+      color: #c0c4cb;
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .device-nav-btn.active {
+      color: #0176d3;
+    }
+
+    .device-nav-icon {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .icon-calendar::before,
+    .icon-calendar::after,
+    .icon-bell::before,
+    .icon-bell::after,
+    .icon-profile::before,
+    .icon-profile::after {
+      content: "";
+      position: absolute;
+      display: block;
+    }
+
+    .icon-calendar::before {
+      inset: 4px 2px 2px;
+      border: 2px solid currentColor;
+      border-radius: 3px;
+    }
+
+    .icon-calendar::after {
+      left: 4px;
+      right: 4px;
+      top: 2px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 1px;
+      box-shadow: -4px 0 0 currentColor, 4px 0 0 currentColor;
+    }
+
+    .icon-bell::before {
+      left: 4px;
+      right: 4px;
+      top: 3px;
+      bottom: 5px;
+      border: 2px solid currentColor;
+      border-bottom: none;
+      border-radius: 8px 8px 2px 2px;
+    }
+
+    .icon-bell::after {
+      left: 5px;
+      right: 5px;
+      bottom: 3px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 999px;
+      box-shadow: 0 4px 0 -1px currentColor;
+    }
+
+    .icon-profile::before {
+      width: 8px;
+      height: 8px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      top: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .icon-profile::after {
+      left: 3px;
+      right: 3px;
+      bottom: 2px;
+      height: 8px;
+      border: 2px solid currentColor;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom: none;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: -7px;
+      right: -9px;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #c23934;
+      color: #fff;
+      font-size: 0.52rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2px;
+      border: 1px solid #090a0d;
+    }
+
+    /* Stage / severity badge color variants */
+    .stage-inspecting { background: #d6ecff !important; color: #0b4f94 !important; }
+    .stage-review     { background: #4a3720 !important; color: #ffd98c !important; }
+    .stage-completed  { background: #1f3d2a !important; color: #9ee2b8 !important; }
+    .stage-other      { background: #4a2024 !important; color: #ffb8bf !important; }
+
+    .sev-high,
+    .sev-medium,
+    .sev-low {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+    }
+
+    .sev-high   { background: #4a2024; border-color: #8e2c36; color: #ffced3; }
+    .sev-medium { background: #4c3a20; border-color: #9d6d22; color: #ffe0a1; }
+    .sev-low    { background: #1f3b2b; border-color: #2e844a; color: #b7ebc9; }
+
+    /* Callout left-border accent */
+    .callout-item { border-left: 4px solid #8f4b00 !important; }
+    .callout-item.confirmed { border-left-color: #2e844a !important; }
+
+    .callout-item {
+      background: #23262d;
+    }
+
+    .callout-context-dark {
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .callout-context-dark.alert {
+      color: #ffe0a1 !important;
+      background: #3a2d1d !important;
+      border-color: #9d6d22 !important;
+    }
+
+    .callout-context-dark.ok {
+      color: #b8d9ff !important;
+      background: #1d2b3b !important;
+      border-color: #2f5f93 !important;
+    }
+
+    #callout-form .slds-form-element__label,
+    #callout-form + * .slds-form-element__label {
+      color: #d6dae1 !important;
+    }
+
+    #callout-form .slds-input,
+    #callout-form .slds-select {
+      background: #23262d !important;
+      border-color: #5a616d !important;
+      color: #f4f4f6 !important;
+      -webkit-text-fill-color: #f4f4f6 !important;
+    }
+
+    #callout-form .slds-input::placeholder {
+      color: #9ea5b1 !important;
+    }
+
+    #callout-form .slds-input:focus,
+    #callout-form .slds-select:focus {
+      border-color: #6ea8de !important;
+      box-shadow: 0 0 0 1px #6ea8de inset !important;
+    }
+
+    #callout-form .slds-button_brand {
+      background: transparent !important;
+      border-color: #406d99 !important;
+      color: #9dcbf5 !important;
+    }
+
+    #callout-form .slds-button_brand:hover,
+    #callout-form .slds-button_brand:focus {
+      background: rgba(39, 103, 165, 0.16) !important;
+      border-color: #5c88b4 !important;
+      color: #c6e0f8 !important;
+    }
+
+    .slds-button_neutral {
+      background: #2e333c !important;
+      border-color: #5b6371 !important;
+      color: #f3f4f6 !important;
+    }
+
+    .slds-button_neutral:hover,
+    .slds-button_neutral:focus {
+      background: #383e48 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_reset {
+      color: inherit !important;
+    }
+
+    .asset-row-title {
+      margin: 0;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+
+    .asset-row-meta {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: #aeb4bf;
+    }
+
+    .asset-row-selected .asset-row-title {
+      color: #8fc7ff;
+    }
+
+    .asset-row-selected .asset-row-meta {
+      color: #d7e9ff;
+    }
+
+    .asset-list-shell {
+      border-top: 1px solid #505562;
+      padding-top: 2px;
+    }
+
+    .asset-inline-editor {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #4a505c;
+      border-radius: 10px;
+      background: #1b1d22;
+    }
+
+    .asset-inline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      margin-bottom: 12px;
+    }
+
+    .asset-note-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .slds-button_brand {
+      background: #0b69c7 !important;
+      border-color: #0b69c7 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_brand:hover,
+    .slds-button_brand:focus {
+      background: #0959a7 !important;
+      border-color: #0959a7 !important;
+    }
+
+    .slds-button_destructive {
+      background: #ba0517 !important;
+      border-color: #ba0517 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_destructive:hover,
+    .slds-button_destructive:focus {
+      background: #930412 !important;
+      border-color: #930412 !important;
+    }
+
+    .slds-button[disabled],
+    .slds-button:disabled {
+      opacity: 0.45;
+    }
+
+    /* Stage timeline */
+    .inspection-timeline {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: grid; gap: 6px;
+    }
+    .inspection-timeline li {
+      border-left: 3px solid #c3d6ea;
+      padding-left: 10px;
+      color: #5c6f82;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .inspection-timeline li.done   { border-left-color: #2e844a; color: #0b5a2b; }
+    .inspection-timeline li.active { border-left-color: #0176d3; color: #032d60; }
+
+    /* Required question checkbox accent */
+    input[type="checkbox"] { accent-color: #0176d3; }
+
+    @media (max-width: 700px) {
+      .phone-shell { width: 100%; min-height: 100dvh; }
+      .map-grid    { grid-template-columns: repeat(3, 1fr); }
+      .system-cards { grid-template-columns: 1fr; }
+      .header-kpis { grid-template-columns: 1fr; }
+      .app-tabs { grid-template-columns: repeat(4, 1fr); }
+      .asset-inline-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
   <main class="app-shell">
-    <section class="phone-shell" aria-label="iPhone style mobile frame">
-      <div class="phone-notch" aria-hidden="true"></div>
+    <section class="phone-shell" aria-label="FSM mobile prototype">
+      <div class="status-bar" aria-hidden="true">
+        <span>AT&amp;T LTE</span>
+        <strong>9:41 AM</strong>
+        <span>&#x1F50B;</span>
+      </div>
 
-      <header class="global-header">
-        <div class="brand-row">
-          <p class="brand-kicker">Field Service</p>
-          <span class="sync-pill">Synced</span>
+      <header class="mobile-page-header">
+        <div class="header-row">
+          <button type="button" class="header-back" aria-label="Go back">&#x2039;</button>
+          <h1 class="header-title">Work Order</h1>
         </div>
-        <h1>Irrigation Service Appointment</h1>
-        <p>FSM-style mobile prototype for technician checkup and checkout.</p>
+        <div class="header-meta">
+          <p class="meta-title">05145116 &middot; Weekly</p>
+          <p class="meta-sub">SA-004281 &middot; Oak Ridge HOA Campus</p>
+        </div>
+        <div class="header-kpis">
+          <div class="header-kpi">
+            <p>System Scope</p>
+            <strong id="system-scope">Loading&hellip;</strong>
+          </div>
+          <div class="header-kpi">
+            <p>Account Manager</p>
+            <strong id="am-status-header">Not assigned</strong>
+          </div>
+          <div class="header-kpi">
+            <p>Work Type</p>
+            <strong>Irrigation - Quarterly</strong>
+          </div>
+        </div>
       </header>
 
-      <section class="context-card" aria-label="Service appointment context">
-        <div class="context-row">
-          <p class="context-label">Account</p>
-          <p class="context-value">Oak Ridge HOA Campus - Northeast</p>
-        </div>
-        <div class="context-row">
-          <p class="context-label">Work Type</p>
-          <p class="context-value">Irrigation - Quarterly</p>
-        </div>
-        <div class="context-row">
-          <p class="context-label">Appointment</p>
-          <p class="context-value">SA-004281 / In Progress</p>
-        </div>
-        <div class="context-row">
-          <p class="context-label">System Scope</p>
-          <p id="system-scope" class="context-value">0 controllers / 0 backflows / 0 zones</p>
-        </div>
-        <div class="chip-row">
-          <span class="chip chip-blue">NE</span>
-          <span class="chip chip-neutral">Quarterly</span>
-          <span id="stage-chip" class="chip chip-blue">INSPECTING</span>
-        </div>
-      </section>
+      <nav class="app-tabs" aria-label="Work order sections">
+        <button class="nav-btn active" data-tab="overview" type="button">Overview</button>
+        <button class="nav-btn" data-tab="map" type="button">Map</button>
+        <button class="nav-btn" data-tab="callouts" type="button">Callouts</button>
+      </nav>
+      <div class="divider-green" aria-hidden="true"></div>
 
-      <section id="viewport" class="viewport map-canvas">
-        <article class="panel panel-map nav-panel active" data-panel="map">
-          <h2>Property Coverage Map</h2>
-          <p id="map-caption" class="panel-subtitle">Tap zones to represent inspected coverage and issue hotspots.</p>
-          <div class="filter-row">
-            <label class="filter-field">
-              Clock Filter
-              <select id="clock-filter"></select>
-            </label>
-          </div>
-          <div class="system-cards">
-            <section class="system-card">
-              <h4>Controllers</h4>
-              <ul id="controller-list"></ul>
-            </section>
-            <section class="system-card">
-              <h4>Backflows</h4>
-              <ul id="backflow-list"></ul>
-            </section>
-          </div>
-          <div class="legend-row" aria-label="Map legend">
-            <span class="legend-pill legend-ok">Stable</span>
-            <span class="legend-pill legend-alert">Follow-up</span>
-          </div>
-          <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
-        </article>
+      <!-- Tab panels -->
+      <section id="viewport">
 
-        <article class="panel panel-assets nav-panel" data-panel="map">
-          <h3>Asset Snapshot</h3>
-          <p id="asset-snapshot" class="panel-subtitle">0 zones flagged. 0 confirmed callouts.</p>
-          <section class="asset-manager">
-            <h4>Add Asset</h4>
-            <form id="asset-form" class="inline-form">
-              <label>
-                Asset Type
-                <select id="asset-type">
-                  <option value="zone">Zone</option>
-                  <option value="controller">Controller</option>
-                  <option value="backflow">Backflow</option>
-                </select>
-              </label>
-              <label>
-                Asset Name
-                <input id="asset-name" type="text" placeholder="Zone 25 / Controller D / Backflow East" />
-              </label>
-              <label>
-                Description
-                <input id="asset-description" type="text" placeholder="Short field description" />
-              </label>
-              <div id="zone-links" class="zone-links">
-                <label>
-                  Zone Clock
-                  <select id="zone-controller"></select>
-                </label>
-                <label>
-                  Zone Backflow
-                  <select id="zone-backflow"></select>
-                </label>
-              </div>
-              <button class="btn btn-brand" type="submit">Add Asset</button>
-            </form>
-
-            <h4>Edit Description</h4>
-            <form id="description-form" class="inline-form">
-              <label>
-                Asset
-                <select id="description-asset"></select>
-              </label>
-              <label>
-                Description
-                <input id="description-input" type="text" placeholder="Update asset description" />
-              </label>
-              <button class="btn btn-neutral" type="submit">Save Description</button>
-            </form>
-          </section>
-        </article>
-
-        <article class="panel panel-a nav-panel" data-panel="checklist">
-          <h2>Required Inspection Questions</h2>
-          <div class="meter-wrap">
-            <div class="meter">
-              <div id="meter-fill" class="meter-fill"></div>
+        <!-- Tab 1: Overview (≈ Details) -->
+        <article class="nav-panel active" data-panel="overview">
+          <div class="slds-card slds-m-bottom_x-small">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Appointment Details</span></h2>
+                </div>
+              </header>
             </div>
-            <p id="meter-label">0 of 6 answered</p>
+            <div class="slds-card__body slds-card__body_inner">
+              <dl class="slds-list_horizontal slds-wrap">
+                <dt class="slds-item_label slds-text-color_weak" style="width:45%">Account</dt>
+                <dd class="slds-item_detail" style="width:55%">Oak Ridge HOA Campus - Northeast</dd>
+                <dt class="slds-item_label slds-text-color_weak" style="width:45%">Work Type</dt>
+                <dd class="slds-item_detail" style="width:55%">Irrigation - Quarterly</dd>
+                <dt class="slds-item_label slds-text-color_weak" style="width:45%">Appointment #</dt>
+                <dd class="slds-item_detail" style="width:55%">SA-004281</dd>
+                <dt class="slds-item_label slds-text-color_weak" style="width:45%">System Scope</dt>
+                <dd id="system-scope-detail" class="slds-item_detail" style="width:55%">Loading&hellip;</dd>
+              </dl>
+              <div class="slds-m-top_x-small">
+                <span class="slds-badge stage-inspecting slds-m-right_xx-small">NE</span>
+                <span class="slds-badge slds-badge_lightest">Quarterly</span>
+              </div>
+            </div>
           </div>
-          <ul id="required-list" class="required-list"></ul>
-        </article>
 
-        <article class="panel panel-b nav-panel" data-panel="callouts">
-          <h3>Suggested Repair Callouts</h3>
-          <p class="panel-subtitle">Create and confirm repair recommendations from failed responses.</p>
-          <p id="callout-context-hint" class="context-hint">Select a zone on the map to prefill this form.</p>
-          <ul id="callout-list" class="callout-list"></ul>
-          <form id="callout-form" class="inline-form">
-            <label>
-              Asset
-              <select id="asset-input"></select>
-            </label>
-            <label>
-              Issue
-              <input id="issue-input" type="text" value="Broken Head" required />
-            </label>
-            <label>
-              Severity
-              <select id="severity-input">
-                <option value="Low">Low</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="High">High</option>
-              </select>
-            </label>
-            <button class="btn btn-brand" type="submit">Add Callout</button>
-          </form>
-        </article>
-
-        <article class="panel panel-c nav-panel" data-panel="checkout">
-          <h3>Approvals</h3>
-          <div class="actions wrap">
-            <label class="am-select-wrap">
-              Account Manager
-              <select id="am-name">
-                <option value="">Select AM</option>
-                <option value="Jamie Rivers">Jamie Rivers</option>
-                <option value="Alex Patel">Alex Patel</option>
-                <option value="Morgan Chen">Morgan Chen</option>
-              </select>
-            </label>
-            <button id="toggle-am" class="btn btn-neutral" type="button">Assign / Clear AM</button>
+          <div class="slds-card slds-m-bottom_x-small">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Asset Snapshot</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <p id="asset-snapshot" class="slds-text-body_small slds-text-color_weak">0 zones flagged. 0 confirmed callouts.</p>
+            </div>
           </div>
-          <p id="am-status" class="status-line">AM not assigned.</p>
         </article>
 
-        <article class="panel panel-d nav-panel" data-panel="checkout">
-          <h3>Checkout</h3>
-          <div class="actions">
-            <button id="open-review" class="btn btn-neutral" type="button">Open Review</button>
-            <button id="simulate-submit" class="btn btn-brand" type="button">Submit Inspection</button>
-            <button id="reset-flow" class="btn btn-destructive" type="button">Reset</button>
+        <!-- Tab 2: Map (≈ Zone grid + Asset registry combined) -->
+        <article class="nav-panel" data-panel="map">
+          <!-- Map Section -->
+          <div class="slds-card slds-m-bottom_x-small">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Property Coverage Map</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <p id="map-caption" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Tap zones to toggle status and route to callouts.</p>
+              <div class="slds-form-element slds-m-bottom_small">
+                <label class="slds-form-element__label" for="clock-filter">Clock Filter</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="clock-filter" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+              <div class="system-cards slds-m-bottom_small">
+                <div class="slds-box slds-box_x-small">
+                  <p class="slds-text-title slds-m-bottom_xx-small">Controllers</p>
+                  <ul id="controller-list" class="slds-list_dotted slds-text-body_small"></ul>
+                </div>
+                <div class="slds-box slds-box_x-small">
+                  <p class="slds-text-title slds-m-bottom_xx-small">Backflows</p>
+                  <ul id="backflow-list" class="slds-list_dotted slds-text-body_small"></ul>
+                </div>
+              </div>
+              <div class="slds-m-bottom_x-small">
+                <span class="slds-badge sev-low slds-m-right_xx-small">Stable</span>
+                <span class="slds-badge sev-medium">Follow-up</span>
+              </div>
+              <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
+            </div>
           </div>
-          <p id="submit-result" class="submit-result">Waiting for action.</p>
-        </article>
 
-        <article class="panel panel-e nav-panel" data-panel="checkout">
-          <h3>Stage Timeline</h3>
-          <ol id="timeline" class="timeline">
-            <li data-stage="RESOLVED">Resolved</li>
-            <li data-stage="BOOTSTRAP">Bootstrap</li>
-            <li data-stage="INSPECTING" class="active">Inspecting</li>
-            <li data-stage="REVIEW">Review</li>
-            <li data-stage="COMPLETED">Completed</li>
-          </ol>
-        </article>
-
-        <article class="panel panel-feedback nav-panel" data-panel="feedback">
-          <h3>Feedback</h3>
-          <p class="panel-subtitle">Capture quick tester feedback while using this prototype.</p>
-          <form id="feedback-form" class="inline-form">
-            <label>
-              Tester Name
-              <input id="feedback-name" type="text" placeholder="Name" />
-            </label>
-            <label>
-              Persona
-              <select id="feedback-persona">
-                <option value="Technician">Technician</option>
-                <option value="Dispatcher">Dispatcher</option>
-                <option value="Account Manager">Account Manager</option>
-                <option value="Supervisor">Supervisor</option>
-                <option value="Other">Other</option>
-              </select>
-            </label>
-            <label>
-              Area
-              <select id="feedback-area">
-                <option value="Map">Map</option>
-                <option value="Checklist">Checklist</option>
-                <option value="Callouts">Callouts</option>
-                <option value="Checkout">Checkout</option>
-                <option value="Assets">Assets</option>
-              </select>
-            </label>
-            <label>
-              Rating
-              <select id="feedback-rating">
-                <option value="5">5 - Great</option>
-                <option value="4">4 - Good</option>
-                <option value="3" selected>3 - Okay</option>
-                <option value="2">2 - Needs Work</option>
-                <option value="1">1 - Poor</option>
-              </select>
-            </label>
-            <label>
-              Comments
-              <textarea id="feedback-comments" rows="3" placeholder="What worked or what needs to change?"></textarea>
-            </label>
-            <button class="btn btn-brand" type="submit">Save Feedback</button>
-          </form>
-          <div class="feedback-actions">
-            <button id="copy-feedback" class="btn btn-neutral" type="button">Copy Feedback JSON</button>
-            <button id="clear-feedback" class="btn btn-destructive" type="button">Clear Feedback</button>
+          <!-- Asset Registry Section -->
+          <div class="slds-card">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Asset Registry</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Tap an asset to view details, edit notes, and create callouts.</p>
+              <div class="slds-grid slds-gutters_small slds-wrap slds-m-bottom_x-small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-filter">Asset Type</label>
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <select id="asset-filter" class="slds-select">
+                        <option value="all">All</option>
+                        <option value="zone">Zones</option>
+                        <option value="controller">Controllers</option>
+                        <option value="backflow">Backflows</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-search">Search</label>
+                  <div class="slds-form-element__control">
+                    <input id="asset-search" type="text" class="slds-input" placeholder="Zone 11 / Controller B / Backflow South" />
+                  </div>
+                </div>
+              </div>
+              <p id="asset-list-summary" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small"></p>
+              <div class="asset-list-shell">
+                <ul id="asset-list" class="slds-has-dividers_top-space"></ul>
+              </div>
+            </div>
           </div>
-          <p id="feedback-status" class="status-line">No feedback submitted yet.</p>
-          <ul id="feedback-list" class="feedback-list"></ul>
         </article>
+
+        <!-- Tab 4: Checklist (≈ Setup Validation) -->
+        <article class="nav-panel" data-panel="checklist">
+          <div class="slds-card">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Required Inspection Questions</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <div class="slds-m-bottom_small">
+                <div class="slds-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Checklist completion">
+                  <span id="meter-fill" class="slds-progress-bar__value" style="width:0%">
+                    <span class="slds-assistive-text">Progress: 0%</span>
+                  </span>
+                </div>
+                <p id="meter-label" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">0 of 12 answered</p>
+              </div>
+              <ul id="required-list" class="slds-has-dividers_top-space"></ul>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 5: Callouts (≈ Issues + Checkout + Audit) -->
+        <article class="nav-panel" data-panel="callouts">
+          <div class="slds-card slds-m-bottom_x-small">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Repair Callouts</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <div id="callout-context-hint" class="slds-box slds-theme_shade slds-m-bottom_x-small" style="font-size:0.84rem;font-weight:600;color:#014486;background:#edf6ff;border-color:#c6def3;">
+                Select a zone on the map to prefill this form.
+              </div>
+              <ul id="callout-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
+              <form id="callout-form" class="slds-form slds-form_stacked">
+                <div class="slds-form-element">
+                  <label class="slds-form-element__label" for="asset-input">Asset</label>
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <select id="asset-input" class="slds-select"></select>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-form-element">
+                  <label class="slds-form-element__label" for="issue-input">Issue</label>
+                  <div class="slds-form-element__control">
+                    <input id="issue-input" type="text" class="slds-input" value="Broken Head" required />
+                  </div>
+                </div>
+                <div class="slds-form-element">
+                  <label class="slds-form-element__label" for="severity-input">Severity</label>
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <select id="severity-input" class="slds-select">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <button class="slds-button slds-button_brand slds-m-top_x-small" type="submit">Add Callout</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Approvals & Checkout -->
+          <div class="slds-card slds-m-bottom_x-small">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Approvals &amp; Checkout</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <div class="slds-form-element slds-m-bottom_x-small">
+                <label class="slds-form-element__label" for="am-name">Account Manager</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="am-name" class="slds-select">
+                      <option value="">Select AM</option>
+                      <option value="Jamie Rivers">Jamie Rivers</option>
+                      <option value="Alex Patel">Alex Patel</option>
+                      <option value="Morgan Chen">Morgan Chen</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button id="toggle-am" class="slds-button slds-button_neutral slds-m-bottom_x-small" type="button">Assign / Clear AM</button>
+              <p id="am-status" class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">AM not assigned.</p>
+              <div class="slds-button-group slds-m-bottom_x-small" role="group">
+                <button id="open-review" class="slds-button slds-button_neutral" type="button">Open Review</button>
+                <button id="simulate-submit" class="slds-button slds-button_brand" type="button">Submit Inspection</button>
+                <button id="reset-flow" class="slds-button slds-button_destructive" type="button">Reset</button>
+              </div>
+              <p id="submit-result" class="slds-text-body_small slds-m-top_xx-small" style="font-weight:600;min-height:20px;">Waiting for action.</p>
+            </div>
+          </div>
+        </article>
+
       </section>
 
-      <nav class="bottom-nav" aria-label="FSM mobile navigation">
-        <button class="nav-btn active" data-tab="map" type="button">
-          <span class="nav-icon" aria-hidden="true">◎</span>
-          <span>Map</span>
+      <section class="actions-tray" aria-label="Actions drawer">
+        <div class="actions-handle" aria-hidden="true"></div>
+        <div class="actions-label"><span class="actions-icon" aria-hidden="true"></span><span>Actions</span></div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="FSM shell navigation">
+        <button class="device-nav-btn active" type="button">
+          <span class="device-nav-icon icon-calendar" aria-hidden="true"></span>
+          <span>Schedule</span>
         </button>
-        <button class="nav-btn" data-tab="checklist" type="button">
-          <span class="nav-icon" aria-hidden="true">✓</span>
-          <span>Checklist</span>
+        <button class="device-nav-btn" type="button">
+          <span class="device-nav-icon icon-bell" aria-hidden="true"><span class="badge-dot">2</span></span>
+          <span>Notifications</span>
         </button>
-        <button class="nav-btn" data-tab="callouts" type="button">
-          <span class="nav-icon" aria-hidden="true">⚑</span>
-          <span>Callouts</span>
-        </button>
-        <button class="nav-btn" data-tab="checkout" type="button">
-          <span class="nav-icon" aria-hidden="true">▣</span>
-          <span>Checkout</span>
-        </button>
-        <button class="nav-btn" data-tab="feedback" type="button">
-          <span class="nav-icon" aria-hidden="true">✎</span>
-          <span>Feedback</span>
+        <button class="device-nav-btn" type="button">
+          <span class="device-nav-icon icon-profile" aria-hidden="true"></span>
+          <span>Profile</span>
         </button>
       </nav>
     </section>
@@ -981,178 +995,108 @@ const state = {
     };
   }),
   requiredQuestions: [
-    { id: "q1", text: "Controller A serial captured", answered: true },
-    { id: "q2", text: "Controller B serial captured", answered: true },
-    { id: "q3", text: "Controller C serial captured", answered: true },
-    { id: "q4", text: "Backflow North compliance verified", answered: true },
-    { id: "q5", text: "Backflow South compliance verified", answered: false },
-    { id: "q6", text: "Zone pressure sample for Zones 1-8", answered: false },
-    { id: "q7", text: "Zone pressure sample for Zones 9-16", answered: false },
-    { id: "q8", text: "Zone pressure sample for Zones 17-24", answered: false },
-    { id: "q9", text: "Valve conditions recorded", answered: false },
-    { id: "q10", text: "Coverage audit photos uploaded", answered: false },
-    { id: "q11", text: "Flow variance captured", answered: false },
-    { id: "q12", text: "Customer walkthrough completed", answered: false },
+    { id: "q1",  text: "Controller A serial captured",               answered: true  },
+    { id: "q2",  text: "Controller B serial captured",               answered: true  },
+    { id: "q3",  text: "Controller C serial captured",               answered: true  },
+    { id: "q4",  text: "Backflow North compliance verified",          answered: true  },
+    { id: "q5",  text: "Backflow South compliance verified",          answered: false },
+    { id: "q6",  text: "Zone pressure sample for Zones 1-8",         answered: false },
+    { id: "q7",  text: "Zone pressure sample for Zones 9-16",        answered: false },
+    { id: "q8",  text: "Zone pressure sample for Zones 17-24",       answered: false },
+    { id: "q9",  text: "Valve conditions recorded",                  answered: false },
+    { id: "q10", text: "Coverage audit photos uploaded",             answered: false },
+    { id: "q11", text: "Flow variance captured",                     answered: false },
+    { id: "q12", text: "Customer walkthrough completed",             answered: false },
   ],
   callouts: [
-    { id: 1, asset: "Zone 3", issue: "Broken Head", severity: "High", confirmed: true },
-    { id: 2, asset: "Zone 11", issue: "Valve leak at manifold", severity: "Medium", confirmed: false },
-    { id: 3, asset: "Backflow South", issue: "Test window expired", severity: "High", confirmed: true },
+    { id: 1, asset: "Zone 3",        issue: "Broken Head",           severity: "High",   confirmed: true  },
+    { id: 2, asset: "Zone 11",       issue: "Valve leak at manifold",severity: "Medium", confirmed: false },
+    { id: 3, asset: "Backflow South",issue: "Test window expired",   severity: "High",   confirmed: true  },
   ],
-  feedbackEntries: [],
   clockFilter: "ALL",
   amAssigned: false,
   amName: "",
 };
 
-const meterFill = document.getElementById("meter-fill");
-const meterLabel = document.getElementById("meter-label");
-const requiredList = document.getElementById("required-list");
-const calloutList = document.getElementById("callout-list");
-const calloutForm = document.getElementById("callout-form");
-const assetInput = document.getElementById("asset-input");
-const issueInput = document.getElementById("issue-input");
-const severityInput = document.getElementById("severity-input");
-const amName = document.getElementById("am-name");
-const amStatus = document.getElementById("am-status");
-const submitResult = document.getElementById("submit-result");
-const stageChip = document.getElementById("stage-chip");
-const navButtons = document.querySelectorAll(".nav-btn");
-const navPanels = document.querySelectorAll(".nav-panel");
-const mapGrid = document.getElementById("map-grid");
-const controllerList = document.getElementById("controller-list");
-const backflowList = document.getElementById("backflow-list");
-const systemScope = document.getElementById("system-scope");
-const assetSnapshot = document.getElementById("asset-snapshot");
-const mapCaption = document.getElementById("map-caption");
-const clockFilter = document.getElementById("clock-filter");
-const calloutContextHint = document.getElementById("callout-context-hint");
-const assetForm = document.getElementById("asset-form");
-const assetType = document.getElementById("asset-type");
-const assetName = document.getElementById("asset-name");
-const assetDescription = document.getElementById("asset-description");
-const zoneLinks = document.getElementById("zone-links");
-const zoneController = document.getElementById("zone-controller");
-const zoneBackflow = document.getElementById("zone-backflow");
-const descriptionForm = document.getElementById("description-form");
-const descriptionAsset = document.getElementById("description-asset");
-const descriptionInput = document.getElementById("description-input");
-const feedbackForm = document.getElementById("feedback-form");
-const feedbackName = document.getElementById("feedback-name");
-const feedbackPersona = document.getElementById("feedback-persona");
-const feedbackArea = document.getElementById("feedback-area");
-const feedbackRating = document.getElementById("feedback-rating");
-const feedbackComments = document.getElementById("feedback-comments");
-const feedbackStatus = document.getElementById("feedback-status");
-const feedbackList = document.getElementById("feedback-list");
-const copyFeedback = document.getElementById("copy-feedback");
-const clearFeedback = document.getElementById("clear-feedback");
+const meterFill         = document.getElementById("meter-fill");
+const meterLabel        = document.getElementById("meter-label");
+const requiredList      = document.getElementById("required-list");
+const calloutList       = document.getElementById("callout-list");
+const calloutForm       = document.getElementById("callout-form");
+const assetInput        = document.getElementById("asset-input");
+const issueInput        = document.getElementById("issue-input");
+const severityInput     = document.getElementById("severity-input");
+const amName            = document.getElementById("am-name");
+const amStatus          = document.getElementById("am-status");
+const amStatusHeader    = document.getElementById("am-status-header");
+const submitResult      = document.getElementById("submit-result");
+const navButtons        = document.querySelectorAll(".nav-btn");
+const navPanels         = document.querySelectorAll(".nav-panel");
+const mapGrid           = document.getElementById("map-grid");
+const controllerList    = document.getElementById("controller-list");
+const backflowList      = document.getElementById("backflow-list");
+const systemScope       = document.getElementById("system-scope");
+const systemScopeDetail = document.getElementById("system-scope-detail");
+const assetSnapshot     = document.getElementById("asset-snapshot");
+const mapCaption        = document.getElementById("map-caption");
+const clockFilter       = document.getElementById("clock-filter");
+const calloutContextHint= document.getElementById("callout-context-hint");
+const assetFilter       = document.getElementById("asset-filter");
+const assetSearch       = document.getElementById("asset-search");
+const assetList         = document.getElementById("asset-list");
+const assetListSummary  = document.getElementById("asset-list-summary");
 
-function getRequiredAnswered() {
-  return state.requiredQuestions.filter((q) => q.answered).length;
-}
+const assetTab = {
+  filter: "all",
+  search: "",
+  selectedKey: "",
+};
 
-function getConfirmedCallouts() {
-  return state.callouts.filter((callout) => callout.confirmed).length;
-}
-
-function getAlertZonesCount() {
-  return state.zones.filter((zone) => zone.status === "alert").length;
-}
+function getRequiredAnswered()  { return state.requiredQuestions.filter((q) => q.answered).length; }
+function getConfirmedCallouts() { return state.callouts.filter((c) => c.confirmed).length; }
+function getAlertZonesCount()   { return state.zones.filter((z) => z.status === "alert").length; }
 
 function getFilteredZones() {
-  if (state.clockFilter === "ALL") {
-    return state.zones;
-  }
-  return state.zones.filter((zone) => zone.controller === state.clockFilter);
+  if (state.clockFilter === "ALL") return state.zones;
+  return state.zones.filter((z) => z.controller === state.clockFilter);
 }
 
 function getAllAssets() {
-  const controllers = state.controllers.map((item) => ({
-    key: `controller:${item.id}`,
-    type: "controller",
-    name: item.name,
-    description: item.description || "",
-    ref: item,
-  }));
-
-  const backflows = state.backflows.map((item) => ({
-    key: `backflow:${item.id}`,
-    type: "backflow",
-    name: item.name,
-    description: item.description || "",
-    ref: item,
-  }));
-
-  const zones = state.zones.map((item) => ({
-    key: `zone:${item.id}`,
-    type: "zone",
-    name: item.label,
-    description: item.description || "",
-    ref: item,
-  }));
-
-  return [...controllers, ...backflows, ...zones];
+  return [
+    ...state.controllers.map((c) => ({ key: `controller:${c.id}`, type: "controller", name: c.name, description: c.description || "", ref: c })),
+    ...state.backflows.map((b)  => ({ key: `backflow:${b.id}`,    type: "backflow",   name: b.name, description: b.description || "", ref: b })),
+    ...state.zones.map((z)      => ({ key: `zone:${z.id}`,        type: "zone",       name: z.label,description: z.description || "", ref: z })),
+  ];
 }
 
 function setStage(nextStage) {
   state.stage = nextStage;
-  stageChip.textContent = nextStage;
-  stageChip.classList.remove("chip-positive", "chip-warning", "chip-danger", "chip-blue");
-
-  if (nextStage === "COMPLETED") {
-    stageChip.classList.add("chip-positive");
-  } else if (nextStage === "REVIEW") {
-    stageChip.classList.add("chip-warning");
-  } else if (nextStage === "INSPECTING") {
-    stageChip.classList.add("chip-blue");
-  } else {
-    stageChip.classList.add("chip-danger");
-  }
-
   document.querySelectorAll("#timeline li").forEach((item) => {
-    const itemStage = item.dataset.stage;
-    item.classList.remove("active", "done");
-
     const order = ["RESOLVED", "BOOTSTRAP", "INSPECTING", "REVIEW", "COMPLETED"];
     const currentIdx = order.indexOf(nextStage);
-    const itemIdx = order.indexOf(itemStage);
-
-    if (itemIdx < currentIdx) {
-      item.classList.add("done");
-    } else if (itemIdx === currentIdx) {
-      item.classList.add("active");
-    }
+    const itemIdx    = order.indexOf(item.dataset.stage);
+    item.classList.remove("active", "done");
+    if      (itemIdx < currentIdx)  item.classList.add("done");
+    else if (itemIdx === currentIdx) item.classList.add("active");
   });
 }
 
 function setActiveTab(tabName) {
-  navButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.tab === tabName);
-  });
-
-  navPanels.forEach((panel) => {
-    const isCheckoutTab = tabName === "checkout";
-    if (isCheckoutTab) {
-      panel.classList.toggle("active", panel.dataset.panel === "checkout");
-      return;
-    }
-    panel.classList.toggle("active", panel.dataset.panel === tabName);
-  });
+  // Handle legacy 'details' reference
+  const mappedTabName = tabName === 'details' ? 'map' : tabName;
+  navButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === mappedTabName));
+  navPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === mappedTabName));
 }
 
 function setSubmitMessage(message, tone) {
   submitResult.textContent = message;
-  if (tone === "ok") {
-    submitResult.style.color = "#2e844a";
-  } else if (tone === "warn") {
-    submitResult.style.color = "#8f4b00";
-  } else {
-    submitResult.style.color = "#ba0517";
-  }
+  if      (tone === "ok")   submitResult.style.color = "#2e844a";
+  else if (tone === "warn") submitResult.style.color = "#8f4b00";
+  else                      submitResult.style.color = "#ba0517";
 }
 
 function routeZoneToCalloutContext(zone) {
+  assetTab.selectedKey = `zone:${zone.id}`;
   setActiveTab("callouts");
   assetInput.value = zone.label;
 
@@ -1160,16 +1104,12 @@ function routeZoneToCalloutContext(zone) {
     issueInput.value = `Issue observed in ${zone.label}`;
     severityInput.value = "Medium";
     calloutContextHint.textContent = `${zone.label} is flagged. Add or confirm a callout for this zone.`;
-    calloutContextHint.style.color = "#8f4b00";
-    calloutContextHint.style.background = "#fff4df";
-    calloutContextHint.style.borderColor = "#f1be6a";
+    calloutContextHint.className = "slds-box slds-m-bottom_x-small callout-context-dark alert";
   } else {
     issueInput.value = `Observation note for ${zone.label}`;
     severityInput.value = "Low";
     calloutContextHint.textContent = `${zone.label} is stable. Add a note or leave as-is.`;
-    calloutContextHint.style.color = "#014486";
-    calloutContextHint.style.background = "#edf6ff";
-    calloutContextHint.style.borderColor = "#c6def3";
+    calloutContextHint.className = "slds-box slds-m-bottom_x-small callout-context-dark ok";
   }
 
   issueInput.focus();
@@ -1177,189 +1117,260 @@ function routeZoneToCalloutContext(zone) {
 }
 
 function renderSystemScope() {
-  systemScope.textContent = `${state.controllers.length} controllers / ${state.backflows.length} backflows / ${state.zones.length} zones`;
+  const text = `${state.controllers.length} controllers / ${state.backflows.length} backflows / ${state.zones.length} zones`;
+  systemScope.textContent = text;
+  if (systemScopeDetail) systemScopeDetail.textContent = text;
 }
 
 function renderSystemCards() {
   controllerList.innerHTML = "";
-  backflowList.innerHTML = "";
-
-  state.controllers.forEach((controller) => {
-    const item = document.createElement("li");
-    item.textContent = `${controller.name} - ${controller.model} (${controller.zones.length} zones)${controller.description ? ` | ${controller.description}` : ""}`;
-    controllerList.appendChild(item);
+  backflowList.innerHTML   = "";
+  state.controllers.forEach((c) => {
+    const li = document.createElement("li");
+    li.textContent = `${c.name} - ${c.model} (${c.zones.length}z)`;
+    controllerList.appendChild(li);
   });
-
-  state.backflows.forEach((backflow) => {
-    const item = document.createElement("li");
-    item.textContent = `${backflow.name} - ${backflow.serial} (${backflow.status})${backflow.description ? ` | ${backflow.description}` : ""}`;
-    backflowList.appendChild(item);
+  state.backflows.forEach((b) => {
+    const li = document.createElement("li");
+    li.textContent = `${b.name} - ${b.serial} (${b.status})`;
+    backflowList.appendChild(li);
   });
 }
 
 function renderAssetSnapshot() {
-  const filteredZones = getFilteredZones();
-  const filteredAlerts = filteredZones.filter((zone) => zone.status === "alert").length;
-
+  const filteredAlerts = getFilteredZones().filter((z) => z.status === "alert").length;
   assetSnapshot.textContent = `${filteredAlerts} flagged in view (${getAlertZonesCount()} total). ${getConfirmedCallouts()} confirmed callouts.`;
 
   if (state.clockFilter === "ALL") {
     mapCaption.textContent = `Tap any of ${state.zones.length} zones to toggle status across ${state.controllers.length} clocks and ${state.backflows.length} backflows.`;
-    return;
+  } else {
+    mapCaption.textContent = `Clock filter: ${state.clockFilter}. Showing ${getFilteredZones().length} zones in this clock.`;
   }
-
-  mapCaption.textContent = `Clock filter: ${state.clockFilter}. Showing ${filteredZones.length} zones in this clock.`;
 }
 
 function renderMapGrid() {
   mapGrid.innerHTML = "";
-
   const filteredZones = getFilteredZones();
-
   filteredZones.forEach((zone) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `zone ${zone.status === "alert" ? "zone-alert" : "zone-ok"}`;
-    button.dataset.zoneId = zone.id;
-    button.innerHTML = `${zone.label}<small>${zone.controller} / ${zone.backflow}${zone.description ? ` | ${zone.description}` : ""}</small>`;
-    mapGrid.appendChild(button);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `zone ${zone.status === "alert" ? "zone-alert" : "zone-ok"}`;
+    btn.dataset.zoneId = zone.id;
+    btn.innerHTML = `${zone.label}<small>${zone.controller.replace("Controller ", "Ctrl ")} / ${zone.backflow.replace("Backflow ", "BF ")}</small>`;
+    mapGrid.appendChild(btn);
   });
-
   if (!filteredZones.length) {
-    const empty = document.createElement("p");
-    empty.className = "panel-subtitle";
-    empty.textContent = "No zones match this clock filter.";
-    mapGrid.appendChild(empty);
+    const p = document.createElement("p");
+    p.className = "slds-text-body_small slds-text-color_weak";
+    p.textContent = "No zones match this clock filter.";
+    mapGrid.appendChild(p);
   }
 }
 
 function renderClockFilterOptions() {
-  clockFilter.innerHTML = "";
-
-  const allOption = document.createElement("option");
-  allOption.value = "ALL";
-  allOption.textContent = "All Clocks";
-  clockFilter.appendChild(allOption);
-
-  state.controllers.forEach((controller) => {
-    const option = document.createElement("option");
-    option.value = controller.name;
-    option.textContent = controller.name;
-    clockFilter.appendChild(option);
+  clockFilter.innerHTML = `<option value="ALL">All Clocks</option>`;
+  state.controllers.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c.name;
+    opt.textContent = c.name;
+    clockFilter.appendChild(opt);
   });
-
   clockFilter.value = state.clockFilter;
 }
 
 function renderAssetOptions() {
   assetInput.innerHTML = "";
-  const assets = [
-    ...state.controllers.map((item) => item.name),
-    ...state.backflows.map((item) => item.name),
-    ...state.zones.map((item) => item.label),
-  ];
-
-  assets.forEach((assetName) => {
-    const option = document.createElement("option");
-    option.value = assetName;
-    option.textContent = assetName;
-    assetInput.appendChild(option);
+  [...state.controllers.map((c) => c.name), ...state.backflows.map((b) => b.name), ...state.zones.map((z) => z.label)].forEach((name) => {
+    const opt = document.createElement("option");
+    opt.value = opt.textContent = name;
+    assetInput.appendChild(opt);
   });
 }
 
-function renderAssetManagerOptions() {
-  zoneController.innerHTML = "";
-  zoneBackflow.innerHTML = "";
-  descriptionAsset.innerHTML = "";
+function getAssetTypeLabel(type) {
+  if (type === "zone") return "Zone";
+  if (type === "controller") return "Controller";
+  if (type === "backflow") return "Backflow";
+  return type;
+}
 
-  state.controllers.forEach((controller) => {
-    const option = document.createElement("option");
-    option.value = controller.name;
-    option.textContent = controller.name;
-    zoneController.appendChild(option);
-  });
-
-  state.backflows.forEach((backflow) => {
-    const option = document.createElement("option");
-    option.value = backflow.name;
-    option.textContent = backflow.name;
-    zoneBackflow.appendChild(option);
-  });
-
-  const assets = getAllAssets();
-  assets.forEach((asset) => {
-    const option = document.createElement("option");
-    option.value = asset.key;
-    option.textContent = `${asset.type.toUpperCase()} - ${asset.name}`;
-    descriptionAsset.appendChild(option);
-  });
-
-  if (assets.length) {
-    descriptionAsset.value = assets[0].key;
-    descriptionInput.value = assets[0].description;
-  } else {
-    descriptionInput.value = "";
+function getAssetStatusText(asset) {
+  if (asset.type === "zone") {
+    return asset.ref.status === "alert" ? "Follow-up" : "Stable";
   }
+  if (asset.type === "backflow") {
+    return asset.ref.status || "Unknown";
+  }
+  return "Active";
 }
 
-function renderFeedback() {
-  feedbackList.innerHTML = "";
+function getFilteredAssetsForTab() {
+  const allAssets = getAllAssets();
+  const typeFiltered = assetTab.filter === "all"
+    ? allAssets
+    : allAssets.filter((a) => a.type === assetTab.filter);
 
-  if (!state.feedbackEntries.length) {
-    feedbackStatus.textContent = "No feedback submitted yet.";
-    feedbackStatus.style.color = "#5c6f82";
+  const query = assetTab.search.trim().toLowerCase();
+  if (!query) return typeFiltered;
+
+  return typeFiltered.filter((a) => {
+    const haystack = `${a.name} ${a.description} ${a.type}`.toLowerCase();
+    return haystack.includes(query);
+  });
+}
+
+function getSelectedAsset() {
+  return getAllAssets().find((a) => a.key === assetTab.selectedKey) || null;
+}
+
+function renderAssetRegistryList() {
+  const filtered = getFilteredAssetsForTab();
+  assetList.innerHTML = "";
+  assetListSummary.textContent = `${filtered.length} assets shown (${state.zones.length + state.controllers.length + state.backflows.length} total in scope).`;
+
+  if (!assetTab.selectedKey || !getAllAssets().some((a) => a.key === assetTab.selectedKey)) {
+    assetTab.selectedKey = filtered[0]?.key || "";
+  }
+
+  if (!filtered.length) {
+    const item = document.createElement("li");
+    item.className = "slds-item";
+    item.style.padding = "8px 0";
+    item.textContent = "No assets match this filter.";
+    assetList.appendChild(item);
+    renderAssetDetail();
     return;
   }
 
-  feedbackStatus.textContent = `${state.feedbackEntries.length} feedback item(s) captured.`;
-  feedbackStatus.style.color = "#2e844a";
-
-  const recentFirst = [...state.feedbackEntries].reverse();
-  recentFirst.forEach((entry) => {
+  filtered.forEach((asset) => {
     const item = document.createElement("li");
-    item.className = "feedback-item";
+    item.className = "slds-item";
+    item.style.padding = "8px 0";
 
-    const header = document.createElement("p");
-    header.innerHTML = `<strong>${entry.name || "Anonymous"}</strong> | ${entry.persona} | ${entry.area} | ${entry.rating}/5`;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.assetKey = asset.key;
+    button.className = "slds-button slds-button_reset";
+    button.style.cssText = "width:100%;text-align:left;";
 
-    const detail = document.createElement("p");
-    detail.textContent = entry.comments || "No comment provided.";
+    const title = document.createElement("p");
+    title.className = "asset-row-title";
+    title.textContent = asset.name;
 
-    const stamp = document.createElement("p");
-    stamp.textContent = entry.timestamp;
+    const meta = document.createElement("p");
+    meta.className = "asset-row-meta";
+    meta.textContent = `${getAssetTypeLabel(asset.type)} • ${getAssetStatusText(asset)}`;
 
-    item.append(header, detail, stamp);
-    feedbackList.appendChild(item);
+    if (asset.key === assetTab.selectedKey) {
+      button.classList.add("asset-row-selected");
+    }
+
+    button.append(title, meta);
+    item.appendChild(button);
+
+    if (asset.key === assetTab.selectedKey) {
+      const editor = document.createElement("div");
+      editor.className = "asset-inline-editor";
+
+      const grid = document.createElement("div");
+      grid.className = "asset-inline-grid";
+
+      const details = document.createElement("div");
+      details.innerHTML = `
+        <dl class="slds-list_vertical slds-m-bottom_small">
+          <dt class="slds-text-title">Name</dt>
+          <dd class="slds-item_detail slds-m-bottom_x-small">${asset.name}</dd>
+          <dt class="slds-text-title">Type</dt>
+          <dd class="slds-item_detail slds-m-bottom_x-small">${getAssetTypeLabel(asset.type)}</dd>
+          <dt class="slds-text-title">Clock</dt>
+          <dd class="slds-item_detail slds-m-bottom_x-small">${asset.type === "zone" ? asset.ref.controller : asset.type === "controller" ? asset.name : "Varies by zone"}</dd>
+          <dt class="slds-text-title">Backflow</dt>
+          <dd class="slds-item_detail slds-m-bottom_x-small">${asset.type === "zone" ? asset.ref.backflow : asset.type === "backflow" ? asset.name : "Varies by zone"}</dd>
+          <dt class="slds-text-title">Status</dt>
+          <dd class="slds-item_detail">${getAssetStatusText(asset)}</dd>
+        </dl>
+      `;
+
+      const actions = document.createElement("div");
+      const noteId = `asset-note-${asset.key.replace(/[^a-z0-9]+/gi, "-")}`;
+      actions.innerHTML = `
+        <div class="slds-form-element">
+          <label class="slds-form-element__label" for="${noteId}">Asset Notes</label>
+          <div class="slds-form-element__control">
+            <textarea id="${noteId}" class="slds-textarea" rows="5" data-role="asset-note">${asset.description || ""}</textarea>
+          </div>
+        </div>
+        <div class="asset-note-actions">
+          <button class="slds-button slds-button_neutral" type="button" data-action="save-note" data-asset-key="${asset.key}">Save Note</button>
+          ${asset.type === "zone" ? `<button class="slds-button slds-button_neutral" type="button" data-action="toggle-status" data-asset-key="${asset.key}">${asset.ref.status === "alert" ? "Mark Stable" : "Flag Follow-up"}</button>` : ""}
+          <button class="slds-button slds-button_neutral" type="button" data-action="open-map" data-asset-key="${asset.key}">Open in Map</button>
+          <button class="slds-button slds-button_brand" type="button" data-action="open-callout" data-asset-key="${asset.key}">Create Callout</button>
+        </div>
+      `;
+
+      grid.append(details, actions);
+      editor.appendChild(grid);
+
+      const activityWrap = document.createElement("div");
+      activityWrap.className = "slds-box slds-theme_shade";
+      const title = document.createElement("p");
+      title.className = "slds-text-title slds-m-bottom_xx-small";
+      title.textContent = "Recent Asset Activity";
+      const activityList = document.createElement("ul");
+      activityList.className = "slds-list_dotted slds-text-body_small";
+      const activityItems = getCalloutsForAsset(asset);
+      if (!activityItems.length) {
+        const li = document.createElement("li");
+        li.textContent = "No callout activity for this asset yet.";
+        activityList.appendChild(li);
+      } else {
+        activityItems.slice(-4).reverse().forEach((callout) => {
+          const li = document.createElement("li");
+          li.textContent = `${callout.asset}: ${callout.issue} (${callout.confirmed ? "Confirmed" : "Draft"})`;
+          activityList.appendChild(li);
+        });
+      }
+      activityWrap.append(title, activityList);
+      editor.appendChild(activityWrap);
+
+      item.appendChild(editor);
+    }
+
+    assetList.appendChild(item);
   });
 }
 
-function refreshAfterAssetChange() {
-  renderSystemScope();
-  renderSystemCards();
-  renderClockFilterOptions();
-  renderAssetOptions();
-  renderAssetManagerOptions();
-  renderMapGrid();
-  renderAssetSnapshot();
+function getCalloutsForAsset(selected) {
+  return state.callouts.filter((c) => {
+    if (selected.type === "zone") return c.asset === selected.name;
+    if (selected.type === "controller") return c.asset.startsWith("Zone ") && state.zones.find((z) => z.label === c.asset)?.controller === selected.name;
+    if (selected.type === "backflow") return c.asset === selected.name || (c.asset.startsWith("Zone ") && state.zones.find((z) => z.label === c.asset)?.backflow === selected.name);
+    return false;
+  });
 }
 
 function renderProgress() {
-  const requiredAnswered = getRequiredAnswered();
-  const requiredTotal = state.requiredQuestions.length;
-  const pct = Math.round((requiredAnswered / requiredTotal) * 100);
-
+  const answered = getRequiredAnswered();
+  const total    = state.requiredQuestions.length;
+  const pct      = Math.round((answered / total) * 100);
   meterFill.style.width = `${pct}%`;
-  meterLabel.textContent = `${requiredAnswered} of ${requiredTotal} answered`;
+  const assistive = meterFill.querySelector(".slds-assistive-text");
+  if (assistive) assistive.textContent = `Progress: ${pct}%`;
+  const bar = meterFill.closest(".slds-progress-bar");
+  if (bar) bar.setAttribute("aria-valuenow", pct);
+  meterLabel.textContent = `${answered} of ${total} answered`;
 }
 
 function renderRequiredQuestions() {
   requiredList.innerHTML = "";
-
   state.requiredQuestions.forEach((question) => {
     const item = document.createElement("li");
-    item.className = "required-item";
+    item.className = "slds-item";
+    item.style.cssText = "padding:8px 0;";
 
     const label = document.createElement("label");
+    label.style.cssText = "display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;";
+
     const check = document.createElement("input");
     check.type = "checkbox";
     check.dataset.questionId = question.id;
@@ -1379,7 +1390,8 @@ function renderCallouts() {
 
   if (!state.callouts.length) {
     const empty = document.createElement("li");
-    empty.className = "callout-item";
+    empty.className = "slds-item";
+    empty.style.padding = "8px 0";
     empty.textContent = "No callouts yet.";
     calloutList.appendChild(empty);
     renderAssetSnapshot();
@@ -1387,29 +1399,34 @@ function renderCallouts() {
   }
 
   state.callouts.forEach((callout) => {
+    const sevClass = callout.severity === "High" ? "sev-high" : callout.severity === "Medium" ? "sev-medium" : "sev-low";
+
     const item = document.createElement("li");
-    item.className = `callout-item ${callout.confirmed ? "confirmed" : ""}`;
+    item.className = `slds-item callout-item${callout.confirmed ? " confirmed" : ""}`;
+    item.style.cssText = "padding:8px 0 8px 8px;";
 
     const title = document.createElement("p");
-    title.innerHTML = `<strong>${callout.asset}</strong> - ${callout.issue}`;
+    title.style.cssText = "margin:0 0 4px;font-weight:700;";
+    title.innerHTML = `${callout.asset} &mdash; ${callout.issue} <span class="slds-badge ${sevClass}" style="margin-left:4px;">${callout.severity}</span>`;
 
     const meta = document.createElement("p");
-    meta.className = "callout-meta";
-    meta.textContent = `Severity: ${callout.severity} | ${callout.confirmed ? "Confirmed" : "Draft"}`;
+    meta.style.cssText = "margin:0 0 6px;font-size:0.84rem;color:#5c6f82;";
+    meta.textContent = callout.confirmed ? "Confirmed" : "Draft";
 
     const actions = document.createElement("div");
-    actions.className = "callout-actions";
+    actions.style.display = "flex";
+    actions.style.gap = "8px";
 
     const confirmBtn = document.createElement("button");
     confirmBtn.type = "button";
-    confirmBtn.className = "btn btn-neutral";
+    confirmBtn.className = "slds-button slds-button_neutral slds-button_small";
     confirmBtn.dataset.action = "confirm";
     confirmBtn.dataset.calloutId = String(callout.id);
     confirmBtn.textContent = callout.confirmed ? "Unconfirm" : "Confirm";
 
     const removeBtn = document.createElement("button");
     removeBtn.type = "button";
-    removeBtn.className = "btn btn-destructive";
+    removeBtn.className = "slds-button slds-button_destructive slds-button_small";
     removeBtn.dataset.action = "remove";
     removeBtn.dataset.calloutId = String(callout.id);
     removeBtn.textContent = "Remove";
@@ -1424,43 +1441,33 @@ function renderCallouts() {
 
 function simulateSubmit() {
   setStage("REVIEW");
-
   if (getRequiredAnswered() < state.requiredQuestions.length) {
     setSubmitMessage("Blocked: required questions incomplete.", "error");
     return;
   }
-
-  const hasConfirmedCallouts = state.callouts.some((callout) => callout.confirmed);
-  if (hasConfirmedCallouts && !state.amAssigned) {
+  if (state.callouts.some((c) => c.confirmed) && !state.amAssigned) {
     setSubmitMessage("Blocked: AM required for confirmed callouts.", "error");
     return;
   }
-
   setStage("COMPLETED");
   setSubmitMessage("Success: inspection can complete.", "ok");
 }
 
 function resetFlow() {
-  state.requiredQuestions.forEach((q, idx) => {
-    q.answered = idx < 4;
-  });
-
-  state.zones.forEach((zone) => {
-    zone.status = [3, 11, 18, 22].includes(Number(zone.id.replace("zone-", ""))) ? "alert" : "ok";
-  });
-
+  state.requiredQuestions.forEach((q, idx) => { q.answered = idx < 4; });
+  state.zones.forEach((z) => { z.status = [3, 11, 18, 22].includes(Number(z.id.replace("zone-", ""))) ? "alert" : "ok"; });
   state.callouts = [
-    { id: 1, asset: "Zone 3", issue: "Broken Head", severity: "High", confirmed: true },
-    { id: 2, asset: "Zone 11", issue: "Valve leak at manifold", severity: "Medium", confirmed: false },
-    { id: 3, asset: "Backflow South", issue: "Test window expired", severity: "High", confirmed: true },
+    { id: 1, asset: "Zone 3",        issue: "Broken Head",           severity: "High",   confirmed: true  },
+    { id: 2, asset: "Zone 11",       issue: "Valve leak at manifold",severity: "Medium", confirmed: false },
+    { id: 3, asset: "Backflow South",issue: "Test window expired",   severity: "High",   confirmed: true  },
   ];
   state.clockFilter = "ALL";
-
   state.amAssigned = false;
   state.amName = "";
   amName.value = "";
   amStatus.textContent = "AM not assigned.";
   amStatus.style.color = "#5c6f82";
+  if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
   setStage("INSPECTING");
   setSubmitMessage("Flow reset for complex system.", "warn");
   renderAll();
@@ -1471,144 +1478,77 @@ function renderAll() {
   renderSystemCards();
   renderClockFilterOptions();
   renderAssetOptions();
-  renderAssetManagerOptions();
   renderMapGrid();
   renderProgress();
   renderRequiredQuestions();
   renderCallouts();
   renderAssetSnapshot();
-  renderFeedback();
+  renderAssetRegistryList();
 }
 
-navButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    setActiveTab(btn.dataset.tab);
-  });
+// Event listeners
+navButtons.forEach((btn) => btn.addEventListener("click", () => setActiveTab(btn.dataset.tab)));
+
+assetFilter.addEventListener("change", () => {
+  assetTab.filter = assetFilter.value;
+  renderAssetRegistryList();
 });
 
-assetType.addEventListener("change", () => {
-  zoneLinks.style.display = assetType.value === "zone" ? "grid" : "none";
+assetSearch.addEventListener("input", () => {
+  assetTab.search = assetSearch.value;
+  renderAssetRegistryList();
 });
 
-assetForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+assetList.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLElement ? event.target.closest("button[data-asset-key]") : null;
+  if (!button) return;
 
-  const type = assetType.value;
-  const rawName = assetName.value.trim();
-  const description = assetDescription.value.trim();
+  const action = button.dataset.action;
+  const assetKey = button.dataset.assetKey || "";
+  const selected = getAllAssets().find((a) => a.key === assetKey);
+  if (!selected) return;
 
-  if (type === "controller") {
-    if (!rawName) {
-      setSubmitMessage("Controller name is required.", "error");
-      return;
-    }
-    state.controllers.push({
-      id: `controller-${Date.now()}`,
-      name: rawName,
-      model: "Custom Clock",
-      description,
-      zones: [],
-    });
-    setSubmitMessage(`Added controller ${rawName}.`, "ok");
-  } else if (type === "backflow") {
-    if (!rawName) {
-      setSubmitMessage("Backflow name is required.", "error");
-      return;
-    }
-    state.backflows.push({
-      id: `backflow-${Date.now()}`,
-      name: rawName,
-      serial: `NEW-${Date.now().toString().slice(-5)}`,
-      status: "Pending",
-      description,
-    });
-    setSubmitMessage(`Added backflow ${rawName}.`, "ok");
-  } else {
-    const nextZoneNumber = state.zones.length + 1;
-    const zoneLabel = rawName || `Zone ${nextZoneNumber}`;
-    const selectedController = zoneController.value || state.controllers[0]?.name || "";
-    const selectedBackflow = zoneBackflow.value || state.backflows[0]?.name || "";
-
-    state.zones.push({
-      id: `zone-${Date.now()}`,
-      label: zoneLabel,
-      status: "ok",
-      controller: selectedController,
-      backflow: selectedBackflow,
-      description,
-    });
-
-    const controller = state.controllers.find((item) => item.name === selectedController);
-    if (controller) {
-      controller.zones.push(nextZoneNumber);
-    }
-    setSubmitMessage(`Added ${zoneLabel}.`, "ok");
-  }
-
-  assetName.value = "";
-  assetDescription.value = "";
-  refreshAfterAssetChange();
-});
-
-descriptionAsset.addEventListener("change", () => {
-  const selected = getAllAssets().find((asset) => asset.key === descriptionAsset.value);
-  descriptionInput.value = selected ? selected.description : "";
-});
-
-descriptionForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const selected = getAllAssets().find((asset) => asset.key === descriptionAsset.value);
-  if (!selected) {
-    setSubmitMessage("Select an asset to update description.", "error");
+  if (!action) {
+    assetTab.selectedKey = assetKey;
+    renderAssetRegistryList();
     return;
   }
 
-  selected.ref.description = descriptionInput.value.trim();
-  setSubmitMessage(`Updated description for ${selected.name}.`, "ok");
-  refreshAfterAssetChange();
-});
-
-feedbackForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  state.feedbackEntries.push({
-    id: Date.now(),
-    name: feedbackName.value.trim(),
-    persona: feedbackPersona.value,
-    area: feedbackArea.value,
-    rating: feedbackRating.value,
-    comments: feedbackComments.value.trim(),
-    timestamp: new Date().toLocaleString(),
-  });
-
-  feedbackComments.value = "";
-  setSubmitMessage("Feedback saved.", "ok");
-  renderFeedback();
-});
-
-copyFeedback.addEventListener("click", async () => {
-  if (!state.feedbackEntries.length) {
-    feedbackStatus.textContent = "No feedback to copy yet.";
-    feedbackStatus.style.color = "#8f4b00";
+  if (action === "save-note") {
+    const note = button.closest(".asset-inline-editor")?.querySelector("textarea[data-role='asset-note']");
+    selected.ref.description = note instanceof HTMLTextAreaElement ? note.value.trim() : selected.ref.description;
+    setSubmitMessage(`Saved notes for ${selected.name}.`, "ok");
+    renderAssetRegistryList();
     return;
   }
 
-  const payload = JSON.stringify(state.feedbackEntries, null, 2);
-  try {
-    await navigator.clipboard.writeText(payload);
-    feedbackStatus.textContent = "Feedback JSON copied to clipboard.";
-    feedbackStatus.style.color = "#2e844a";
-  } catch {
-    feedbackStatus.textContent = "Clipboard blocked. Select and copy from browser dev tools console if needed.";
-    feedbackStatus.style.color = "#ba0517";
+  if (action === "toggle-status" && selected.type === "zone") {
+    selected.ref.status = selected.ref.status === "alert" ? "ok" : "alert";
+    setSubmitMessage(selected.ref.status === "alert" ? `${selected.name} flagged for follow-up.` : `${selected.name} marked stable.`, "warn");
+    renderAssetRegistryList();
+    renderMapGrid();
+    renderAssetSnapshot();
+    return;
   }
-});
 
-clearFeedback.addEventListener("click", () => {
-  state.feedbackEntries = [];
-  renderFeedback();
-  feedbackStatus.textContent = "Feedback cleared.";
-  feedbackStatus.style.color = "#8f4b00";
+  if (action === "open-map") {
+    if (selected.type === "zone") {
+      state.clockFilter = selected.ref.controller;
+      clockFilter.value = state.clockFilter;
+      renderMapGrid();
+      renderAssetSnapshot();
+    }
+    setActiveTab("map");
+    return;
+  }
+
+  if (action === "open-callout") {
+    setActiveTab("callouts");
+    assetInput.value = selected.name;
+    issueInput.value = selected.type === "zone" ? `Issue observed in ${selected.name}` : `Issue observed near ${selected.name}`;
+    severityInput.value = selected.type === "zone" && selected.ref.status === "alert" ? "High" : "Medium";
+    issueInput.focus();
+  }
 });
 
 clockFilter.addEventListener("change", () => {
@@ -1618,93 +1558,55 @@ clockFilter.addEventListener("change", () => {
 });
 
 mapGrid.addEventListener("click", (event) => {
-  const target = event.target;
-  const zoneButton = target instanceof HTMLElement ? target.closest("button.zone") : null;
-  if (!zoneButton) {
-    return;
-  }
-
-  const zone = state.zones.find((item) => item.id === zoneButton.dataset.zoneId);
-  if (!zone) {
-    return;
-  }
-
+  const zoneButton = event.target instanceof HTMLElement ? event.target.closest("button.zone") : null;
+  if (!zoneButton) return;
+  const zone = state.zones.find((z) => z.id === zoneButton.dataset.zoneId);
+  if (!zone) return;
   zone.status = zone.status === "alert" ? "ok" : "alert";
-
-  if (zone.status === "alert") {
-    setSubmitMessage(`${zone.label} flagged for follow-up.`, "warn");
-  } else {
-    setSubmitMessage(`${zone.label} marked as stable.`, "warn");
-  }
-
+  setSubmitMessage(zone.status === "alert" ? `${zone.label} flagged for follow-up.` : `${zone.label} marked as stable.`, "warn");
   renderMapGrid();
   renderAssetSnapshot();
   routeZoneToCalloutContext(zone);
 });
 
 requiredList.addEventListener("change", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLInputElement)) {
-    return;
-  }
-
-  const question = state.requiredQuestions.find((q) => q.id === target.dataset.questionId);
-  if (!question) {
-    return;
-  }
-
-  question.answered = target.checked;
-  if (state.stage === "COMPLETED") {
-    setStage("INSPECTING");
-  }
+  if (!(event.target instanceof HTMLInputElement)) return;
+  const question = state.requiredQuestions.find((q) => q.id === event.target.dataset.questionId);
+  if (!question) return;
+  question.answered = event.target.checked;
+  if (state.stage === "COMPLETED") setStage("INSPECTING");
   renderProgress();
 });
 
 calloutList.addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLButtonElement)) {
-    return;
-  }
-
-  const calloutId = Number(target.dataset.calloutId);
-  const action = target.dataset.action;
-
+  if (!(event.target instanceof HTMLButtonElement)) return;
+  const calloutId = Number(event.target.dataset.calloutId);
+  const action    = event.target.dataset.action;
   if (action === "remove") {
-    state.callouts = state.callouts.filter((callout) => callout.id !== calloutId);
+    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
     renderCallouts();
+    renderAssetRegistryList();
     return;
   }
-
   if (action === "confirm") {
-    const callout = state.callouts.find((item) => item.id === calloutId);
-    if (!callout) {
-      return;
+    const callout = state.callouts.find((c) => c.id === calloutId);
+    if (callout) {
+      callout.confirmed = !callout.confirmed;
+      renderCallouts();
+      renderAssetRegistryList();
     }
-
-    callout.confirmed = !callout.confirmed;
-    renderCallouts();
   }
 });
 
 calloutForm.addEventListener("submit", (event) => {
   event.preventDefault();
-
   const issue = issueInput.value.trim();
-  if (!issue) {
-    return;
-  }
-
-  state.callouts.push({
-    id: Date.now(),
-    asset: assetInput.value,
-    issue,
-    severity: severityInput.value,
-    confirmed: false,
-  });
-
+  if (!issue) return;
+  state.callouts.push({ id: Date.now(), asset: assetInput.value, issue, severity: severityInput.value, confirmed: false });
   issueInput.value = "";
   setSubmitMessage("Draft callout added.", "warn");
   renderCallouts();
+  renderAssetRegistryList();
 });
 
 document.getElementById("toggle-am").addEventListener("click", () => {
@@ -1714,19 +1616,19 @@ document.getElementById("toggle-am").addEventListener("click", () => {
     amName.value = "";
     amStatus.textContent = "AM cleared.";
     amStatus.style.color = "#8f4b00";
+    if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
     return;
   }
-
   if (!amName.value) {
     amStatus.textContent = "Select an AM before assigning.";
     amStatus.style.color = "#ba0517";
     return;
   }
-
   state.amAssigned = true;
   state.amName = amName.value;
   amStatus.textContent = `AM assigned: ${state.amName}`;
   amStatus.style.color = "#2e844a";
+  if (amStatusHeader) amStatusHeader.textContent = state.amName;
 });
 
 document.getElementById("open-review").addEventListener("click", () => {
@@ -1737,13 +1639,12 @@ document.getElementById("open-review").addEventListener("click", () => {
 document.getElementById("simulate-submit").addEventListener("click", simulateSubmit);
 document.getElementById("reset-flow").addEventListener("click", resetFlow);
 
+// Init
 setStage("INSPECTING");
 setSubmitMessage("Complex campus system loaded.", "warn");
-zoneLinks.style.display = "grid";
-setActiveTab("map");
+assetTab.selectedKey = `zone:${state.zones[0].id}`;
+setActiveTab("overview");
 renderAll();
-
-</script>
+  </script>
 </body>
 </html>
-
