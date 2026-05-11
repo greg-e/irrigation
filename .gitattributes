@@ -1,0 +1,20 @@
+* text=auto
+
+# Enforce LF for source and documentation files
+*.md text eol=lf
+*.txt text eol=lf
+*.mmd text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.py text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.xlsx binary
+*.xls binary
+*.pdf binary
