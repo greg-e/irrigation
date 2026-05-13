@@ -282,7 +282,7 @@ Already defined in [research/fsm_asset_architecture.md](../research/fsm_asset_ar
 | `AssetId` | Standard | Required for irrigation callouts — Zone/Controller/Backflow |
 | `Subject` | Standard | Issue summary |
 | `Quantity` / `UnitPrice` | Standard | Parts/labor |
-| `Issue_Type__c` | Custom (existing) | Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overspray / Clog / Other |
+| `Issue_Type__c` | Custom (existing) | Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overwatering / Clog / Other |
 | `Callout_Status__c` | Custom (existing) | New / Quoted / Approved / Completed |
 | `Callout_Notes__c` | Custom (existing) | |
 | `Callout_Photo__c` | Custom (existing) | |

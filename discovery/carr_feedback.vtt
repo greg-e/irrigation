@@ -1,0 +1,4202 @@
+WEBVTT
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-0
+00:00:03.954 --> 00:00:06.843
+<v James Carr>or whatever.
+And so what I do is I just adjust the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-1
+00:00:06.843 --> 00:00:10.639
+<v James Carr>training. The meat of the training,
+how to do a check is the same,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-2
+00:00:10.639 --> 00:00:14.038
+<v James Carr>but then I just adjust it to whatever
+system they're using.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-3
+00:00:14.038 --> 00:00:18.796
+<v James Carr>This is a huge thing. Over the last month,
+I've had many locations reach out asking</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-4
+00:00:18.796 --> 00:00:22.649
+<v James Carr>about what they should use.
+And what I've been telling them is hold</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-5
+00:00:22.649 --> 00:00:27.237
+<v James Carr>tight, use whatever you're using for now,
+but hopefully soon we're going to have</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/698-6
+00:00:27.237 --> 00:00:28.314
+<v James Carr>something internal.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/702-0
+00:00:29.194 --> 00:00:31.674
+<v James Carr>and we're going to mitigate to that or
+migrate.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/752-0
+00:00:34.154 --> 00:00:37.643
+<v James Carr>My big thoughts on that,
+we've done this before.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/752-1
+00:00:37.643 --> 00:00:42.842
+<v James Carr>I know Jay probably remembers,
+but we used to have Pronto forms and they</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/752-2
+00:00:42.842 --> 00:00:46.545
+<v James Carr>piloted it in there and Texas was the
+biggest user.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/722-0
+00:00:43.154 --> 00:00:43.314
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/752-3
+00:00:46.545 --> 00:00:52.314
+<v James Carr>But the problem with it is they loaded
+everything in there and it became such an</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/761-0
+00:00:52.474 --> 00:00:56.554
+<v James Carr>overwhelming form that nobody wanted to
+use it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/784-0
+00:00:56.994 --> 00:01:00.638
+<v Greg Ehrenberg>When you say everything,
+do you mean every single little question</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/763-0
+00:00:57.434 --> 00:00:57.914
+<v James Carr>And...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/784-1
+00:01:00.638 --> 00:01:04.392
+<v Greg Ehrenberg>that can be asked per zone?
+Was it was a different thing you had to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/778-0
+00:01:03.474 --> 00:01:03.874
+<v James Carr>And.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/784-2
+00:01:04.392 --> 00:01:04.834
+<v Greg Ehrenberg>go down?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-0
+00:01:05.514 --> 00:01:08.223
+<v James Carr>everything you could ask with the
+irrigation system.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-1
+00:01:08.223 --> 00:01:10.880
+<v James Carr>What size is the main line?
+What size is the valve?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-2
+00:01:10.880 --> 00:01:13.589
+<v James Carr>What type of controller?
+How many stations? How old?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-3
+00:01:13.589 --> 00:01:17.116
+<v James Carr>Because their thought was,
+we want to have all that in one document.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-4
+00:01:17.116 --> 00:01:20.847
+<v James Carr>And they had this thought that the
+irrigation techs are just going to be</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-5
+00:01:20.847 --> 00:01:24.016
+<v James Carr>okay with skipping this and that.
+But really with technology,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/840-6
+00:01:24.016 --> 00:01:25.754
+<v James Carr>we've got to make it super simple.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/880-0
+00:01:26.954 --> 00:01:29.956
+<v James Carr>And so I know you're getting a lot of
+feedback.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/880-1
+00:01:29.956 --> 00:01:34.710
+<v James Carr>I've seen some of those members on the
+call coming up. I've talked to them.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/880-2
+00:01:34.710 --> 00:01:39.339
+<v James Carr>I know that some of them are very
+analytical and brainy and some are very</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/880-3
+00:01:39.339 --> 00:01:42.404
+<v James Carr>negative.
+So I'm pretty sure you already kind of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/880-4
+00:01:42.404 --> 00:01:45.594
+<v James Carr>gather how to get that feedback.
+But the one thing</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/899-0
+00:01:46.074 --> 00:01:51.705
+<v James Carr>I really want to hopefully get to as to
+where we can have two levels of these</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/899-1
+00:01:51.705 --> 00:01:54.954
+<v James Carr>reports,
+one just for a simple system check.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/946-0
+00:01:56.074 --> 00:01:59.220
+<v James Carr>And then another one for a full onsite
+assessment.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/946-1
+00:01:59.220 --> 00:02:03.354
+<v James Carr>I think that'll solve the need.
+The simplified one is just for the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/946-2
+00:02:03.354 --> 00:02:07.117
+<v James Carr>regular contract expected checks that
+keeps it super simple.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/946-3
+00:02:07.117 --> 00:02:12.052
+<v James Carr>And then the assessment one would be for
+when we pick up a new property or when</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/946-4
+00:02:12.052 --> 00:02:15.754
+<v James Carr>we're starting to do irrigation
+assessments for extra work.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/959-0
+00:02:16.794 --> 00:02:22.074
+<v James Carr>And then that will give you both.
+I shared with Jay. Go on.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/953-0
+00:02:20.194 --> 00:02:20.674
+<v Greg Ehrenberg>So.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/974-0
+00:02:22.354 --> 00:02:26.336
+<v Greg Ehrenberg>Yeah, I'm sorry.
+The first one was on an existing system.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/974-1
+00:02:26.336 --> 00:02:30.594
+<v Greg Ehrenberg>What did you call that? Not an assessment,
+but the first one.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-0
+00:02:31.354 --> 00:02:34.870
+<v James Carr>A simple PMI,
+preventative maintenance inspection,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/985-0
+00:02:33.914 --> 00:02:34.594
+<v Greg Ehrenberg>Okay, PMR.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-1
+00:02:34.870 --> 00:02:38.248
+<v James Carr>just a simplified one. Basically it's,
+you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-2
+00:02:38.248 --> 00:02:41.764
+<v James Carr>what's the name of the controller,
+how many zones,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-3
+00:02:41.764 --> 00:02:45.211
+<v James Carr>then go through like what's wrong with
+each zone.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-4
+00:02:45.211 --> 00:02:50.795
+<v James Carr>Something super simplified that even the
+lowest tech technician can use and it's</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1021-5
+00:02:50.795 --> 00:02:51.554
+<v James Carr>super easy.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1064-0
+00:02:52.634 --> 00:02:57.530
+<v James Carr>I think the part that we have one shot to
+get right is preparation for future</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1064-1
+00:02:57.530 --> 00:03:00.920
+<v James Carr>comings. I was connected with One Rock,
+the ESG team,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1064-2
+00:03:00.920 --> 00:03:05.692
+<v James Carr>which is the Bright View Investors.
+And a lot of the questions they had is,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1064-3
+00:03:05.692 --> 00:03:10.714
+<v James Carr>how can we increase revenue with our
+national accounts and all of our accounts?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1114-0
+00:03:10.954 --> 00:03:15.005
+<v James Carr>by doing assessments.
+So I think their angle is going to be,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1114-1
+00:03:15.005 --> 00:03:19.454
+<v James Carr>we're going to start to push,
+our teams can do in-depth irrigation</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1114-2
+00:03:19.454 --> 00:03:23.439
+<v James Carr>assessments and use that as a foot in the
+door for our ESG,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1114-3
+00:03:23.439 --> 00:03:28.685
+<v James Carr>but also for our revenue and growth.
+The concern I have with that is currently</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1114-4
+00:03:28.685 --> 00:03:31.674
+<v James Carr>how we do that or how I do it with my
+areas.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-0
+00:03:31.834 --> 00:03:35.309
+<v James Carr>is I quarterback it with the text to
+gather the field information.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-1
+00:03:35.309 --> 00:03:39.408
+<v James Carr>They send it to me wherever I am in the
+world, and I manually create a report.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-2
+00:03:39.408 --> 00:03:43.506
+<v James Carr>And so if they're going to push that,
+I think we're going to get a bottleneck.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-3
+00:03:43.506 --> 00:03:46.566
+<v James Carr>And so that's why I think if we can do
+the simplified one,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-4
+00:03:46.566 --> 00:03:48.849
+<v James Carr>we're going to have success with the
+teams.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1168-5
+00:03:48.849 --> 00:03:51.754
+<v James Carr>And if we can do a more in-depth one,
+we're going to...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1185-0
+00:03:51.914 --> 00:03:56.371
+<v James Carr>really capitalize on revenue growth.
+And I don't know how it's going to look,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1185-1
+00:03:56.371 --> 00:03:59.514
+<v James Carr>but I always picture a report coming out
+like the QSA.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1189-0
+00:04:00.674 --> 00:04:02.714
+<v James Carr>got the fluff pictures and stuff like
+that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1206-0
+00:04:04.394 --> 00:04:07.551
+<v James Carr>At least, I mean,
+the report aspect could go with the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1206-1
+00:04:07.551 --> 00:04:10.474
+<v James Carr>assessment report.
+The other one can be whatever.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1207-0
+00:04:14.994 --> 00:04:15.474
+<v Greg Ehrenberg>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1208-0
+00:04:17.234 --> 00:04:17.714
+<v Greg Ehrenberg>Burns.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1213-0
+00:04:38.274 --> 00:04:39.314
+<v Greg Ehrenberg>Sorry, I'm thinking.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1214-0
+00:04:41.034 --> 00:04:41.474
+<v Greg Ehrenberg>Hmm.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1221-0
+00:04:44.674 --> 00:04:47.714
+<v Greg Ehrenberg>Have you used any kind of mapping systems?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1217-0
+00:04:45.034 --> 00:04:45.314
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1226-0
+00:04:48.474 --> 00:04:49.834
+<v James Carr>Yes, so...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1230-0
+00:04:49.074 --> 00:04:51.794
+<v Greg Ehrenberg>Do something like this like Esri or
+anything like that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1285-0
+00:04:52.474 --> 00:04:56.361
+<v James Carr>So with the mapping,
+obviously the biggest challenge is the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1285-1
+00:04:56.361 --> 00:05:00.248
+<v James Carr>subscription and then who owns the data
+and all that stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1285-2
+00:05:00.248 --> 00:05:05.172
+<v James Carr>The most useful and most effective,
+unfortunately, has been Google My Maps.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1285-3
+00:05:05.172 --> 00:05:10.161
+<v James Carr>Google My Maps has proven to be the
+Fisher Price that I can get anybody with</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1285-4
+00:05:10.161 --> 00:05:12.234
+<v James Carr>any technology level to utilize.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-0
+00:05:12.714 --> 00:05:16.374
+<v James Carr>But not only that,
+it's really easy to export the KML or the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-1
+00:05:16.374 --> 00:05:19.374
+<v James Carr>data file,
+get it into Salesforce under the maps.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-2
+00:05:19.374 --> 00:05:22.974
+<v James Carr>And then it's really,
+it works really great with our teams.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-3
+00:05:22.974 --> 00:05:26.454
+<v James Carr>So they create the map and with my maps,
+you send a link.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-4
+00:05:26.454 --> 00:05:30.114
+<v James Carr>And so what I've got some branches doing
+for every property,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1334-5
+00:05:30.114 --> 00:05:31.554
+<v James Carr>they have a spreadsheet.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1379-0
+00:05:31.914 --> 00:05:36.440
+<v James Carr>They got the property and then right next
+to it is the map link.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1379-1
+00:05:36.440 --> 00:05:42.080
+<v James Carr>So the irrigation tech has access to that
+sheet with a link and on their phones,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1379-2
+00:05:42.080 --> 00:05:46.327
+<v James Carr>they click the link,
+the map opens up and they can GPS right</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1379-3
+00:05:46.327 --> 00:05:49.600
+<v James Carr>to it.
+And so if we could find a way to create</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1379-4
+00:05:49.600 --> 00:05:50.714
+<v James Carr>that system or I</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1418-0
+00:05:51.594 --> 00:05:54.311
+<v James Carr>That's the best, easiest way. I mean,
+again,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1418-1
+00:05:54.311 --> 00:05:58.416
+<v James Carr>I've seen all these mapping systems.
+Everybody's trying to sell it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1418-2
+00:05:58.416 --> 00:06:02.823
+<v James Carr>Everybody's got the latest and greatest,
+but my biggest concerns are the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1418-3
+00:06:02.823 --> 00:06:05.781
+<v James Carr>subscription cost,
+the ease of use for my teams,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1418-4
+00:06:05.781 --> 00:06:07.834
+<v James Carr>and also who owns the data, right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1413-0
+00:06:08.834 --> 00:06:09.234
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1457-0
+00:06:09.154 --> 00:06:14.066
+<v James Carr>A lot of these controllers like
+WeatherMatic and WeatherTrack do mapping.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1457-1
+00:06:14.066 --> 00:06:19.244
+<v James Carr>And I'm trying to work with them to
+create an export function to where we can</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1457-2
+00:06:19.244 --> 00:06:24.488
+<v James Carr>get that data and get it into Salesforce
+so that when we have branch turnover,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1457-3
+00:06:24.488 --> 00:06:27.674
+<v James Carr>irrigation tech turnover,
+it's all right there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1477-0
+00:06:29.794 --> 00:06:35.471
+<v Greg Ehrenberg>And are those are the weather track and
+weathermatic are they are they GIS mapped?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1477-1
+00:06:35.471 --> 00:06:38.754
+<v Greg Ehrenberg>So you have specific locations per valve
+clock.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1520-0
+00:06:38.394 --> 00:06:42.951
+<v James Carr>Yeah. Yes. So with Weathermatic,
+they're a bit of a pain in the ***.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1520-1
+00:06:42.951 --> 00:06:46.121
+<v James Carr>I don't think they're a viable team in on
+that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1520-2
+00:06:46.121 --> 00:06:49.159
+<v James Carr>Weather track is a little bit more
+forgiving.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1520-3
+00:06:49.159 --> 00:06:54.641
+<v James Carr>They're working on putting in it where we
+can export that. But in a perfect world,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1520-4
+00:06:54.641 --> 00:06:58.274
+<v James Carr>if we could find a way to have an
+internal bright view</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1561-0
+00:06:58.394 --> 00:07:01.816
+<v James Carr>system that mirrors Google My Maps and
+does what it does,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1561-1
+00:07:01.816 --> 00:07:06.005
+<v James Carr>I think we've hit a home run.
+I've rolled it out with some of the most</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1561-2
+00:07:06.005 --> 00:07:10.312
+<v James Carr>stubborn people with technology.
+In Vegas market, there's this guy, Leo.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1561-3
+00:07:10.312 --> 00:07:13.971
+<v James Carr>He hates technology,
+but I showed him this and showed him how</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1561-4
+00:07:13.971 --> 00:07:16.154
+<v James Carr>easy it was, and he's just taken off.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1577-0
+00:07:18.754 --> 00:07:25.714
+<v Greg Ehrenberg>So he's actually on his weather track
+clocks. He's creating the GI. No.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1570-0
+00:07:23.834 --> 00:07:24.234
+<v James Carr>No.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1580-0
+00:07:25.514 --> 00:07:27.194
+<v James Carr>No, on Google My Maps.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1592-0
+00:07:27.234 --> 00:07:30.876
+<v Greg Ehrenberg>Oh, Google My Maps. Okay,
+not not our track system. Okay. Yeah,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1592-1
+00:07:30.876 --> 00:07:32.754
+<v Greg Ehrenberg>Google My Maps. It's very simple.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1625-0
+00:07:35.434 --> 00:07:37.734
+<v James Carr>Our clients love it too.
+Whenever I use it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1625-1
+00:07:37.734 --> 00:07:40.504
+<v James Carr>I do a virtual site walk with these large
+proposals.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1625-2
+00:07:40.504 --> 00:07:43.012
+<v James Carr>It wows them because you got pictures in
+there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1614-0
+00:07:42.754 --> 00:07:43.074
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1625-3
+00:07:43.012 --> 00:07:47.194
+<v James Carr>I can create irrigation books where I
+send them the link and it's in real time.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1622-0
+00:07:45.474 --> 00:07:45.634
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1624-0
+00:07:47.314 --> 00:07:47.794
+<v Greg Ehrenberg>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-0
+00:07:52.954 --> 00:07:55.882
+<v James Carr>But on the reports,
+do you think it's possible to create</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-1
+00:07:55.882 --> 00:07:59.888
+<v James Carr>those two levels? I think, you know,
+obviously we want to build this and roll</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-2
+00:07:59.888 --> 00:08:03.124
+<v James Carr>it out and have some success.
+I'm just concerned like with the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-3
+00:08:03.124 --> 00:08:07.131
+<v James Carr>different levels and knowing what I know
+about these techs and their level of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-4
+00:08:07.131 --> 00:08:09.699
+<v James Carr>technology.
+I really think we need the simplified</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1678-5
+00:08:09.699 --> 00:08:11.754
+<v James Carr>system check one and then more in depth.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1669-0
+00:08:09.754 --> 00:08:10.114
+<v Greg Ehrenberg>****.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1673-0
+00:08:12.034 --> 00:08:12.274
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1707-0
+00:08:12.154 --> 00:08:16.731
+<v James Carr>And that mirrors my BrightPath training,
+because for Tech Zero and Tech One,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1707-1
+00:08:16.731 --> 00:08:20.833
+<v James Carr>I'm teaching them simple checks,
+broken pop-ups and stuff like that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1707-2
+00:08:20.833 --> 00:08:23.924
+<v James Carr>Tech Two and above,
+I'm teaching them more in-depth</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1707-3
+00:08:23.924 --> 00:08:27.194
+<v James Carr>assessments and how to identify revenue
+opportunities.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1710-0
+00:08:29.914 --> 00:08:31.154
+<v Greg Ehrenberg>I need to take your training.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1718-0
+00:08:32.954 --> 00:08:35.544
+<v James Carr>Where are you at?
+What part of town or what part of the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1718-1
+00:08:35.544 --> 00:08:35.914
+<v James Carr>country?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1719-0
+00:08:36.074 --> 00:08:36.914
+<v Greg Ehrenberg>I'm in Georgia.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1744-0
+00:08:37.754 --> 00:08:40.607
+<v James Carr>Oh, well,
+hopefully maybe soon I'll be out there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1730-0
+00:08:40.434 --> 00:08:40.514
+<v Greg Ehrenberg>You.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1744-1
+00:08:40.607 --> 00:08:45.000
+<v James Carr>I know I've had some talks once I get New
+Jersey done, then we'll shift out,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1744-2
+00:08:45.000 --> 00:08:45.514
+<v James Carr>but yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1761-0
+00:08:45.954 --> 00:08:50.119
+<v Greg Ehrenberg>Can I do it on Absorb?
+Just sign up for it and go through,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1761-1
+00:08:50.119 --> 00:08:53.930
+<v Greg Ehrenberg>do you have the,
+is there like a class online kind of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1757-0
+00:08:52.234 --> 00:08:52.714
+<v James Carr>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1761-2
+00:08:53.930 --> 00:08:54.354
+<v Greg Ehrenberg>thing?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1796-0
+00:08:55.114 --> 00:08:57.915
+<v James Carr>Coming really soon is Irrigation Tech
+Zero. Right now,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1796-1
+00:08:57.915 --> 00:09:01.532
+<v James Carr>our learning development team is
+finalizing it. There is one in there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1796-2
+00:09:01.532 --> 00:09:05.352
+<v James Carr>There's a module in there on PMI,
+so you could take the basic of the basic</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1796-3
+00:09:05.352 --> 00:09:08.714
+<v James Carr>one there when we launch it.
+There should be a huge announcement.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1793-0
+00:09:07.394 --> 00:09:07.434
+<v Greg Ehrenberg>I.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1840-0
+00:09:13.274 --> 00:09:15.945
+<v James Carr>But I know with this,
+I like to do more hands on,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1840-1
+00:09:15.945 --> 00:09:20.220
+<v James Carr>like with the tech one and the simplified
+version, we cover a lot of the stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1840-2
+00:09:20.220 --> 00:09:23.212
+<v James Carr>I show some pictures, but tech 2,
+I do it in the field.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1840-3
+00:09:23.212 --> 00:09:27.006
+<v James Carr>I take them out to the field and just
+show them how easy it is to spot</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1840-4
+00:09:27.006 --> 00:09:27.594
+<v James Carr>everything.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1839-0
+00:09:28.314 --> 00:09:28.674
+<v Greg Ehrenberg>Wright.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1849-0
+00:09:40.794 --> 00:09:43.844
+<v James Carr>Now,
+we're potentially rolling it out in July,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1849-1
+00:09:43.844 --> 00:09:44.234
+<v James Carr>right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1851-0
+00:09:46.034 --> 00:09:46.834
+<v Greg Ehrenberg>Yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1859-0
+00:09:47.514 --> 00:09:50.954
+<v James Carr>Are and are we thinking piloting pocket
+areas, obviously?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1864-0
+00:09:50.714 --> 00:09:54.434
+<v Greg Ehrenberg>Yeah, piloting, but but at branch level.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1862-0
+00:09:52.314 --> 00:09:52.834
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1865-0
+00:09:55.514 --> 00:09:56.114
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1878-0
+00:09:57.114 --> 00:10:01.151
+<v James Carr>Well, whenever it's about to launch,
+if you touch base with me,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1878-1
+00:10:01.151 --> 00:10:03.674
+<v James Carr>I can kind of help formulate a training.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1896-0
+00:10:04.874 --> 00:10:08.852
+<v James Carr>and work closer with them.
+And I think that's gonna be the key,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1896-1
+00:10:08.852 --> 00:10:13.514
+<v James Carr>developing it and then getting the
+training going and getting everybody up</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1896-2
+00:10:13.514 --> 00:10:14.074
+<v James Carr>to speed.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1920-0
+00:10:16.154 --> 00:10:19.255
+<v Greg Ehrenberg>James,
+we got you hooked in for this whole</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1920-1
+00:10:19.255 --> 00:10:24.808
+<v Greg Ehrenberg>process. So, you're going to hear,
+you're going to hear about it before that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1912-0
+00:10:19.994 --> 00:10:20.794
+<v James Carr>That's good.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1920-2
+00:10:24.808 --> 00:10:25.674
+<v Greg Ehrenberg>happens. So,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1924-0
+00:10:27.034 --> 00:10:29.354
+<v Greg Ehrenberg>We've we've scaffolded some.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1964-0
+00:10:32.954 --> 00:10:36.586
+<v Greg Ehrenberg>We're using a part of Salesforce with FSM
+called assets,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1964-1
+00:10:36.586 --> 00:10:40.218
+<v Greg Ehrenberg>and we have a hierarchy of assets
+starting at the clock,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1937-0
+00:10:37.634 --> 00:10:38.314
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1964-2
+00:10:40.218 --> 00:10:44.488
+<v Greg Ehrenberg>a sibling of a backflow,
+and then we have under the clock you have</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1964-3
+00:10:44.488 --> 00:10:47.101
+<v Greg Ehrenberg>zones,
+and then under zones you have the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1964-4
+00:10:47.101 --> 00:10:51.434
+<v Greg Ehrenberg>different components that are involved in
+that zone, so valve or...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/1968-0
+00:10:51.914 --> 00:10:55.594
+<v Greg Ehrenberg>Had or whatever now.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2014-0
+00:10:56.794 --> 00:11:00.919
+<v Greg Ehrenberg>In order to fill out this form,
+we don't have to have an asset</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2014-1
+00:11:00.919 --> 00:11:06.289
+<v Greg Ehrenberg>necessarily all the way filled out. Now,
+I think that's going to be preferable in</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2014-2
+00:11:06.289 --> 00:11:10.873
+<v Greg Ehrenberg>the future because then you can add to it,
+you can take away from it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2014-3
+00:11:10.873 --> 00:11:13.754
+<v Greg Ehrenberg>you can see the past history of each
+asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2042-0
+00:11:15.994 --> 00:11:21.007
+<v Greg Ehrenberg>With this also is exposing it through
+native GIS,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2042-1
+00:11:21.007 --> 00:11:27.624
+<v Greg Ehrenberg>which is something that has been in
+Salesforce for two years now.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2042-2
+00:11:27.624 --> 00:11:31.434
+<v Greg Ehrenberg>And they partner with Esri and ArcGIS.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2075-0
+00:11:33.354 --> 00:11:39.944
+<v Greg Ehrenberg>So even on the mobile app in the field,
+you could pin where a valve is and it'll</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2075-1
+00:11:39.944 --> 00:11:46.778
+<v Greg Ehrenberg>collect the GIS information and then you
+can fill in information for it. Next week,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2089-0
+00:11:45.994 --> 00:11:49.919
+<v James Carr>With that, with that,
+can I ask one question?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2075-2
+00:11:46.778 --> 00:11:47.754
+<v Greg Ehrenberg>what's that?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2089-1
+00:11:49.919 --> 00:11:54.954
+<v James Carr>Will they have the ability to put a pin
+at a at a desktop?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2079-0
+00:11:49.994 --> 00:11:50.394
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2090-0
+00:11:55.514 --> 00:11:56.154
+<v Greg Ehrenberg>Yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2136-0
+00:11:56.794 --> 00:11:59.779
+<v James Carr>Okay, yeah,
+because that's one of the challenges I</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2097-0
+00:11:58.114 --> 00:11:58.394
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2136-1
+00:11:59.779 --> 00:12:04.109
+<v James Carr>found is our cell phones are fantastic,
+but when they get into the field,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2136-2
+00:12:04.109 --> 00:12:07.972
+<v James Carr>there's a lot of important sites where
+their signal is just junk.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2115-0
+00:12:07.314 --> 00:12:07.554
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2136-3
+00:12:07.972 --> 00:12:12.771
+<v James Carr>And so what I've been having them do for
+that is put it on a map and when you get</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2120-0
+00:12:09.114 --> 00:12:09.314
+<v Greg Ehrenberg>By.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2136-4
+00:12:12.771 --> 00:12:14.234
+<v James Carr>to the office, put a pin.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2139-0
+00:12:14.834 --> 00:12:19.194
+<v Greg Ehrenberg>So they can pin it in the field on a map
+offline.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2141-0
+00:12:20.234 --> 00:12:20.674
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2166-0
+00:12:21.114 --> 00:12:24.774
+<v Greg Ehrenberg>Okay, because it's not,
+you're not using a cell signal,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2166-1
+00:12:24.774 --> 00:12:29.741
+<v Greg Ehrenberg>you're using a satellite signal.
+And then if you don't have the SAT signal,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2166-2
+00:12:29.741 --> 00:12:31.114
+<v Greg Ehrenberg>you can still pin it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2167-0
+00:12:32.634 --> 00:12:33.114
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2191-0
+00:12:33.194 --> 00:12:37.964
+<v Greg Ehrenberg>and fill in the GIS information or leave
+it missing.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2191-1
+00:12:37.964 --> 00:12:45.164
+<v Greg Ehrenberg>You can get close to where it is and it
+can just be a pen without a geo mark to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2191-2
+00:12:45.164 --> 00:12:45.434
+<v Greg Ehrenberg>it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2198-0
+00:12:46.314 --> 00:12:50.314
+<v James Carr>So this sounds kind of like a bit of an
+in-depth.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2192-0
+00:12:46.794 --> 00:12:47.034
+<v Greg Ehrenberg>Ohh.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2205-0
+00:12:51.114 --> 00:12:54.394
+<v James Carr>Kind of site assessment irrigation book
+type tool.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2209-0
+00:12:55.554 --> 00:12:56.754
+<v James Carr>Which, in a...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2230-0
+00:12:55.754 --> 00:13:00.158
+<v Greg Ehrenberg>Well,
+the idea is you can switch off of that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2230-1
+00:13:00.158 --> 00:13:05.834
+<v Greg Ehrenberg>and just go through a system and have
+call outs on zones.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2242-0
+00:13:06.874 --> 00:13:11.883
+<v James Carr>Okay, so it sounds like it's already dual.
+You can go in-depth, assess,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2233-0
+00:13:06.954 --> 00:13:07.874
+<v Greg Ehrenberg>So, more of a...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2242-1
+00:13:11.883 --> 00:13:13.274
+<v James Carr>and then simplified.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2278-0
+00:13:14.874 --> 00:13:19.708
+<v Greg Ehrenberg>That's where I've been headed with all
+the research that I've been doing.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2278-1
+00:13:19.708 --> 00:13:25.131
+<v Greg Ehrenberg>And so it's good to hear your feedback so
+far. That's why I've been kind of quiet.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2260-0
+00:13:20.554 --> 00:13:21.594
+<v James Carr>Okay, perfect.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2278-2
+00:13:25.131 --> 00:13:30.554
+<v Greg Ehrenberg>Because I think you're going to be very
+excited about where we're going with this.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2317-0
+00:13:32.274 --> 00:13:38.122
+<v Greg Ehrenberg>And Jay hasn't even seen it yet.
+All the work that I've we've put in so</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2317-1
+00:13:38.122 --> 00:13:43.077
+<v Greg Ehrenberg>far. But next week,
+you're on a call that we invited you to.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2317-2
+00:13:43.077 --> 00:13:49.169
+<v Greg Ehrenberg>I'm going to be I'm going to be
+introducing this on that call. The I mean,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2300-0
+00:13:43.114 --> 00:13:43.514
+<v James Carr>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2317-3
+00:13:49.169 --> 00:13:53.474
+<v Greg Ehrenberg>we're going to we're going to start with
+the basics.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2329-0
+00:13:53.834 --> 00:14:01.034
+<v Greg Ehrenberg>And that's a dictionary and a shared
+understanding of the different components.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2330-0
+00:14:01.834 --> 00:14:02.234
+<v James Carr>OK.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2370-0
+00:14:02.074 --> 00:14:07.034
+<v Greg Ehrenberg>making sure that we're covering every
+component that we need to.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2370-1
+00:14:07.034 --> 00:14:11.307
+<v Greg Ehrenberg>And this is not,
+we're not talking about a form like we</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2370-2
+00:14:11.307 --> 00:14:16.420
+<v Greg Ehrenberg>tried the first time where you're filling
+out all this stuff. Now,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2370-3
+00:14:16.420 --> 00:14:22.754
+<v Greg Ehrenberg>there's a place for that on systems that
+need to be documented, need to be mapped.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2404-0
+00:14:23.274 --> 00:14:28.531
+<v Greg Ehrenberg>that you're continually going back to
+that are heavily managed, where you need,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2404-1
+00:14:28.531 --> 00:14:31.948
+<v Greg Ehrenberg>you know,
+15 clocks mapped on a site and know where</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2404-2
+00:14:31.948 --> 00:14:36.811
+<v Greg Ehrenberg>all their zones are, et cetera.
+And you're working from a beginning of an</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2404-3
+00:14:36.811 --> 00:14:41.674
+<v Greg Ehrenberg>as-built and you develop that into a
+digital map. That's that assessment.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-0
+00:14:42.154 --> 00:14:45.227
+<v Greg Ehrenberg>category,
+but it needs to be as simple as just</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-1
+00:14:45.227 --> 00:14:50.196
+<v Greg Ehrenberg>going to a property like Michael Trinidad
+with Victoria Gardens in Florida.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-2
+00:14:50.196 --> 00:14:54.250
+<v Greg Ehrenberg>They just go there.
+They might have a reference map that they</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-3
+00:14:54.250 --> 00:14:56.931
+<v Greg Ehrenberg>do,
+but they have to they have to assess</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-4
+00:14:56.931 --> 00:15:01.051
+<v Greg Ehrenberg>every single residence in this community
+on a quarterly basis.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2441-0
+00:15:00.314 --> 00:15:00.714
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2452-5
+00:15:01.051 --> 00:15:03.274
+<v Greg Ehrenberg>They have 1100 homes. They have to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2492-0
+00:15:04.074 --> 00:15:08.830
+<v Greg Ehrenberg>generate a report on.
+And each home might only have one zone.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2492-1
+00:15:08.830 --> 00:15:13.662
+<v Greg Ehrenberg>And the clock isn't on the home.
+It's a master clock on a pod.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2492-2
+00:15:13.662 --> 00:15:18.265
+<v Greg Ehrenberg>And so they'll know where the zone is and
+what clock it is.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2492-3
+00:15:18.265 --> 00:15:22.484
+<v Greg Ehrenberg>So all they have to do is collect, okay,
+it's clock A,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2534-0
+00:15:22.634 --> 00:15:27.510
+<v Greg Ehrenberg>and it's zone 15 for this house.
+And we did these adjustments. There's no,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2534-1
+00:15:27.510 --> 00:15:32.126
+<v Greg Ehrenberg>there's no breaks, there's no problems.
+Boom, move on to the next one.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2534-2
+00:15:32.126 --> 00:15:35.897
+<v Greg Ehrenberg>They bring it up and there might be a
+break or something.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2534-3
+00:15:35.897 --> 00:15:40.709
+<v Greg Ehrenberg>They do a call out on that break,
+which becomes an item to be on a repair</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2534-4
+00:15:40.709 --> 00:15:41.034
+<v Greg Ehrenberg>list.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2544-0
+00:15:41.434 --> 00:15:47.114
+<v Greg Ehrenberg>Then they move on to the next one,
+so the thinking is, yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2543-0
+00:15:43.834 --> 00:15:46.554
+<v James Carr>I love that. I could...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2563-0
+00:15:48.394 --> 00:15:53.470
+<v James Carr>I love that I could share a 500 page book
+where I did that with a site that has 400</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2563-1
+00:15:53.470 --> 00:15:56.794
+<v James Carr>homes and that was all manual.
+So I love hearing that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2575-0
+00:15:59.434 --> 00:16:03.245
+<v Greg Ehrenberg>So, I mean, it sounds,
+it sounds like we're in the right,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2575-1
+00:16:03.245 --> 00:16:04.954
+<v Greg Ehrenberg>going the right direction.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2576-0
+00:16:08.634 --> 00:16:08.754
+<v Greg Ehrenberg>Matt.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-0
+00:16:10.234 --> 00:16:14.580
+<v James Carr>Yeah, I think we're aligned.
+The other two questions I have is how are</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-1
+00:16:14.580 --> 00:16:17.764
+<v James Carr>we looking?
+Because originally one of the talks was</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-2
+00:16:17.764 --> 00:16:21.498
+<v James Carr>with these contracts,
+they have contract expected checks and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-3
+00:16:21.498 --> 00:16:26.151
+<v James Carr>they would be put into FSM as tickets,
+more kind of like accountability and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-4
+00:16:26.151 --> 00:16:30.130
+<v James Carr>nudges. Is that still a,
+I think the biggest lift is going to be</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2617-0
+00:16:27.034 --> 00:16:27.514
+<v Greg Ehrenberg>Mmh.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2632-5
+00:16:30.130 --> 00:16:33.314
+<v James Carr>how do we get existing contracts updated
+with that?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2671-0
+00:16:34.634 --> 00:16:38.422
+<v Greg Ehrenberg>Yes.
+So that is the entry point for this is a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2671-1
+00:16:38.422 --> 00:16:44.516
+<v Greg Ehrenberg>challenge because if we have a service
+appointment that's generated for a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2671-2
+00:16:44.516 --> 00:16:49.704
+<v Greg Ehrenberg>service contract and field service
+management, that comes out,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2671-3
+00:16:49.704 --> 00:16:54.234
+<v Greg Ehrenberg>it's assigned to an irrigation tech,
+they bring it up,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2705-0
+00:16:55.434 --> 00:17:00.243
+<v Greg Ehrenberg>on the mobile app and they have the
+appointment information,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2705-1
+00:17:00.243 --> 00:17:05.524
+<v Greg Ehrenberg>but right now all it's showing is
+irrigation startup or irrigation</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2705-2
+00:17:05.524 --> 00:17:09.624
+<v Greg Ehrenberg>evaluation.
+There's no other asset for them to look</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2705-3
+00:17:09.624 --> 00:17:13.881
+<v Greg Ehrenberg>at right now.
+We do have a way of attaching documents</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2705-4
+00:17:13.881 --> 00:17:14.354
+<v Greg Ehrenberg>at the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2749-0
+00:17:14.874 --> 00:17:19.972
+<v Greg Ehrenberg>property account level that go to every
+single service appointment that's in the,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2749-1
+00:17:19.972 --> 00:17:24.199
+<v Greg Ehrenberg>that gets generated from the service
+contract. So right now, today,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2749-2
+00:17:24.199 --> 00:17:29.048
+<v Greg Ehrenberg>we could add a map to that document and
+it would show up on the mobile app so</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2749-3
+00:17:29.048 --> 00:17:33.835
+<v Greg Ehrenberg>that at least they would have a reference
+if there's a PDF map or, you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2749-4
+00:17:33.835 --> 00:17:34.954
+<v Greg Ehrenberg>an output from my.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2762-0
+00:17:35.194 --> 00:17:38.819
+<v Greg Ehrenberg>my Google Maps or something like that.
+And even a link,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2762-1
+00:17:38.819 --> 00:17:42.314
+<v Greg Ehrenberg>you could have a link to my Google's map
+potentially.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2765-0
+00:17:43.154 --> 00:17:44.234
+<v James Carr>Perfect, that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2815-0
+00:17:43.434 --> 00:17:47.722
+<v Greg Ehrenberg>That exists today.
+The idea of this is when it is an</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2771-0
+00:17:45.594 --> 00:17:45.714
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2815-1
+00:17:47.722 --> 00:17:53.225
+<v Greg Ehrenberg>irrigation type, work type,
+that it also brings up the asset of the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2815-2
+00:17:53.225 --> 00:17:57.594
+<v Greg Ehrenberg>property that has an irrigation system
+related to it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2815-3
+00:17:57.594 --> 00:18:03.986
+<v Greg Ehrenberg>Getting those assets set up for each
+property account is the big lift for this</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2815-4
+00:18:03.986 --> 00:18:04.634
+<v Greg Ehrenberg>project.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2856-0
+00:18:05.274 --> 00:18:12.422
+<v Greg Ehrenberg>So there's got to be a simple entry point
+to where that's not required in order to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2811-0
+00:18:05.354 --> 00:18:05.914
+<v James Carr>Oh yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2856-1
+00:18:12.422 --> 00:18:18.968
+<v Greg Ehrenberg>start collecting data on a system.
+So the idea I have so far is if there is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2856-2
+00:18:18.968 --> 00:18:23.533
+<v Greg Ehrenberg>no asset yet,
+you can actually start creating one in</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2856-3
+00:18:23.533 --> 00:18:24.394
+<v Greg Ehrenberg>the field.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2857-0
+00:18:25.594 --> 00:18:25.914
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2896-0
+00:18:27.194 --> 00:18:32.369
+<v Greg Ehrenberg>So they could knock out to, you know,
+instead of writing it out on or drawing</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2859-0
+00:18:27.834 --> 00:18:28.154
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2896-1
+00:18:32.369 --> 00:18:37.744
+<v Greg Ehrenberg>it on a sat map, a printed out, you know,
+piece of paper and they're marking the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2896-2
+00:18:37.744 --> 00:18:42.654
+<v Greg Ehrenberg>zones on there, where the clock is,
+where the backflow is, approximately.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2896-3
+00:18:42.654 --> 00:18:47.034
+<v Greg Ehrenberg>They could be doing that on,
+I'm thinking preferably on a tablet.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2899-0
+00:18:47.594 --> 00:18:48.794
+<v Greg Ehrenberg>But it could be on a phone.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2901-0
+00:18:50.394 --> 00:18:50.874
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-0
+00:18:50.634 --> 00:18:55.603
+<v James Carr>Yeah, tablets are a whole other thing. Oh,
+I love that because we can get them</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-1
+00:18:55.603 --> 00:19:00.698
+<v James Carr>onboarded and then I can work branch by
+branch and get them all up to speed in a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-2
+00:19:00.698 --> 00:19:05.667
+<v James Carr>phased plan, which I think is great.
+The tablet thing I have a little bit of a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-3
+00:19:05.667 --> 00:19:08.750
+<v James Carr>concern with,
+just because when we came over and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-4
+00:19:08.750 --> 00:19:12.272
+<v James Carr>transitioned,
+I know that all the techs had tablets and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2962-5
+00:19:12.272 --> 00:19:14.474
+<v James Carr>what they found was they had tools.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2969-0
+00:19:14.914 --> 00:19:18.714
+<v James Carr>But they were all sitting underneath the
+seat, collecting dust.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/2967-0
+00:19:18.554 --> 00:19:18.874
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3026-0
+00:19:19.674 --> 00:19:22.751
+<v James Carr>And so what the,
+I've had branches all over reach out</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3026-1
+00:19:22.751 --> 00:19:27.310
+<v James Carr>about tablets and I've kind of done an
+evaluation to see if this is just a cool</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3026-2
+00:19:27.310 --> 00:19:31.640
+<v James Carr>thing to have or if they're actually
+going to utilize it and then selecting</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3026-3
+00:19:31.640 --> 00:19:35.344
+<v James Carr>key people at the branch to utilize the
+tablet versus the phone,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3026-4
+00:19:35.344 --> 00:19:40.074
+<v James Carr>just to try to protect our investment and
+the asset on that. The other question I,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3072-0
+00:19:40.554 --> 00:19:43.560
+<v James Carr>kind of head on that is once this is up
+and rolling,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3072-1
+00:19:43.560 --> 00:19:47.530
+<v James Carr>I assume there's like with QSA,
+you get QSA reports, who's completed,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3072-2
+00:19:47.530 --> 00:19:50.593
+<v James Carr>who hasn't.
+Would I be able to have access to kind of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3072-3
+00:19:50.593 --> 00:19:54.847
+<v James Carr>where they're at on the performing on the
+checks so that I can help be the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3049-0
+00:19:51.994 --> 00:19:52.074
+<v Greg Ehrenberg>He.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3072-4
+00:19:54.847 --> 00:19:58.874
+<v James Carr>accountability and the driver of getting
+this done? Again, this is our</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3076-0
+00:19:59.194 --> 00:20:02.154
+<v James Carr>Our revenue here, and so...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3097-0
+00:20:11.354 --> 00:20:11.434
+<v James Carr>The.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3141-0
+00:20:11.474 --> 00:20:17.373
+<v Greg Ehrenberg>of accountability could happen. So if,
+so here's number one that needs to happen.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3141-1
+00:20:17.373 --> 00:20:21.330
+<v Greg Ehrenberg>The branch needs to be using field
+service management.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3118-0
+00:20:20.954 --> 00:20:21.274
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3141-2
+00:20:21.330 --> 00:20:27.013
+<v Greg Ehrenberg>They need to be assigning the service
+appointments to the techs, to the crews.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3141-3
+00:20:27.013 --> 00:20:31.474
+<v Greg Ehrenberg>When the crew completes that work,
+you know who completed it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-0
+00:20:32.074 --> 00:20:34.650
+<v Greg Ehrenberg>by default.
+There's no extra field to fill out.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-1
+00:20:34.650 --> 00:20:38.515
+<v Greg Ehrenberg>There's, I mean, it was assigned to them.
+They're the ones that did it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-2
+00:20:38.515 --> 00:20:42.379
+<v Greg Ehrenberg>They're the ones that completed it.
+You have the whole hierarchy there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-3
+00:20:42.379 --> 00:20:46.083
+<v Greg Ehrenberg>You know what property it was on.
+You know if it came from a service</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-4
+00:20:46.083 --> 00:20:48.444
+<v Greg Ehrenberg>contract or from an extra work sales
+order.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-5
+00:20:48.444 --> 00:20:52.577
+<v Greg Ehrenberg>You know if it was an emergency work
+order that doesn't have anything linked</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3191-6
+00:20:52.577 --> 00:20:53.114
+<v Greg Ehrenberg>to it yet.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3195-0
+00:20:53.994 --> 00:20:56.154
+<v Greg Ehrenberg>So all three of those things are handled.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3224-0
+00:20:57.674 --> 00:21:01.198
+<v Greg Ehrenberg>And you know who did it.
+So you can determine the volume of work</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3203-0
+00:20:59.834 --> 00:21:00.554
+<v James Carr>That's.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3224-1
+00:21:01.198 --> 00:21:05.590
+<v Greg Ehrenberg>that a tech is doing based on the service
+appointments that are assigned to them</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3224-2
+00:21:05.590 --> 00:21:07.434
+<v Greg Ehrenberg>and the number that they complete.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3252-0
+00:21:08.314 --> 00:21:12.651
+<v James Carr>You're speaking my language.
+I just had a conversation with Tony out</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3252-1
+00:21:12.651 --> 00:21:15.542
+<v James Carr>here,
+the SVP or whatever his position is now</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3252-2
+00:21:15.542 --> 00:21:18.874
+<v James Carr>about how we've been horrible about that.
+The one...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3300-0
+00:21:21.034 --> 00:21:24.913
+<v James Carr>The one amazing,
+maybe fantasy idea that we had talked</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3300-1
+00:21:24.913 --> 00:21:30.132
+<v James Carr>about was this communicating with extra
+work. And when they submitted it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3300-2
+00:21:30.132 --> 00:21:35.774
+<v James Carr>it would generate an SO or a proposal
+that the manager could adjust and assess.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3300-3
+00:21:35.774 --> 00:21:39.230
+<v James Carr>Is that,
+or did we come up with a game plan or a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3300-4
+00:21:39.230 --> 00:21:42.474
+<v James Carr>path there? Because when I last spoke,
+it was</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3303-0
+00:21:42.594 --> 00:21:43.194
+<v James Carr>Will see.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3347-0
+00:21:43.714 --> 00:21:49.421
+<v Greg Ehrenberg>This first version is going to generate a
+report that goes to, by default,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3347-1
+00:21:49.421 --> 00:21:52.922
+<v Greg Ehrenberg>it goes to the account owner of the
+property,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3347-2
+00:21:52.922 --> 00:21:58.782
+<v Greg Ehrenberg>but we can adjust that based on our
+discussions going forward if there is an</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3347-3
+00:21:58.782 --> 00:22:04.794
+<v Greg Ehrenberg>irrigation manager at the branch that
+handles all of the extra work proposals.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3384-0
+00:22:05.274 --> 00:22:10.703
+<v Greg Ehrenberg>But there's still going to be a step
+where it's generating and giving you</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3384-1
+00:22:10.703 --> 00:22:14.591
+<v Greg Ehrenberg>everything that needs to be called out
+and repaired.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3384-2
+00:22:14.591 --> 00:22:20.680
+<v Greg Ehrenberg>And then they have to go into extra work
+and complete the and create the SO to get</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3384-3
+00:22:20.680 --> 00:22:22.074
+<v Greg Ehrenberg>approved. It's not.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3382-0
+00:22:21.194 --> 00:22:23.350
+<v James Carr>Gotcha,
+so they didn't figure out a way to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3382-1
+00:22:23.350 --> 00:22:24.554
+<v James Carr>integrate automatically?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3417-0
+00:22:25.034 --> 00:22:28.612
+<v Greg Ehrenberg>Nope,
+we have the integration of the extra work</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3417-1
+00:22:28.612 --> 00:22:34.353
+<v Greg Ehrenberg>spitting out a service contract of when
+the repair needs to be done and it's</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3417-2
+00:22:34.353 --> 00:22:39.274
+<v Greg Ehrenberg>approved. That part is there.
+But talking back to extra work, no.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3438-0
+00:22:40.394 --> 00:22:44.506
+<v James Carr>Hey, if we could figure that out,
+we would knock out the majority of our</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3438-1
+00:22:44.506 --> 00:22:48.617
+<v James Carr>problems and I think and really be
+efficient. And probably to be honest,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3438-2
+00:22:48.617 --> 00:22:51.434
+<v James Carr>probably too efficient.
+We'd probably get buried.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3450-0
+00:22:54.074 --> 00:22:57.190
+<v Greg Ehrenberg>I mean,
+we heard that from Alex Chavez yesterday.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3450-1
+00:22:57.190 --> 00:22:59.994
+<v Greg Ehrenberg>You know,
+pretty much he's the paper pusher.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3451-0
+00:23:01.354 --> 00:23:01.834
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3493-0
+00:23:02.554 --> 00:23:08.808
+<v Greg Ehrenberg>Although a lot of the paper he pushes is
+trying is is wrangling and organizing the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3493-1
+00:23:08.808 --> 00:23:12.651
+<v Greg Ehrenberg>output of the inspections and getting
+them set up.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3493-2
+00:23:12.651 --> 00:23:18.604
+<v Greg Ehrenberg>So we can take half of that work off of
+off of the folks who are handling this</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3493-3
+00:23:18.604 --> 00:23:20.714
+<v Greg Ehrenberg>stuff. It's a good place to.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3492-0
+00:23:19.754 --> 00:23:21.034
+<v James Carr>That works, 'cause what?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3496-0
+00:23:20.874 --> 00:23:21.834
+<v Greg Ehrenberg>Or, maybe.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3547-0
+00:23:22.554 --> 00:23:27.635
+<v James Carr>That works because one of the things I
+had conversations with Jeff Robinson is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3547-1
+00:23:27.635 --> 00:23:32.717
+<v James Carr>unifying the HR job codes and job titles.
+And so obviously irrigation managers</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3547-2
+00:23:32.717 --> 00:23:35.740
+<v James Carr>would be ideal,
+but salary wise or skill wise,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3547-3
+00:23:35.740 --> 00:23:39.986
+<v James Carr>probably not going to happen.
+But looking at utilizing the senior</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3547-4
+00:23:39.986 --> 00:23:41.594
+<v James Carr>irrigation tech position,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3565-0
+00:23:42.074 --> 00:23:45.565
+<v James Carr>That's a great one.
+I'm working on that BrightPath training</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3565-1
+00:23:45.565 --> 00:23:50.336
+<v James Carr>and that could be included in there and
+kind of tying into this and managing that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3565-2
+00:23:50.336 --> 00:23:52.314
+<v James Carr>type portion, if that makes sense.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3583-0
+00:23:54.154 --> 00:23:59.600
+<v Greg Ehrenberg>So let me ask you some of those higher
+authority questions.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3583-1
+00:23:59.600 --> 00:24:03.594
+<v Greg Ehrenberg>So if we had a library of terms
+nationwide,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3596-0
+00:24:04.874 --> 00:24:10.968
+<v Greg Ehrenberg>Who would be responsible for that?
+Who has the authority to change that?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3596-1
+00:24:10.968 --> 00:24:12.554
+<v Greg Ehrenberg>Does it need to be?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3610-0
+00:24:14.074 --> 00:24:19.482
+<v Greg Ehrenberg>regionalized or can we actually have a
+standard irrigation terminology across</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3610-1
+00:24:19.482 --> 00:24:20.314
+<v Greg Ehrenberg>the country?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3660-0
+00:24:21.114 --> 00:24:26.154
+<v James Carr>So I would try to take ownership of it.
+I've had conversations with Dozier and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3660-1
+00:24:26.154 --> 00:24:30.173
+<v James Carr>Robinson about expanding and supporting
+the entire. So I mean,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3660-2
+00:24:30.173 --> 00:24:34.192
+<v James Carr>I'm just waiting on the official thumbs
+up. I would take that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3660-3
+00:24:34.192 --> 00:24:38.912
+<v James Carr>Here's when I came into this role,
+I always heard irrigation is different</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3660-4
+00:24:38.912 --> 00:24:40.954
+<v James Carr>and everybody hung their hat on.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3706-0
+00:24:41.274 --> 00:24:44.212
+<v James Carr>all this region is different than that
+region.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3706-1
+00:24:44.212 --> 00:24:49.214
+<v James Carr>And the method they apply irrigation in
+the piping material and the approach is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3706-2
+00:24:49.214 --> 00:24:54.154
+<v James Carr>different, but the principles are not.
+And so when we talk about a dictionary,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3706-3
+00:24:54.154 --> 00:24:58.530
+<v James Carr>the dictionary and that type of thing are
+the same everywhere, right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3706-4
+00:24:58.530 --> 00:25:01.594
+<v James Carr>Some may use winterization, some may not.
+And so</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3693-0
+00:24:58.714 --> 00:24:59.034
+<v Greg Ehrenberg>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3752-0
+00:25:01.834 --> 00:25:07.228
+<v James Carr>I feel like sometimes we get lost in the
+forest to the trees with this difference</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3752-1
+00:25:07.228 --> 00:25:12.162
+<v James Carr>part and having gone from Hawaii to
+Seattle to Denver to Texas to the East</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3752-2
+00:25:12.162 --> 00:25:15.122
+<v James Carr>Coast,
+there's unique differences on the way</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3752-3
+00:25:15.122 --> 00:25:19.990
+<v James Carr>they approach it at the branch,
+but the terms and principles are the same</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3752-4
+00:25:19.990 --> 00:25:20.714
+<v James Carr>everywhere.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3776-0
+00:25:20.954 --> 00:25:26.323
+<v James Carr>And if we stop making every region unique
+and start creating a foundation of unity,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3776-1
+00:25:26.323 --> 00:25:29.902
+<v James Carr>we can add their individual unique houses
+on top of it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3776-2
+00:25:29.902 --> 00:25:32.714
+<v James Carr>and it's part of the One Bright View
+model.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3823-0
+00:25:37.594 --> 00:25:41.932
+<v James Carr>So to answer your question, yeah,
+we can absolutely with the terms and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3823-1
+00:25:41.932 --> 00:25:46.087
+<v James Carr>stuff like that, we can unify that.
+And then, you know, next steps,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3823-2
+00:25:46.087 --> 00:25:49.447
+<v James Carr>working with each market on their
+specific approaches,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3823-3
+00:25:49.447 --> 00:25:54.274
+<v James Carr>which is kind of what I've been trying to
+build the system is getting that one</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3809-0
+00:25:51.274 --> 00:25:51.674
+<v Greg Ehrenberg>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3823-4
+00:25:54.274 --> 00:25:56.474
+<v James Carr>BrightView foundation and then unity</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3848-0
+00:25:56.794 --> 00:26:02.825
+<v James Carr>amongst their own. Because in my vision,
+every market should have a go-to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3848-1
+00:26:02.825 --> 00:26:08.856
+<v James Carr>irrigation guy that's kind of driving the
+culture and the market specific</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3848-2
+00:26:08.856 --> 00:26:09.834
+<v James Carr>information.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3853-0
+00:26:10.474 --> 00:26:14.714
+<v Greg Ehrenberg>Okay. What kind of things do you adapt?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3895-0
+00:26:16.234 --> 00:26:20.382
+<v James Carr>Well, I mean,
+the adapting is we look at California.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3895-1
+00:26:20.382 --> 00:26:24.686
+<v James Carr>California has a lot of spray heads for
+planting beds,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3895-2
+00:26:24.686 --> 00:26:30.399
+<v James Carr>or they have a lot of netafin.
+We look at Denver and the Rocky Mountain,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3895-3
+00:26:30.399 --> 00:26:34.234
+<v James Carr>they do a lot of winterization,
+and they're only</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3938-0
+00:26:34.474 --> 00:26:38.287
+<v James Carr>going during seasonal.
+And so the only thing that we really have</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3938-1
+00:26:38.287 --> 00:26:42.276
+<v James Carr>to adapt is the approach.
+And then we look back east where the soil</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3938-2
+00:26:42.276 --> 00:26:44.858
+<v James Carr>is soft.
+They may be doing vibra plowing or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3938-3
+00:26:44.858 --> 00:26:47.850
+<v James Carr>sometimes they don't even need irrigation
+as much.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3938-4
+00:26:47.850 --> 00:26:52.074
+<v James Carr>And so it's just the piping material and
+the approach that is adjusted.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3942-0
+00:26:52.394 --> 00:26:55.434
+<v Greg Ehrenberg>Okay, so the local process.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3941-0
+00:26:53.434 --> 00:26:54.154
+<v James Carr>But at the.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3954-0
+00:26:56.274 --> 00:26:59.505
+<v James Carr>The local process at the end of the day,
+it's still just water moving through</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3954-1
+00:26:59.505 --> 00:26:59.754
+<v James Carr>pipes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3953-0
+00:26:59.914 --> 00:27:00.314
+<v Greg Ehrenberg>OK.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3955-0
+00:27:03.034 --> 00:27:03.594
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3957-0
+00:27:06.044 --> 00:27:06.684
+<v Greg Ehrenberg>What about...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3974-0
+00:27:10.154 --> 00:27:16.314
+<v Greg Ehrenberg>So Alex brought this up yesterday around
+regulations for reclaimed water and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3974-1
+00:27:16.314 --> 00:27:17.674
+<v Greg Ehrenberg>things like that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3987-0
+00:27:19.194 --> 00:27:27.994
+<v Greg Ehrenberg>Are you are you training for those kind
+of regional or nationwide regulations?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-0
+00:27:29.514 --> 00:27:33.433
+<v James Carr>So I'm training the nationwide type stuff.
+I'm training too.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/3990-0
+00:27:29.754 --> 00:27:29.914
+<v Greg Ehrenberg>Yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-1
+00:27:33.433 --> 00:27:37.801
+<v James Carr>But then what I'm working with local
+teams is building local stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-2
+00:27:37.801 --> 00:27:42.234
+<v James Carr>Like we look at New Jersey.
+New Jersey has irrigation licensing that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-3
+00:27:42.234 --> 00:27:45.382
+<v James Carr>you have to do.
+So I'm working on building that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4021-0
+00:27:44.634 --> 00:27:44.794
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-4
+00:27:45.382 --> 00:27:48.722
+<v James Carr>It'll be like New Jersey specific.
+Then with Texas,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4046-5
+00:27:48.722 --> 00:27:50.714
+<v James Carr>they have irrigation licensing.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4088-0
+00:27:51.114 --> 00:27:55.462
+<v James Carr>And so to answer your question,
+we're addressing all that and trying to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4088-1
+00:27:55.462 --> 00:27:59.932
+<v James Carr>figure out how to make all that specific
+in the training and also utilize</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4088-2
+00:27:59.932 --> 00:28:04.280
+<v James Carr>BrightView University for that.
+So like the teams in Texas could take a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4088-3
+00:28:04.280 --> 00:28:08.508
+<v James Carr>irrigator license prep thing,
+but they still have to go to a place to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4088-4
+00:28:08.508 --> 00:28:09.354
+<v James Carr>take the test.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4084-0
+00:28:09.794 --> 00:28:10.314
+<v Greg Ehrenberg>OK.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4135-0
+00:28:11.194 --> 00:28:15.289
+<v James Carr>And with the reclaimed water,
+there's a general base approach to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4135-1
+00:28:15.289 --> 00:28:18.879
+<v James Carr>reclaimed water,
+but then you also have to deal with the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4135-2
+00:28:18.879 --> 00:28:23.037
+<v James Carr>governing authorities, like in California,
+in the San Diego area,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4135-3
+00:28:23.037 --> 00:28:27.258
+<v James Carr>in order to deal with reclaim,
+you have to be reclaimed certified.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4135-4
+00:28:27.258 --> 00:28:29.274
+<v James Carr>And that training is through the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4156-0
+00:28:29.354 --> 00:28:34.116
+<v James Carr>the municipality agency.
+And so kind of trying to identify those</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4156-1
+00:28:34.116 --> 00:28:39.683
+<v James Carr>pockets and figuring out how to support
+them in prepping for the regulation</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4156-2
+00:28:39.683 --> 00:28:42.394
+<v James Carr>testing that is done by other people.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4159-0
+00:28:48.874 --> 00:28:49.354
+<v Greg Ehrenberg>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4163-0
+00:28:48.874 --> 00:28:50.954
+<v James Carr>So it's part of the plan we're building
+out.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4165-0
+00:28:59.274 --> 00:29:00.474
+<v Greg Ehrenberg>Jay, do you have any questions?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4180-0
+00:29:03.594 --> 00:29:07.080
+<v Jay Jamison>I don't. No,
+looking forward to seeing the demo of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4180-1
+00:29:07.080 --> 00:29:11.114
+<v Jay Jamison>that assets that you're talking about.
+So that'll be good.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4179-0
+00:29:12.314 --> 00:29:12.394
+<v Greg Ehrenberg>The.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4187-0
+00:29:18.234 --> 00:29:20.474
+<v Greg Ehrenberg>You know,
+I think I can give you guys a sneak peek.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4196-0
+00:29:24.314 --> 00:29:28.914
+<v Greg Ehrenberg>I just, I, you know,
+I mainly want to encourage you, James.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4199-0
+00:29:29.834 --> 00:29:31.194
+<v Greg Ehrenberg>Let me, let me pull this up.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4211-0
+00:29:36.074 --> 00:29:39.056
+<v Greg Ehrenberg>Or,
+or you can tell me I'm barking at the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4211-1
+00:29:39.056 --> 00:29:41.754
+<v Greg Ehrenberg>wrong tree and I need to reset myself.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4222-0
+00:29:53.354 --> 00:29:56.390
+<v Greg Ehrenberg>Alright, um,
+and these are these are prototypes that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4222-1
+00:29:56.390 --> 00:29:57.994
+<v Greg Ehrenberg>I'm about to show you, okay?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4223-0
+00:29:58.794 --> 00:29:59.194
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4228-0
+00:29:59.434 --> 00:30:02.154
+<v Greg Ehrenberg>They don't get stuck up on pixels.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4231-0
+00:30:08.234 --> 00:30:09.274
+<v Greg Ehrenberg>Can you see my screen?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4232-0
+00:30:09.994 --> 00:30:10.394
+<v James Carr>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4274-0
+00:30:32.314 --> 00:30:32.714
+<v James Carr>Wright.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4277-0
+00:30:32.754 --> 00:30:33.194
+<v Greg Ehrenberg>That's.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4327-0
+00:30:36.074 --> 00:30:40.628
+<v Greg Ehrenberg>So when you click into this,
+you have details of that asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4327-1
+00:30:40.628 --> 00:30:45.406
+<v Greg Ehrenberg>So what the name is,
+it's a controller type, what its label is,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4327-2
+00:30:45.406 --> 00:30:50.333
+<v Greg Ehrenberg>we can add the make model. Now,
+none of these are required, okay?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4327-3
+00:30:50.333 --> 00:30:55.634
+<v Greg Ehrenberg>So if you're going through and building
+something in the field and you</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-0
+00:30:55.794 --> 00:30:59.857
+<v Greg Ehrenberg>and you click a pen on a map,
+you can just say controller A and you're</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-1
+00:30:59.857 --> 00:31:03.233
+<v Greg Ehrenberg>done. And you just,
+you have an indicator of what type it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-2
+00:31:03.233 --> 00:31:06.151
+<v Greg Ehrenberg>you know,
+it's a controller and it's controller A,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-3
+00:31:06.151 --> 00:31:09.928
+<v Greg Ehrenberg>and you can say it's here.
+So it's not like the pronto form where</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-4
+00:31:09.928 --> 00:31:12.903
+<v Greg Ehrenberg>you're doing everything completely.
+Plus with this,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-5
+00:31:12.903 --> 00:31:16.737
+<v Greg Ehrenberg>it's repeatable every time.
+When you go out to the property on the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4393-6
+00:31:16.737 --> 00:31:20.514
+<v Greg Ehrenberg>next service appointment,
+you're pulling up the same exact asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4440-0
+00:31:21.034 --> 00:31:25.355
+<v Greg Ehrenberg>So whatever's been done in the past,
+whatever callouts have been made in the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4440-1
+00:31:25.355 --> 00:31:28.105
+<v Greg Ehrenberg>past, you have that history.
+It's already there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4440-2
+00:31:28.105 --> 00:31:32.426
+<v Greg Ehrenberg>You don't have to fill it out again.
+You don't have to say this clock has 16</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4440-3
+00:31:32.426 --> 00:31:35.738
+<v Greg Ehrenberg>zones because it's been completed. Now,
+if it doesn't yet,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4440-4
+00:31:35.738 --> 00:31:39.554
+<v Greg Ehrenberg>you can add it as you go or not.
+You can just say zone 16, clock A,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4449-0
+00:31:41.034 --> 00:31:46.074
+<v Greg Ehrenberg>has a lateral break or whatever.
+So you have the asset information.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4495-0
+00:31:51.434 --> 00:31:55.656
+<v Greg Ehrenberg>These are not as important.
+And then you have everything that's</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4495-1
+00:31:55.656 --> 00:31:58.692
+<v Greg Ehrenberg>related to that clock.
+So there's a backflow.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4495-2
+00:31:58.692 --> 00:32:02.056
+<v Greg Ehrenberg>There's just a couple of zones I've added
+in here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4495-3
+00:32:02.056 --> 00:32:05.883
+<v Greg Ehrenberg>But if you look at a specific zone,
+you can just, I mean,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4495-4
+00:32:05.883 --> 00:32:10.634
+<v Greg Ehrenberg>it has very basic information,
+a zone number. And these are things that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4538-0
+00:32:12.074 --> 00:32:16.484
+<v Greg Ehrenberg>that we're going to develop as a team,
+what fields need to be here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4538-1
+00:32:16.484 --> 00:32:19.337
+<v Greg Ehrenberg>And this would be more like the
+assessment.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4538-2
+00:32:19.337 --> 00:32:24.007
+<v Greg Ehrenberg>You'd be dealing with this interface as a
+manager, setting up a system,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4538-3
+00:32:24.007 --> 00:32:27.963
+<v Greg Ehrenberg>setting up assets.
+I'll show you what the mobile view ad hoc</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4538-4
+00:32:27.963 --> 00:32:29.714
+<v Greg Ehrenberg>will look like in a second.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4543-0
+00:32:30.234 --> 00:32:33.914
+<v Greg Ehrenberg>And then you can see,
+let me go back to the clock.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4587-0
+00:32:35.194 --> 00:32:39.640
+<v Greg Ehrenberg>you click this hierarchy tab,
+you can see the whole system,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4587-1
+00:32:39.640 --> 00:32:43.418
+<v Greg Ehrenberg>the whole asset together.
+So if this had 15 zones,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4587-2
+00:32:43.418 --> 00:32:48.012
+<v Greg Ehrenberg>you'd see all of that.
+If you had gathered the information in</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4587-3
+00:32:48.012 --> 00:32:52.903
+<v Greg Ehrenberg>the field, perhaps, you know,
+one time you had to repair a valve,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4587-4
+00:32:52.903 --> 00:32:55.274
+<v Greg Ehrenberg>and so you said, okay, zone one,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4616-0
+00:32:55.434 --> 00:33:00.021
+<v Greg Ehrenberg>is the 1 1/2 inch PGA. You could do that.
+Now, it's not required,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4616-1
+00:33:00.021 --> 00:33:05.721
+<v Greg Ehrenberg>but it would be nice to have, potentially,
+especially if you've touched it in the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4616-2
+00:33:05.721 --> 00:33:08.154
+<v Greg Ehrenberg>past. You can give that level of...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4621-0
+00:33:09.194 --> 00:33:12.474
+<v Greg Ehrenberg>granularity but it's not required.
+Does that make sense?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4644-0
+00:33:13.434 --> 00:33:17.465
+<v James Carr>Yeah, and I mean, I'm thinking ahead,
+I would encourage him to have that level</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4644-1
+00:33:17.465 --> 00:33:19.914
+<v James Carr>of granularity because we talk about
+proposing.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4646-0
+00:33:20.954 --> 00:33:21.434
+<v James Carr>You know?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4648-0
+00:33:21.834 --> 00:33:22.154
+<v Greg Ehrenberg>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4670-0
+00:33:23.194 --> 00:33:28.742
+<v Greg Ehrenberg>But just think about the size of burger
+that is, you have to bite, you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4670-1
+00:33:28.742 --> 00:33:33.354
+<v Greg Ehrenberg>out of the gate. We just, we can't,
+we can't have any blockers.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-0
+00:33:35.194 --> 00:33:39.966
+<v Greg Ehrenberg>to using and actually filling out a form
+at first. Like you said at the beginning,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-1
+00:33:39.966 --> 00:33:42.611
+<v Greg Ehrenberg>we need a PMI.
+We need something very simple.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-2
+00:33:42.611 --> 00:33:46.349
+<v Greg Ehrenberg>And that's what Trinidad's doing in
+Florida that works for them.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-3
+00:33:46.349 --> 00:33:50.431
+<v Greg Ehrenberg>They got to generate this stuff.
+They got to generate a high volume of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4704-0
+00:33:46.954 --> 00:33:47.354
+<v James Carr>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-4
+00:33:50.431 --> 00:33:53.421
+<v Greg Ehrenberg>this stuff.
+We need to make it as quick and easy as</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4728-5
+00:33:53.421 --> 00:33:55.434
+<v Greg Ehrenberg>possible. So this is the beginning.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4774-0
+00:33:55.514 --> 00:34:00.304
+<v Greg Ehrenberg>There's some things down here that we're
+going to talk about.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4774-1
+00:34:00.304 --> 00:34:05.327
+<v Greg Ehrenberg>When I say set up validation,
+it's going through some questions.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4774-2
+00:34:05.327 --> 00:34:09.963
+<v Greg Ehrenberg>If you do an assessment and start
+building out this system,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4774-3
+00:34:09.963 --> 00:34:16.298
+<v Greg Ehrenberg>think of it as like a guided walkthrough
+to take you through in the setting up of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4774-4
+00:34:16.298 --> 00:34:16.994
+<v Greg Ehrenberg>an asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4797-0
+00:34:17.594 --> 00:34:22.691
+<v Greg Ehrenberg>And like I said,
+it's not going to be a required thing to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4797-1
+00:34:22.691 --> 00:34:27.436
+<v Greg Ehrenberg>have, but you can,
+we have a way to stage you through</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4797-2
+00:34:27.436 --> 00:34:29.194
+<v Greg Ehrenberg>setting up an asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4857-0
+00:34:30.154 --> 00:34:33.778
+<v James Carr>One question I do have,
+and it may already be here,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4857-1
+00:34:33.778 --> 00:34:38.100
+<v James Carr>but what I love in the QSAs is
+opportunities for enhancement.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4857-2
+00:34:38.100 --> 00:34:43.746
+<v James Carr>And what I'd love to have here is either
+a notes box or something that documents</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4857-3
+00:34:43.746 --> 00:34:48.625
+<v James Carr>opportunities for enhancement.
+Because one of the things I'm teaching</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4857-4
+00:34:48.625 --> 00:34:51.274
+<v James Carr>the guys is to go beyond what's broken</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4886-0
+00:34:51.434 --> 00:34:56.244
+<v James Carr>and visualize what could be and document
+that. And if we have that in there,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4855-0
+00:34:52.874 --> 00:34:53.114
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4886-1
+00:34:56.244 --> 00:35:01.368
+<v James Carr>which I assume you probably already do,
+but because what I'm telling everybody is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4886-2
+00:35:01.368 --> 00:35:04.554
+<v James Carr>for every controller,
+you should have a list of...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4900-0
+00:35:05.754 --> 00:35:09.721
+<v James Carr>upgrades or enhancements that the account
+manager can use to build a relationship</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4900-1
+00:35:09.721 --> 00:35:10.834
+<v James Carr>with a client of trust.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4923-0
+00:35:14.114 --> 00:35:17.287
+<v Greg Ehrenberg>Yep, I have that on my list.
+For call outs,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4923-1
+00:35:17.287 --> 00:35:20.461
+<v Greg Ehrenberg>not only for a repair that needs to
+happen,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4923-2
+00:35:20.461 --> 00:35:23.274
+<v Greg Ehrenberg>but for an enhancement that can happen.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4956-0
+00:35:25.394 --> 00:35:28.471
+<v James Carr>Perfect, yeah,
+because that's what I'm really pushing is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4956-1
+00:35:28.471 --> 00:35:32.843
+<v James Carr>getting these technicians to look beyond
+what's broken and what and be into what</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4956-2
+00:35:32.843 --> 00:35:35.866
+<v James Carr>could be because that's really going to
+hit our growth,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4956-3
+00:35:35.866 --> 00:35:37.594
+<v James Carr>client satisfaction and revenue.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4977-0
+00:35:47.994 --> 00:35:51.493
+<v James Carr>And I'm sure you've talked to a lot of
+irrigation professionals,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4977-1
+00:35:51.493 --> 00:35:55.692
+<v James Carr>and I'm sure you already know this,
+but I'm sure you've got a lot of requests</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4977-2
+00:35:55.692 --> 00:35:56.554
+<v James Carr>your way. But...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4978-0
+00:35:58.154 --> 00:35:58.474
+<v James Carr>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4988-0
+00:36:01.034 --> 00:36:04.634
+<v James Carr>Some of them are a little wild,
+I'm sure you've seen, right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4989-0
+00:36:07.514 --> 00:36:07.994
+<v Greg Ehrenberg>Uh...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/4993-0
+00:36:10.994 --> 00:36:12.314
+<v Greg Ehrenberg>Not necessarily, I mean.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5011-0
+00:36:13.594 --> 00:36:18.579
+<v Greg Ehrenberg>Nothing more than I would have expected.
+Not really surprised yet.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5003-0
+00:36:16.954 --> 00:36:17.594
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5011-1
+00:36:18.579 --> 00:36:21.034
+<v Greg Ehrenberg>I need to get surprised, I think.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5052-0
+00:36:21.914 --> 00:36:24.071
+<v James Carr>Well,
+I guess the reason I say that is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5052-1
+00:36:24.071 --> 00:36:28.552
+<v James Carr>sometimes the irrigators come from left
+field with suggestions that don't really</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5052-2
+00:36:28.552 --> 00:36:31.207
+<v James Carr>impact efficiencies or the goal. And,
+you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5052-3
+00:36:31.207 --> 00:36:35.687
+<v James Carr>I'm sure you already know some stuff you
+can take it or leave it until later and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5052-4
+00:36:35.687 --> 00:36:36.794
+<v James Carr>we can fine tune it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5050-0
+00:36:37.594 --> 00:36:37.994
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5066-0
+00:36:38.474 --> 00:36:43.274
+<v Jay Jamison>That's not just irrigators, James.
+That's landscapers. That's everybody.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5058-0
+00:36:40.634 --> 00:36:40.874
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5063-0
+00:36:41.994 --> 00:36:42.714
+<v James Carr>Yeah, because...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-0
+00:36:44.074 --> 00:36:47.814
+<v James Carr>Yeah, because like I said,
+I talked to a lot of people and they're</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-1
+00:36:47.814 --> 00:36:50.773
+<v James Carr>just like,
+everybody's got a different level of what</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-2
+00:36:50.773 --> 00:36:53.900
+<v James Carr>it should be.
+And some of them are super analytical and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-3
+00:36:53.900 --> 00:36:56.914
+<v James Carr>super left field.
+And some of them are down to earth.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-4
+00:36:56.914 --> 00:36:59.371
+<v James Carr>And I just,
+we need the value of the teams,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-5
+00:36:59.371 --> 00:37:03.558
+<v James Carr>but sometimes these managers are just,
+they're not in tune with the actual</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5131-6
+00:37:03.558 --> 00:37:04.954
+<v James Carr>frontline workers. And so</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5121-0
+00:37:05.274 --> 00:37:05.674
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-0
+00:37:05.914 --> 00:37:09.507
+<v James Carr>I trust that you've got that filter where
+you can say, that's a great idea.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-1
+00:37:09.507 --> 00:37:12.201
+<v James Carr>We'll put it on the back burner and kind
+of evaluate it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5147-0
+00:37:12.154 --> 00:37:12.554
+<v Greg Ehrenberg>That.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-2
+00:37:12.201 --> 00:37:15.132
+<v James Carr>I always get nervous talking to the
+managers because, I mean,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-3
+00:37:15.132 --> 00:37:18.536
+<v James Carr>either they're going to talk about
+BrightView's processes negatively or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-4
+00:37:18.536 --> 00:37:22.034
+<v James Carr>they're going to come up with,
+it'd be great to have this. But, you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-5
+00:37:22.034 --> 00:37:24.965
+<v James Carr>one of the things having been here going
+on 10 years in June,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5191-6
+00:37:24.965 --> 00:37:26.714
+<v James Carr>I've seen a lot of systems and stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5196-0
+00:37:27.354 --> 00:37:29.834
+<v James Carr>And I've learned a lot of lessons from
+that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5244-0
+00:37:30.874 --> 00:37:35.570
+<v James Carr>You know, and I'm excited for this.
+I'm excited to jump in the trenches with</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5244-1
+00:37:35.570 --> 00:37:38.375
+<v James Carr>you and make sure that the rollout is
+smooth,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5244-2
+00:37:38.375 --> 00:37:43.254
+<v James Carr>make sure we get this going good and the
+support is there because you guys will</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5244-3
+00:37:43.254 --> 00:37:47.767
+<v James Carr>probably do the technical support,
+but I'll take on the task of doing the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5244-4
+00:37:47.767 --> 00:37:50.634
+<v James Carr>usage support and stuff and get this
+because I</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5268-0
+00:37:50.914 --> 00:37:54.556
+<v James Carr>I also believe this is a feather in the
+cat for BrightView,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5268-1
+00:37:54.556 --> 00:37:58.928
+<v James Carr>not only to announce and through
+communications and for our clients and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5268-2
+00:37:58.928 --> 00:38:01.842
+<v James Carr>our new bids,
+but the success of it is actually</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5268-3
+00:38:01.842 --> 00:38:02.874
+<v James Carr>sticking with it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5267-0
+00:38:03.754 --> 00:38:04.074
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5270-0
+00:38:06.394 --> 00:38:07.034
+<v Greg Ehrenberg>Um, um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5284-0
+00:38:09.514 --> 00:38:13.235
+<v Greg Ehrenberg>What you described about taking
+everything with a grain of salt,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5284-1
+00:38:13.235 --> 00:38:15.754
+<v Greg Ehrenberg>that's my life.
+You can ask Jay about that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5286-0
+00:38:16.874 --> 00:38:17.034
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5330-0
+00:38:19.114 --> 00:38:24.719
+<v Greg Ehrenberg>We're constantly having to discern
+priorities. So that is my job.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5330-1
+00:38:24.719 --> 00:38:31.004
+<v Greg Ehrenberg>And then I come back to guys like Jay and
+other business leaders and say,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5330-2
+00:38:31.004 --> 00:38:36.780
+<v Greg Ehrenberg>what do you guys rank this as?
+So I'm definitely not the final say.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5330-3
+00:38:36.780 --> 00:38:37.714
+<v Greg Ehrenberg>I document.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-0
+00:38:37.834 --> 00:38:42.754
+<v Greg Ehrenberg>And then we make decisions about priority
+and whether it's going to be a thing or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-1
+00:38:42.754 --> 00:38:45.574
+<v Greg Ehrenberg>not.
+And that's the way we handle our backlog.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5345-0
+00:38:43.834 --> 00:38:44.554
+<v James Carr>Gotcha.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-2
+00:38:45.574 --> 00:38:49.174
+<v Greg Ehrenberg>So this other view that I'm showing here
+is the mobile app,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-3
+00:38:49.174 --> 00:38:53.794
+<v Greg Ehrenberg>the field service management mobile app.
+This is what a service appointment.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-4
+00:38:53.794 --> 00:38:58.174
+<v Greg Ehrenberg>And again, this is a prototype.
+It's not pixel perfect according to what</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5388-5
+00:38:58.174 --> 00:38:59.674
+<v Greg Ehrenberg>it even looks like today.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5436-0
+00:38:59.874 --> 00:39:04.450
+<v Greg Ehrenberg>but it's pretty close.
+So this is what a tech would get assigned</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5436-1
+00:39:04.450 --> 00:39:07.618
+<v Greg Ehrenberg>to them.
+They're going out to do a quarterly</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5436-2
+00:39:07.618 --> 00:39:13.040
+<v Greg Ehrenberg>irrigation evaluation or a wet check or
+whatever, even a repair potentially.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5436-3
+00:39:13.040 --> 00:39:17.053
+<v Greg Ehrenberg>They're going to get all the information
+from the asset.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5436-4
+00:39:17.053 --> 00:39:20.714
+<v Greg Ehrenberg>If the asset's been set up on the
+property account,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5458-0
+00:39:21.114 --> 00:39:26.154
+<v Greg Ehrenberg>Then,
+they're going to have this level of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5458-1
+00:39:26.154 --> 00:39:32.754
+<v Greg Ehrenberg>insight. OK,
+this is actually Esri GIS integrated with</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5458-2
+00:39:32.754 --> 00:39:34.794
+<v Greg Ehrenberg>Salesforce, so...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5508-0
+00:39:36.394 --> 00:39:40.677
+<v Greg Ehrenberg>all the user licenses and all that taken
+care of, James.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5508-1
+00:39:40.677 --> 00:39:44.509
+<v Greg Ehrenberg>And you can create a new asset directly
+from here,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5508-2
+00:39:44.509 --> 00:39:50.746
+<v Greg Ehrenberg>but if you just want to look at clock A
+for this asset, you can see this on a map.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5508-3
+00:39:50.746 --> 00:39:54.954
+<v Greg Ehrenberg>This map is just mocked up,
+so don't stumble over that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5526-0
+00:39:55.194 --> 00:39:59.920
+<v Greg Ehrenberg>But for each one of these,
+this particular zone, three has,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5506-0
+00:39:55.834 --> 00:39:56.314
+<v James Carr>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5526-1
+00:39:59.920 --> 00:40:05.434
+<v Greg Ehrenberg>you can make a call out on it saying,
+I have a broken head on zone 3.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5552-0
+00:40:08.154 --> 00:40:13.639
+<v Greg Ehrenberg>And, you know, it's as simple as that,
+is making a call out.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5552-1
+00:40:13.639 --> 00:40:19.034
+<v Greg Ehrenberg>So if I look at Zone 8 and I want to make
+a call out on it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5590-0
+00:40:21.274 --> 00:40:27.110
+<v Greg Ehrenberg>And this is not great UI yet. I'm just,
+I'm gathering the components we need to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5590-1
+00:40:27.110 --> 00:40:30.539
+<v Greg Ehrenberg>capture.
+And that's the discussions that we'll</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5590-2
+00:40:30.539 --> 00:40:35.426
+<v Greg Ehrenberg>have when we look at this as a group.
+If we look at it as a group,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5590-3
+00:40:35.426 --> 00:40:37.834
+<v Greg Ehrenberg>that's to be determined yet, but.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5596-0
+00:40:38.394 --> 00:40:38.874
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5600-0
+00:40:40.474 --> 00:40:43.274
+<v Greg Ehrenberg>So, you can say 5 broken heads.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5602-0
+00:40:44.434 --> 00:40:46.074
+<v Greg Ehrenberg>You can also speak into this.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5621-0
+00:40:47.474 --> 00:40:50.492
+<v James Carr>That's perfect,
+because that's what I'm teaching them to</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5621-1
+00:40:50.492 --> 00:40:53.034
+<v James Carr>do that are struggling with spelling and
+stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5614-0
+00:40:50.794 --> 00:40:51.074
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5647-0
+00:40:53.994 --> 00:41:00.811
+<v Greg Ehrenberg>So that's another call out.
+So now we have 4 call outs in the system.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5647-1
+00:41:00.811 --> 00:41:05.194
+<v Greg Ehrenberg>And it'll show each one that has a call
+out.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5649-0
+00:41:06.794 --> 00:41:07.914
+<v Greg Ehrenberg>They're in yellow here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5705-0
+00:41:10.074 --> 00:41:15.222
+<v Greg Ehrenberg>These are, this is the backflow,
+so you know where the location of it is.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5705-1
+00:41:15.222 --> 00:41:19.535
+<v Greg Ehrenberg>This is the clock,
+so you know where the location of that is.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5705-2
+00:41:19.535 --> 00:41:22.735
+<v Greg Ehrenberg>You see all the information for it right
+now.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5705-3
+00:41:22.735 --> 00:41:26.004
+<v Greg Ehrenberg>Programming is another layer that can be
+here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5705-4
+00:41:26.004 --> 00:41:30.874
+<v Greg Ehrenberg>I don't know if this is the place for it
+or it's another interaction.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5749-0
+00:41:31.674 --> 00:41:37.098
+<v Greg Ehrenberg>in this actual Salesforce app that an
+account manager or somebody else has.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5749-1
+00:41:37.098 --> 00:41:41.879
+<v Greg Ehrenberg>I don't know if the program,
+I saw it on your spreadsheet that you</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5749-2
+00:41:41.879 --> 00:41:47.160
+<v Greg Ehrenberg>actually have the program laid out there.
+Do they actually fill that out?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5749-3
+00:41:47.160 --> 00:41:51.514
+<v Greg Ehrenberg>And this is the program they have when
+they leave the place?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5740-0
+00:41:48.954 --> 00:41:49.914
+<v James Carr>There's there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-0
+00:41:52.314 --> 00:41:54.367
+<v James Carr>Yeah,
+they're supposed to for a couple of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-1
+00:41:54.367 --> 00:41:56.567
+<v James Carr>reasons. One,
+so the account manager has it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-2
+00:41:56.567 --> 00:41:59.403
+<v James Carr>He doesn't have to tell the client,
+I'll get back to you.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-3
+00:41:59.403 --> 00:42:01.994
+<v James Carr>He can just look like a professional and
+pull it up.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-4
+00:42:01.994 --> 00:42:05.758
+<v James Carr>The other thing is I'm trying to get
+ahead of these irrigation techs rushing</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-5
+00:42:05.758 --> 00:42:08.154
+<v James Carr>and screwing things up by doing schedules
+wrong.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5807-6
+00:42:08.154 --> 00:42:10.794
+<v James Carr>So what I'm training him to do is to get
+it on paper.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5815-0
+00:42:11.274 --> 00:42:14.954
+<v James Carr>And so, my thought is,
+if we can have that in here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5840-0
+00:42:16.314 --> 00:42:20.678
+<v James Carr>And that's an easy way because then when
+an attack or when an account manager</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5840-1
+00:42:20.678 --> 00:42:23.867
+<v James Carr>looks into it,
+he should just be able to click the asset</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5840-2
+00:42:23.867 --> 00:42:25.434
+<v James Carr>and see the schedule, right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5861-0
+00:42:27.194 --> 00:42:30.211
+<v Greg Ehrenberg>That would be the idea, yeah.
+So you could, if you're on a clock,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5848-0
+00:42:29.274 --> 00:42:29.674
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5861-1
+00:42:30.211 --> 00:42:32.954
+<v Greg Ehrenberg>you click the clock and then you could
+look at the program.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5895-0
+00:42:33.834 --> 00:42:37.607
+<v James Carr>Yeah, so I'd like to have that in there,
+especially for, you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5895-1
+00:42:37.607 --> 00:42:40.253
+<v James Carr>making sure they put the right
+information in.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5895-2
+00:42:40.253 --> 00:42:44.758
+<v James Carr>I'm also working teaching them how to
+control or program these controllers more</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5895-3
+00:42:44.758 --> 00:42:45.434
+<v James Carr>efficiently.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5943-0
+00:42:46.954 --> 00:42:52.108
+<v Greg Ehrenberg>Okay. So if you don't have a map,
+if you don't have anything in Esri yet</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5943-1
+00:42:52.108 --> 00:42:56.768
+<v Greg Ehrenberg>for this property account,
+you can have a list of just the assets</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5943-2
+00:42:56.768 --> 00:43:01.216
+<v Greg Ehrenberg>that have been added in either on the
+property account assets,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5943-3
+00:43:01.216 --> 00:43:05.594
+<v Greg Ehrenberg>or this could be blank and a tech could
+just come in and say,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5951-0
+00:43:05.674 --> 00:43:08.578
+<v Greg Ehrenberg>add something, they could say,
+I'm adding a controller,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5951-1
+00:43:08.578 --> 00:43:10.394
+<v Greg Ehrenberg>and they could name the controller.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5952-0
+00:43:11.674 --> 00:43:11.994
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/5955-0
+00:43:16.314 --> 00:43:17.114
+<v Greg Ehrenberg>And then...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6011-0
+00:43:18.394 --> 00:43:23.025
+<v Greg Ehrenberg>They could actually pin it if they wanted
+to. This isn't even working,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6011-1
+00:43:23.025 --> 00:43:27.070
+<v Greg Ehrenberg>but you get the idea.
+So instead of having to have everything</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6011-2
+00:43:27.070 --> 00:43:31.571
+<v Greg Ehrenberg>laid out before they get there,
+they could just go through and start</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6011-3
+00:43:31.571 --> 00:43:35.224
+<v Greg Ehrenberg>adding things.
+And then if all they were going to do is</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6011-4
+00:43:35.224 --> 00:43:37.834
+<v Greg Ehrenberg>make a call out on controller D zone 16,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6056-0
+00:43:38.314 --> 00:43:41.405
+<v Greg Ehrenberg>Those could be the only thing set up in
+the system,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6006-0
+00:43:39.194 --> 00:43:39.514
+<v James Carr>Yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6056-1
+00:43:41.405 --> 00:43:45.923
+<v Greg Ehrenberg>and they could be done with their,
+and they could submit this for repair or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6056-2
+00:43:45.923 --> 00:43:48.835
+<v Greg Ehrenberg>for a result of an inspection.
+So that's a very,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6056-3
+00:43:48.835 --> 00:43:52.640
+<v Greg Ehrenberg>that's the very lightweight way of
+getting onboarded with this.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6056-4
+00:43:52.640 --> 00:43:55.434
+<v Greg Ehrenberg>You don't have to have the stuff set up
+first.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6048-0
+00:43:54.154 --> 00:43:54.714
+<v James Carr>Gotcha.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6065-0
+00:43:55.874 --> 00:44:01.274
+<v James Carr>Is there an option to import like KML
+files if we already have it mapped?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6066-0
+00:44:01.674 --> 00:44:03.034
+<v Greg Ehrenberg>With Ezri, yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6069-0
+00:44:03.834 --> 00:44:04.714
+<v James Carr>OK, perfect.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6070-0
+00:44:04.954 --> 00:44:05.274
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6094-0
+00:44:06.674 --> 00:44:09.706
+<v Greg Ehrenberg>Now,
+the ESRI piece of this is still up in the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6094-1
+00:44:09.706 --> 00:44:12.479
+<v Greg Ehrenberg>air.
+I've been learning and researching as</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6094-2
+00:44:12.479 --> 00:44:15.834
+<v Greg Ehrenberg>I've been working on this only for about
+two weeks.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6089-0
+00:44:14.394 --> 00:44:14.474
+<v James Carr>The.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6130-0
+00:44:18.354 --> 00:44:23.432
+<v Greg Ehrenberg>I have the understanding and the path
+forward for it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6130-1
+00:44:23.432 --> 00:44:30.392
+<v Greg Ehrenberg>but it is an enterprise license,
+but it's like pennies compared to like a</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6130-2
+00:44:30.392 --> 00:44:34.154
+<v Greg Ehrenberg>Salesforce license. It's ridiculous. So.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6176-0
+00:44:35.314 --> 00:44:39.880
+<v Greg Ehrenberg>We'll need to assess how many techs and
+irrigation manager types.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6176-1
+00:44:39.880 --> 00:44:45.068
+<v Greg Ehrenberg>There's a field worker who would be
+interacting with these kind of things,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6176-2
+00:44:45.068 --> 00:44:50.256
+<v Greg Ehrenberg>adding assets ad hoc. They could,
+they for adding just the asset stuff and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6176-3
+00:44:50.256 --> 00:44:54.960
+<v Greg Ehrenberg>not even interacting with Esri,
+everything they have in their field</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6176-4
+00:44:54.960 --> 00:44:55.514
+<v Greg Ehrenberg>service.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6221-0
+00:44:55.674 --> 00:45:00.000
+<v Greg Ehrenberg>management licensing covers that.
+So you could do this,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6221-1
+00:45:00.000 --> 00:45:04.790
+<v Greg Ehrenberg>you could do this all without even having
+Esri as part of it,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6221-2
+00:45:04.790 --> 00:45:09.889
+<v Greg Ehrenberg>if that becomes a thing.
+There also is an opportunity to layer in</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6202-0
+00:45:06.954 --> 00:45:08.314
+<v James Carr>In a perfect world.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6221-3
+00:45:09.889 --> 00:45:14.834
+<v Greg Ehrenberg>something like Mapbox or Google Maps as
+an alternative to Esri.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6228-0
+00:45:16.074 --> 00:45:17.554
+<v Greg Ehrenberg>So there's blocks.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6272-0
+00:45:16.074 --> 00:45:19.255
+<v James Carr>If we could do that,
+that'll be really wonderful.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6272-1
+00:45:19.255 --> 00:45:23.200
+<v James Carr>If we could layer that in there,
+that might save on the cost.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6272-2
+00:45:23.200 --> 00:45:27.082
+<v James Carr>In a perfect world,
+what my thought would be is obviously we</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6272-3
+00:45:27.082 --> 00:45:31.600
+<v James Carr>get a new property and all this stuff is
+done within the first 30, 60,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6272-4
+00:45:31.600 --> 00:45:35.354
+<v James Carr>90 but it's done by the senior tech or
+irrigation manager.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6275-0
+00:45:36.074 --> 00:45:39.034
+<v James Carr>That way, I mean,
+those are the ones that would have.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6278-0
+00:45:40.114 --> 00:45:41.914
+<v James Carr>The the licenses, I guess.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6298-0
+00:45:43.274 --> 00:45:45.204
+<v James Carr>But that doesn't depend,
+like not every tech,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6298-1
+00:45:45.204 --> 00:45:47.973
+<v James Carr>if they're going to do a system check,
+they don't need a license.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6298-2
+00:45:47.973 --> 00:45:49.274
+<v James Carr>They can just be a user, right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6299-0
+00:45:49.834 --> 00:45:50.554
+<v Greg Ehrenberg>Correct.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6330-0
+00:45:51.514 --> 00:45:54.206
+<v James Carr>Yeah, so I mean,
+in a perfect world and where I'm headed</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6330-1
+00:45:54.206 --> 00:45:58.031
+<v James Carr>in the system we're trying to build is
+you would probably have one to two people</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6330-2
+00:45:58.031 --> 00:46:00.675
+<v James Carr>at the branch that would be responsible
+for doing this.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6330-3
+00:46:00.675 --> 00:46:02.234
+<v James Carr>That would be the license holder.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6338-0
+00:46:03.114 --> 00:46:08.074
+<v James Carr>Or all of that, and then the text could,
+you know, just use it.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6350-0
+00:46:10.354 --> 00:46:12.479
+<v Greg Ehrenberg>Me,
+I don't know if you've ever seen this</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6350-1
+00:46:12.479 --> 00:46:14.554
+<v Greg Ehrenberg>before. I'm gonna drop a link into the...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6362-0
+00:46:15.834 --> 00:46:19.674
+<v Greg Ehrenberg>Chat,
+I would really like your your opinion and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6362-1
+00:46:19.674 --> 00:46:21.034
+<v Greg Ehrenberg>feedback on that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6384-0
+00:46:23.274 --> 00:46:30.460
+<v Greg Ehrenberg>That's a like a specific ArcGIS solution
+that they've built for irrigation</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6384-1
+00:46:30.460 --> 00:46:31.514
+<v Greg Ehrenberg>management.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6387-0
+00:46:33.674 --> 00:46:34.874
+<v James Carr>Ah, yes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6389-0
+00:46:35.114 --> 00:46:36.234
+<v Greg Ehrenberg>Have you seen that before?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6406-0
+00:46:36.954 --> 00:46:39.458
+<v James Carr>Yeah,
+they reached out a year or two ago when</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6406-1
+00:46:39.458 --> 00:46:42.234
+<v James Carr>they came to this and we piloted it in
+some areas.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6408-0
+00:46:43.754 --> 00:46:44.554
+<v James Carr>And.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6456-0
+00:46:45.754 --> 00:46:51.264
+<v James Carr>The general feedback is it was great,
+but it didn't really work in all areas we</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6456-1
+00:46:51.264 --> 00:46:56.704
+<v James Carr>needed to. And when we went through it,
+it was still in the development phases</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6456-2
+00:46:56.704 --> 00:47:01.457
+<v James Carr>and it kind of looked like crap.
+They didn't have a lot of the icons</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6456-3
+00:47:01.457 --> 00:47:04.074
+<v James Carr>dialed in and stuff like that. And so.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6463-0
+00:47:04.714 --> 00:47:08.714
+<v James Carr>The challenge I've always had with ArcGIS
+is that it's just so damn expensive.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6482-0
+00:47:13.194 --> 00:47:18.069
+<v Greg Ehrenberg>So with the way that we're using it and
+the partnership that they have with</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6482-1
+00:47:18.069 --> 00:47:19.994
+<v Greg Ehrenberg>Salesforce, that changes some.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6480-0
+00:47:18.874 --> 00:47:18.994
+<v James Carr>The.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6520-0
+00:47:21.594 --> 00:47:28.637
+<v Greg Ehrenberg>This is an ESRI component that we drop
+into the Field Service Management app.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6520-1
+00:47:28.637 --> 00:47:35.679
+<v Greg Ehrenberg>This is like our quickest way to a win,
+but the Mapbox or the Google Maps are</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6520-2
+00:47:35.679 --> 00:47:37.034
+<v Greg Ehrenberg>also an option.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6522-0
+00:47:38.314 --> 00:47:39.994
+<v Greg Ehrenberg>Those will be completely custom.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6537-0
+00:47:41.594 --> 00:47:46.578
+<v Greg Ehrenberg>But maybe in the long run might be better
+for our organization for licensing and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6537-1
+00:47:46.578 --> 00:47:47.194
+<v Greg Ehrenberg>cost, etc.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6540-0
+00:47:48.314 --> 00:47:48.754
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6541-0
+00:47:49.754 --> 00:47:51.394
+<v Greg Ehrenberg>So, this is just a...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6557-0
+00:47:52.314 --> 00:47:58.634
+<v Greg Ehrenberg>I'm working with the concept here.
+I know that irrigation is spatial. So</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6546-0
+00:47:52.954 --> 00:47:53.514
+<v James Carr>Womack.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6585-0
+00:47:59.754 --> 00:48:06.870
+<v Greg Ehrenberg>I've lived it too, James,
+and having an idea of where things are</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6561-0
+00:48:00.914 --> 00:48:00.994
+<v James Carr>The.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6585-1
+00:48:06.870 --> 00:48:12.234
+<v Greg Ehrenberg>and having a system mapped is battle
+number one.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6640-0
+00:48:13.114 --> 00:48:17.422
+<v James Carr>Yeah, we can't manage what we don't know.
+And when it comes to these things,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6592-0
+00:48:15.194 --> 00:48:15.514
+<v Greg Ehrenberg>Greg.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6640-1
+00:48:17.422 --> 00:48:20.220
+<v James Carr>you know, my biggest challenge is,
+unfortunately,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6640-2
+00:48:20.220 --> 00:48:24.696
+<v James Carr>our irrigation techs are working off a
+variety of reading levels and technology</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6640-3
+00:48:24.696 --> 00:48:27.325
+<v James Carr>levels.
+And that's what I look for is specific</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6640-4
+00:48:27.325 --> 00:48:31.354
+<v James Carr>people who can navigate ArcGIS.
+But then that's what I also liked about</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6692-0
+00:48:31.754 --> 00:48:36.350
+<v James Carr>the my maps is it's Fisher Price.
+And I found that even the most technology</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6692-1
+00:48:36.350 --> 00:48:40.583
+<v James Carr>challenged. And so in my mind,
+both options work and making sure that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6692-2
+00:48:40.583 --> 00:48:45.179
+<v James Carr>the ArcGIS and the more technical stuff
+is being utilized by those that are</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6692-3
+00:48:45.179 --> 00:48:49.352
+<v James Carr>prepared and actually doing it.
+But we're also not leaving everybody</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6692-4
+00:48:49.352 --> 00:48:52.194
+<v James Carr>behind because that's kind of how we got
+here.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6738-0
+00:48:52.794 --> 00:48:55.038
+<v James Carr>Right? Oh,
+they're not good with technology.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6738-1
+00:48:55.038 --> 00:48:58.579
+<v James Carr>We'll just leave them alone.
+And so I like both options because at the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6701-0
+00:48:55.914 --> 00:48:56.794
+<v Greg Ehrenberg>Yeah, yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6738-2
+00:48:58.579 --> 00:49:02.470
+<v James Carr>end of the day, we need this information.
+It's what they're being trained to.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6738-3
+00:49:02.470 --> 00:49:05.163
+<v James Carr>We're expecting to get some growth.
+And to be honest,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6738-4
+00:49:05.163 --> 00:49:08.954
+<v James Carr>we haven't even scratched the surface on
+our irrigation growth and revenue.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6739-0
+00:49:09.354 --> 00:49:12.554
+<v Greg Ehrenberg>Yeah, well, yeah,
+that that's why this is a priority.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6740-0
+00:49:14.154 --> 00:49:14.714
+<v Greg Ehrenberg>Um...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6749-0
+00:49:15.514 --> 00:49:18.314
+<v Greg Ehrenberg>This is our highest priority in FSM at
+the moment.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6769-0
+00:49:21.434 --> 00:49:25.873
+<v Greg Ehrenberg>Okay. I mean,
+generally what you see so far,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6769-1
+00:49:25.873 --> 00:49:31.594
+<v Greg Ehrenberg>am I barking up the right tree or am I
+smoking something?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6790-0
+00:49:32.554 --> 00:49:36.530
+<v James Carr>You're on the right track.
+I like that there's different levels.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6790-1
+00:49:36.530 --> 00:49:40.751
+<v James Carr>I like the simplicity of it.
+And I'm also the mindset of we just got</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6790-2
+00:49:40.751 --> 00:49:41.914
+<v James Carr>to build something.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6795-0
+00:49:42.794 --> 00:49:45.434
+<v James Carr>and get them going on it, you know.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6802-0
+00:49:46.794 --> 00:49:49.834
+<v James Carr>But I like what I see. I like the usage.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6862-0
+00:49:51.834 --> 00:49:57.179
+<v James Carr>and excited for like the rollout plan and
+how we can get in front of the tripping</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6862-1
+00:49:57.179 --> 00:50:01.938
+<v James Carr>points that we have. You know,
+I know one of the biggest tripping points</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6862-2
+00:50:01.938 --> 00:50:07.087
+<v James Carr>and why it's got to be kind of phased
+rollout is a lot of our techs don't even</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6862-3
+00:50:07.087 --> 00:50:11.455
+<v James Carr>know their emails or the logins on their
+phones. And so, you know,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6844-0
+00:50:08.474 --> 00:50:08.874
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6862-4
+00:50:11.455 --> 00:50:12.954
+<v James Carr>once this is finalized,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6899-0
+00:50:13.194 --> 00:50:17.767
+<v James Carr>Maybe we can connect and figure out a
+rollout plan and kind of figure out that</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6899-1
+00:50:17.767 --> 00:50:20.315
+<v James Carr>stuff.
+And I'd love to partner with you and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6899-2
+00:50:20.315 --> 00:50:25.062
+<v James Carr>maybe we can record some training to go
+in the irrigation track in Bright Path or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6899-3
+00:50:25.062 --> 00:50:26.394
+<v James Carr>Bright View University.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6922-0
+00:50:27.594 --> 00:50:31.582
+<v James Carr>that I can utilize and send them to,
+and then I can do the hands-on training.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6922-1
+00:50:31.582 --> 00:50:35.111
+<v James Carr>But once we get this done,
+it's just rolling it out and getting past</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6922-2
+00:50:35.111 --> 00:50:37.514
+<v James Carr>the technology roadblocks and stuff like
+that.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6924-0
+00:50:39.674 --> 00:50:40.234
+<v Greg Ehrenberg>Awesome.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6933-0
+00:50:41.514 --> 00:50:44.954
+<v Greg Ehrenberg>So you're reporting to Enrique right now,
+is that right?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6980-0
+00:50:45.674 --> 00:50:50.186
+<v James Carr>I actually, so I report to,
+I don't know what their roles are,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6980-1
+00:50:50.186 --> 00:50:53.982
+<v James Carr>the regional VP.
+Whenever I'm working in a market or</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6950-0
+00:50:53.114 --> 00:50:53.594
+<v Greg Ehrenberg>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6980-2
+00:50:53.982 --> 00:50:58.996
+<v James Carr>whatever, I connect with them.
+And then it used to be the director of</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6980-3
+00:50:58.996 --> 00:51:02.577
+<v James Carr>operations.
+So basically I report my goings on in</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6980-4
+00:51:02.577 --> 00:51:05.514
+<v James Carr>those areas with them and Enrico signs my</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6984-0
+00:51:06.394 --> 00:51:08.154
+<v James Carr>ETO and does all that stuff.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6998-0
+00:51:08.394 --> 00:51:11.684
+<v Greg Ehrenberg>Okay,
+so but there's potentially a point where</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/6998-1
+00:51:11.684 --> 00:51:15.114
+<v Greg Ehrenberg>you're going to be reporting directly to
+Dozier.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7026-0
+00:51:16.634 --> 00:51:19.511
+<v James Carr>See, I don't know.
+That's the question that we haven't</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7026-1
+00:51:19.511 --> 00:51:22.858
+<v James Carr>really figured out is what does that look
+like and how it goes.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7026-2
+00:51:22.858 --> 00:51:26.154
+<v James Carr>I would assume I'd be reporting to the
+two east and west guys.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7018-0
+00:51:23.194 --> 00:51:23.674
+<v Greg Ehrenberg>Mhm.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7041-0
+00:51:28.154 --> 00:51:31.457
+<v Greg Ehrenberg>Well,
+you might you might become like Jay who</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7030-0
+00:51:28.314 --> 00:51:29.234
+<v James Carr>But it's kind of a...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7041-1
+00:51:31.457 --> 00:51:34.474
+<v Greg Ehrenberg>reports to my boss and becomes part of IT.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7042-0
+00:51:35.114 --> 00:51:35.594
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7101-0
+00:51:37.674 --> 00:51:42.677
+<v James Carr>You know, we're doing all this work,
+and the only way this works is if we try</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7101-1
+00:51:42.677 --> 00:51:47.296
+<v James Carr>to build 1 BrightView for irrigation.
+We look at not only this portion,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7059-0
+00:51:43.514 --> 00:51:43.834
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7101-2
+00:51:47.296 --> 00:51:52.043
+<v James Carr>but we look at procurement, we look at HR,
+we look at talent acquisition,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7101-3
+00:51:52.043 --> 00:51:57.046
+<v James Carr>we look at sales, all of these aspects.
+There's no unifying thread supporting</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7101-4
+00:51:57.046 --> 00:51:58.714
+<v James Carr>each of those. And at some</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-0
+00:51:58.834 --> 00:52:01.947
+<v James Carr>point,
+we've got to create that unifying thread</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-1
+00:52:01.947 --> 00:52:04.865
+<v James Carr>that supports all that,
+but then builds off.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-2
+00:52:04.865 --> 00:52:07.848
+<v James Carr>What we can't do is have the wild,
+wild west.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-3
+00:52:07.848 --> 00:52:12.906
+<v James Carr>I don't know your experience with the
+branches, but I deal with at least 100,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7126-0
+00:52:10.794 --> 00:52:10.954
+<v Greg Ehrenberg>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-4
+00:52:12.906 --> 00:52:18.159
+<v James Carr>if not more. And every time I step in,
+it's like a new process, a new viewpoint.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7148-5
+00:52:18.159 --> 00:52:18.354
+<v James Carr>And</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7145-0
+00:52:18.394 --> 00:52:18.794
+<v Greg Ehrenberg>Yep.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7169-0
+00:52:19.434 --> 00:52:22.791
+<v James Carr>It's frustrating.
+We need that uniformity of the foundation</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7169-1
+00:52:22.791 --> 00:52:25.365
+<v James Carr>that can be specialized for the branch
+needs,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7169-2
+00:52:25.365 --> 00:52:28.554
+<v James Carr>but we don't even have the uniformity of
+the foundation.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7183-0
+00:52:30.074 --> 00:52:34.918
+<v Greg Ehrenberg>Yep, Jay and I are very aware of that.
+We just finished rolling out FSM to every</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7183-1
+00:52:34.918 --> 00:52:36.234
+<v Greg Ehrenberg>branch in the country.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-0
+00:52:37.194 --> 00:52:40.756
+<v James Carr>Yeah, yeah. And so, I mean,
+I'm going to keep doing what I'm doing.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-1
+00:52:40.756 --> 00:52:43.689
+<v James Carr>The suggestion I got was just let it be
+natural growth,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-2
+00:52:43.689 --> 00:52:47.461
+<v James Carr>continue to work with the Midwest,
+continue to work with until somebody</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-3
+00:52:47.461 --> 00:52:50.709
+<v James Carr>figures out who to give the thumbs up in
+the official buy-in.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-4
+00:52:50.709 --> 00:52:54.952
+<v James Carr>I know I talked to Jeff Robinson and he
+was going to talk to his team and figure</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7239-5
+00:52:54.952 --> 00:52:56.314
+<v James Carr>out what that looked like.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7260-0
+00:52:57.194 --> 00:53:02.705
+<v Greg Ehrenberg>Is there anybody else besides is on our
+our list for that meeting next week?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7260-1
+00:53:02.705 --> 00:53:08.217
+<v Greg Ehrenberg>Is there somebody in the Northeast or
+somebody in the Midwest that you would</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7260-2
+00:53:08.217 --> 00:53:09.434
+<v Greg Ehrenberg>add to that team?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7259-0
+00:53:10.314 --> 00:53:10.394
+<v James Carr>Uhh...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7309-0
+00:53:11.914 --> 00:53:17.029
+<v James Carr>So the guy that I would have added in the
+Midwest just left the company.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7309-1
+00:53:17.029 --> 00:53:21.164
+<v James Carr>In the Northeast,
+if you have thick skin and a passionate,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7309-2
+00:53:21.164 --> 00:53:24.878
+<v James Carr>I have Eric Chadwick.
+I don't know if he's on there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7309-3
+00:53:24.878 --> 00:53:30.554
+<v James Carr>He's been somebody that I've worked with,
+but again, I say he's from New Jersey.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7292-0
+00:53:24.954 --> 00:53:25.514
+<v Greg Ehrenberg>Is not.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7319-0
+00:53:30.714 --> 00:53:36.314
+<v James Carr>So thick skin and you know he's
+passionate. And then if we...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7320-0
+00:53:35.154 --> 00:53:37.114
+<v Greg Ehrenberg>Did he work? Does he work for James Horn?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7334-0
+00:53:38.314 --> 00:53:41.547
+<v James Carr>I don't know exactly who he works for.
+I just know I've been working with him</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7334-1
+00:53:41.547 --> 00:53:42.874
+<v James Carr>and he got me in the door, so...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7333-0
+00:53:42.874 --> 00:53:43.354
+<v Greg Ehrenberg>Okay.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7350-0
+00:53:44.394 --> 00:53:49.161
+<v James Carr>Eric Chadwick and I don't know if Jay,
+what his thoughts was about Steven</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7350-1
+00:53:49.161 --> 00:53:51.674
+<v James Carr>Portland, the irrigation manager there.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7358-0
+00:53:56.354 --> 00:53:59.434
+<v Jay Jamison>Yeah, I mean,
+Steene might be a good addition as well.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7360-0
+00:54:00.154 --> 00:54:01.194
+<v Greg Ehrenberg>What's his last name?</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7361-0
+00:54:01.834 --> 00:54:02.314
+<v Jay Jamison>Greg.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7362-0
+00:54:04.714 --> 00:54:05.234
+<v Greg Ehrenberg>K.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7374-0
+00:54:08.554 --> 00:54:12.789
+<v Greg Ehrenberg>All right. All right. Thank you so much,
+James. Thanks for, well,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7374-1
+00:54:12.789 --> 00:54:14.714
+<v Greg Ehrenberg>you woke up early anyway, but.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7407-0
+00:54:15.594 --> 00:54:19.597
+<v James Carr>Yeah. Thanks for doing this.
+And thank you for navigating the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7382-0
+00:54:16.474 --> 00:54:17.754
+<v Greg Ehrenberg>Hope your day goes well.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7407-1
+00:54:19.597 --> 00:54:23.729
+<v James Carr>irrigator personalities.
+I'm sure you've dealt with some of the</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7407-2
+00:54:23.729 --> 00:54:27.410
+<v James Carr>different personalities.
+The irrigators have just unique</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7401-0
+00:54:24.634 --> 00:54:24.954
+<v Greg Ehrenberg>But.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7407-3
+00:54:27.410 --> 00:54:28.314
+<v James Carr>personalities.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7415-0
+00:54:30.954 --> 00:54:35.594
+<v Greg Ehrenberg>I've, I've, yes, and uh,
+we're gonna get stuck in, so...</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7433-0
+00:54:38.474 --> 00:54:43.007
+<v Greg Ehrenberg>Looking forward to the progress,
+the process, the path, the road,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7433-1
+00:54:43.007 --> 00:54:45.274
+<v Greg Ehrenberg>whatever you want to call it. And</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7431-0
+00:54:45.354 --> 00:54:45.994
+<v James Carr>Yeah.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7468-0
+00:54:47.034 --> 00:54:49.576
+<v James Carr>Well,
+thank you for all your hard work and</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7440-0
+00:54:47.274 --> 00:54:48.074
+<v Greg Ehrenberg>I'll be.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7468-1
+00:54:49.576 --> 00:54:53.536
+<v James Carr>passion. And just remember,
+I'm here to help you guys succeed too.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7468-2
+00:54:53.536 --> 00:54:58.384
+<v James Carr>So whatever I can do to help in the field
+and with the teams make this a success,</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7468-3
+00:54:58.384 --> 00:54:59.034
+<v James Carr>I'm all in.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7470-0
+00:55:01.434 --> 00:55:02.394
+<v James Carr>We can do this.</v>
+
+5859a22f-7f89-434c-ae28-882dcd7c92d2/7472-0
+00:55:03.674 --> 00:55:04.314
+<v Greg Ehrenberg>Awesome.</v>

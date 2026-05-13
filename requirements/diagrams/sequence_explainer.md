@@ -19,10 +19,11 @@ This sequence shows runtime interaction order across dispatcher, technician, LWC
 ## Runtime Guarantees Captured
 - Resolver must return exactly one published set or fail.
 - Service Appointment stores the resolved set and version at start.
+- Map context is loaded from Salesforce `Map_Feature__c` through Mapbox LWC and can accept ad hoc feature capture.
 - Missing required assets invoke bootstrap mode before inspection proceeds.
 - Suggested repairs are continuously updated and deduplicated during response entry.
 - Checkout is blocked if required answers are missing.
-- Confirmed repairs become pending callouts only after checkout review.
+- Confirmed repairs/enhancements become pending callouts only after checkout review.
 - Completion applies staged asset edits; failures create exceptions without losing inspection completion.
 
 ## Integration Boundaries

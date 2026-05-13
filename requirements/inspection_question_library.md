@@ -146,7 +146,7 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 | Q6.10 | Sunken / tilted head | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Broken Head |
 | Q6.10a | Head not retracting | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Broken Head |
 | Q6.10b | Head not rotating | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Broken Head |
-| Q6.11 | Overspray onto hardscape | Boolean | No | If Yes | True | Mike's form (not on James's grid — retain for FL) → WOLI Issue_Type = Overspray |
+| Q6.11 | Overwatering onto hardscape | Boolean | No | If Yes | True | FL-only delta (confirmed May 13, 2026 — James adapts form regionally; not national baseline) → WOLI Issue_Type = Overwatering |
 | Q6.12 | Lateral leak | Boolean | Yes | If Yes | True | James col: Lateral Leak → WOLI Issue_Type = Leak |
 | Q6.13 | Valve not activating | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Valve Fault |
 | Q6.13a | Seeping valve | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Valve Fault |
@@ -224,7 +224,7 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 | Q6.10 Sunken / tilted head | James | Broken Head |
 | Q6.10a Head not retracting | James | Broken Head |
 | Q6.10b Head not rotating | James | Broken Head |
-| Q6.11 Overspray | Mike | Overspray |
+| Q6.11 Overwatering | Mike | Overwatering |
 | Q6.12 Lateral leak | James | Leak |
 | Q6.13 Valve not activating | James | Valve Fault |
 | Q6.13a Seeping valve | James | Valve Fault |
@@ -254,7 +254,7 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 ## Open Questions for Stakeholder Validation
 
 - [x] **James (West Coast):** ~~Confirm Section 6 covers all items on the West Coast uniform Excel sheet.~~ **Resolved May 7, 2026** — Section 6 now mirrors all 13 failure-mode columns on James's report. New Section 9 added for the program schedule footer.
-- [ ] **James:** Confirm West Coast does not need an Overspray column (Q6.11 is on Mike's form but not James's grid). If yes, add to West Coast variant.
+- [x] **James:** Confirmed May 13, 2026 — Overwatering (Q6.11) is FL-only delta. James adapts form regionally; West Coast does not include this question.
 - [ ] **Alex (California):** Confirm Section 5 controller/programming questions match the California digital sheet. Any CA water-board reporting items missing?
 - [ ] **Mike (Florida):** Confirm Section 6 zone questions cover everything in the FL digital form, especially logic-driven expanders.
 - [ ] **National irrigation lead:** Should drip-specific questions be a separate sub-section rather than conditional within Section 6?

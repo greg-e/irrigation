@@ -23,12 +23,13 @@ This diagram shows the end-to-end irrigation inspection operating flow from work
 - Done/reporting nodes (light green): terminal outcomes and monitoring sinks.
 
 ## Critical Rules Captured
+- Map context is Mapbox LWC backed by Salesforce `Map_Feature__c` (point/polygon/line), available during desktop/mobile execution.
 - Question set must resolve to exactly one published match.
 - No-match condition fails loudly with explicit admin next steps.
 - Selected question set version is snapshotted at inspection start and stays locked.
 - Bootstrap mode is used when required asset types are missing.
 - Required questions must be complete before checkout.
-- Suggested repairs are generated continuously, then explicitly confirmed at checkout.
+- Suggested repairs and enhancements are generated continuously, then explicitly confirmed at checkout.
 - AM is required for pending callout ownership.
 - Asset apply failures do not discard inspection completion; exception is recorded.
 

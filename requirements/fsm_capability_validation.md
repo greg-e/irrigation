@@ -61,6 +61,8 @@ Validation matrix for the irrigation inspection workflow against actual Salesfor
 | 3.3 | Photos taken offline upload when online | ✅ Native | Low | Files queue locally and upload on reconnect. |
 | 3.4 | LWC plug-ins work offline | 🟢 Standard | Low | LWC plug-ins are designed to be offline-capable. Source: [FSM Mobile LWC guide](https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_mobile_lwc.htm). LWC must be authored to use offline-friendly APIs (`@wire` with cached adapters or local SQLite via `@salesforce/mobile-offline`). |
 | 3.5 | Conflict resolution when 2 users edit same record offline | 🟠 Caveat | — | Salesforce uses last-write-wins by default. Inspection responses are essentially append-only post-checkout, so conflict risk is low. Validation rule prevents post-completion edits. |
+| 3.6 | MVP within-property map delivered via custom Mapbox LWC component | 🟡 Custom LWC | Medium | Mapbox GL JS is embedded in custom LWC for desktop/mobile contexts and renders Salesforce-hosted GeoJSON from `Map_Feature__c`. |
+| 3.7 | Map usability in no-signal scenarios | 🟠 Caveat | Medium | Map rendering depends on tile availability and cache strategy. Keep inspection writes and GPS capture as offline-safe baseline; map writes queue and sync when online. |
 
 ---
 
@@ -185,6 +187,12 @@ Key FSM-capability implications if NE workflow differs materially:
 2. The "Suggested Repairs" Review Screen LWC (Pattern C from the WOLI discussion)
 3. PDF generation pipeline
 4. Question library admin UX
+
+Decision alignment update (May 2026):
+
+1. Mapbox GL JS in a custom LWC is the MVP mapping path for within-property irrigation visualization.
+2. Custom LWC includes both inspection runtime and map experiences (desktop/mobile).
+3. Mapbox offline tile/cache behavior must be validated with a dedicated spike before release.
 
 Before locking the build plan, prioritize the spikes in Section 9 — especially **PDF generation path**.
 

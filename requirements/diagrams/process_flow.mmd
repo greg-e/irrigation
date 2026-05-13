@@ -30,7 +30,8 @@ flowchart TD
         direction TB
         SA --> CHKIN["Tech checks in<br/>Status = In Progress"]:::mobile
         CHKIN --> GPS["LocationService LWC<br/>captures GPS<br/>→ SA + Asset lat/lng"]:::mobile
-        GPS --> RESOLVE["Resolve published Question Set<br/>by Region + Inspection Type/Season + Work Type"]:::mobile
+        GPS --> MAPLOAD["Mapbox Map LWC loads property features<br/>from Map_Feature__c (Point/Polygon/Line)"]:::mobile
+        MAPLOAD --> RESOLVE["Resolve published Question Set<br/>by Region + Inspection Type/Season + Work Type"]:::mobile
         class RESOLVE decision
         RESOLVE -->|one match| SNAP["Snapshot selected set version<br/>on Service Appointment"]:::sf
         RESOLVE -->|no match| FAILSET["Fail loudly<br/>show admin error + next steps"]:::decision
@@ -41,7 +42,9 @@ flowchart TD
         BOOTSTRAP --> STAGE["Stage asset changes in pending-change object<br/>(field-level before/after)"]:::sf
         STAGE --> LOAD
 
-        LOAD --> HDR["Section 1-3 Header<br/>controller state, backflow, meter,<br/>rain/freeze sensor, restrictions"]:::mobile
+        LOAD --> MAPCTX["Map context available during inspection<br/>asset/location-aware interactions"]:::mobile
+        MAPCTX --> ADHOCPIN["Optional ad hoc pin/feature capture<br/>queued offline, synced when online"]:::mobile
+        ADHOCPIN --> HDR["Section 1-3 Header<br/>controller state, backflow, meter,<br/>rain/freeze sensor, restrictions"]:::mobile
         HDR --> ZONELOOP["Section 6 — per-Zone loop<br/>distribution, runtime, 13 failure modes,<br/>photos, voice-to-text notes"]:::mobile
         ZONELOOP --> PROG["Section 9 — Programs A-D<br/>start times, water days, budget %<br/>→ Irrigation_Program__c records"]:::mobile
         PROG --> FOOT["Section 8 Footer<br/>recommendations, customer notes,<br/>internal notes, overall status"]:::mobile
@@ -58,7 +61,7 @@ flowchart TD
     class SUGG decision
     SUGG --> AMREQ{"AM assigned?"}:::decision
     AMREQ -->|no| BLOCKAM["Block checkout<br/>AM is required"]:::decision
-    AMREQ -->|yes| WOLI["WorkOrderLineItem created as pending<br/>Issue_Type__c, Asset__c,<br/>severity + structured description,<br/>Source_Inspection_Response__c"]:::sf
+    AMREQ -->|yes| WOLI["WorkOrderLineItem created as pending<br/>Issue_Type__c, Callout_Type__c,<br/>Asset__c, severity + structured description,<br/>Source_Inspection_Response__c"]:::sf
     SUGG -->|tech dismisses| DISMISS["Response flagged failed<br/>but no callout created"]:::sf
     SUGG -->|tech merges| WOLIM["Multiple responses → 1 pending WOLI"]:::sf
 

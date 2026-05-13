@@ -2,6 +2,19 @@
 
 Exploration of options for mapping irrigation system components at the yard/property level inside Salesforce.
 
+## Confirmed Decisions (May 2026)
+
+- Offline support is required for the LWC experience in FSM Mobile.
+- Primary user: Irrigation Manager.
+- Secondary users: Account Manager, Field Tech.
+- **Strategic mapping path: Mapbox GL JS embedded in a custom LWC. (Revised May 2026 — see pivot note below.)**
+- ArcGIS is **not** the MVP path. Client has no existing ArcGIS Online org; Esri requires dual-platform licensing and admin overhead that is not justified at this scale.
+- Geometry support (zone polygons, pipe/wire lines) is a hard MVP requirement. Image + pin overlay (Option 1) is insufficient and is not the primary path.
+- Satellite basemap is nice-to-have; Mapbox covers it via style toggle at no extra gate.
+
+> **⚠️ PIVOT — May 2026**
+> ArcGIS direction has been **reversed**. Client confirmed no existing ArcGIS Online org. Esri integration requires a net-new license, a second admin platform, and ArcGIS Field Maps for offline mobile — unjustified for a within-property residential irrigation use case. Mapbox GL JS in a custom LWC is the selected MVP path. See Option 2c below and the updated Recommendation section.
+
 ## Problem Statement
 
 Salesforce Maps resolves property-to-property routing and territory visibility but cannot map components within a property. Technicians and admins need a way to see where each irrigation component (zone valve, head, backflow, controller) is physically located on the property — both for audit purposes and to guide techs during service visits.
@@ -51,7 +64,7 @@ Upload a site photo, as-built drawing, or aerial image as a File on the Account.
 
 ### Fit for Irrigation
 
-**High fit for MVP+.** The aerial photo of a property is usually sufficient to communicate where a valve box or backflow is located. This is a practical, low-dependency approach that keeps everything inside Salesforce and linked to Asset records.
+**Good fallback fit.** The aerial photo + pin model is still a practical fallback when offline-first data capture is needed, but it is no longer the primary MVP direction.
 
 ---
 
@@ -105,12 +118,12 @@ All three options require lat/long coordinates on each Asset record. The `Asset`
 - External API dependency and ongoing license/usage cost
 - Requires lat/long on every Asset — data entry burden during initial audit
 - More development complexity than Option 1
-- ArcGIS is significant investment — overkill for a single-contractor irrigation operation without GIS team
+- ArcGIS requires licensing and implementation planning, but is selected for MVP due to strategic fit and native Salesforce/FSM integration
 - Google Maps API key management adds a security surface (key must be scoped and restricted)
 
 ### Fit for Irrigation
 
-**Medium fit — strong future-state, lower priority for MVP.** The value increases significantly if the business grows to multi-property portfolio management, water usage auditing, or regulatory compliance reporting. For a single property visit the aerial photo + pin model (Option 1) is sufficient and far simpler to build and maintain.
+**High fit when ArcGIS is selected as the strategic GIS platform.** ArcGIS provides the strongest long-term path for spatially accurate asset mapping, richer GIS layers, and enterprise integration across Salesforce/FSM.
 
 ---
 
@@ -118,15 +131,17 @@ All three options require lat/long coordinates on each Asset record. The `Asset`
 
 | Phase | Approach |
 |---|---|
-| MVP | Files on Account for as-built PDFs and site photos. No interactive pinning yet. |
-| Phase 2 | Custom LWC (Option 1) — background image + Asset pin overlay. Medium dev effort, high value for field audits. |
-| Future / Scale | Google Maps API embedded LWC (Option 2a) if lat/long coordinates are captured during field audits and multi-property spatial reporting becomes a need. ArcGIS only if GIS capability becomes a strategic investment. |
+| MVP | **Mapbox GL JS in a custom LWC.** Points (asset pins), polygons (zone boundaries), lines (pipe/wire runs). Offline via Mapbox downloadable tile packs. Satellite basemap via style toggle. Geometry stored on Salesforce custom objects linked to Asset records. |
+| Phase 2 | Evaluate portfolio-level spatial queries (cross-property analysis, water usage spatial reporting) if scale justifies it. |
+| Future / Scale | Revisit ArcGIS only if client acquires an ArcGIS Online org for a separate business reason — do not build toward it speculatively. |
 
+> **⚠️ PIVOT — May 2026**
+> ArcGIS dropped from MVP. Mapbox GL JS selected. Rationale: no client ArcGIS org, dual-platform overhead not justified, geometry requirement (polygons + lines) rules out image/pin Option 1, Mapbox covers all three geometry types plus optional satellite basemap in a single custom LWC with no second admin model.
 ---
 
 ## Open Questions
 
 - [x] Is lat/long capture feasible during the initial asset audit phase using FSM Mobile GPS? **→ Yes — GPS capture will be built at launch. Custom LWC screen flow writes device GPS to Asset Latitude/Longitude fields during field audit. (Decided in irrigationcheckups_analysis.md)**
-- [ ] Does the org have an existing Google Maps API key or ArcGIS license?
-- [ ] What is the primary user for the within-property map — office admin, dispatcher, or field tech?
-- [ ] Does the LWC need to work offline in the FSM Mobile app?
+- [x] Does the org have an existing Google Maps API key or ArcGIS license? **→ No ArcGIS Online org. ArcGIS dropped. Mapbox GL JS selected as the MVP mapping library.**
+- [x] What is the primary user for the within-property map — office admin, dispatcher, or field tech? **→ Primary: Irrigation Manager. Secondary: Account Manager, Field Tech.**
+- [x] Does the LWC need to work offline in the FSM Mobile app? **→ Yes, offline support is required.**

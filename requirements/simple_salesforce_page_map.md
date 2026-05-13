@@ -56,10 +56,14 @@ Use standard Salesforce page components:
    - Backflows
    - Pumps
    - Sensors
-5. Validation / blockers section
+5. Irrigation System Map section (MVP)
+   - Custom Mapbox LWC component (desktop + mobile-compatible)
+   - Filtered to the current property/account context
+   - Used by Irrigation Manager primarily; Account Manager and Field Tech secondarily
+6. Validation / blockers section
    - Show current blockers
    - Show placeholder warnings
-6. Audit history section
+7. Audit history section
    - Read-only action history
 
 Keep this page compact and task-focused.
@@ -113,6 +117,7 @@ Expose only these actions in the first version:
 - Add Asset
 - Edit Asset
 - Retire Asset
+- Open Irrigation System Map
 - Validate
 - Mark Setup Complete
 - Reopen Setup
@@ -134,7 +139,8 @@ That means:
 
 1. Configure property list/report views.
 2. Configure the Account record page.
-3. Configure Asset record pages.
-4. Add Flows for Validate, Mark Complete, Reopen.
-5. Add audit object/report if needed.
-6. Add custom UI only if a real gap remains.
+3. Configure Mapbox LWC map component on Account page for MVP.
+4. Configure Asset record pages.
+5. Add Flows for Validate, Mark Complete, Reopen.
+6. Add audit object/report if needed.
+7. Add custom UI only if a real gap remains.

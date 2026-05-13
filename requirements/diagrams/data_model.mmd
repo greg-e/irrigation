@@ -4,6 +4,7 @@ title: Irrigation Inspection — Recommended Data Model
 erDiagram
     ACCOUNT ||--o{ SERVICE_CONTRACT : "has"
     ACCOUNT ||--o{ ASSET : "owns"
+    ACCOUNT ||--o{ MAP_FEATURE : "has geometry features"
     SERVICE_CONTRACT ||--o{ WORK_ORDER : "generates"
     WORK_ORDER ||--o{ WORK_ORDER_LINE_ITEM : "contains"
     WORK_ORDER ||--o{ SERVICE_APPOINTMENT : "scheduled as"
@@ -14,19 +15,28 @@ erDiagram
     ASSET ||--o{ IRRIGATION_PROGRAM : "controller has programs A-D"
     ASSET ||--o{ INSPECTION_RESPONSE : "asset-scoped responses"
     ASSET ||--o{ WORK_ORDER_LINE_ITEM : "callouts target asset"
+    ASSET ||--o{ MAP_FEATURE : "optional feature binding"
 
     SERVICE_APPOINTMENT ||--o{ INSPECTION_RESPONSE : "M-D parent"
     SERVICE_APPOINTMENT ||--o{ IRRIGATION_PROGRAM : "snapshot at visit"
     SERVICE_APPOINTMENT ||--o{ CONTENT_DOC_LINK : "photos via Files"
+    SERVICE_APPOINTMENT ||--o{ INSPECTION_SUGGESTED_REPAIR : "live suggestions"
+    SERVICE_APPOINTMENT ||--o{ INSPECTION_ASSET_CHANGE : "staged changes"
+    SERVICE_APPOINTMENT ||--o{ ASSET_SYNC_EXCEPTION : "apply failures"
 
     INSPECTION_QUESTION_SET ||--o{ INSPECTION_QUESTION_SET_MEMBER : "membership"
+    INSPECTION_QUESTION_SET ||--o{ INSPECTION_QUESTION_SET_DELTA : "delta overlays"
+    INSPECTION_QUESTION_SET ||--o{ INSPECTION_QUESTION_SET : "pinned base inheritance"
     INSPECTION_QUESTION ||--o{ INSPECTION_QUESTION_SET_MEMBER : "in sets"
     INSPECTION_QUESTION ||--o{ INSPECTION_RESPONSE : "answered as"
     INSPECTION_QUESTION ||--o{ INSPECTION_QUESTION : "branching parent"
 
     INSPECTION_RESPONSE ||--o{ WORK_ORDER_LINE_ITEM : "failed → suggested callout"
     INSPECTION_RESPONSE ||--o{ CONTENT_DOC_LINK : "per-question photo"
+    INSPECTION_RESPONSE ||--o{ INSPECTION_SUGGESTED_REPAIR : "source responses"
+    INSPECTION_SUGGESTED_REPAIR ||--o{ WORK_ORDER_LINE_ITEM : "confirmed → pending callout"
     WORK_ORDER_LINE_ITEM ||--o{ CONTENT_DOC_LINK : "callout photo"
+    INSPECTION_ASSET_CHANGE ||--o{ ASSET_SYNC_EXCEPTION : "failed apply creates exception"
 
     ACCOUNT {
         string Name
@@ -48,6 +58,7 @@ erDiagram
         Id AssetId
         string Subject
         picklist Issue_Type__c "Broken Head / Valve Fault / Leak / etc."
+        picklist Callout_Type__c "Repair / Enhancement"
         picklist Callout_Status__c "New / Quoted / Approved / Completed"
         longtext Callout_Notes__c
         lookup Source_Inspection_Response__c "FK → Inspection_Response__c"
@@ -80,11 +91,22 @@ erDiagram
     ASSET {
         string Name
         Id ParentId "hierarchy via AssetLevel"
-        picklist Asset_Type__c "Controller / Zone / Backflow / Head / Pump / Sensor"
+        picklist Asset_Type__c "Controller / Zone / Backflow / Head / Valve / Drip_Line / Pump / Sensor"
         decimal Latitude
         decimal Longitude
         picklist ConsequenceOfFailure
         picklist Status "Operational / Needs Repair"
+    }
+    MAP_FEATURE {
+        lookup Account__c
+        lookup Asset__c "nullable"
+        picklist Feature_Type__c "Point / Polygon / LineString"
+        longtext GeoJSON_Geometry__c
+        string Label__c
+        string Color_Code__c
+        number Sort_Order__c
+        picklist Spatial_Source__c
+        picklist Spatial_Confidence__c
     }
     IRRIGATION_PROGRAM {
         lookup Controller_Asset__c
@@ -139,11 +161,46 @@ erDiagram
         date Effective_End__c
         bool Active__c
     }
+    INSPECTION_QUESTION_SET_DELTA {
+        masterdetail Base_Set__c
+        masterdetail Variant_Set__c
+        picklist Action__c "Add / Override / Remove"
+        lookup Question__c
+        number Display_Order__c
+        bool Required__c
+    }
     INSPECTION_QUESTION_SET_MEMBER {
         masterdetail Question_Set__c
         lookup Question__c
         number Display_Order__c
         bool Required__c
+    }
+    INSPECTION_SUGGESTED_REPAIR {
+        masterdetail Service_Appointment__c
+        lookup Asset__c
+        lookup Source_Response__c
+        picklist Issue_Type__c
+        picklist Callout_Type__c "Repair / Enhancement"
+        number Quantity__c
+        picklist Severity__c
+        longtext Notes__c
+        bool Confirmed__c
+    }
+    INSPECTION_ASSET_CHANGE {
+        masterdetail Service_Appointment__c
+        lookup Asset__c
+        string Field_API_Name__c
+        longtext Before_Value__c
+        longtext After_Value__c
+        datetime Applied_At__c
+        bool Apply_Succeeded__c
+    }
+    ASSET_SYNC_EXCEPTION {
+        masterdetail Service_Appointment__c
+        lookup Related_Asset_Change__c
+        longtext Error_Detail__c
+        datetime Logged_At__c
+        bool Resolved__c
     }
     CONTENT_DOC_LINK {
         Id LinkedEntityId "polymorphic SA / Response / WOLI / Asset"

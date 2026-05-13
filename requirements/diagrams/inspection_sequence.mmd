@@ -7,6 +7,7 @@ sequenceDiagram
     actor Tech
     participant FSM as Salesforce FSM
     participant LWC as Inspection LWC
+    participant Map as Mapbox Map LWC
     participant Resolver as Question Set Resolver
     participant QL as Question Library
     participant Stage as Asset Change Staging
@@ -18,6 +19,8 @@ sequenceDiagram
     Dispatcher->>FSM: Schedule Service Appointment
     Tech->>LWC: Check in to appointment
     LWC->>FSM: Capture GPS and set In Progress
+    LWC->>Map: Load Map_Feature__c for property context
+    Map-->>LWC: Render points/polygons/lines
 
     LWC->>Resolver: Resolve set(region + season/type + work type)
     Resolver->>QL: Query published sets
@@ -45,6 +48,10 @@ sequenceDiagram
         LWC->>FSM: Upsert Inspection_Response__c
         LWC->>Suggest: Evaluate failed-value rules
         Suggest->>FSM: Upsert deduped suggestion (Inspection + Asset + IssueType)
+        opt Tech captures ad hoc map feature
+            Tech->>Map: Add pin/line/polygon
+            Map->>FSM: Upsert Map_Feature__c (queue if offline)
+        end
     end
 
     Tech->>LWC: Start checkout
@@ -55,7 +62,7 @@ sequenceDiagram
         LWC->>FSM: Load suggested repairs
         Tech->>LWC: Confirm/edit/dismiss suggestions
         LWC->>FSM: Create pending WOLIs for confirmed items
-        Note over LWC,FSM: Severity + structured description required; AM required
+        Note over LWC,FSM: Severity + structured description + Callout_Type (Repair/Enhancement) required; AM required
         Tech->>LWC: Submit inspection
         LWC->>Flow: Trigger completion automations
 

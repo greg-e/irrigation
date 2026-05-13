@@ -228,26 +228,29 @@ Dependencies: E3-S1
 
 ---
 
-## Epic E5: Suggested Repairs and Pending Callout Conversion (P0)
-Goal: Generate continuous suggestions and convert confirmed items to AM-owned pending callouts at checkout.
+## Epic E5: Suggested Repairs, Enhancements, and Pending Callout Conversion (P0)
+Goal: Generate continuous suggestions (repairs and enhancements) and convert confirmed items to AM-owned pending callouts at checkout.
 
-### Story E5-S1: Generate and de-duplicate suggested repairs continuously
-As a tech, I need live suggested repair visibility while answering questions.
+### Story E5-S1: Generate and de-duplicate suggested repairs and enhancements continuously
+As a tech, I need live suggested repair and enhancement visibility while answering questions.
 
 Acceptance criteria:
 1. Failed responses create/update suggestion records in near-real time.
 2. Suggestions are de-duplicated by Inspection + Asset + Issue Type.
 3. Suggestions track quantity, severity, and notes.
 4. Suggestions remain editable in checkout review.
+5. Each suggestion carries a Callout_Type picklist: `Repair` (something broken) or `Enhancement` (improvement opportunity beyond what's broken).
+6. Enhancement suggestions can be created manually by the tech at any point, not only triggered by failed responses.
 
 ### Story E5-S2: Checkout review and confirmation workflow
 As a tech, I need explicit control over what becomes a callout.
 
 Acceptance criteria:
-1. Checkout shows all current suggestions.
+1. Checkout shows all current suggestions, grouped by Callout_Type (Repair / Enhancement).
 2. Tech can confirm, dismiss, or merge suggestions.
 3. Confirmed items require structured description.
 4. Severity is required and constrained to standard values.
+5. Enhancement suggestions display distinct visual treatment from repair suggestions in checkout UI.
 
 ### Story E5-S3: Convert confirmed suggestions to pending WOLIs
 As AM operations, I need pending callouts ready for estimate review.
@@ -255,8 +258,9 @@ As AM operations, I need pending callouts ready for estimate review.
 Acceptance criteria:
 1. Confirmed items create WOLIs in Pending AM Review status.
 2. WOLI stores source inspection response linkage.
-3. AM assignment is required at checkout.
-4. If AM is missing, checkout is blocked with actionable message.
+3. WOLI carries Callout_Type field (`Repair` / `Enhancement`) sourced from confirmed suggestion.
+4. AM assignment is required at checkout.
+5. If AM is missing, checkout is blocked with actionable message.
 
 Dependencies: E3-S3
 
@@ -279,7 +283,7 @@ As an AM, I need a queue and detail view to triage pending callouts.
 
 Acceptance criteria:
 1. AM queue filters by owner and status.
-2. Callout detail shows source context (asset, issue type, severity, notes).
+2. Callout detail shows source context (asset, issue type, Callout_Type, severity, notes).
 3. AM can mark quotable or in-contract repair path.
 4. Status transitions are captured for reporting.
 
@@ -326,6 +330,101 @@ Acceptance criteria:
 4. Data dictionary for report fields is documented.
 
 Dependencies: E4-S3, E6-S2
+
+---
+
+## Epic E9: Mapbox Map LWC — Within-Property Irrigation System Visualization (P0)
+Goal: Deliver a custom Lightning Web Component embedding Mapbox GL JS that lets admins and techs author, view, and update the spatial layout of an irrigation system's components at the property level.
+
+> **Architecture decision (May 2026):** ArcGIS dropped — no client ArcGIS Online org. Mapbox GL JS selected for within-property visualization. Full geometry required (points for components, polygons for zones, lines for pipe/wire runs). Offline via Mapbox tile packs. Satellite basemap included via style toggle (nice-to-have). No second admin platform.
+
+### Story E9-S1: Stand up Mapbox LWC shell and API key governance
+As a Salesforce admin, I need a secure, configurable Mapbox LWC available on Lightning pages.
+
+Acceptance criteria:
+1. LWC loads Mapbox GL JS and renders a basemap tile within the component boundaries.
+2. Mapbox public access token is stored in a Custom Setting or Custom Metadata (not hardcoded).
+3. Token is scoped to the org's Salesforce domain in the Mapbox dashboard (URL restriction).
+4. Streets basemap is the default; satellite/hybrid basemap is available via a toggle control.
+5. Component is configurable in App Builder for phone and desktop form factors.
+6. Component renders without errors when no property geometry exists yet (empty state).
+
+Dependencies: None
+
+---
+
+### Story E9-S2: Define and implement the map geometry data model
+As a solution architect, I need a Salesforce-native geometry storage model that links spatial features to Asset records.
+
+Acceptance criteria:
+1. `Map_Feature__c` custom object exists with fields: Account lookup, Asset lookup (nullable for zone polygons and pipe lines), Feature_Type picklist (Point / Polygon / LineString), GeoJSON_Geometry__c (long text area), Label__c, Color_Code__c, Sort_Order__c.
+2. Feature_Type picklist values are controlled: Point, Polygon, LineString.
+3. Asset lookup is nullable — zone boundary polygons and pipe lines are account-level features, not always tied to a single asset.
+4. Object is reportable and accessible via standard Salesforce SOQL.
+5. Sharing model allows field techs to read; only authorized roles can create/edit.
+
+Dependencies: E4A-S1
+
+---
+
+### Story E9-S3: Build desktop feature authoring experience (Account record page)
+As an Irrigation Manager or office admin, I need to draw and label the irrigation system layout on a property's account record.
+
+Acceptance criteria:
+1. Map LWC embeds on the Account record page as a dedicated "Irrigation Map" tab.
+2. Mapbox Draw tools are available: place point, draw polygon (zone), draw line (pipe/wire).
+3. On save, drawn geometry is stored as a `Map_Feature__c` record linked to the Account.
+4. Point features prompt a popup to select the linked Asset record and confirm the label.
+5. Polygon and line features prompt for label and optional color code.
+6. Existing features load from `Map_Feature__c` on component init and render on the map.
+7. Users with edit permission can drag/reshape existing features; changes persist on save.
+8. Delete action removes the `Map_Feature__c` record after confirmation.
+
+Dependencies: E9-S2
+
+---
+
+### Story E9-S4: Build mobile feature view and GPS pin capture (FSM Mobile / Work Order)
+As a field tech, I need to view the property map and add or update component pins from mobile during a visit.
+
+Acceptance criteria:
+1. Map LWC embeds on the Work Order record page in a "Property Map" tab visible in FSM Mobile.
+2. All existing `Map_Feature__c` records for the account are rendered on load.
+3. Asset pins are color-coded by asset type (controller, zone, backflow, pump, sensor).
+4. Tapping a pin shows a popup with asset name, type, and last inspected date; tapping "Open Asset" navigates to the Asset record.
+5. "Drop GPS Pin" action captures device GPS coordinates and creates a new Point `Map_Feature__c` record linked to the account, prompting asset selection.
+6. Tech can edit the label and asset linkage of an existing pin they dropped; cannot delete or reshape features authored by office admin.
+7. Component gracefully degrades when device GPS is unavailable (button disabled with explanatory message).
+
+Dependencies: E9-S2, E9-S3
+
+---
+
+### Story E9-S5: Implement offline tile caching strategy
+As a field tech, I need the property map to be usable in low-connectivity residential environments.
+
+Acceptance criteria:
+1. Offline tile pack approach is documented and approved: either Mapbox offline API pre-load per scheduled visit or a static fallback tile set cached at app load.
+2. Component detects network state and renders a "Offline mode — map tiles may not load" banner when offline.
+3. GPS pin capture (E9-S4) functions offline and queues the `Map_Feature__c` record for sync.
+4. Queued offline records sync automatically on next connectivity restore without user action.
+5. Sync failures surface in the Salesforce standard offline conflict UI or a custom notification.
+
+Dependencies: E9-S4
+
+---
+
+### Story E9-S6: Link map features to inspection and callout context
+As an AM or office user, I need to see repair callout status reflected on the property map.
+
+Acceptance criteria:
+1. Asset pins on the map display a status badge when the linked Asset has an open pending callout (WOLI in Pending AM Review or In Progress status).
+2. Badge color/icon is distinct from default pin — uses controlled value set (open callout, in-progress repair, no issues).
+3. Tapping a badged pin shows the callout summary (issue type, severity, AM owner) in the popup.
+4. Badge state updates within one map reload after callout status changes.
+5. Filtering control on the map allows showing only assets with open callouts.
+
+Dependencies: E9-S3, E5-S3
 
 ---
 
@@ -376,11 +475,13 @@ Acceptance criteria:
 ## Milestone Cut Suggestion
 
 ### Milestone M1 (P0 core go-live)
-- E1, E2, E3, E4, E5, E6
+- E1, E2, E3, E4, E4A, E5, E6
+- E9-S1, E9-S2, E9-S3, E9-S4 (Map LWC desktop authoring + mobile GPS pin)
 - NFR-S1, NFR-S3
 
 ### Milestone M2 (operational hardening)
 - E7, E8
+- E9-S5, E9-S6 (offline tile strategy + callout map badges)
 - NFR-S2
 
 ---

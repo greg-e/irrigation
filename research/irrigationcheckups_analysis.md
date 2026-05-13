@@ -90,7 +90,7 @@ Pricing: $79/mo PRO (unlimited checkups, up to 250 zones/controller, e-signature
 IrrigationCheckups has a structured "Repair Callout" concept — a discrete issue flagged at a specific zone or component during a checkup, with notes, photos, and an auto-linked quote item.
 
 **Decision:** Repair Callouts are modeled as **Work Order Line Items with extended custom fields** — no separate custom object. Schema defined in [fsm_asset_architecture.md](fsm_asset_architecture.md):
-- `Issue_Type__c` — Picklist (Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overspray / Clog / Other)
+- `Issue_Type__c` — Picklist (Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overwatering / Clog / Other)
 - `Callout_Status__c` — Picklist (New / Quoted / Approved / Completed)
 - `Callout_Notes__c` — Long Text Area
 - `Callout_Photo__c` — Files attachment reference

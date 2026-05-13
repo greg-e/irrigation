@@ -78,7 +78,7 @@ Custom fields added for Repair Callout tracking (decisions from irrigationchecku
 
 | Field API Name | Type | Values / Notes |
 |---|---|---|
-| `Issue_Type__c` | Picklist | Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overspray / Clog / Other |
+| `Issue_Type__c` | Picklist | Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overwatering / Clog / Other |
 | `Callout_Status__c` | Picklist | New / Quoted / Approved / Completed |
 | `Callout_Notes__c` | Long Text Area | Tech voice/text notes captured in the field |
 | `Callout_Photo__c` | Text (URL) | Reference to Files attachment; or use native Files on WOLI |
