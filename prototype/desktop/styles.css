@@ -1,0 +1,796 @@
+:root {
+  --ink: #181818;
+  --muted: #5f6b7a;
+  --line: #dde3ea;
+  --surface: #ffffff;
+  --surface-soft: #f7f9fb;
+  --brand: #0176d3;
+  --brand-ink: #ffffff;
+  --ok: #1f7a41;
+  --warn: #8f4b00;
+  --danger: #ba0517;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Salesforce Sans", "Segoe UI", Arial, sans-serif;
+  color: var(--ink);
+  background: #f4f6f9;
+}
+
+.sf-report-header {
+  max-width: 1320px;
+  margin: 16px auto 0;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px 8px 0 0;
+}
+
+.sf-report-header-tight {
+  margin-top: 8px;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  padding: 10px 10px 8px;
+}
+
+.sf-report-controls {
+  align-items: center;
+}
+
+.action-green {
+  color: #6a9f00;
+  border-color: #b9ce74;
+}
+
+.split-edit-group {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.sf-report-meta {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.sf-report-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: #24a69a;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.sf-report-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sf-report-warning {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 10px 14px;
+  border: 1px solid #dddbda;
+  border-top: none;
+  background: #fff;
+  color: #6f4e00;
+  font-size: 0.86rem;
+}
+
+
+
+.layout,
+.record-layout {
+  max-width: 1320px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.panel-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.report-stats-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.report-stat {
+  margin: 2px 0 0;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.filters {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filters label {
+  min-width: 180px;
+  flex: 1 1 180px;
+}
+
+.queue-table-wrap,
+.audit-wrap {
+  margin-top: 10px;
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.queue-table,
+.audit-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.am-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.am-action-btn {
+  min-width: 88px;
+}
+
+th,
+td {
+  font-size: 0.83rem;
+  padding: 7px;
+  border-bottom: 1px solid #eef1f5;
+  text-align: left;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f7f9fb;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.status-not-started {
+  background: #eef2f6;
+  color: #2f445d;
+}
+
+.status-in-progress {
+  background: #e8f3ff;
+  color: #0b5cab;
+}
+
+.status-complete {
+  background: #e8f8ee;
+  color: #056034;
+}
+
+.workspace-panel {
+  min-height: auto;
+}
+
+.report-help {
+  min-height: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.record-page {
+  display: grid;
+  gap: 10px;
+}
+
+/* Ensure the record header object icon keeps Salesforce-like color in this prototype. */
+.slds-page-header__icon-wrapper.slds-icon-standard-asset,
+.slds-page-header__icon-wrapper.slds-icon-standard-asset_object {
+  background: #0176d3;
+  border-radius: 0.25rem;
+}
+
+.slds-page-header__icon-wrapper .slds-page-header__icon {
+  fill: #ffffff;
+}
+
+.tabs {
+  margin-top: 4px;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: #3e3e3c;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: #0176d3;
+  font-weight: 700;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* ── Asset modal ── */
+.slds-modal.hidden,
+.slds-backdrop.hidden {
+  display: none;
+}
+
+.slds-modal {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+
+.slds-modal__container {
+  position: relative;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  width: 700px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.slds-modal__header {
+  background: #f3f3f3;
+  border-bottom: 1px solid #dddbda;
+  padding: 1rem 1.5rem;
+  border-radius: 4px 4px 0 0;
+}
+
+.slds-modal__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.slds-modal__content {
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.slds-modal__footer {
+  border-top: 1px solid #dddbda;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border-radius: 0 0 4px 4px;
+}
+
+.slds-modal__close {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+}
+
+.slds-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 8999;
+}
+
+/* ── Asset related list table ── */
+.slds-card_boundary {
+  border: 1px solid #dddbda;
+  border-radius: 4px;
+}
+
+.slds-table_fixed-layout {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.slds-table_fixed-layout td,
+.slds-table_fixed-layout th {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-section {
+  border-top: 1px solid #dddbda;
+  padding-top: 12px;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.record-section h3 {
+  margin: 0 0 8px;
+  font-size: 0.96rem;
+}
+
+.assets-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.actions-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.status-pill {
+  display: inline-block;
+  margin: 2px 0 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.83rem;
+  font-weight: 700;
+  background: #eef2f6;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.warning-line {
+  margin: 8px 0 0;
+  color: var(--warn);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.inline-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+}
+
+.inline-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  padding: 6px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-brand {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+/* ── Detail tab: SF-style field layout ── */
+.slds-section__title.slds-theme_shade {
+  border-radius: 0;
+  padding: 0;
+  border-top: 1px solid #dddbda;
+}
+
+.slds-section__title-action {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #3e3e3c;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: #f3f3f3;
+}
+
+.slds-section__title-action-icon {
+  transition: transform 0.18s ease;
+}
+
+.slds-section.slds-is-open .slds-section__title-action-icon {
+  transform: rotate(90deg);
+}
+
+.slds-section__content {
+  display: none;
+}
+
+.slds-section.slds-is-open .slds-section__content {
+  display: block;
+}
+
+.detail-field .slds-form-element__control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 4px;
+  min-height: 28px;
+}
+
+.detail-field .slds-form-element__static {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.detail-field .slds-form-element__label {
+  font-size: 0.75rem;
+  color: #706e6b;
+  margin-bottom: 2px;
+}
+
+.detail-edit-btn.slds-button_icon {
+  opacity: 0;
+  transition: opacity 0.12s;
+  flex-shrink: 0;
+}
+
+.slds-hint-parent:hover .detail-edit-btn.slds-button_icon {
+  opacity: 1;
+}
+
+.slds-form-element__static.status-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+/* ── Detail tab: SF-style field layout ── */
+
+.btn-neutral {
+  background: #f7f9fb;
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+.btn-danger {
+  background: #fff4f4;
+  border-color: #f5c0c0;
+  color: var(--danger);
+}
+
+.status-line {
+  margin: 8px 0 0;
+  min-height: 17px;
+  font-size: 0.82rem;
+}
+
+.rule-list {
+  display: grid;
+  gap: 6px;
+}
+
+.rule-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: var(--surface-soft);
+}
+
+.rule-pass {
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.rule-fail {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.asset-tree {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  padding: 8px;
+  min-height: 230px;
+  max-height: 420px;
+  overflow: auto;
+}
+
+.tree-title {
+  margin: 0 0 8px;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+.tree-group {
+  margin-bottom: 8px;
+}
+
+.tree-node {
+  border: 1px solid #e7ebef;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  padding: 5px 6px;
+  background: #fff;
+}
+
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tree-toggle {
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #0b5cab;
+  cursor: pointer;
+  padding: 2px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.tree-toggle:hover {
+  background: rgba(11, 92, 171, 0.1);
+  border-radius: 2px;
+}
+
+.tree-node-expanded .tree-toggle {
+  transform: rotate(90deg);
+}
+
+.tree-toggle .slds-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: currentColor;
+}
+
+.tree-toggle-placeholder {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+}
+
+.tree-node-btn {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: #0b5cab;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+}
+
+.tree-count-badge {
+  display: inline-block;
+  background: #f4f6f9;
+  color: #0b5cab;
+  border-radius: 12px;
+  padding: 1px 6px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.tree-children {
+  margin-top: 6px;
+  margin-left: 12px;
+}
+
+.tree-node-selected {
+  border-color: #91c9f7;
+  background: #eef6fc;
+}
+
+.tree-node-title {
+  display: block;
+  font-weight: 700;
+  color: #032d60;
+}
+
+.tree-node-subtitle {
+  display: block;
+  font-size: 0.74rem;
+  color: #5f6b7a;
+}
+
+.hierarchy-search-wrap {
+  min-width: 250px;
+}
+
+.detail-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.timeline-item {
+  border-left: 3px solid #bcc7d3;
+  padding: 6px 10px;
+  background: #fafbfc;
+}
+
+.timeline-alert {
+  border-left-color: #ba0517;
+  background: #fff5f5;
+}
+
+.timeline-warning {
+  border-left-color: #8f4b00;
+  background: #fffaf3;
+}
+
+.timeline-meta {
+  font-size: 0.72rem;
+  color: #5f6b7a;
+}
+
+.timeline-title {
+  margin: 2px 0;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+.timeline-detail {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.form-grid button {
+  align-self: end;
+}
+
+.issue-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.issue-link {
+  margin-left: 6px;
+  border: none;
+  background: transparent;
+  color: #0b5cab;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.related-context {
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-soft);
+  padding: 8px;
+}
+
+.related-list {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+.related-record-card {
+  margin-top: 8px;
+}
+
+@media (max-width: 1120px) {
+  .sf-report-header {
+    flex-direction: column;
+  }
+
+  .highlights-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    overflow: auto;
+    white-space: nowrap;
+  }
+
+  .assets-layout,
+  .filters,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
