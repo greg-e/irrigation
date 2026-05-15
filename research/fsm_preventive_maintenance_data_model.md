@@ -1,5 +1,7 @@
 # Field Service Preventive Maintenance Data Model
 
+Reference-only native FSM diagram. It explains the broader Salesforce maintenance object graph but is not part of the chosen irrigation implementation.
+
 ```mermaid
 flowchart TD
     A[Account Property] --> SC[Service Contract]
@@ -16,4 +18,10 @@ flowchart TD
     WO --> WOLI[Work Order Line Item]
     AS --> WO
     AS --> WOLI
+
+    NOTE[Reference only\nNot in irrigation solution scope]:::note
+    NOTE -.-> MP
+    NOTE -.-> MA
+
+    classDef note fill:#ffffff,stroke:#9e9e9e,stroke-dasharray: 4 4,color:#616161
 ```

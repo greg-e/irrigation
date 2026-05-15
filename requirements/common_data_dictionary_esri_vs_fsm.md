@@ -1,16 +1,16 @@
-# Common Data Dictionary: Irrigation Asset Model — Mapbox + FSM
+# Common Data Dictionary: Irrigation Asset Model — Spatial LWC + FSM
 
 Status: Draft v2
 Date: 2026-05-13
 
-> **REVISED — May 2026:** ArcGIS dropped as the geometry platform. Client has no ArcGIS Online org. Selected path: **Mapbox GL JS in a custom LWC** for within-property visualization. Geometry (points, polygons, lines) is stored natively in Salesforce on `Map_Feature__c` (GeoJSON). Mapbox renders it client-side. This document has been updated to remove Esri as the geometry authority. Esri field mappings are retained as a reference appendix only.
+> **REVISED — May 2026:** ArcGIS dropped as the geometry platform. Client has no ArcGIS Online org. Current MVP path is a decision gate between **Mapbox GL JS** and **Google Maps JavaScript API** in a custom LWC for within-property visualization. Geometry (points, polygons, lines) is stored natively in Salesforce on `Map_Feature__c` (GeoJSON). This document has been updated to remove Esri as the geometry authority. Esri field mappings are retained as a reference appendix only.
 
 ## Decision Baseline (May 2026)
 
 1. **Geometry authority: Salesforce** — GeoJSON stored on `Map_Feature__c`, linked to Account and optionally to Asset.
-2. **Map renderer: Mapbox GL JS** — embedded in a custom LWC on Account and Work Order pages.
+2. **Map renderer: selected provider LWC** — Mapbox GL JS or Google Maps JavaScript API embedded in a custom LWC on Account and Work Order pages.
 3. Primary map user is Irrigation Manager; secondary users are Account Manager and Field Tech.
-4. Offline GPS pin capture is required in FSM Mobile. Offline tile strategy documented in E9-S5.
+4. Offline GPS pin capture is required in FSM Mobile. Offline mapping strategy is defined after provider selection.
 
 ## Objective
 
@@ -30,14 +30,15 @@ This document compares both models, identifies gaps, and recommends a path forwa
 ## Executive Summary
 
 1. Salesforce is the single system of record — for both operational data (inspections, callouts, WOs) and geometry (GeoJSON on `Map_Feature__c`).
-2. Mapbox GL JS renders geometry client-side in a custom LWC; no external geometry authority.
+2. A selected-provider spatial LWC (Mapbox or Google Maps) renders geometry client-side; no external geometry authority.
 3. FSM model is the execution system for inspection workflow, service execution, and repair handoff.
 4. The canonical dictionary defines field names, domain values, and object mappings entirely within Salesforce.
 5. Esri domain sets are retained as a reference for domain governance quality (condition scale, asset type vocabulary) — not as a sync target.
+6. Service Appointment is the runtime inspection container and may be parented by Work Order, Work Order Line Item, or Asset depending on the flow; do not assume a fixed WO-only hierarchy.
 
 ## Model Overview
 
-| Dimension | Salesforce FSM Irrigation Model | Mapbox LWC Layer | Notes |
+| Dimension | Salesforce FSM Irrigation Model | Spatial LWC Layer | Notes |
 |---|---|---|---|
 | Geometry storage | `Map_Feature__c` with GeoJSON_Geometry__c, Feature_Type, Asset lookup | Renders GeoJSON from `Map_Feature__c` via SOQL on component init | Salesforce is geometry authority |
 | Asset operations | Asset object with type, parent, lifecycle, condition fields | Asset pins sourced from `Map_Feature__c` Point records linked to Asset | Single source |
@@ -110,14 +111,13 @@ The canonical dictionary is organized by subject area.
 
 | Canonical Value | FSM Asset_Type__c | Notes |
 |---|---|---|
+| System | System | Optional hierarchy root |
 | Controller | Controller | MVP |
 | Zone | Zone | MVP |
 | Backflow | Backflow | MVP |
-| Pump | Pump | MVP |
-| Sensor | Sensor | MVP |
 | Valve | Valve | Phase 2 |
 | Head | Head | Phase 2 |
-| Drip_Line | Drip_Line | Phase 2 |
+| Drip | Drip | Phase 2 |
 | Pipe | Pipe | Phase 2 |
 | Wire | Wire | Phase 2 |
 
@@ -165,7 +165,7 @@ The canonical dictionary is organized by subject area.
 1. No canonical external asset business key currently defined — need `Business_Asset_Id__c` on Asset.
 2. No condition scale field currently enforced in FSM — need `Condition_Score__c`.
 3. Spatial source/confidence picklists not yet standardized — need to align to canonical domain values.
-4. Asset type vocabulary partially aligned — Valve, Wire, Pipe not yet in FSM taxonomy; scope to Phase 2 unless inspection questions require them at MVP.
+4. Asset type vocabulary partially aligned — System and Drip must be included in taxonomy; Valve, Wire, Pipe remain Phase 2 unless inspection questions require earlier inclusion.
 5. GeoJSON geometry field requires validation — need a server-side check that stored GeoJSON is well-formed before rendering in Mapbox.
 
 ## Recommended Path Forward

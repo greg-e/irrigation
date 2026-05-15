@@ -4,7 +4,7 @@
 This backlog reflects the locked design decisions documented in:
 - requirements/inspection_form_data_model.md
 - requirements/inspection_question_library.md
-- requirements/fsm_capability_validation.md
+- research/automation_flows_design.md
 - requirements/diagrams/process_flow.mmd
 - requirements/diagrams/data_model.mmd
 - requirements/diagrams/inspection_sequence.mmd
@@ -16,6 +16,7 @@ This backlog reflects the locked design decisions documented in:
 - Runtime set resolution is deterministic: region + inspection type/season + work type.
 - Checkout is blocked when required answers are incomplete.
 - AM-owned pending callout handoff is required before ExtraWork estimate creation.
+- Within-property mapping MVP stack is a decision gate between Mapbox GL JS and Google Maps JavaScript API.
 
 ## Priority Legend
 - P0: Must-have for first production go-live
@@ -183,7 +184,7 @@ Goal: Implement the canonical irrigation asset taxonomy and field governance use
 As a solution architect, I need a controlled irrigation asset taxonomy on standard Asset.
 
 Acceptance criteria:
-1. Controlled asset type values are implemented: Controller, Zone, Backflow, Head, Valve, Drip_Line, Pump, Sensor.
+1. Controlled asset type values are implemented: System, Controller, Zone, Backflow, Head, Valve, Drip.
 2. Record type strategy and validation rules enforce valid parent-child relationships.
 3. Asset type is required for all irrigation assets.
 4. Existing irrigation assets are mapped/migrated to canonical type values.
@@ -201,7 +202,7 @@ Acceptance criteria:
 As a tech, I need minimal create friction during bootstrap while preserving data quality.
 
 Acceptance criteria:
-1. Bootstrap create forms enforce minimum required fields per type (Controller, Zone, Backflow, Pump, Sensor).
+1. Bootstrap create forms enforce minimum required fields per type (System, Controller, Zone, Backflow).
 2. Zone requires zone number and controller parent.
 3. Controller requires label and total zones.
 4. Backflow requires backflow type.
@@ -333,28 +334,28 @@ Dependencies: E4-S3, E6-S2
 
 ---
 
-## Epic E9: Mapbox Map LWC — Within-Property Irrigation System Visualization (P0)
-Goal: Deliver a custom Lightning Web Component embedding Mapbox GL JS that lets admins and techs author, view, and update the spatial layout of an irrigation system's components at the property level.
+## Epic E9: Spatial Mapping LWC — Decision Gate and Implementation (P0)
+Goal: Deliver a custom Lightning Web Component for within-property irrigation mapping, selecting one MVP provider (Mapbox or Google Maps) via a short decision gate.
 
-> **Architecture decision (May 2026):** ArcGIS dropped — no client ArcGIS Online org. Mapbox GL JS selected for within-property visualization. Full geometry required (points for components, polygons for zones, lines for pipe/wire runs). Offline via Mapbox tile packs. Satellite basemap included via style toggle (nice-to-have). No second admin platform.
+> **Architecture constraint (May 2026):** ArcGIS is out for MVP due to no client ArcGIS Online org and added admin overhead. Full geometry is still required (points for components, polygons for zones, lines for pipe/wire runs). MVP provider decision is Mapbox GL JS vs Google Maps JavaScript API.
 
-### Story E9-S1: Stand up Mapbox LWC shell and API key governance
-As a Salesforce admin, I need a secure, configurable Mapbox LWC available on Lightning pages.
+### Story E9-S1: Run provider decision gate (Mapbox vs Google)
+As a solution owner, I need a time-boxed technical decision gate to choose a single mapping stack for MVP.
 
 Acceptance criteria:
-1. LWC loads Mapbox GL JS and renders a basemap tile within the component boundaries.
-2. Mapbox public access token is stored in a Custom Setting or Custom Metadata (not hardcoded).
-3. Token is scoped to the org's Salesforce domain in the Mapbox dashboard (URL restriction).
-4. Streets basemap is the default; satellite/hybrid basemap is available via a toggle control.
-5. Component is configurable in App Builder for phone and desktop form factors.
-6. Component renders without errors when no property geometry exists yet (empty state).
+1. Two thin POCs exist with equivalent behaviors: load basemap, render sample point/polygon/line, and save/reload geometry.
+2. Both POCs are validated in desktop Lightning and FSM Mobile contexts.
+3. Decision scorecard exists with weighted criteria: offline behavior, implementation effort, performance, governance/security, and projected 12-month usage cost.
+4. Security model is defined for each provider key/token handling approach.
+5. Final decision is documented with rationale and approved by product/architecture owners.
+6. One provider is selected and the other is explicitly retired from MVP scope.
 
 Dependencies: None
 
 ---
 
-### Story E9-S2: Define and implement the map geometry data model
-As a solution architect, I need a Salesforce-native geometry storage model that links spatial features to Asset records.
+### Story E9-S2: Define provider-agnostic geometry data model
+As a solution architect, I need a Salesforce-native geometry storage model that survives provider choice.
 
 Acceptance criteria:
 1. `Map_Feature__c` custom object exists with fields: Account lookup, Asset lookup (nullable for zone polygons and pipe lines), Feature_Type picklist (Point / Polygon / LineString), GeoJSON_Geometry__c (long text area), Label__c, Color_Code__c, Sort_Order__c.
@@ -362,17 +363,18 @@ Acceptance criteria:
 3. Asset lookup is nullable — zone boundary polygons and pipe lines are account-level features, not always tied to a single asset.
 4. Object is reportable and accessible via standard Salesforce SOQL.
 5. Sharing model allows field techs to read; only authorized roles can create/edit.
+6. Geometry representation is normalized and does not require provider-specific storage formats.
 
 Dependencies: E4A-S1
 
 ---
 
-### Story E9-S3: Build desktop feature authoring experience (Account record page)
-As an Irrigation Manager or office admin, I need to draw and label the irrigation system layout on a property's account record.
+### Story E9-S3: Build desktop feature authoring with selected provider (Account page)
+As an Irrigation Manager or office admin, I need to draw and label irrigation system geometry on the Account record.
 
 Acceptance criteria:
 1. Map LWC embeds on the Account record page as a dedicated "Irrigation Map" tab.
-2. Mapbox Draw tools are available: place point, draw polygon (zone), draw line (pipe/wire).
+2. Selected provider supports draw tools: place point, draw polygon (zone), draw line (pipe/wire).
 3. On save, drawn geometry is stored as a `Map_Feature__c` record linked to the Account.
 4. Point features prompt a popup to select the linked Asset record and confirm the label.
 5. Polygon and line features prompt for label and optional color code.
@@ -380,7 +382,7 @@ Acceptance criteria:
 7. Users with edit permission can drag/reshape existing features; changes persist on save.
 8. Delete action removes the `Map_Feature__c` record after confirmation.
 
-Dependencies: E9-S2
+Dependencies: E9-S1, E9-S2
 
 ---
 
@@ -390,21 +392,21 @@ As a field tech, I need to view the property map and add or update component pin
 Acceptance criteria:
 1. Map LWC embeds on the Work Order record page in a "Property Map" tab visible in FSM Mobile.
 2. All existing `Map_Feature__c` records for the account are rendered on load.
-3. Asset pins are color-coded by asset type (controller, zone, backflow, pump, sensor).
+3. Asset pins are color-coded by asset type (system, controller, zone, backflow, valve/head/drip components).
 4. Tapping a pin shows a popup with asset name, type, and last inspected date; tapping "Open Asset" navigates to the Asset record.
 5. "Drop GPS Pin" action captures device GPS coordinates and creates a new Point `Map_Feature__c` record linked to the account, prompting asset selection.
 6. Tech can edit the label and asset linkage of an existing pin they dropped; cannot delete or reshape features authored by office admin.
 7. Component gracefully degrades when device GPS is unavailable (button disabled with explanatory message).
 
-Dependencies: E9-S2, E9-S3
+Dependencies: E9-S1, E9-S2, E9-S3
 
 ---
 
-### Story E9-S5: Implement offline tile caching strategy
+### Story E9-S5: Implement and validate offline mapping strategy
 As a field tech, I need the property map to be usable in low-connectivity residential environments.
 
 Acceptance criteria:
-1. Offline tile pack approach is documented and approved: either Mapbox offline API pre-load per scheduled visit or a static fallback tile set cached at app load.
+1. Offline approach for the selected provider is documented, tested, and approved.
 2. Component detects network state and renders a "Offline mode — map tiles may not load" banner when offline.
 3. GPS pin capture (E9-S4) functions offline and queues the `Map_Feature__c` record for sync.
 4. Queued offline records sync automatically on next connectivity restore without user action.
@@ -476,7 +478,7 @@ Acceptance criteria:
 
 ### Milestone M1 (P0 core go-live)
 - E1, E2, E3, E4, E4A, E5, E6
-- E9-S1, E9-S2, E9-S3, E9-S4 (Map LWC desktop authoring + mobile GPS pin)
+- E9-S1, E9-S2, E9-S3, E9-S4 (provider decision + desktop authoring + mobile GPS pin)
 - NFR-S1, NFR-S3
 
 ### Milestone M2 (operational hardening)

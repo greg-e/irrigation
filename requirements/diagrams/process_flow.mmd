@@ -30,7 +30,7 @@ flowchart TD
         direction TB
         SA --> CHKIN["Tech checks in<br/>Status = In Progress"]:::mobile
         CHKIN --> GPS["LocationService LWC<br/>captures GPS<br/>→ SA + Asset lat/lng"]:::mobile
-        GPS --> MAPLOAD["Mapbox Map LWC loads property features<br/>from Map_Feature__c (Point/Polygon/Line)"]:::mobile
+        GPS --> MAPLOAD["Spatial Map LWC loads property features<br/>from Map_Feature__c (Point/Polygon/Line)"]:::mobile
         MAPLOAD --> RESOLVE["Resolve published Question Set<br/>by Region + Inspection Type/Season + Work Type"]:::mobile
         class RESOLVE decision
         RESOLVE -->|one match| SNAP["Snapshot selected set version<br/>on Service Appointment"]:::sf

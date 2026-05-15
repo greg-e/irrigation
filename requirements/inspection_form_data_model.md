@@ -207,14 +207,13 @@ Use standard `Asset` with irrigation record types and `Asset_Type__c` as a contr
 
 | Record Type / Asset Type | Parent Required | Used In Inspection Sections | Notes |
 |---|---|---|---|
-| `Controller` | Account | 5, 9 | Parent for Zone assets; stores controller identity and capacity |
+| `System` | Account | N/A | Optional hierarchy root node for irrigation system grouping |
+| `Controller` | System (preferred) or Account | 5, 9 | Parent for Zone assets; stores controller identity and capacity |
 | `Zone` | Controller | 6 | Primary inspection loop target |
-| `Backflow` | Account (or Controller site grouping) | 4 | Compliance and leak/test flows |
+| `Backflow` | System (preferred) or Account | 4 | Compliance and leak/test flows |
 | `Head` | Zone | Optional detail for advanced mapping | Not required for baseline go-live |
 | `Valve` | Zone | Optional detail for advanced mapping | Can be represented as zone-level finding at go-live |
-| `Drip_Line` | Zone | 6 (conditional) | Optional dedicated type; otherwise model via zone responses |
-| `Pump` | Account | 3 (conditional) | Required only when site has pump-based system |
-| `Sensor` | Controller | 5 (conditional) | Rain/freeze/flow sensor tracking |
+| `Drip` | Zone | 6 (conditional) | Drip emitter group modeling under Zone |
 
 ### 4b.2 Common Fields (all irrigation asset types)
 
@@ -237,11 +236,10 @@ These are the minimum required fields when tech creates assets in bootstrap mode
 
 | Asset Type | Minimum Required Fields at Bootstrap |
 |---|---|
+| `System` | `Name`, `Asset_Type__c` |
 | `Controller` | `Name`, `Asset_Type__c`, `Controller_Label__c`, `Controller_Total_Zones__c` |
 | `Zone` | `Name`, `Asset_Type__c`, `Zone_Number__c`, `ParentId` (Controller) |
 | `Backflow` | `Name`, `Asset_Type__c`, `Backflow_Type__c` |
-| `Pump` | `Name`, `Asset_Type__c` |
-| `Sensor` | `Name`, `Asset_Type__c`, `Sensor_Type__c`, `ParentId` (Controller) |
 
 ### 4b.4 Managed Fields by Asset Type (non-exhaustive)
 
@@ -257,12 +255,10 @@ These are the minimum required fields when tech creates assets in bootstrap mode
 | Zone | `Landscape_Type__c` | Picklist | No | Turf / Bed / Color |
 | Zone | `Default_Runtime_Minutes__c` | Number(5,2) | No | Planning baseline |
 | Zone | `Is_Placeholder__c` | Checkbox | Yes | Placeholder allowed per locked decision |
+| Head | `Head_Subtype__c` | Picklist | No | Rotor / Spray |
 | Backflow | `Backflow_Type__c` | Picklist | Yes | RPZ / DCV / PVB / Other |
 | Backflow | `Last_Test_Date__c` | Date | No | Compliance tracking |
 | Backflow | `Compliance_Status__c` | Picklist | No | Compliant / Due / Failed |
-| Pump | `Pump_Pressure_PSI__c` | Number(6,2) | No | Optional capture |
-| Sensor | `Sensor_Type__c` | Picklist | Yes | Rain / Freeze / Flow |
-| Sensor | `Functional__c` | Checkbox | No | Current observed state |
 
 ### 4b.5 Asset Type Resolution Rules
 

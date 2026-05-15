@@ -29,6 +29,14 @@ In scope:
 5. Reopen Setup action
 6. Retire-only behavior (no hard delete)
 7. Visible audit history
+8. Canonical hierarchy in setup flow:
+   - Account (Property)
+   - Optional root Asset record type `System` (Irrigation System)
+   - Controller assets under System
+   - Zone assets under Controller
+   - Zone component assets under Zone: Valve, Head, Drip
+   - Backflow asset under System
+   - `Irrigation_Program__c` as child records under Controller
 
 Out of scope (v1):
 
@@ -85,7 +93,7 @@ Recommendation:
 
 1. Validation Rules for required field constraints.
 2. Duplicate Rule for zone uniqueness key.
-3. Record-triggered Flow for conditional pump/sensor gating.
+3. Record-triggered Flow for conditional System/component gating.
 4. Record-triggered Flow for retire safeguards.
 
 Implementation level: OOTB + Flow
@@ -117,9 +125,8 @@ Section order (top to bottom):
 
 1. Setup Header
    - Irrigation Setup Status
+   - System Root Present
    - Placeholder Zone Count
-   - Has Pump System
-   - Has Sensors
 2. Actions
    - Mark Setup Complete
    - Reopen Setup
@@ -150,9 +157,8 @@ Filters:
 On Account:
 
 1. Irrigation_Setup_Status__c (Not Started, In Progress, Complete)
-2. Has_Pump_System__c (Checkbox)
-3. Has_Sensors__c (Checkbox)
-4. Placeholder_Zone_Count__c (Number)
+2. Has_System_Root__c (Checkbox)
+3. Placeholder_Zone_Count__c (Number)
 
 On Asset (confirm existing fields from canonical model):
 
@@ -165,6 +171,18 @@ On Asset (confirm existing fields from canonical model):
 7. Is_Placeholder__c
 8. Normalization_Status__c
 9. Status
+10. Head_Subtype__c (Rotor, Spray)
+
+On Irrigation_Program__c:
+
+1. Controller_Asset__c
+2. Program_Name__c
+3. Schedule_Days__c
+4. Start_Time__c
+5. Zone_Asset__c
+6. Run_Time_Minutes__c
+7. Seasonal_Adjust_Pct__c
+8. Is_Active__c
 
 Audit object:
 
@@ -183,8 +201,8 @@ Mark Setup Complete checks:
 2. At least one active Zone
 3. Every active Zone linked to active Controller
 4. At least one active Backflow
-5. If Has_Pump_System__c = true then at least one active Pump
-6. If Has_Sensors__c = true then at least one active Sensor
+5. If active System exists, each active Controller must have ParentId -> System
+6. If active System exists, at least one active Backflow must have ParentId -> System
 
 If any fail: block completion and show detailed list.
 
@@ -199,13 +217,14 @@ If any fail: block completion and show detailed list.
 
 1. Cannot retire a Controller if active Zones still linked.
 2. If property status = Complete, block retire when resulting state violates completion baseline.
+3. Cannot retire System when active Controller or Backflow assets are still linked.
 
-## 6.4 Pump/Sensor Flag Save Rules
+## 6.4 Optional System Root Save Rules
 
 On Account save:
 
-1. Block save if Has_Pump_System__c = true and no active Pump.
-2. Block save if Has_Sensors__c = true and no active Sensor.
+1. If Has_System_Root__c = true, at least one active System asset must exist.
+2. If Has_System_Root__c = true and active System exists, all active Controllers and Backflow assets must be parented to that System.
 
 ## 7. Automation Sequence
 

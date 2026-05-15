@@ -105,7 +105,7 @@ Security and audit controls are treated as cross-cutting constraints applied to 
 - Requirements decision lock-ins:
   - [../inspection_form_data_model.md](../inspection_form_data_model.md)
   - [../inspection_question_library.md](../inspection_question_library.md)
-  - [../fsm_capability_validation.md](../fsm_capability_validation.md)
+  - [../../research/automation_flows_design.md](../../research/automation_flows_design.md)
 
 - Diagrams:
   - [process_flow.mmd](process_flow.mmd)

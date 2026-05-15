@@ -52,8 +52,9 @@ Purpose: keep the Salesforce setup experience focused, low-noise, and fast for B
 ## Assets
 
 1. Keep hierarchy simple and readable.
-2. Prefer explicit edit actions over gesture interactions.
-3. Hide retired assets by default with one toggle.
+2. Keep canonical hierarchy visible in context: Account -> System (optional) -> Controller -> Zone -> components (Valve, Head, Drip) with Backflow under System.
+3. Prefer explicit edit actions over gesture interactions.
+4. Hide retired assets by default with one toggle.
 
 ## Validation
 

@@ -1,6 +1,6 @@
 # Automation Flows Design
 
-Stubs for Salesforce Flows driven by decisions in asset_record_page_design.md.
+Current-state stubs for Salesforce Flows aligned to irrigation inspection requirements and WOLI-first execution.
 
 ---
 
@@ -55,7 +55,7 @@ Automatically flip `Asset.Status` based on repair callout activity and Work Orde
 - Object: `WorkOrderLineItem`
 - Trigger type: Record-Triggered Flow — After Save (insert only)
 - Entry criteria:
-  - `Callout_Status__c = 'New'`
+   - `Issue_Type__c != null`
   - `AssetId != null`
 - Run when: Record is created and meets conditions
 
@@ -78,10 +78,12 @@ Automatically flip `Asset.Status` based on repair callout activity and Work Orde
 
 **Actions**
 1. Get all open Work Order Line Items for this Asset
-   - Query: `WorkOrderLineItems WHERE AssetId = {WorkOrder.AssetId} AND Callout_Status__c NOT IN ('Completed', 'Canceled')`
+   - Query: `WorkOrderLineItems WHERE AssetId = {WorkOrder.AssetId} AND (Callout_Status__c = null OR Callout_Status__c != 'Completed')`
 2. **Decision: Are there any remaining open callouts?**
    - **Yes → No action.** Asset still has unresolved issues — do not flip status back.
    - **No → Update `Asset.Status` = `'Installed'`** (back to baseline)
+
+> Implementation note: if the org later adopts additional terminal callout states (for example `Declined`), update this query to treat those as closed states.
 
 ---
 
@@ -104,3 +106,53 @@ Recommended custom picklist values for `Asset.Status`:
 - [ ] If multiple WOs are open against one Asset, does closing one WO trigger the status check, or wait for all WOs to close?
 - [ ] Should Flow 2b also clear `Has_Open_Compliance_Case__c` if used (from Flow 1 guard condition)?
 - [ ] Is `Asset.Status` visible and editable by techs, or read-only (automation-only)?
+
+---
+
+## Flow 3: Suggested Repairs from Failed Inspection Responses
+
+### Purpose
+Generate deduplicated suggested repairs during inspection, then allow explicit confirmation at checkout.
+
+### Trigger
+- Object: `Inspection_Response__c`
+- Trigger type: Record-Triggered Flow — After Save (insert and update)
+- Entry criteria:
+   - `Failed_Inspection__c = true`
+   - `Asset__c != null`
+   - mapped `Issue_Type__c` can be derived from question/response
+
+### Actions
+1. Resolve target issue type from failed response mapping.
+2. Upsert suggested repair record using dedupe key `(Inspection, Asset, Issue Type)`.
+3. Preserve/edit quantity, severity, and notes if record already exists.
+4. Surface suggested repairs in checkout review UI for tech confirmation.
+
+### Open Questions
+- [ ] Final object/API name for suggested repair staging record.
+- [ ] Should severity be required at suggestion time or only at checkout confirmation?
+
+---
+
+## Flow 4: Checkout Automation Bundle
+
+### Purpose
+On irrigation checkout completion, run downstream automation consistently.
+
+### Trigger
+- Object: `ServiceAppointment`
+- Trigger type: Record-Triggered Flow — After Save (update only)
+- Entry criteria:
+   - irrigation Work Type
+   - `Status` transitions to `Completed`
+
+### Actions
+1. Generate internal and customer PDFs and stamp generated-at fields.
+2. Queue BV Connect publish when customer subscription criteria are met.
+3. Convert confirmed suggested repairs into AM-owned pending callout WOLIs.
+4. Apply staged asset changes from pending-change records.
+5. If asset apply fails, keep inspection completion but flag asset-sync failure and create follow-up exception task/case.
+
+### Open Questions
+- [ ] Should checkout automation run synchronously or via async queue for reliability and mobile latency?
+- [ ] What is the canonical exception object for asset-sync failures (Case, custom object, or platform event)?

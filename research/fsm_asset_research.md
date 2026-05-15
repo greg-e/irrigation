@@ -62,6 +62,8 @@ The `Asset` object represents a product or item of commercial value that a custo
 - Service Appointments can be created as **child records of an Asset directly** (not just Work Orders)
 - A record can have multiple child Service Appointments (e.g., two visits to complete a repair)
 
+> Note: This is native FSM reference behavior. In the irrigation solution, treat Service Appointment as the scheduling container and use the appointment parent/WO context explicitly rather than assuming a single fixed hierarchy.
+
 ### Work Types
 - Work Types are templates applied to Work Orders and Service Appointments
 - Define duration and skill requirements
@@ -93,6 +95,8 @@ Estimating will be handled by a **ExtraWork custom app**. The FSM Work Order and
 
 ## 4. Preventive Maintenance — Seasonal Relevance
 
+> Reference only. Maintenance Plans and related maintenance objects help explain the native FSM object graph, but they are not part of the irrigation solution architecture.
+
 **Source:** [Field Service Preventive Maintenance Data Model — Developer Guide (Spring '26)](https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_maintenance.htm)
 
 - **Maintenance Plans** can cover multiple Assets under a single Account
@@ -119,6 +123,8 @@ Estimating will be handled by a **ExtraWork custom app**. The FSM Work Order and
 ---
 
 ## 6. Extending Asset for Irrigation Components
+
+This section describes the irrigation implementation, not the native maintenance-plan model above.
 
 Three mechanisms work together: **Record Types**, **Custom Fields**, and **Asset Hierarchy (ParentId)**. One component type (Controller Program Settings) requires a child custom object due to its one-to-many nature.
 
@@ -224,7 +230,7 @@ Account (Property)
 #### Drip
 | Field Label | API Name | Type | Notes |
 |---|---|---|---|
-| Emitter Type | `Emitter_Type__c` | Picklist | Point Emitter, Drip Line, Micro Spray, Flag Emitter |
+| Emitter Type | `Emitter_Type__c` | Picklist | Point Emitter, Drip, Micro Spray, Flag Emitter |
 | Flow Rate (GPH) | `Flow_Rate_GPH__c` | Number | Per emitter |
 | Emitter Count | `Emitter_Count__c` | Number | Total in zone/group |
 | Coverage Area (sq ft) | `Coverage_Area_sqft__c` | Number | |
@@ -239,7 +245,7 @@ Program Settings are a one-to-many relationship to the Controller — one contro
 
 | Field Label | API Name | Type | Notes |
 |---|---|---|---|
-| Controller Asset | `Controller_Asset__c` | Master-Detail → Asset | Parent Controller |
+| Controller Asset | `Controller_Asset__c` | Master-Detail → Asset | Parent Controller (under System when used) |
 | Program Name | `Program_Name__c` | Text | e.g., "Program A", "Drip Schedule" |
 | Schedule Days | `Schedule_Days__c` | Multi-select Picklist | Mon/Tue/Wed/Thu/Fri/Sat/Sun |
 | Start Time | `Start_Time__c` | Time | |

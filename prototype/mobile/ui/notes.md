@@ -2,7 +2,7 @@
 
 ## Workspace + Active Surface
 - Repo root: C:/Users/GEhrenberg/irrigation
-- Primary file edited: prototype/mobile_throwaway/ui/fsm_mobile_inspection_standalone.html
+- Primary file edited: prototype/mobile/ui/fsm_mobile_inspection_standalone.html
 - Active browser page during validation: FSM Mobile Inspection Prototype (file URL in VS Code browser)
 
 ## User Goal Progression

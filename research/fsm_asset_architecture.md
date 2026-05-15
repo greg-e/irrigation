@@ -16,6 +16,8 @@ This document captures the target architecture for:
 
 **Reason:** Work Order generation is already handled by an existing process. The primary value of the FSM Maintenance Plan object is auto-generating Work Orders on a schedule — since that capability already exists, Maintenance Plans add no value and would introduce redundant configuration.
 
+**Clarification:** Native Field Service data-model diagrams still reference `Maintenance Plan`, `Maintenance Asset`, and `Maintenance Work Rule` because they describe the broader FSM object graph. We are keeping them out of the solution design, but they remain useful as reference when interpreting mobile screenshots and relationship diagrams.
+
 **Research retained in:** [fsm_asset_research.md](fsm_asset_research.md) and the `.mmd` / `.md` diagram files for reference.
 
 ---
@@ -31,7 +33,7 @@ Account (Property)
 Asset (Irrigation Component)
 └── Work Order (planned or reactive job, linked to Asset + Account)
     └── Work Order Line Item (task/parts line, linked to Asset)
-    └── Service Appointment (scheduled visit)
+    └── Service Appointment (scheduled visit; parent can be WO, WOLI, or Asset)
 ```
 
 ### Object Roles
@@ -44,7 +46,7 @@ Asset (Irrigation Component)
 | Contract Line Item | Coverage detail rows — optionally per asset, product, or service category |
 | Work Order | Execution record for any planned or reactive irrigation job; linked to Asset |
 | Work Order Line Item | Task or parts line within a WO; also linked to Asset |
-| Service Appointment | Scheduled field visit; parent is WO or WOLI |
+| Service Appointment | Scheduled field visit; parent is polymorphic (`ParentRecordId`) and can be WO, WOLI, Asset, Account, Lead, or Opportunity |
 | Work Type | Template applied to WO/SA — defines duration, skills, task standard |
 
 ### Work Type Strategy
@@ -111,6 +113,58 @@ Expose these related signals on the Asset record page:
 - Use Files on Account and Asset for as-built maps, site maps, and photos (versioned).
 - Price Book/Product setup is partial — start with labor-first line items, phase in full parts pricing.
 - Damage outside a WO: Case for intake + `Asset_Damage_Event__c` custom object for structured tracking.
+
+### Field Service Mobile Behavior: Asset vs WOLI Placement
+
+Observed behavior from discovery and Salesforce object docs supports your finding that Asset can appear as a separate item above Work Order Line Items in mobile, but the exact visual order is still a page-layout / mobile-card configuration concern.
+
+What is confirmed:
+
+- `WorkOrder.AssetId` exists as a native lookup, so Asset is first-class context on the WO record.
+- `WorkOrderLineItem.AssetId` exists as a native lookup and is explicitly **not automatically inherited** from the parent Work Order.
+- `ServiceAppointment` is linked by `ParentRecordId` (polymorphic) and can parent to `WorkOrder`, `WorkOrderLineItem`, `Asset`, `Account`, `Lead`, or `Opportunity`.
+
+Why Asset appears as its own item above WOLIs in mobile:
+
+- On mobile record pages, lookup context fields/cards (for example the work context Asset) typically render in the record detail/header zone.
+- WOLIs are a child collection and render as a related list/child section.
+- This naturally creates a visual hierarchy where a single Asset context appears above a list of WOLIs.
+
+What the diagrams add:
+
+- In the core Field Service object model, `ServiceAppointment` is the central scheduling record and `ParentRecordId` is the actual link that controls which business record owns the appointment.
+- `Asset` is a separate first-class object under `Account`, and `WorkOrder` / `WorkOrderLineItem` each have their own `AssetId`.
+- The maintenance model introduces `Maintenance Plan` / `Maintenance Asset`, but that is orthogonal to our chosen implementation and mainly explains some native FSM diagrams.
+
+Design implication for irrigation:
+
+- Treat Asset as the working context anchor.
+- Treat WOLIs as scoped task/callout rows under that context.
+- Always set `WOLI.AssetId` intentionally; do not rely on WO asset defaults.
+
+Validation checklist in sandbox (recommended):
+
+1. Build one `WorkOrder` with `AssetId = A1`.
+2. Add two `WorkOrderLineItem` records, one with `AssetId = A1`, one with `AssetId = A2`.
+3. Open the assigned `ServiceAppointment` in Field Service Mobile.
+4. Confirm Asset context placement vs WOLI related list placement.
+5. Confirm each WOLI keeps its own asset linkage independent of WO asset.
+6. Confirm the service appointment parent record is the intended record type (`WorkOrder` vs `WorkOrderLineItem` vs `Asset`) before drawing any UI conclusions.
+
+Execution runbook:
+
+- [Mobile prototype notes and walkthrough](../prototype/mobile/ui/notes.md)
+
+Source evidence:
+
+- Salesforce Object Reference — Work Order: `AssetId` field
+  https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_workorder.htm
+- Salesforce Object Reference — Work Order Line Item: `AssetId` exists and is not auto-inherited
+  https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_workorderlineitem.htm
+- Salesforce Object Reference — Service Appointment: `ParentRecordId` polymorphic parent (`...WorkOrder, WorkOrderLineItem, Asset...`)
+  https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_serviceappointment.htm
+- Field Service Core Data Model (parent/child behavior for WO, WOLI, SA)
+  https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_core.htm
 
 ### Risks and Mitigations
 

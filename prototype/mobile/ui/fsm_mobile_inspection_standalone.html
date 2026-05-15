@@ -2190,6 +2190,7 @@
                   </span>
                 </div>
                 <p id="meter-label" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">0 of 12 answered</p>
+                <p id="resolver-meta" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Resolver pending...</p>
               </div>
               <ul id="required-list" class="slds-has-dividers_top-space"></ul>
             </div>
@@ -2254,7 +2255,7 @@
                 <button id="simulate-submit" class="slds-button slds-button_brand" type="button">Submit Irrigation Report</button>
                 <button id="reset-flow" class="slds-button slds-button_destructive" type="button">Reset</button>
               </div>
-              <p id="submit-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Complete required sections to enable irrigation report submit.</p>
+              <p id="submit-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Submit blocks on callout policy and AM assignment. Required questions are advisory.</p>
               <p id="submit-result" class="slds-text-body_small slds-m-top_xx-small" style="font-weight:600;min-height:20px;">Waiting for action.</p>
             </div>
           </div>
@@ -2335,6 +2336,14 @@
             </div>
           </div>
 
+          <div id="detail-programs-section" class="sheet-section hidden">
+            <h3 style="margin: 0 0 4px; font-size: 0.9rem; font-weight: 700; color: #f7f9fd;">
+              Programs (Irrigation_Program__c) <span id="detail-programs-count" style="font-weight: 400; font-size: 0.75rem; color: #8e9aac;"></span>
+            </h3>
+            <p style="font-size: 0.75rem; color: #8e9aac; margin: 0 0 10px;">Reference schedule — read-only during PMI. Edit via Controller Program Audit work type.</p>
+            <ul id="detail-programs-list" style="list-style: none; margin: 0; padding: 0; font-size: 0.8rem;"></ul>
+          </div>
+
           <div id="detail-asset-callouts" class="sheet-section hidden">
             <h3 style="margin: 0 0 10px; font-size: 0.9rem; font-weight: 700; color: #f7f9fd;">Callouts for This Asset</h3>
             <ul id="detail-callouts-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
@@ -2345,6 +2354,17 @@
               <label class="slds-form-element__label" for="detail-callout-text">Create Callout</label>
               <div class="slds-form-element__control">
                 <textarea id="detail-callout-text" class="slds-textarea" rows="3" placeholder="Describe the issue"></textarea>
+              </div>
+            </div>
+            <div class="slds-form-element slds-m-top_x-small">
+              <label class="slds-form-element__label" for="detail-callout-type">Callout Type</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container">
+                  <select id="detail-callout-type" class="slds-select">
+                    <option value="Repair">Repair</option>
+                    <option value="Enhancement">Enhancement</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="sheet-actions">
@@ -2477,6 +2497,11 @@ function createInitialIrrigationSession() {
       model: "Hydrawise HC-12",
       description: "North lawn and clubhouse frontage clock.",
       zones: [1, 2, 3, 4, 5, 6, 7, 8],
+      programs: [
+        { id: "mp-a1", programName: "Program A", scheduleDays: ["Mon", "Wed", "Fri"], startTime: "06:00", zone: "Zone 1", runTimeMinutes: 15, seasonalAdjustPct: 0, isActive: true },
+        { id: "mp-a2", programName: "Program B", scheduleDays: ["Tue", "Thu", "Sat"], startTime: "05:30", zone: "Zone 2", runTimeMinutes: 20, seasonalAdjustPct: 10, isActive: true },
+        { id: "mp-a3", programName: "Program C (Drip)", scheduleDays: ["Mon", "Thu"], startTime: "07:00", zone: "Zone 5", runTimeMinutes: 45, seasonalAdjustPct: 0, isActive: false },
+      ],
     },
     {
       id: "controller-b",
@@ -2484,6 +2509,10 @@ function createInitialIrrigationSession() {
       model: "Rain Bird ESP-LX",
       description: "Athletic field and east perimeter clock.",
       zones: [9, 10, 11, 12, 13, 14, 15, 16],
+      programs: [
+        { id: "mp-b1", programName: "Program A", scheduleDays: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "05:30", zone: "Zone 9", runTimeMinutes: 20, seasonalAdjustPct: 0, isActive: true },
+        { id: "mp-b2", programName: "Program B (Weekend)", scheduleDays: ["Sat", "Sun"], startTime: "06:00", zone: "Zone 10", runTimeMinutes: 25, seasonalAdjustPct: 0, isActive: true },
+      ],
     },
     {
       id: "controller-c",
@@ -2491,6 +2520,9 @@ function createInitialIrrigationSession() {
       model: "Toro Tempus Pro",
       description: "Pool deck and south slope clock.",
       zones: [17, 18, 19, 20, 21, 22, 23, 24],
+      programs: [
+        { id: "mp-c1", programName: "Program A", scheduleDays: ["Sun", "Wed"], startTime: "06:30", zone: "Zone 17", runTimeMinutes: 25, seasonalAdjustPct: 5, isActive: true },
+      ],
     },
   ],
   backflows: [
@@ -2567,6 +2599,13 @@ const workOrder = {
   ],
 };
 
+const resolverContext = {
+  region: "Northeast",
+  inspectionType: "Quarterly",
+  season: "Spring",
+  questionSetVersion: "NE-Quarterly-PMI-v3",
+};
+
 const woliSessions = new Map();
 let activeWoliId = "";
 let appMode = "wo";
@@ -2574,6 +2613,7 @@ let state = createInitialIrrigationSession();
 
 const meterFill         = document.getElementById("meter-fill");
 const meterLabel        = document.getElementById("meter-label");
+const resolverMeta      = document.getElementById("resolver-meta");
 const requiredList      = document.getElementById("required-list");
 const calloutList       = document.getElementById("callout-list");
 const amName            = document.getElementById("am-name");
@@ -2643,6 +2683,7 @@ const detailNotes       = document.getElementById("detail-notes");
 const detailZoneLinks   = document.getElementById("detail-zone-links");
 const detailCalloutComposer = document.getElementById("detail-callout-composer");
 const detailCalloutText = document.getElementById("detail-callout-text");
+const detailCalloutType = document.getElementById("detail-callout-type");
 const detailCreateCallout = document.getElementById("detail-create-callout");
 const detailCalloutSubmit = document.getElementById("detail-callout-submit");
 const detailCalloutCancel = document.getElementById("detail-callout-cancel");
@@ -2747,7 +2788,9 @@ function setActiveWoli(woliId) {
 }
 
 function getCalloutRequirementMet(session) {
-  const hasCallouts = session.callouts.some((c) => (c.issue || "").trim().length > 0);
+  const hasCallouts = session.callouts.some(
+    (c) => (c.issue || "").trim().length > 0 && (c.calloutType === "Repair" || c.calloutType === "Enhancement")
+  );
   return hasCallouts || Boolean(session.noIssuesFound);
 }
 
@@ -2780,11 +2823,17 @@ function updateSubmitEligibility() {
 
   const submitBtn = document.getElementById("simulate-submit");
   submitBtn.disabled = blockers.length > 0;
+  const requiredRemaining = state.requiredQuestions.length - getRequiredAnswered();
   if (submitHelper) {
     submitHelper.textContent = blockers.length
-      ? `Complete: ${blockers.join(" and ")}.`
-      : "Ready to submit irrigation report.";
+      ? `Complete: ${blockers.join(" and ")}. Required questions remaining: ${requiredRemaining} (advisory).`
+      : `Ready to submit irrigation report. Required questions remaining: ${requiredRemaining} (advisory).`;
   }
+}
+
+function renderResolverContext() {
+  if (!resolverMeta) return;
+  resolverMeta.textContent = `Resolved set: ${resolverContext.questionSetVersion} (Region: ${resolverContext.region}, Type: ${resolverContext.inspectionType}, Season: ${resolverContext.season}).`;
 }
 
 function renderModeChrome() {
@@ -3372,6 +3421,11 @@ function renderMapListView() {
         <div style="grid-column: 1 / -1; border-top: 1px solid #3e4455; padding-top: 10px; margin-top: 4px;">
           <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Callout — ${asset.name}</label>
           <textarea class="gis-callout-issue-textarea" placeholder="Describe the issue..." style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #5a6475; padding: 8px; border-radius: 6px; font-size: 0.84rem; min-height: 64px; box-sizing: border-box; resize: vertical;" data-asset-key="${asset.key}"></textarea>
+          <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin: 8px 0 6px;">Callout Type</label>
+          <select class="gis-callout-type-select" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #5a6475; padding: 8px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}">
+            <option value="Repair">Repair</option>
+            <option value="Enhancement">Enhancement</option>
+          </select>
           <div style="display: flex; gap: 6px; margin-top: 6px;">
             <button type="button" class="gis-callout-submit" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Save Callout</button>
             <button type="button" class="gis-callout-cancel" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Cancel</button>
@@ -3440,15 +3494,28 @@ function renderMapListView() {
     btn.addEventListener("click", (e) => {
       const assetKey = e.currentTarget.dataset.assetKey;
       const textarea = mapGrid.querySelector(`.gis-callout-issue-textarea[data-asset-key="${assetKey}"]`);
+      const calloutTypeSelect = mapGrid.querySelector(`.gis-callout-type-select[data-asset-key="${assetKey}"]`);
       const issue = textarea ? textarea.value.trim() : "";
+      const calloutType = calloutTypeSelect ? calloutTypeSelect.value : "";
       if (!issue) {
         if (textarea) textarea.style.borderColor = "#8a3540";
+        return;
+      }
+      if (!calloutType) {
         return;
       }
       const asset = getAllAssets().find((a) => a.key === assetKey);
       if (!asset) return;
       if (!state.callouts) state.callouts = [];
-      state.callouts.push({ id: Date.now(), assetKey, title: asset.name, issue, timestamp: new Date().toISOString(), resolved: false });
+      state.callouts.push({
+        id: Date.now(),
+        assetKey,
+        title: asset.name,
+        issue,
+        calloutType,
+        timestamp: new Date().toISOString(),
+        resolved: false,
+      });
       if (asset.type === "zone") asset.ref.status = "alert";
       mapTab.calloutFormKey = "";
       renderCallouts();
@@ -3949,7 +4016,31 @@ function openDetailSheet(assetKey, launchTab = "details") {
     detailZoneLinks.style.display = "none";
   }
 
-  detailCalloutComposer.classList.add("hidden");
+  const detailProgramsSection = document.getElementById("detail-programs-section");
+  const detailProgramsList    = document.getElementById("detail-programs-list");
+  const detailProgramsCount   = document.getElementById("detail-programs-count");
+  if (detailProgramsSection && detailProgramsList && detailProgramsCount) {
+    if (asset.type === "controller") {
+      const programs = asset.ref.programs || [];
+      detailProgramsCount.textContent = `(${programs.length})`;
+      detailProgramsList.innerHTML = programs.length
+        ? programs.map((p) => {
+            const days    = (p.scheduleDays || []).join("/") || "—";
+            const dot     = p.isActive ? "🟢" : "⚪";
+            const seasonal = p.seasonalAdjustPct ? ` · ${p.seasonalAdjustPct}% adj.` : "";
+            return `<li style="padding:6px 0;border-bottom:1px solid #3e4a5b;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-weight:600;color:#d0d8e4;">${dot} ${p.programName}</span>
+              <span style="color:#8e9aac;">${days} · ${p.startTime || "—"} · ${p.zone || "—"} · ${p.runTimeMinutes != null ? p.runTimeMinutes + " min" : "—"}${seasonal}</span>
+            </li>`;
+          }).join("")
+        : `<li style="color:#8e9aac;padding:6px 0;">No programs recorded for this controller.</li>`;
+      detailProgramsSection.classList.remove("hidden");
+    } else {
+      detailProgramsSection.classList.add("hidden");
+    }
+  }
+
+
   detailCalloutText.value = "";
   renderDetailAssetCallouts();
   assetDetailSheet.classList.remove("hidden");
@@ -4187,6 +4278,7 @@ function renderCallouts() {
     item.innerHTML = `
       <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
+        <span style="background: #1f2a38; color: #d9dee8; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.calloutType || "Repair"}</span>
         <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
       </div>
       <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
@@ -4231,6 +4323,7 @@ function renderDetailAssetCallouts() {
     item.innerHTML = `
       <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
+        <span style="background: #1f2a38; color: #d9dee8; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.calloutType || "Repair"}</span>
         <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
       </div>
       <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
@@ -4252,13 +4345,19 @@ function simulateSubmit() {
 
   updateSubmitEligibility();
   if (document.getElementById("simulate-submit").disabled) {
-    setSubmitMessage("Blocked: complete required sections first.", "error");
+    setSubmitMessage("Blocked: complete callout policy and AM assignment first.", "error");
     return;
   }
 
+  const unanswered = state.requiredQuestions.length - getRequiredAnswered();
+
   woli.status = "COMPLETED";
   setStage("COMPLETED");
-  setSubmitMessage("Irrigation report submitted.", "ok");
+  if (unanswered > 0) {
+    setSubmitMessage(`Irrigation report submitted with advisory: ${unanswered} required question(s) unanswered.`, "warn");
+  } else {
+    setSubmitMessage("Irrigation report submitted.", "ok");
+  }
   renderWoliOverviewList();
   returnToWorkOrderOverview();
 }
@@ -4292,6 +4391,7 @@ function resetFlow() {
 
 function renderAll() {
   renderModeChrome();
+  renderResolverContext();
   renderWoliOverviewList();
   renderWoRelatedSummary();
   renderWoliDetails();
@@ -4615,14 +4715,20 @@ detailCreateCallout.addEventListener("click", () => {
 detailCalloutCancel.addEventListener("click", () => {
   detailCalloutComposer.classList.add("hidden");
   detailCalloutText.value = "";
+  detailCalloutType.value = "Repair";
 });
 
 detailCalloutSubmit.addEventListener("click", () => {
   const asset = getActiveDetailAsset();
   if (!asset) return;
   const issue = detailCalloutText.value.trim();
+  const calloutType = detailCalloutType.value;
   if (!issue) {
     setSubmitMessage("Callout description is required.", "error");
+    return;
+  }
+  if (!calloutType) {
+    setSubmitMessage("Callout type is required.", "error");
     return;
   }
 
@@ -4631,6 +4737,7 @@ detailCalloutSubmit.addEventListener("click", () => {
     assetKey: asset.key,
     title: asset.name,
     issue,
+    calloutType,
     timestamp: new Date().toISOString(),
     resolved: false,
   });
@@ -4639,6 +4746,7 @@ detailCalloutSubmit.addEventListener("click", () => {
   if (noIssuesCheckbox) noIssuesCheckbox.checked = false;
   detailCalloutComposer.classList.add("hidden");
   detailCalloutText.value = "";
+  detailCalloutType.value = "Repair";
   setSubmitMessage(`Callout created for ${asset.name}.`, "ok");
   renderAll();
   renderWoliOverviewList();

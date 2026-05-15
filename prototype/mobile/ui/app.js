@@ -50,6 +50,10 @@ const state = {
       description: `Coverage area for ${zoneNumber <= 12 ? "north/east" : "south/west"} campus section.`,
     };
   }),
+  mapFeatures: [],
+  mapUndoStack: [],
+  mapRedoStack: [],
+  selectedFeatureId: "",
   requiredQuestions: [
     { id: "q1", text: "Controller A serial captured", answered: true },
     { id: "q2", text: "Controller B serial captured", answered: true },
@@ -117,6 +121,18 @@ const feedbackStatus = document.getElementById("feedback-status");
 const feedbackList = document.getElementById("feedback-list");
 const copyFeedback = document.getElementById("copy-feedback");
 const clearFeedback = document.getElementById("clear-feedback");
+const syncPill = document.getElementById("sync-pill");
+const mobileMapFrame = document.getElementById("mobile-map-frame");
+const mobileAddPoint = document.getElementById("mobile-add-point");
+const mobileAddLine = document.getElementById("mobile-add-line");
+const mobileAddPolygon = document.getElementById("mobile-add-polygon");
+const mobileUndo = document.getElementById("mobile-undo");
+const mobileRedo = document.getElementById("mobile-redo");
+const mobileExportKml = document.getElementById("mobile-export-kml");
+const mobileImportKml = document.getElementById("mobile-import-kml");
+const mobileImportKmlInput = document.getElementById("mobile-import-kml-input");
+const mobileFeatureList = document.getElementById("mobile-feature-list");
+const mobileMapMessage = document.getElementById("mobile-map-message");
 
 function getRequiredAnswered() {
   return state.requiredQuestions.filter((q) => q.answered).length;
@@ -135,6 +151,183 @@ function getFilteredZones() {
     return state.zones;
   }
   return state.zones.filter((zone) => zone.controller === state.clockFilter);
+}
+
+function initMapFeatures() {
+  if (state.mapFeatures.length) {
+    return;
+  }
+  state.mapFeatures = state.zones.map((zone) => ({
+    id: `feature-${zone.id}`,
+    name: zone.label,
+    type: "Polygon",
+    assetType: "zone",
+    syncState: "Synced",
+  }));
+}
+
+function mapSnapshot() {
+  return {
+    mapFeatures: JSON.parse(JSON.stringify(state.mapFeatures)),
+    selectedFeatureId: state.selectedFeatureId,
+  };
+}
+
+function pushMapHistory() {
+  state.mapUndoStack.push(mapSnapshot());
+  if (state.mapUndoStack.length > 30) {
+    state.mapUndoStack.shift();
+  }
+  state.mapRedoStack = [];
+}
+
+function applyMapSnapshot(snapshot) {
+  state.mapFeatures = JSON.parse(JSON.stringify(snapshot.mapFeatures || []));
+  state.selectedFeatureId = snapshot.selectedFeatureId || "";
+}
+
+function syncClass(syncState) {
+  if (syncState === "Failed") return "sync-failed";
+  if (syncState === "Pending") return "sync-pending";
+  return "sync-synced";
+}
+
+function normalizeAssetType(assetType) {
+  const value = String(assetType || "").trim().toLowerCase();
+  const valid = ["controller", "backflow", "pump", "zone", "valve", "head", "drip"];
+  if (valid.includes(value)) return value;
+  return "generic";
+}
+
+function inferMobileAssetType(name, fallback = "generic") {
+  const text = String(name || "").toLowerCase();
+  if (text.includes("controller")) return "controller";
+  if (text.includes("backflow")) return "backflow";
+  if (text.includes("pump")) return "pump";
+  if (text.includes("zone")) return "zone";
+  if (text.includes("valve")) return "valve";
+  if (text.includes("head") || text.includes("rotor") || text.includes("spray")) return "head";
+  if (text.includes("drip") || text.includes("emitter")) return "drip";
+  return normalizeAssetType(fallback);
+}
+
+function mobileSymbolSpec(assetType) {
+  const key = normalizeAssetType(assetType);
+  const spec = {
+    controller: { code: "CTR", label: "Controller" },
+    backflow: { code: "BFL", label: "Backflow" },
+    pump: { code: "PMP", label: "Pump" },
+    zone: { code: "ZON", label: "Zone" },
+    valve: { code: "VLV", label: "Valve" },
+    head: { code: "HED", label: "Head" },
+    drip: { code: "DRP", label: "Drip" },
+    generic: { code: "GEN", label: "Generic" },
+  };
+  return { key, ...spec[key] };
+}
+
+function refreshSyncPill() {
+  const pending = state.mapFeatures.filter((feature) => feature.syncState === "Pending").length;
+  const failed = state.mapFeatures.filter((feature) => feature.syncState === "Failed").length;
+  if (failed > 0) {
+    syncPill.textContent = `${failed} Failed`;
+    return;
+  }
+  if (pending > 0) {
+    syncPill.textContent = `${pending} Pending`;
+    return;
+  }
+  syncPill.textContent = "Synced";
+}
+
+function mobileMapEmbedUrl() {
+  const hint = `Oak Ridge HOA Campus ${state.clockFilter === "ALL" ? "Irrigation" : state.clockFilter}`;
+  const encoded = encodeURIComponent(hint);
+  return `https://maps.google.com/maps?q=${encoded}&t=h&z=18&output=embed`;
+}
+
+function setMobileMapMessage(text, tone = "neutral") {
+  mobileMapMessage.textContent = text;
+  if (tone === "ok") {
+    mobileMapMessage.style.color = "#2e844a";
+    return;
+  }
+  if (tone === "warn") {
+    mobileMapMessage.style.color = "#8f4b00";
+    return;
+  }
+  if (tone === "error") {
+    mobileMapMessage.style.color = "#ba0517";
+    return;
+  }
+  mobileMapMessage.style.color = "#5c6f82";
+}
+
+function addMobileFeature(type) {
+  const rawName = window.prompt(`${type} name (required):`, `${type} ${state.mapFeatures.length + 1}`);
+  if (rawName === null) return;
+  const name = rawName.trim();
+  if (!name) {
+    setMobileMapMessage("Type + Name are required.", "error");
+    return;
+  }
+
+  const requestedAssetType = window.prompt(
+    "Asset type code: controller, backflow, pump, zone, valve, head, drip",
+    inferMobileAssetType(name, type === "Polygon" ? "zone" : "generic")
+  );
+  if (requestedAssetType === null) return;
+  const assetType = normalizeAssetType(requestedAssetType);
+
+  pushMapHistory();
+  const feature = {
+    id: `feature-${Date.now()}`,
+    name,
+    type,
+    assetType,
+    syncState: "Pending",
+  };
+  state.mapFeatures.push(feature);
+  state.selectedFeatureId = feature.id;
+  setMobileMapMessage(`${type} created and queued for sync.`, "ok");
+  renderMapFeatureList();
+  refreshSyncPill();
+}
+
+function buildMobileKml() {
+  const placemarks = state.mapFeatures
+    .map((feature) => `<Placemark><name>${feature.name}</name></Placemark>`)
+    .join("");
+  return `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document>${placemarks}</Document></kml>`;
+}
+
+function parseMobileKml(text) {
+  const names = [];
+  const regex = /<name>([^<]+)<\/name>/gi;
+  let match = regex.exec(text);
+  while (match) {
+    names.push(match[1].trim());
+    match = regex.exec(text);
+  }
+  return names;
+}
+
+function renderMapFeatureList() {
+  if (!mobileFeatureList) return;
+  mobileFeatureList.innerHTML = "";
+
+  state.mapFeatures.slice(0, 12).forEach((feature) => {
+    feature.assetType = inferMobileAssetType(feature.name, feature.assetType);
+    const symbol = mobileSymbolSpec(feature.assetType);
+    const item = document.createElement("li");
+    item.className = "mobile-feature-item";
+    item.innerHTML = `<span><span class="asset-symbol asset-${symbol.key}">${symbol.code}</span> ${feature.name} (${symbol.label})</span><span class="sync-state ${syncClass(feature.syncState)}">${feature.syncState}</span>`;
+    item.addEventListener("click", () => {
+      state.selectedFeatureId = feature.id;
+      setMobileMapMessage(`Selected ${feature.name}.`, "warn");
+    });
+    mobileFeatureList.appendChild(item);
+  });
 }
 
 function getAllAssets() {
@@ -282,6 +475,10 @@ function renderAssetSnapshot() {
 }
 
 function renderMapGrid() {
+  if (mobileMapFrame) {
+    mobileMapFrame.src = mobileMapEmbedUrl();
+  }
+
   mapGrid.innerHTML = "";
 
   const filteredZones = getFilteredZones();
@@ -291,7 +488,12 @@ function renderMapGrid() {
     button.type = "button";
     button.className = `zone ${zone.status === "alert" ? "zone-alert" : "zone-ok"}`;
     button.dataset.zoneId = zone.id;
-    button.innerHTML = `${zone.label}<small>${zone.controller} / ${zone.backflow}${zone.description ? ` | ${zone.description}` : ""}</small>`;
+    button.innerHTML = `<span class="zone-symbol">ZON</span>`;
+    button.setAttribute(
+      "aria-label",
+      `${zone.label} ${zone.controller} ${zone.backflow} ${zone.description || ""}`.trim()
+    );
+    button.title = `${zone.label} | ${zone.controller} | ${zone.backflow}`;
     mapGrid.appendChild(button);
   });
 
@@ -507,6 +709,13 @@ function simulateSubmit() {
   }
 
   setStage("COMPLETED");
+  state.mapFeatures.forEach((feature) => {
+    if (feature.syncState === "Pending") {
+      feature.syncState = "Synced";
+    }
+  });
+  renderMapFeatureList();
+  refreshSyncPill();
   setSubmitMessage("Success: inspection can complete.", "ok");
 }
 
@@ -525,6 +734,10 @@ function resetFlow() {
     { id: 3, asset: "Backflow South", issue: "Test window expired", severity: "High", confirmed: true },
   ];
   state.clockFilter = "ALL";
+  state.mapFeatures = [];
+  state.mapUndoStack = [];
+  state.mapRedoStack = [];
+  state.selectedFeatureId = "";
 
   state.amAssigned = false;
   state.amName = "";
@@ -537,12 +750,15 @@ function resetFlow() {
 }
 
 function renderAll() {
+  initMapFeatures();
   renderSystemScope();
   renderSystemCards();
   renderClockFilterOptions();
   renderAssetOptions();
   renderAssetManagerOptions();
   renderMapGrid();
+  renderMapFeatureList();
+  refreshSyncPill();
   renderProgress();
   renderRequiredQuestions();
   renderCallouts();
@@ -687,6 +903,79 @@ clockFilter.addEventListener("change", () => {
   renderAssetSnapshot();
 });
 
+mobileAddPoint.addEventListener("click", () => addMobileFeature("Point"));
+mobileAddLine.addEventListener("click", () => addMobileFeature("Line"));
+mobileAddPolygon.addEventListener("click", () => addMobileFeature("Polygon"));
+
+mobileUndo.addEventListener("click", () => {
+  const previous = state.mapUndoStack.pop();
+  if (!previous) {
+    setMobileMapMessage("Nothing to undo.", "warn");
+    return;
+  }
+  state.mapRedoStack.push(mapSnapshot());
+  applyMapSnapshot(previous);
+  renderMapFeatureList();
+  refreshSyncPill();
+  setMobileMapMessage("Undo applied.", "ok");
+});
+
+mobileRedo.addEventListener("click", () => {
+  const next = state.mapRedoStack.pop();
+  if (!next) {
+    setMobileMapMessage("Nothing to redo.", "warn");
+    return;
+  }
+  state.mapUndoStack.push(mapSnapshot());
+  applyMapSnapshot(next);
+  renderMapFeatureList();
+  refreshSyncPill();
+  setMobileMapMessage("Redo applied.", "ok");
+});
+
+mobileExportKml.addEventListener("click", () => {
+  const kml = buildMobileKml();
+  const blob = new Blob([kml], { type: "application/vnd.google-earth.kml+xml" });
+  const objectUrl = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = "mobile-irrigation-map.kml";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(objectUrl);
+  setMobileMapMessage("KML exported.", "ok");
+});
+
+mobileImportKml.addEventListener("click", () => {
+  mobileImportKmlInput.click();
+});
+
+mobileImportKmlInput.addEventListener("change", async () => {
+  const file = mobileImportKmlInput.files && mobileImportKmlInput.files[0];
+  if (!file) return;
+  const text = await file.text();
+  const names = parseMobileKml(text).slice(0, 20);
+  if (!names.length) {
+    setMobileMapMessage("No valid KML placemarks found.", "error");
+    return;
+  }
+  pushMapHistory();
+  names.forEach((name) => {
+    state.mapFeatures.push({
+      id: `feature-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name,
+      type: "Point",
+      assetType: inferMobileAssetType(name, "generic"),
+      syncState: "Pending",
+    });
+  });
+  mobileImportKmlInput.value = "";
+  renderMapFeatureList();
+  refreshSyncPill();
+  setMobileMapMessage(`Imported ${names.length} KML features.`, "ok");
+});
+
 mapGrid.addEventListener("click", (event) => {
   const target = event.target;
   const zoneButton = target instanceof HTMLElement ? target.closest("button.zone") : null;
@@ -701,6 +990,11 @@ mapGrid.addEventListener("click", (event) => {
 
   zone.status = zone.status === "alert" ? "ok" : "alert";
 
+  const linkedFeature = state.mapFeatures.find((feature) => feature.name === zone.label);
+  if (linkedFeature) {
+    linkedFeature.syncState = "Pending";
+  }
+
   if (zone.status === "alert") {
     setSubmitMessage(`${zone.label} flagged for follow-up.`, "warn");
   } else {
@@ -708,6 +1002,8 @@ mapGrid.addEventListener("click", (event) => {
   }
 
   renderMapGrid();
+  renderMapFeatureList();
+  refreshSyncPill();
   renderAssetSnapshot();
   routeZoneToCalloutContext(zone);
 });

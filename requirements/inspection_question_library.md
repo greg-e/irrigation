@@ -241,7 +241,7 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 - Q1.4 surfaced when Q1.3 = "Specific Resident"
 - Q1.5 surfaced when Q1.3 = "Common Area"
 - Q3.3 surfaced when Q3.2 = Yes
-- Q3.4–Q3.5 surfaced only when property has Pump asset
+- Q3.4–Q3.5 surfaced only when site has pump-station context
 - Q4.5–Q4.6 surfaced when Q4.4 = Yes
 - Q5.10 surfaced when Q5.9 = Yes
 - Q6.15–Q6.16 surfaced when Q6.3 includes Drip

@@ -168,6 +168,16 @@ body {
   border-collapse: collapse;
 }
 
+.am-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.am-action-btn {
+  min-width: 88px;
+}
+
 th,
 td {
   font-size: 0.83rem;
@@ -221,6 +231,17 @@ th {
 .record-page {
   display: grid;
   gap: 10px;
+}
+
+/* Ensure the record header object icon keeps Salesforce-like color in this prototype. */
+.slds-page-header__icon-wrapper.slds-icon-standard-asset,
+.slds-page-header__icon-wrapper.slds-icon-standard-asset_object {
+  background: #0176d3;
+  border-radius: 0.25rem;
+}
+
+.slds-page-header__icon-wrapper .slds-page-header__icon {
+  fill: #ffffff;
 }
 
 .tabs {

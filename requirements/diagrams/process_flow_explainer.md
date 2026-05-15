@@ -23,7 +23,7 @@ This diagram shows the end-to-end irrigation inspection operating flow from work
 - Done/reporting nodes (light green): terminal outcomes and monitoring sinks.
 
 ## Critical Rules Captured
-- Map context is Mapbox LWC backed by Salesforce `Map_Feature__c` (point/polygon/line), available during desktop/mobile execution.
+- Map context is a selected-provider spatial LWC backed by Salesforce `Map_Feature__c` (point/polygon/line), available during desktop/mobile execution.
 - Question set must resolve to exactly one published match.
 - No-match condition fails loudly with explicit admin next steps.
 - Selected question set version is snapshotted at inspection start and stays locked.

@@ -142,12 +142,12 @@ Content controlled by **Component Visibility Rules** (filter on Record Type):
 
 ---
 
-### Tab: Map Pin (Phase 2)
+### Tab: Spatial Map (MVP Decision Gate)
 
-> Placeholder tab — activate in Phase 2 when spatial mapping LWC is built.
+> Activate after MVP mapping stack selection (Mapbox GL JS or Google Maps JavaScript API).
 
-- Custom LWC: shows asset pin position on a background image of the property layout
-- Driven by `Asset_Map_Pin__c` child record (from spatial_mapping_options.md)
+- Custom LWC: shows asset pins plus optional zone polygons and pipe/wire polylines
+- Backed by geospatial fields/records defined in the selected mapping implementation path
 - GPS Capture button (LWC) — triggers device GPS write to `Latitude` / `Longitude`
 
 ---
@@ -184,3 +184,4 @@ Avoid surfacing the Map Pin tab on mobile until the LWC is built and tested offl
 - [x] Is the Repair Callout quick action ("Log Repair Callout") workable without a pre-existing SA context, or does it require an active SA to attach to? **→ Require an active SA — callout must attach to a visit. Tech must have an open SA on their device before logging callouts.**
 - [x] Should the Work History tab filter to show only the last 12 months by default, or all time? **→ All time — show full history by default.**
 - [x] Who sets the asset `Status` field — automation, the tech, or office admin? **→ Automation — Flow-driven. Status flips to "Needs Repair" when a callout is logged; flips back to "Installed" when the parent WO is closed.**
+- [ ] Which mapping stack wins MVP for the Spatial Map tab (Mapbox or Google) based on offline behavior and 12-month projected usage cost?
