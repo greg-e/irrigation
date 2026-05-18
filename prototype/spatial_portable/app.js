@@ -26,6 +26,8 @@ const state = {
   tool: TOOL_MODES.SELECT,
   selectedFeatureId: null,
   features: [],
+  assets: [], // Will store the property's asset hierarchy
+  assetMap: {}, // Map for quick asset lookup by ID
 };
 
 const api = new SpatialFeatureApi();
@@ -42,6 +44,62 @@ function setStatus(message) {
 
 function featureById(id) {
   return state.features.find((feature) => feature.id === id) || null;
+}
+
+function assetById(id) {
+  return state.assetMap[id] || null;
+}
+
+// Load seed data and register assets with API
+async function loadAndRegisterAssets() {
+  try {
+    // Try to load seed data (same location as property_record.js uses)
+    const response = await fetch("../desktop/seed_data.json");
+    if (!response.ok) {
+      console.warn("Could not load seed_data.json, proceeding without asset hierarchy");
+      return;
+    }
+    const data = await response.json();
+    
+    // Find the property's assets
+    const property = data.properties?.find((p) => p.id === context.propertyId);
+    if (!property || !property.assets) {
+      console.warn(`No assets found for property ${context.propertyId}`);
+      return;
+    }
+    
+    // Store assets and build lookup map
+    state.assets = property.assets;
+    state.assets.forEach((asset) => {
+      state.assetMap[asset.id] = asset;
+    });
+    
+    // Register with API for auto-feature generation
+    api.registerAssets(context.propertyId, state.assets);
+    console.log(`Loaded ${state.assets.length} assets for property ${context.propertyId}`);
+  } catch (error) {
+    console.warn("Error loading assets:", error);
+  }
+}
+
+// Get asset hierarchy context for a feature
+function getAssetContext(feature) {
+  if (!feature.assetId) return null;
+  
+  const asset = assetById(feature.assetId);
+  if (!asset) return null;
+  
+  const context = {
+    asset,
+    parent: asset.parentId ? assetById(asset.parentId) : null,
+  };
+  
+  // Get grandparent for zones (parent is controller, grandparent is system)
+  if (context.parent && context.parent.parentId) {
+    context.grandparent = assetById(context.parent.parentId);
+  }
+  
+  return context;
 }
 
 function upsertLocal(feature) {
@@ -96,9 +154,28 @@ function renderFeatureList() {
     const li = document.createElement("li");
     li.className = `feature-item${feature.id === state.selectedFeatureId ? " active" : ""}`;
     const typeIcon = getTypeIcon(feature.type);
+    
+    // Build asset context line
+    let assetContext = "No Asset";
+    if (feature.assetId) {
+      const assetCtx = getAssetContext(feature);
+      if (assetCtx) {
+        const parts = [assetCtx.asset.name];
+        if (assetCtx.parent && assetCtx.parent.type !== "System") {
+          parts.unshift(`${assetCtx.parent.type}: ${assetCtx.parent.name}`);
+        }
+        assetContext = parts.join(" ← ");
+      } else {
+        assetContext = feature.assetId;
+      }
+    }
+    
+    // For auto-generated features, show asset type badge
+    const isAutoFeature = feature.isAuto ? " [Auto]" : "";
+    
     li.innerHTML = `
-      <p class="feature-label"><span class="feature-type-icon ${feature.type}">${typeIcon}</span>${feature.name}</p>
-      <p class="feature-meta">${featureTypeLabel(feature.type)} | ${feature.assetId || "No Asset"}</p>
+      <p class="feature-label"><span class="feature-type-icon ${feature.type}">${typeIcon}</span>${feature.name}${isAutoFeature}</p>
+      <p class="feature-meta">${featureTypeLabel(feature.type)} | ${assetContext}</p>
     `;
     li.addEventListener("click", () => {
       state.selectedFeatureId = feature.id;
@@ -302,6 +379,9 @@ function wireEvents() {
 async function start() {
   wireEvents();
 
+  // Load assets before loading features (so auto-features can be generated)
+  await loadAndRegisterAssets();
+
   mapAdapter.onFeatureSelected = (featureId) => {
     state.selectedFeatureId = featureId;
     const feature = featureById(featureId);
@@ -343,7 +423,20 @@ async function start() {
 
   await mapAdapter.init();
   await loadFeatures();
-  setTool(TOOL_MODES.SELECT);
+  
+  // Set tool based on context mode (for asset-first workflows)
+  if (context.mode === TOOL_MODES.POLYGON && context.assetId) {
+    setTool(TOOL_MODES.POLYGON);
+    setStatus(`Ready to draw polygon for asset ${context.assetId}. Click on the map to start.`);
+  } else if (context.mode === TOOL_MODES.POLYLINE && context.assetId) {
+    setTool(TOOL_MODES.POLYLINE);
+    setStatus(`Ready to draw line for asset ${context.assetId}. Click on the map to start.`);
+  } else if (context.mode === TOOL_MODES.MARKER && context.assetId) {
+    setTool(TOOL_MODES.MARKER);
+    setStatus(`Ready to place marker for asset ${context.assetId}. Click on the map.`);
+  } else {
+    setTool(TOOL_MODES.SELECT);
+  }
 }
 
 start().catch((error) => {

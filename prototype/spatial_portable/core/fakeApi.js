@@ -56,12 +56,58 @@ const seedByProperty = {
 export class SpatialFeatureApi {
   constructor() {
     this.store = deepClone(seedByProperty);
+    this.assetsByProperty = {}; // Store asset hierarchies for auto-feature generation
+  }
+
+  // Register asset data for a property to enable auto-feature generation
+  registerAssets(propertyId, assets) {
+    this.assetsByProperty[propertyId] = deepClone(assets);
+  }
+
+  // Generate auto-features (markers) from assets with mapCoordinates
+  _generateAutoFeatures(propertyId) {
+    const assets = this.assetsByProperty[propertyId] || [];
+    const autoFeatures = [];
+    const autoTypesToInclude = ["System", "Controller", "Backflow", "Pump"];
+
+    assets.forEach((asset) => {
+      if (
+        autoTypesToInclude.includes(asset.type) &&
+        asset.mapCoordinates &&
+        asset.status !== "Retired"
+      ) {
+        const iconMap = {
+          System: "🏠",
+          Controller: "📊",
+          Backflow: "🔄",
+          Pump: "⚙️",
+        };
+        autoFeatures.push({
+          id: `auto-${asset.id}`,
+          propertyId,
+          assetId: asset.id,
+          assetType: asset.type,
+          assetName: asset.name,
+          type: FEATURE_TYPES.MARKER,
+          name: `${asset.type}: ${asset.name}`,
+          geometry: deepClone(asset.mapCoordinates),
+          isAuto: true,
+          modifiedAt: Date.now(),
+        });
+      }
+    });
+
+    return autoFeatures;
   }
 
   async listFeatures(context) {
     await delay(220);
-    const features = this.store[context.propertyId] || [];
-    return deepClone(features);
+    const userFeatures = this.store[context.propertyId] || [];
+    const autoFeatures = this._generateAutoFeatures(context.propertyId);
+    
+    // Combine auto-generated and user-created features
+    // Auto-features first, then user features (so user-created ones can be on top)
+    return deepClone([...autoFeatures, ...userFeatures]);
   }
 
   async upsertFeature(context, feature) {
