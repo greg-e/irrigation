@@ -51,28 +51,20 @@
 
       <section class="slds-col slds-size_9-of-12 slds-p-around_small">
         <div class="slds-card">
-          <div class="slds-card__header slds-grid slds-has-flexi-truncate slds-var-p-bottom_small">
-            <div class="slds-form-element slds-form-element_inline slds-var-m-bottom_none">
-              <fieldset class="slds-form-element__fieldset slds-var-m-bottom_none">
-                <legend class="slds-form-element__legend slds-form-element__label slds-text-body_small">Drawing Tools</legend>
-                <div class="slds-button-group" role="group">
-                  <button data-tool="select" class="slds-button slds-button_brand tool-active" title="Select and edit existing geometry">Select</button>
-                  <button data-tool="marker" class="slds-button slds-button_neutral" title="Draw a point">Point</button>
-                  <button data-tool="polyline" class="slds-button slds-button_neutral" title="Draw a line">Line</button>
-                  <button data-tool="polygon" class="slds-button slds-button_neutral" title="Draw a polygon">Polygon</button>
-                </div>
-              </fieldset>
-            </div>
-            <div class="slds-form-element slds-form-element_inline slds-var-m-bottom_none slds-var-m-left_medium">
-              <fieldset class="slds-form-element__fieldset slds-var-m-bottom_none">
-                <legend class="slds-form-element__legend slds-form-element__label slds-text-body_small">Actions</legend>
-                <div class="slds-button-group" role="group">
-                  <button id="rename-btn" class="slds-button slds-button_neutral" title="Rename selected feature (Alt+R)" disabled>Rename</button>
-                  <button id="delete-btn" class="slds-button slds-button_destructive" title="Delete selected feature (Del)" disabled>Delete</button>
-                  <button id="save-btn" class="slds-button slds-button_success" title="Save to storage">Save</button>
-                  <button id="reload-btn" class="slds-button slds-button_neutral" title="Reload from storage">Reload</button>
-                </div>
-              </fieldset>
+          <div class="slds-card__header slds-var-p-bottom_small">
+            <div class="toolbar-minimal">
+              <div class="toolbar-group">
+                <button data-tool="select" class="btn-icon tool-active" title="Select and edit geometry">↖️</button>
+                <button data-tool="marker" class="btn-icon" title="Draw point">📍</button>
+                <button data-tool="polyline" class="btn-icon" title="Draw line">📏</button>
+                <button data-tool="polygon" class="btn-icon" title="Draw polygon">🔷</button>
+              </div>
+              <div class="toolbar-group">
+                <button id="rename-btn" class="btn-icon" title="Rename feature" disabled>✏️</button>
+                <button id="delete-btn" class="btn-icon btn-danger" title="Delete feature" disabled>🗑️</button>
+                <button id="save-btn" class="btn-icon btn-success" title="Save to storage">💾</button>
+                <button id="reload-btn" class="btn-icon" title="Reload from storage">🔄</button>
+              </div>
             </div>
           </div>
           <div class="slds-card__body slds-card__body_inner">

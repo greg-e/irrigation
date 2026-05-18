@@ -112,64 +112,73 @@ body {
   position: relative;
 }
 
-/* Button group overrides */
-.slds-button-group {
+/* Minimalist toolbar */
+.toolbar-minimal {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--line);
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid var(--line);
   background: white;
-  display: flex;
 }
 
-.slds-button {
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: none;
   border-right: 1px solid var(--line);
-  font-size: 0.875rem;
-  padding: 0.5rem 1rem;
-  height: auto;
-  line-height: 1.5;
-  flex: 0 1 auto;
   background: white;
-  color: var(--ink);
   cursor: pointer;
+  font-size: 1rem;
   transition: all 0.15s ease-in-out;
+  color: var(--ink);
+  flex-shrink: 0;
 }
 
-.slds-button:hover:not(:disabled) {
-  background-color: #f5f7fa;
-}
-
-.slds-button:last-child {
+.btn-icon:last-child {
   border-right: none;
 }
 
-.slds-button_brand.tool-active {
+.btn-icon:hover:not(:disabled) {
+  background-color: #f5f7fa;
+}
+
+.btn-icon.tool-active {
   background-color: var(--brand);
-  border-color: var(--brand);
   color: white;
-  border-right-color: var(--brand);
 }
 
-.slds-button_success {
+.btn-icon.btn-success {
   background-color: var(--good);
-  border-color: var(--good);
   color: white;
-  border-right-color: var(--good);
 }
 
-.slds-button_success:hover:not(:disabled) {
+.btn-icon.btn-success:hover:not(:disabled) {
   background-color: #095a38;
 }
 
-.slds-button_destructive {
+.btn-icon.btn-danger {
   background-color: var(--danger);
-  border-color: var(--danger);
   color: white;
-  border-right-color: var(--danger);
 }
 
-.slds-button_destructive:hover:not(:disabled) {
+.btn-icon.btn-danger:hover:not(:disabled) {
   background-color: #991a1a;
+}
+
+.btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* Modal/Dialog styling */
