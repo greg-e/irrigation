@@ -130,6 +130,7 @@ export class GoogleMapAdapter {
   addFeature(feature, prebuiltOverlay) {
     const overlay = prebuiltOverlay || this.createOverlay(feature);
     overlay.__featureId = feature.id;
+    overlay.__readOnly = Boolean(feature.isAuto);
 
     overlay.addListener("click", () => {
       this.selectFeature(feature.id);
@@ -170,14 +171,15 @@ export class GoogleMapAdapter {
 
     this.overlaysById.forEach((overlay, id) => {
       const selected = id === featureId;
+      const editable = selected && !overlay.__readOnly;
       if (overlay instanceof google.maps.Marker) {
-        overlay.setDraggable(selected);
+        overlay.setDraggable(editable);
         overlay.setAnimation(selected ? google.maps.Animation.BOUNCE : null);
         if (selected) {
           setTimeout(() => overlay.setAnimation(null), 700);
         }
       } else {
-        overlay.setEditable(selected);
+        overlay.setEditable(editable);
         overlay.setOptions({
           strokeColor: selected ? "#b42318" : "#0b5cab",
           fillColor: selected ? "#b42318" : "#0b5cab",

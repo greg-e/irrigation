@@ -11,20 +11,6 @@
 </head>
 <body class="slds-scope">
   <main class="slds-box slds-var-m-around_medium">
-    <header class="slds-page-header">
-      <div class="slds-page-header__row">
-        <div class="slds-page-header__col-title">
-          <p class="slds-page-header__title-label">Irrigation Spatial</p>
-          <h1 class="slds-page-header__title">Portable Mapping Prototype</h1>
-        </div>
-        <div class="slds-page-header__col-meta">
-          <div class="slds-var-m-top_small">
-            <p id="context-chip" class="slds-text-body_small slds-text-color_weak">Loading...</p>
-          </div>
-        </div>
-      </div>
-    </header>
-
     <section class="slds-grid slds-var-m-top_medium slds-gutters">
       <aside class="slds-col slds-size_3-of-12 slds-p-around_small">
         <div class="slds-card">
@@ -32,18 +18,19 @@
             <div class="slds-media slds-media_center slds-has-flexi-truncate">
               <div class="slds-media__figure">
                 <span class="slds-icon_container slds-icon-utility-layers slds-current-color" title="Features">
-                  <svg class="slds-icon slds-icon_small" aria-hidden="true" viewBox="0 0 24 24"><use xlink:href="#"></use></svg>
+                  <svg class="slds-icon slds-icon_small" aria-hidden="true" viewBox="0 0 52 52">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#layers"></use>
+                  </svg>
                 </span>
               </div>
               <div class="slds-media__body">
                 <h3 class="slds-card__header-title slds-text-heading_small">
-                  Features <span id="feature-count" class="slds-badge slds-var-m-left_x-small">0</span>
+                  System Hierarchy
                 </h3>
               </div>
             </div>
           </div>
           <div class="slds-card__body slds-card__body_inner slds-var-p-vertical_small">
-            <p class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_medium">Points, lines, and polygons linked to assets.</p>
             <ul id="feature-list" class="slds-list slds-has-dividers_top-space"></ul>
           </div>
         </div>
@@ -55,30 +42,46 @@
             <div class="toolbar-minimal">
               <div class="toolbar-group">
                 <button data-tool="select" class="btn-icon tool-active" title="Select and edit geometry">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M2.5 2.5l6 6v-5h12v12h-5l6 6-14-14z"/></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#target"></use>
+                  </svg>
                 </button>
                 <button data-tool="marker" class="btn-icon" title="Draw point">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-5.52 0-10 4.48-10 10 0 7 10 11 10 11s10-4 10-11c0-5.52-4.48-10-10-10zm0 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#location"></use>
+                  </svg>
                 </button>
                 <button data-tool="polyline" class="btn-icon" title="Draw line">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 20 10 13 14 17 21 9"></polyline></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#trail"></use>
+                  </svg>
                 </button>
                 <button data-tool="polygon" class="btn-icon" title="Draw polygon">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l7 6v10l-7 6-7-6V7z"/></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 52 52" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#layers"></use>
+                  </svg>
                 </button>
               </div>
               <div class="toolbar-group">
                 <button id="rename-btn" class="btn-icon" title="Rename feature" disabled>
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#edit"></use>
+                  </svg>
                 </button>
                 <button id="delete-btn" class="btn-icon btn-danger" title="Delete feature" disabled>
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 52 52" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#delete"></use>
+                  </svg>
                 </button>
                 <button id="save-btn" class="btn-icon btn-success" title="Save to storage">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#save"></use>
+                  </svg>
                 </button>
                 <button id="reload-btn" class="btn-icon" title="Reload from storage">
-                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21.5 2 21.5 8 15.5 8"></polyline><path d="M17.5 13a6 6 0 0 0-6-6 6 6 0 0 0-5.5 3.5m2 13a6 6 0 0 0 5.5-3.5"></path></svg>
+                  <svg class="slds-icon-sm" viewBox="0 0 520 520" aria-hidden="true">
+                    <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#refresh"></use>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -88,7 +91,7 @@
           </div>
           <div class="slds-card__footer slds-var-p-vertical_small slds-border_top">
             <p id="status" class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_none">Initializing...</p>
-            <p id="hint" class="slds-text-body_x-small slds-text-color_weak slds-var-m-top_x-small slds-var-m-bottom_none">💡 Select a feature to enable rename/delete. Edits auto-save to localStorage when you click Save.</p>
+            <p id="hint" class="slds-text-body_x-small slds-text-color_weak slds-var-m-top_x-small slds-var-m-bottom_none">Select a hierarchy node to find mapped geometry. Rename/Delete stay tied to selected map geometry.</p>
           </div>
         </div>
       </section>
@@ -100,7 +103,9 @@
       <div class="slds-modal__header">
         <h2 class="slds-modal__title slds-hyphenate">Rename Feature</h2>
         <button id="rename-cancel-header" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
-          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 24 24"><use xlink:href="#"></use></svg>
+          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 520 520">
+            <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
           <span class="slds-assistive-text">Close</span>
         </button>
       </div>
@@ -122,6 +127,33 @@
     </div>
   </dialog>
   <div id="rename-backdrop" class="slds-backdrop slds-backdrop_hide"></div>
+
+  <dialog id="link-dialog" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-modal__title slds-hyphenate">Link Point To Component</h2>
+        <button id="link-cancel-header" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 520 520">
+            <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+      </div>
+      <div class="slds-modal__content slds-var-p-around_medium">
+        <div class="slds-form-element slds-var-m-bottom_medium">
+          <label class="slds-form-element__label" for="link-component-select">Component</label>
+          <div class="slds-form-element__control">
+            <select id="link-component-select" class="slds-select"></select>
+          </div>
+        </div>
+      </div>
+      <div class="slds-modal__footer slds-grid slds-grid_align-end slds-gap_x-small">
+        <button id="link-skip" class="slds-button slds-button_neutral">Create Unlinked</button>
+        <button id="link-confirm" class="slds-button slds-button_brand">Link Point</button>
+      </div>
+    </div>
+  </dialog>
+  <div id="link-backdrop" class="slds-backdrop slds-backdrop_hide"></div>
 
   <script type="module" src="app.js"></script>
 </body>
