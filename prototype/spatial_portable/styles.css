@@ -116,15 +116,27 @@ body {
 .slds-button-group {
   border-radius: 4px;
   overflow: hidden;
+  border: 1px solid var(--line);
+  background: white;
+  display: flex;
 }
 
 .slds-button {
-  border-radius: 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border: none;
+  border-right: 1px solid var(--line);
   font-size: 0.875rem;
   padding: 0.5rem 1rem;
   height: auto;
   line-height: 1.5;
+  flex: 0 1 auto;
+  background: white;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.slds-button:hover:not(:disabled) {
+  background-color: #f5f7fa;
 }
 
 .slds-button:last-child {
@@ -135,15 +147,17 @@ body {
   background-color: var(--brand);
   border-color: var(--brand);
   color: white;
+  border-right-color: var(--brand);
 }
 
 .slds-button_success {
   background-color: var(--good);
   border-color: var(--good);
   color: white;
+  border-right-color: var(--good);
 }
 
-.slds-button_success:hover {
+.slds-button_success:hover:not(:disabled) {
   background-color: #095a38;
 }
 
@@ -151,9 +165,10 @@ body {
   background-color: var(--danger);
   border-color: var(--danger);
   color: white;
+  border-right-color: var(--danger);
 }
 
-.slds-button_destructive:hover {
+.slds-button_destructive:hover:not(:disabled) {
   background-color: #991a1a;
 }
 
