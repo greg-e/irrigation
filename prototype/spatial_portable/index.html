@@ -36,7 +36,9 @@
                 </span>
               </div>
               <div class="slds-media__body">
-                <h3 class="slds-card__header-title slds-text-heading_small">Features</h3>
+                <h3 class="slds-card__header-title slds-text-heading_small">
+                  Features <span id="feature-count" class="slds-badge slds-var-m-left_x-small">0</span>
+                </h3>
               </div>
             </div>
           </div>
@@ -65,8 +67,8 @@
               <fieldset class="slds-form-element__fieldset slds-var-m-bottom_none">
                 <legend class="slds-form-element__legend slds-form-element__label slds-text-body_small">Actions</legend>
                 <div class="slds-button-group" role="group">
-                  <button id="rename-btn" class="slds-button slds-button_neutral" title="Rename selected feature">Rename</button>
-                  <button id="delete-btn" class="slds-button slds-button_destructive" title="Delete selected feature">Delete</button>
+                  <button id="rename-btn" class="slds-button slds-button_neutral" title="Rename selected feature (Alt+R)" disabled>Rename</button>
+                  <button id="delete-btn" class="slds-button slds-button_destructive" title="Delete selected feature (Del)" disabled>Delete</button>
                   <button id="save-btn" class="slds-button slds-button_success" title="Save to storage">Save</button>
                   <button id="reload-btn" class="slds-button slds-button_neutral" title="Reload from storage">Reload</button>
                 </div>
@@ -78,6 +80,7 @@
           </div>
           <div class="slds-card__footer slds-var-p-vertical_small slds-border_top">
             <p id="status" class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_none">Initializing...</p>
+            <p id="hint" class="slds-text-body_x-small slds-text-color_weak slds-var-m-top_x-small slds-var-m-bottom_none">💡 Select a feature to enable rename/delete. Edits auto-save to localStorage when you click Save.</p>
           </div>
         </div>
       </section>

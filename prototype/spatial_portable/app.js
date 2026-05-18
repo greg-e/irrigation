@@ -14,6 +14,7 @@ const ui = {
   featureList: document.getElementById("feature-list"),
   status: document.getElementById("status"),
   contextChip: document.getElementById("context-chip"),
+  featureCount: document.getElementById("feature-count"),
   renameBtn: document.getElementById("rename-btn"),
   deleteBtn: document.getElementById("delete-btn"),
   saveBtn: document.getElementById("save-btn"),
@@ -59,22 +60,44 @@ function removeLocal(featureId) {
   }
 }
 
+function updateActionButtons() {
+  const hasSelection = state.selectedFeatureId !== null;
+  ui.renameBtn.disabled = !hasSelection;
+  ui.deleteBtn.disabled = !hasSelection;
+}
+
+function updateFeatureCount() {
+  ui.featureCount.textContent = state.features.length;
+}
+
+function getTypeIcon(featureType) {
+  const typeMap = {
+    marker: "📍",
+    polyline: "📏",
+    polygon: "🔷",
+  };
+  return typeMap[featureType] || "📌";
+}
+
 function renderFeatureList() {
   ui.featureList.innerHTML = "";
+  updateFeatureCount();
 
   if (!state.features.length) {
     const li = document.createElement("li");
     li.className = "feature-item";
     li.innerHTML = "<p class=\"feature-label\">No features yet</p><p class=\"feature-meta\">Create one from the toolbar.</p>";
     ui.featureList.appendChild(li);
+    updateActionButtons();
     return;
   }
 
   state.features.forEach((feature) => {
     const li = document.createElement("li");
     li.className = `feature-item${feature.id === state.selectedFeatureId ? " active" : ""}`;
+    const typeIcon = getTypeIcon(feature.type);
     li.innerHTML = `
-      <p class="feature-label">${feature.name}</p>
+      <p class="feature-label"><span class="feature-type-icon ${feature.type}">${typeIcon}</span>${feature.name}</p>
       <p class="feature-meta">${featureTypeLabel(feature.type)} | ${feature.assetId || "No Asset"}</p>
     `;
     li.addEventListener("click", () => {
@@ -85,6 +108,7 @@ function renderFeatureList() {
     });
     ui.featureList.appendChild(li);
   });
+  updateActionButtons();
 }
 
 function setTool(mode) {
@@ -281,6 +305,7 @@ async function start() {
   mapAdapter.onFeatureSelected = (featureId) => {
     state.selectedFeatureId = featureId;
     const feature = featureById(featureId);
+    updateActionButtons();
     renderFeatureList();
     if (feature) {
       setStatus(`Selected ${feature.name}`);

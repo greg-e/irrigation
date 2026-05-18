@@ -246,6 +246,63 @@ body {
   list-style: none;
 }
 
+/* Badge styling */
+.slds-badge {
+  display: inline-block;
+  background-color: var(--brand);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Button states */
+.slds-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slds-button_success:disabled {
+  background-color: var(--good);
+  border-color: var(--good);
+}
+
+.slds-button_destructive:disabled {
+  background-color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* Feature type icons */
+.feature-type-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+  vertical-align: -3px;
+  font-weight: bold;
+  font-size: 0.7rem;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 2px;
+  color: white;
+}
+
+.feature-type-icon.marker {
+  background-color: #ff6b6b;
+}
+
+.feature-type-icon.polyline {
+  background-color: #4ecdc4;
+}
+
+.feature-type-icon.polygon {
+  background-color: #45b7d1;
+}
+
 /* Animations */
 @keyframes slideInUp {
   from {
