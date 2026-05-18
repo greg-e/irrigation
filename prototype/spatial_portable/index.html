@@ -54,16 +54,32 @@
           <div class="slds-card__header slds-var-p-bottom_small">
             <div class="toolbar-minimal">
               <div class="toolbar-group">
-                <button data-tool="select" class="btn-icon tool-active" title="Select and edit geometry">↖️</button>
-                <button data-tool="marker" class="btn-icon" title="Draw point">📍</button>
-                <button data-tool="polyline" class="btn-icon" title="Draw line">📏</button>
-                <button data-tool="polygon" class="btn-icon" title="Draw polygon">🔷</button>
+                <button data-tool="select" class="btn-icon tool-active" title="Select and edit geometry">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3l18 18M3 21L21 3"/></svg>
+                </button>
+                <button data-tool="marker" class="btn-icon" title="Draw point">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.03 2 3 6.03 3 11c0 8 9 13 9 13s9-5 9-13c0-4.97-4.03-9-9-9zm0 11.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                </button>
+                <button data-tool="polyline" class="btn-icon" title="Draw line">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17l6-6 4 4 8-8M16 3h5v5"/></svg>
+                </button>
+                <button data-tool="polygon" class="btn-icon" title="Draw polygon">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 5v10l-9 5-9-5V7z"/></svg>
+                </button>
               </div>
               <div class="toolbar-group">
-                <button id="rename-btn" class="btn-icon" title="Rename feature" disabled>✏️</button>
-                <button id="delete-btn" class="btn-icon btn-danger" title="Delete feature" disabled>🗑️</button>
-                <button id="save-btn" class="btn-icon btn-success" title="Save to storage">💾</button>
-                <button id="reload-btn" class="btn-icon" title="Reload from storage">🔄</button>
+                <button id="rename-btn" class="btn-icon" title="Rename feature" disabled>
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg>
+                </button>
+                <button id="delete-btn" class="btn-icon btn-danger" title="Delete feature" disabled>
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z"/></svg>
+                </button>
+                <button id="save-btn" class="btn-icon btn-success" title="Save to storage">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+                </button>
+                <button id="reload-btn" class="btn-icon" title="Reload from storage">
+                  <svg class="slds-icon-sm" viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+                </button>
               </div>
             </div>
           </div>
