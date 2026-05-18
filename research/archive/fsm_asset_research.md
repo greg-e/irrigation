@@ -1,3 +1,12 @@
+> **SUPERSEDED**
+> **Superseded by:** [requirements/irrigation_data_dictionary.md](../../requirements/irrigation_data_dictionary.md)
+> **Rationale:** Platform research informed the canonical data dictionary. The Salesforce Asset object verdict (strong fit) is recorded there. Raw research retained here for audit trail.
+> **Decision Log ID:** DL-002
+> **Archived:** 2026-05-18
+> **Owner:** BA (G. Ehrenberg)
+
+---
+
 # FSM Asset Research
 
 Research into whether the Salesforce FSM + standard Asset object is a viable path for the irrigation asset catalog and repair workflow.

@@ -1,3 +1,12 @@
+> **SUPERSEDED** (reference only — out of scope)
+> **Superseded by:** N/A — this document was never part of the implementation design.
+> **Rationale:** PM objects (Maintenance Plan, Maintenance Asset, Maintenance Work Rule) are explicitly out of scope per DL-003. Work Order generation uses an existing process.
+> **Decision Log ID:** DL-003
+> **Archived:** 2026-05-18
+> **Owner:** BA (G. Ehrenberg)
+
+---
+
 # Field Service Preventive Maintenance Data Model
 
 Reference-only native FSM diagram. It explains the broader Salesforce maintenance object graph but is not part of the chosen irrigation implementation.

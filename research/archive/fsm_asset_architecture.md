@@ -1,3 +1,12 @@
+> **SUPERSEDED**
+> **Superseded by:** [requirements/irrigation_data_dictionary.md](../../requirements/irrigation_data_dictionary.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
+> **Rationale:** Architecture decisions absorbed into the canonical data dictionary and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
+> **Decision Log ID:** DL-002
+> **Archived:** 2026-05-18
+> **Owner:** BA (G. Ehrenberg)
+
+---
+
 # FSM Asset Architecture
 
 Architecture notes for Salesforce Field Service Management (FSM) asset modeling in the irrigation solution.

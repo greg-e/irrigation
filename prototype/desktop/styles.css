@@ -559,13 +559,93 @@ th {
 }
 
 .asset-tree {
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  border: 1px solid #dddbda;
+  border-radius: 4px;
   background: #fff;
-  padding: 8px;
+  padding: 0;
   min-height: 230px;
-  max-height: 420px;
+  max-height: 440px;
   overflow: auto;
+}
+
+.hierarchy-tree {
+  border-radius: 3px;
+}
+
+.hierarchy-grid {
+  min-width: 1120px;
+}
+
+.hierarchy-grid-header,
+.hierarchy-grid-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 2.2fr) minmax(90px, 1fr) minmax(100px, 1fr) minmax(100px, 1fr) minmax(120px, 1.2fr) minmax(140px, 1.2fr) minmax(130px, 1.1fr) minmax(100px, 1fr);
+  align-items: center;
+}
+
+.hierarchy-grid-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f3f2f2;
+  border-bottom: 1px solid #dddbda;
+}
+
+.hierarchy-grid-row {
+  border-bottom: 1px solid #f3f2f2;
+  background: #fff;
+}
+
+.hierarchy-grid-row:hover {
+  background: #fafaf9;
+}
+
+.hierarchy-grid-row-selected {
+  background: #fff;
+}
+
+.hierarchy-grid-cell {
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 0.73rem;
+  color: #3e3e3c;
+  border-right: 1px solid #f3f2f2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hierarchy-grid-header .hierarchy-grid-cell {
+  font-size: 0.63rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #706e6b;
+  font-weight: 700;
+}
+
+.hierarchy-grid-cell-asset {
+  gap: 2px;
+}
+
+.hierarchy-asset-link {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #0176d3;
+  text-decoration: none;
+}
+
+.hierarchy-current-badge {
+  margin-left: 5px;
+  padding: 0 5px;
+  border: 1px solid #dddbda;
+  border-radius: 2px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #514f4d;
+  background: #fff;
+  line-height: 1.3;
 }
 
 .tree-title {
@@ -596,11 +676,11 @@ th {
   flex-shrink: 0;
   border: none;
   background: transparent;
-  color: #0b5cab;
+  color: #706e6b;
   cursor: pointer;
-  padding: 2px;
-  width: 18px;
-  height: 18px;
+  padding: 1px;
+  width: 16px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -608,7 +688,7 @@ th {
 }
 
 .tree-toggle:hover {
-  background: rgba(11, 92, 171, 0.1);
+  background: #f3f2f2;
   border-radius: 2px;
 }
 
@@ -617,20 +697,20 @@ th {
 }
 
 .tree-toggle .slds-icon {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 0.7rem;
+  height: 0.7rem;
   fill: currentColor;
 }
 
 .tree-toggle-placeholder {
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   display: inline-block;
 }
 
 .tree-node-btn {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   border: none;
   background: transparent;
@@ -639,43 +719,10 @@ th {
   cursor: pointer;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
   overflow: hidden;
-}
-
-.tree-count-badge {
-  display: inline-block;
-  background: #f4f6f9;
-  color: #0b5cab;
-  border-radius: 12px;
-  padding: 1px 6px;
-  font-size: 0.65rem;
-  font-weight: 600;
-  margin-left: 6px;
-  flex-shrink: 0;
-}
-
-.tree-children {
-  margin-top: 6px;
-  margin-left: 12px;
-}
-
-.tree-node-selected {
-  border-color: #91c9f7;
-  background: #eef6fc;
-}
-
-.tree-node-title {
-  display: block;
-  font-weight: 700;
-  color: #032d60;
-}
-
-.tree-node-subtitle {
-  display: block;
-  font-size: 0.74rem;
-  color: #5f6b7a;
 }
 
 .hierarchy-search-wrap {

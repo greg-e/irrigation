@@ -48,12 +48,6 @@
           <div class="slds-page-header__control">
             <div class="slds-button-group">
               <a href="index.html" class="slds-button slds-button_neutral">Back to Report</a>
-              <button class="slds-button slds-button_icon slds-button_icon-border-filled" type="button" title="More Actions">
-                <svg class="slds-button__icon" aria-hidden="true">
-                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#down"></use>
-                </svg>
-                <span class="slds-assistive-text">More Actions</span>
-              </button>
             </div>
           </div>
         </div>
@@ -220,11 +214,36 @@
                     </div>
                   </div>
                 </div>
+                <!-- Hierarchy fields: OOTB standard Asset fields (read-only) -->
+                <div class="slds-grid slds-gutters_xx-small slds-wrap slds-m-top_x-small" id="detail-hierarchy-fields">
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Parent Asset</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-parent-asset" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Root Asset</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-root-asset" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Asset Level</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-asset-level" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- ── Section: Asset Timeline ── -->
           <div id="detail-timeline-section" class="slds-section slds-is-open">
             <h3 class="slds-section__title slds-theme_shade">
               <button class="slds-button slds-section__title-action" type="button">
@@ -793,6 +812,36 @@
             </div>
           </div>
           <div id="program-modal-backdrop" class="slds-backdrop hidden"></div>
+
+        </section>
+
+        <section class="tab-panel" data-tab-panel="hierarchy">
+          <article class="slds-card slds-card_boundary">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">Asset Hierarchy</h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">Related-style hierarchy view in-tab for faster navigation.</p>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center slds-m-bottom_small">
+                <button id="hierarchy-new-btn" class="slds-button slds-button_neutral" type="button">New</button>
+                <div class="slds-form-element slds-m-bottom_none hierarchy-search-wrap">
+                  <label class="slds-assistive-text" for="hierarchy-search">Search hierarchy</label>
+                  <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                    <svg class="slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
+                      <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#search"></use>
+                    </svg>
+                    <input id="hierarchy-search" class="slds-input" type="text" placeholder="Search assets" />
+                  </div>
+                </div>
+              </div>
+              <p id="hierarchy-summary" class="muted"></p>
+              <div id="hierarchy-tree" class="asset-tree hierarchy-tree"></div>
+            </div>
+          </article>
         </section>
 
         <section class="tab-panel" data-tab-panel="inspections">
@@ -887,28 +936,6 @@
               <a class="slds-card__footer-action" href="#">View All in Salesforce <span class="slds-assistive-text">Proposals</span></a>
             </footer>
           </article>
-        </section>
-
-        <section class="tab-panel" data-tab-panel="hierarchy">
-          <section class="record-section">
-            <div class="record-header">
-              <h3>Asset Hierarchy</h3>
-              <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center">
-                <button id="hierarchy-new-btn" class="slds-button slds-button_neutral" type="button">New</button>
-                <div class="slds-form-element slds-m-bottom_none hierarchy-search-wrap">
-                  <label class="slds-assistive-text" for="hierarchy-search">Search hierarchy</label>
-                  <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
-                    <svg class="slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
-                      <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#search"></use>
-                    </svg>
-                    <input id="hierarchy-search" class="slds-input" type="text" placeholder="Search assets" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p id="hierarchy-summary" class="muted"></p>
-            <div id="hierarchy-tree" class="asset-tree hierarchy-tree"></div>
-          </section>
         </section>
 
         <section class="tab-panel" data-tab-panel="chatter">

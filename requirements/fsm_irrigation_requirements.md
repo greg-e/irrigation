@@ -85,6 +85,7 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Area Served` | No | Human-readable area description. |
 | `Flow Rate (GPM)` | No | Operational or design flow rate. |
 | `Primary Head Type` | No | Useful when the zone is mapped to a head subtype. |
+| `Solenoid Resistance (Ω)` | No | Last measured solenoid resistance in ohms. Nominal range 20–60 Ω; out-of-range flags valve diagnostic need. Written by inspection checkout via Q6.13c. |
 | `Install Date` | No | Optional lifecycle date. |
 
 ### 2.5 Backflow Metadata

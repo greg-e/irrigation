@@ -373,6 +373,9 @@ const els = {
   hierarchyTree: document.getElementById("hierarchy-tree"),
   hierarchySummary: document.getElementById("hierarchy-summary"),
   hierarchySearch: document.getElementById("hierarchy-search"),
+  detailParentAsset: document.getElementById("detail-parent-asset"),
+  detailRootAsset: document.getElementById("detail-root-asset"),
+  detailAssetLevel: document.getElementById("detail-asset-level"),
   hlProperty: document.getElementById("hl-property"),
   hlOwner: document.getElementById("hl-owner"),
   hlStatus: document.getElementById("hl-status"),
@@ -951,6 +954,43 @@ function closeAssetModal() {
   document.body.classList.remove("slds-overflow-hidden");
 }
 
+function getRootAsset(property, asset) {
+  if (!asset) return null;
+  let current = asset;
+  const visited = new Set();
+  while (current.parentId && !visited.has(current.id)) {
+    visited.add(current.id);
+    const parent = property.assets.find((a) => a.id === current.parentId);
+    if (!parent) break;
+    current = parent;
+  }
+  return current;
+}
+
+function getAssetLevel(property, asset) {
+  if (!asset) return null;
+  let level = 1;
+  let current = asset;
+  const visited = new Set();
+  while (current.parentId && !visited.has(current.id)) {
+    visited.add(current.id);
+    const parent = property.assets.find((a) => a.id === current.parentId);
+    if (!parent) break;
+    current = parent;
+    level++;
+  }
+  return level;
+}
+
+function openHierarchyTab() {
+  const property = getProperty();
+  if (property) {
+    const currentAsset = property.assets.find((a) => a.id === selectedAssetId) || null;
+    renderHierarchy(property, currentAsset);
+  }
+  setActiveTab("hierarchy");
+}
+
 function setSelectedAsset(assetId, options = {}) {
   const property = getProperty();
   if (!property) return;
@@ -958,7 +998,7 @@ function setSelectedAsset(assetId, options = {}) {
   if (!asset) return;
 
   if (!options.suppressTabSwitch) {
-    setActiveTab("hierarchy");
+    openHierarchyTab();
   }
 
   selectedAssetId = assetId;
@@ -1384,6 +1424,7 @@ function renderHierarchy(property, contextAsset = null) {
   const assets = activeAssets(property);
   const byParent = new Map();
   const descendantMatchCache = new Map();
+  const maxDepth = 20;
 
   assets.forEach((asset) => {
     const parentKey = asset.parentId || "root";
@@ -1393,17 +1434,7 @@ function renderHierarchy(property, contextAsset = null) {
     byParent.get(parentKey).push(asset);
   });
 
-  byParent.forEach((group) => group.sort((a, b) => a.name.localeCompare(b.name)));
-
-  // Count all descendants recursively
-  function countAllDescendants(assetId) {
-    const directChildren = byParent.get(assetId) || [];
-    let total = directChildren.length;
-    directChildren.forEach((child) => {
-      total += countAllDescendants(child.id);
-    });
-    return total;
-  }
+  byParent.forEach((group) => group.sort((a, b) => getAssetDisplayTitle(a).localeCompare(getAssetDisplayTitle(b))));
 
   function nodeMatches(asset) {
     if (!term) return true;
@@ -1422,38 +1453,74 @@ function renderHierarchy(property, contextAsset = null) {
     return result;
   }
 
-  function renderNode(asset) {
+  function toCell(value) {
+    if (value === null || value === undefined || value === "") return "&mdash;";
+    return escapeHtml(String(value));
+  }
+
+  function formatInstallDate(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString();
+  }
+
+  function formatHierarchyDate(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString();
+  }
+
+  function getHierarchySku(asset) {
+    return asset.makeModel || asset.controllerMake || asset.primaryHeadType || asset.backflowType || null;
+  }
+
+  function renderRows(asset, depth = 0) {
     const children = byParent.get(asset.id) || [];
     const hasChildren = children.length > 0;
     const hasMatchingChildren = children.some((child) => nodeMatches(child) || hasMatchingDescendant(child.id));
     const isExpanded = expandedAssets.has(asset.id);
     const shouldExpand = term ? isExpanded || hasMatchingChildren : isExpanded;
-    const totalDescendants = countAllDescendants(asset.id);
-    const childHtml = shouldExpand ? children.map(renderNode).join("") : "";
     const matches = nodeMatches(asset) || hasMatchingChildren;
     if (!matches) {
       return "";
     }
 
     const isSelected = selectedAssetId === asset.id;
-    const line2 = asset.type === "Zone" ? asset.type : asset.type;
+    const assetPadding = Math.min(depth, maxDepth - 1) * 14;
+    const status = asset.status || null;
+    const sku = getHierarchySku(asset);
+    const productCode = null;
+    const serial = asset.serialNumber || null;
+    const modifiedDate = formatHierarchyDate(property.updatedAt);
+    const modifiedBy = CURRENT_USER;
+    const installDate = formatInstallDate(asset.installDate);
 
     const toggleBtn = hasChildren
       ? `<button type="button" class="tree-toggle" data-tree-toggle="${asset.id}" title="${shouldExpand ? 'Collapse' : 'Expand'}" aria-expanded="${shouldExpand}"><svg class="slds-icon slds-icon_x-small" aria-hidden="true"><use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#chevronright"></use></svg></button>`
       : `<span class="tree-toggle-placeholder"></span>`;
 
-    const countBadge = totalDescendants > 0 ? `<span class="tree-count-badge" title="Total child assets including zones">${totalDescendants}</span>` : "";
-
-    return `<div class="tree-node ${isSelected ? "tree-node-selected" : ""} ${shouldExpand && hasChildren ? "tree-node-expanded" : ""}">
-      <div class="tree-node-header">
+    const row = `<div class="hierarchy-grid-row ${isSelected ? "hierarchy-grid-row-selected" : ""} ${shouldExpand && hasChildren ? "tree-node-expanded" : ""}" role="row">
+      <div class="hierarchy-grid-cell hierarchy-grid-cell-asset" role="gridcell" style="padding-left:${assetPadding}px">
         ${toggleBtn}
-        <button type="button" class="tree-node-btn" data-hierarchy-asset="${asset.id}">
-          <span class="tree-node-title">${escapeHtml(getAssetDisplayTitle(asset))}</span>
-          <span class="tree-node-subtitle">${line2}${countBadge}</span>
-        </button>
+        <button type="button" class="tree-node-btn hierarchy-asset-link" data-hierarchy-asset="${asset.id}">${escapeHtml(getAssetDisplayTitle(asset))}</button>
+        ${isSelected ? '<span class="hierarchy-current-badge">CURRENT</span>' : ""}
       </div>
-      ${hasChildren && shouldExpand ? `<div class="tree-children">${childHtml}</div>` : ""}
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(status)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(sku)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(productCode)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(serial)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(modifiedDate)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(modifiedBy)}</div>
+      <div class="hierarchy-grid-cell" role="gridcell">${toCell(installDate)}</div>
     </div>`;
+
+    if (!(hasChildren && shouldExpand) || depth + 1 >= maxDepth) {
+      return row;
+    }
+
+    return `${row}${children.map((child) => renderRows(child, depth + 1)).join("")}`;
   }
 
   let roots = byParent.get("root") || [];
@@ -1465,9 +1532,23 @@ function renderHierarchy(property, contextAsset = null) {
     hierarchyMode = "branch";
   }
 
-  const html = roots.map(renderNode).join("");
+  const rowsHtml = roots.map((root) => renderRows(root, 0)).join("");
 
-  els.hierarchyTree.innerHTML = html || "<p class='muted'>No hierarchy matches the current filter.</p>";
+  els.hierarchyTree.innerHTML = rowsHtml
+    ? `<div class="hierarchy-grid" role="grid" aria-label="Asset Hierarchy">
+        <div class="hierarchy-grid-header" role="row">
+          <div class="hierarchy-grid-cell hierarchy-grid-cell-asset" role="columnheader">Asset</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Status</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Product SKU</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Product Code</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Serial Number</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Last Modified Date</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Last Modified By</div>
+          <div class="hierarchy-grid-cell" role="columnheader">Install Date</div>
+        </div>
+        <div class="hierarchy-grid-body">${rowsHtml}</div>
+      </div>`
+    : "<p class='muted'>No hierarchy matches the current filter.</p>";
 
   const selected = assets.find((a) => a.id === selectedAssetId);
   if (selected) {
@@ -1478,9 +1559,9 @@ function renderHierarchy(property, contextAsset = null) {
     const breadcrumb = getAssetPath(property, selected)
       .map((node) => `<a class="slds-text-link" href="${assetRecordHref(node.id)}">${escapeHtml(getAssetDisplayTitle(node))}</a>`)
       .join(" &gt; ");
-    els.hierarchySummary.innerHTML = `${prefix}: ${breadcrumb}`;
+    els.hierarchySummary.innerHTML = `${prefix}: ${breadcrumb}. Max depth shown: ${maxDepth} levels.`;
   } else {
-    els.hierarchySummary.textContent = `${assets.length} active asset(s) in hierarchy.`;
+    els.hierarchySummary.textContent = `${assets.length} active asset(s) in hierarchy. Max depth shown: ${maxDepth} levels.`;
   }
 }
 
@@ -1684,6 +1765,26 @@ function renderDetailsTab(property, controllerAsset) {
   const firstAudit = property.audit.length ? property.audit[property.audit.length - 1] : null;
   els.detailCreatedBy.textContent = firstAudit ? `${firstAudit.user}, ${fmtDate(firstAudit.when)}` : "Prototype User";
   els.detailModifiedBy.textContent = `Prototype User, ${fmtDate(property.updatedAt)}`;
+
+  // Populate OOTB hierarchy fields
+  if (asset) {
+    const parentAsset = asset.parentId ? property.assets.find((a) => a.id === asset.parentId) : null;
+    const rootAssetRecord = getRootAsset(property, asset);
+    const level = getAssetLevel(property, asset);
+    if (els.detailParentAsset) {
+      els.detailParentAsset.textContent = parentAsset ? parentAsset.name : "—";
+    }
+    if (els.detailRootAsset) {
+      els.detailRootAsset.textContent = rootAssetRecord ? rootAssetRecord.name : "—";
+    }
+    if (els.detailAssetLevel) {
+      els.detailAssetLevel.textContent = level != null ? String(level) : "—";
+    }
+  } else {
+    if (els.detailParentAsset) els.detailParentAsset.textContent = "—";
+    if (els.detailRootAsset) els.detailRootAsset.textContent = "—";
+    if (els.detailAssetLevel) els.detailAssetLevel.textContent = "—";
+  }
 }
 
 function renderPrograms(property, controllerAsset) {
@@ -2071,7 +2172,7 @@ function openCurrentAssetEditor() {
     null;
 
   if (!currentAssetId) return;
-  setSelectedAsset(currentAssetId);
+  setSelectedAsset(currentAssetId, { suppressTabSwitch: true });
 }
 
 function bindEvents() {
@@ -2126,7 +2227,6 @@ function bindEvents() {
   });
 
   els.hierarchyNewBtn?.addEventListener("click", () => {
-    setActiveTab("hierarchy");
     openCreateModal();
   });
 

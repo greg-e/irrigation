@@ -1,3 +1,12 @@
+> **SUPERSEDED** (call prep — session closed)
+> **Superseded by:** [requirements/decision_log.md](../decision_log.md)
+> **Rationale:** Pre-call facilitation script for May 2026 stakeholder sessions. Session outcomes are logged in the decision log. This script is no longer active.
+> **Decision Log ID:** DL-004
+> **Archived:** 2026-05-18
+> **Owner:** BA (G. Ehrenberg)
+
+---
+
 # Stakeholder Follow-Up Questions — Mike, Alex, James
 
 Targeted follow-up question set per stakeholder, updated after May 11 design lock-ins (custom-object question library, immutable published versions, deterministic set resolution, required-question checkout gate, suggested-repair confirmation flow, AM-required handoff, staged asset-change apply with exception handling).

@@ -151,6 +151,7 @@ Questions are organized into **8 sections**. Each Question Set (form variant) se
 | Q6.13 | Valve not activating | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Valve Fault |
 | Q6.13a | Seeping valve | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Valve Fault |
 | Q6.13b | Bad solenoid | Boolean | Yes | If Yes | True | James col → WOLI Issue_Type = Valve Fault |
+| Q6.13c | Solenoid resistance reading (ohms) | Number | Conditional | — | <15 or >60 | Surfaced when Q6.13 = True or Q6.13b = True; nominal range 20–60 Ω; out-of-range → WOLI Issue_Type = Valve Fault; written to `Asset.Solenoid_Resistance__c` on Zone record at checkout |
 | Q6.14 | Valve box lid missing | Boolean | Yes | If Yes | True | James col |
 | Q6.15 | Broken drip line | Boolean | Conditional | If Yes | True | James col — surfaced when Q6.3 = D → WOLI Issue_Type = Leak |
 | Q6.16 | Drip emitters / filter / regulator OK? | Boolean | Conditional | If No | False | When Q6.3 = D — not on James's grid; retained from IrrigationCheckups industry standard |

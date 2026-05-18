@@ -1,3 +1,12 @@
+> **SUPERSEDED**
+> **Superseded by:** [requirements/irrigation_data_dictionary.md](../irrigation_data_dictionary.md)
+> **Rationale:** Data dictionary (v3, 2026-05-18) absorbed and expanded the inspection form schema into a unified canonical Salesforce object reference.
+> **Decision Log ID:** DL-001
+> **Archived:** 2026-05-18
+> **Owner:** BA (G. Ehrenberg)
+
+---
+
 # Irrigation Inspection Form — Data Model
 
 Draft data model for the standardized digital irrigation inspection form captured at Service Appointment checkout.
