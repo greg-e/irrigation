@@ -11,3 +11,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local prototype secrets
+prototype/spatial_portable/config.local.js

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spatial Mapping Portable Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="config.local.js"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="kicker">Irrigation Spatial</p>
+        <h1>Portable Mapping Prototype</h1>
+      </div>
+      <div class="context" id="context-chip"></div>
+    </header>
+
+    <section class="workspace">
+      <aside class="panel sidebar">
+        <h2>Features</h2>
+        <p class="hint">Points, lines, and polygons linked to assets.</p>
+        <ul id="feature-list" class="feature-list"></ul>
+      </aside>
+
+      <section class="panel canvas-panel">
+        <div class="toolbar">
+          <button data-tool="select" class="tool active">Select</button>
+          <button data-tool="marker" class="tool">Point</button>
+          <button data-tool="polyline" class="tool">Line</button>
+          <button data-tool="polygon" class="tool">Polygon</button>
+          <button id="rename-btn" class="tool neutral">Rename</button>
+          <button id="delete-btn" class="tool danger">Delete</button>
+          <button id="save-btn" class="tool positive">Save</button>
+          <button id="reload-btn" class="tool neutral">Reload</button>
+        </div>
+
+        <div id="map-root" class="map-root"></div>
+        <p id="status" class="status">Initializing...</p>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="rename-dialog" class="rename-dialog">
+    <div class="dialog-content">
+      <h3>Rename Feature</h3>
+      <input id="rename-input" type="text" placeholder="Feature name" />
+      <div class="dialog-buttons">
+        <button id="rename-confirm" class="btn-confirm">OK</button>
+        <button id="rename-cancel" class="btn-cancel">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
