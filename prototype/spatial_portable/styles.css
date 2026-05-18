@@ -149,18 +149,18 @@ body {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
 }
 
 .btn-icon.tool-active svg.slds-icon-sm,
 .btn-icon.btn-success svg.slds-icon-sm,
 .btn-icon.btn-danger svg.slds-icon-sm {
-  fill: currentColor;
-  stroke: none;
+  color: currentColor;
+}
+
+.btn-icon.tool-active,
+.btn-icon.btn-success,
+.btn-icon.btn-danger {
+  color: white;
 }
 
 .btn-icon:last-child {
