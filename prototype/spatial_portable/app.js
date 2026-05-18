@@ -2,7 +2,6 @@ import {
   TOOL_MODES,
   parseContextFromUrl,
   featureTypeLabel,
-  newFeatureName,
 } from "./core/contracts.js";
 import { SpatialFeatureApi } from "./core/fakeApi.js";
 import { GoogleMapAdapter } from "./core/googleMapAdapter.js";
@@ -150,10 +149,27 @@ function removeLocal(featureId) {
   }
 }
 
+function linkedFeatureName(assetId, fallbackName = "") {
+  return assetById(assetId)?.name || fallbackName;
+}
+
+function normalizeFeatureNames(features) {
+  return features.map((feature) => {
+    const linkedName = linkedFeatureName(feature.assetId, feature.name);
+    if (!linkedName || linkedName === feature.name) {
+      return feature;
+    }
+    return {
+      ...feature,
+      name: linkedName,
+    };
+  });
+}
+
 function updateActionButtons() {
   const selectedFeature = state.selectedFeatureId ? featureById(state.selectedFeatureId) : null;
   const hasSelection = Boolean(selectedFeature && !selectedFeature.isAuto);
-  ui.renameBtn.disabled = !hasSelection;
+  ui.renameBtn.disabled = true;
   ui.deleteBtn.disabled = !hasSelection;
 }
 
@@ -164,9 +180,8 @@ function updateFeatureCount() {
 }
 
 function componentCandidates() {
-  const componentTypes = new Set(["Valve", "Head", "Drip", "Pump", "Backflow"]);
   return state.assets
-    .filter((asset) => asset.status !== "Retired" && componentTypes.has(asset.type))
+    .filter((asset) => asset.status !== "Retired")
     .sort((a, b) => {
       if (a.type !== b.type) return a.type.localeCompare(b.type);
       return (a.name || "").localeCompare(b.name || "");
@@ -227,10 +242,10 @@ async function promptComponentLink(defaultAssetId = "") {
 
 function getAssetTypeIcon(assetType) {
   const typeMap = {
-    System: "layers",
-    Controller: "target",
-    Zone: "record",
-    Backflow: "refresh",
+    System: "asset_object",
+    Controller: "clock",
+    Zone: "choice",
+    Backflow: "water",
     Pump: "location",
     Valve: "trail",
     Head: "location",
@@ -431,7 +446,7 @@ async function loadFeatures() {
   const userFeatures =
     storedFeatures && storedFeatures.length > 0 ? storedFeatures : seededUserFeatures;
 
-  state.features = [...autoFeatures, ...userFeatures];
+  state.features = normalizeFeatureNames([...autoFeatures, ...userFeatures]);
   state.selectedFeatureId = null;
   state.selectedAssetId = null;
   mapAdapter.renderFeatures(state.features);
@@ -462,81 +477,7 @@ async function deleteSelectedFeature() {
 }
 
 async function renameSelectedFeature() {
-  if (!state.selectedFeatureId) {
-    setStatus("Select a feature to rename.");
-    return;
-  }
-
-  const feature = featureById(state.selectedFeatureId);
-  if (!feature) return;
-  if (feature.isAuto) {
-    setStatus("Simulated placements are read-only. Rename user-created geometry only.");
-    return;
-  }
-
-  const dialog = document.getElementById("rename-dialog");
-  const backdrop = document.getElementById("rename-backdrop");
-  const input = document.getElementById("rename-input");
-  const confirmBtn = document.getElementById("rename-confirm");
-  const cancelBtn = document.getElementById("rename-cancel");
-  const cancelHeaderBtn = document.getElementById("rename-cancel-header");
-
-  input.value = feature.name;
-  input.select();
-  
-  // Show modal with backdrop
-  dialog.showModal();
-  backdrop.classList.remove("slds-backdrop_hide");
-  backdrop.classList.add("slds-backdrop_open");
-
-  return new Promise((resolve) => {
-    const cleanup = () => {
-      dialog.close();
-      backdrop.classList.add("slds-backdrop_hide");
-      backdrop.classList.remove("slds-backdrop_open");
-      confirmBtn.removeEventListener("click", onConfirm);
-      cancelBtn.removeEventListener("click", onCancel);
-      cancelHeaderBtn.removeEventListener("click", onCancel);
-      input.removeEventListener("keydown", onKeyDown);
-    };
-
-    const onConfirm = async () => {
-      const nextName = input.value.trim();
-      if (!nextName) {
-        setStatus("Feature name cannot be empty.");
-        return;
-      }
-
-      const updated = await api.upsertFeature(context, {
-        ...feature,
-        name: nextName,
-      });
-
-      upsertLocal(updated);
-      renderFeatureList();
-      setStatus(`Renamed to ${updated.name}.`);
-      cleanup();
-      resolve();
-    };
-
-    const onCancel = () => {
-      cleanup();
-      resolve();
-    };
-
-    const onKeyDown = (e) => {
-      if (e.key === "Enter") {
-        onConfirm();
-      } else if (e.key === "Escape") {
-        onCancel();
-      }
-    };
-
-    confirmBtn.addEventListener("click", onConfirm);
-    cancelBtn.addEventListener("click", onCancel);
-    cancelHeaderBtn.addEventListener("click", onCancel);
-    input.addEventListener("keydown", onKeyDown);
-  });
+  setStatus("Feature names come from the linked component and cannot be edited.");
 }
 
 async function saveAll() {
@@ -610,6 +551,7 @@ async function start() {
 
     const updated = await api.upsertFeature(context, {
       ...feature,
+      name: linkedFeatureName(feature.assetId, feature.name),
       geometry,
     });
     upsertLocal(updated);
@@ -620,19 +562,17 @@ async function start() {
   mapAdapter.onFeatureCreated = async (draftFeature, overlay) => {
     let linkedAssetId = context.assetId || state.selectedAssetId || "";
 
-    if (draftFeature.type === TOOL_MODES.MARKER) {
-      const selectedComponentId = await promptComponentLink(linkedAssetId);
-      if (selectedComponentId === null) {
-        overlay.setMap(null);
-        setStatus("Point creation canceled.");
-        return;
-      }
-      linkedAssetId = selectedComponentId;
+    const selectedComponentId = await promptComponentLink(linkedAssetId);
+    if (!selectedComponentId) {
+      overlay.setMap(null);
+      setStatus("Shape creation canceled. A linked component is required.");
+      return;
     }
+    linkedAssetId = selectedComponentId;
 
     const created = await api.upsertFeature(context, {
       ...draftFeature,
-      name: newFeatureName(draftFeature.type, state.features.length),
+      name: linkedFeatureName(linkedAssetId, featureTypeLabel(draftFeature.type)),
       assetId: linkedAssetId,
     });
 
