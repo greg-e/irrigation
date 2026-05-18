@@ -4,54 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spatial Mapping Portable Prototype</title>
+  <!-- Salesforce Lightning Design System -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@salesforce-ux/design-system@latest/assets/styles/salesforce-lightning-design-system.min.css" />
   <link rel="stylesheet" href="styles.css" />
   <script src="config.local.js"></script>
 </head>
-<body>
-  <main class="shell">
-    <header class="topbar">
-      <div>
-        <p class="kicker">Irrigation Spatial</p>
-        <h1>Portable Mapping Prototype</h1>
+<body class="slds-scope">
+  <main class="slds-box slds-var-m-around_medium">
+    <header class="slds-page-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <p class="slds-page-header__title-label">Irrigation Spatial</p>
+          <h1 class="slds-page-header__title">Portable Mapping Prototype</h1>
+        </div>
+        <div class="slds-page-header__col-meta">
+          <div class="slds-var-m-top_small">
+            <p id="context-chip" class="slds-text-body_small slds-text-color_weak">Loading...</p>
+          </div>
+        </div>
       </div>
-      <div class="context" id="context-chip"></div>
     </header>
 
-    <section class="workspace">
-      <aside class="panel sidebar">
-        <h2>Features</h2>
-        <p class="hint">Points, lines, and polygons linked to assets.</p>
-        <ul id="feature-list" class="feature-list"></ul>
+    <section class="slds-grid slds-var-m-top_medium slds-gutters">
+      <aside class="slds-col slds-size_3-of-12 slds-p-around_small">
+        <div class="slds-card">
+          <div class="slds-card__header slds-grid slds-has-flexi-truncate">
+            <div class="slds-media slds-media_center slds-has-flexi-truncate">
+              <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-utility-layers slds-current-color" title="Features">
+                  <svg class="slds-icon slds-icon_small" aria-hidden="true" viewBox="0 0 24 24"><use xlink:href="#"></use></svg>
+                </span>
+              </div>
+              <div class="slds-media__body">
+                <h3 class="slds-card__header-title slds-text-heading_small">Features</h3>
+              </div>
+            </div>
+          </div>
+          <div class="slds-card__body slds-card__body_inner slds-var-p-vertical_small">
+            <p class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_medium">Points, lines, and polygons linked to assets.</p>
+            <ul id="feature-list" class="slds-list slds-has-dividers_top-space"></ul>
+          </div>
+        </div>
       </aside>
 
-      <section class="panel canvas-panel">
-        <div class="toolbar">
-          <button data-tool="select" class="tool active">Select</button>
-          <button data-tool="marker" class="tool">Point</button>
-          <button data-tool="polyline" class="tool">Line</button>
-          <button data-tool="polygon" class="tool">Polygon</button>
-          <button id="rename-btn" class="tool neutral">Rename</button>
-          <button id="delete-btn" class="tool danger">Delete</button>
-          <button id="save-btn" class="tool positive">Save</button>
-          <button id="reload-btn" class="tool neutral">Reload</button>
+      <section class="slds-col slds-size_9-of-12 slds-p-around_small">
+        <div class="slds-card">
+          <div class="slds-card__header slds-grid slds-has-flexi-truncate slds-var-p-bottom_small">
+            <div class="slds-form-element slds-form-element_inline slds-var-m-bottom_none">
+              <fieldset class="slds-form-element__fieldset slds-var-m-bottom_none">
+                <legend class="slds-form-element__legend slds-form-element__label slds-text-body_small">Drawing Tools</legend>
+                <div class="slds-button-group" role="group">
+                  <button data-tool="select" class="slds-button slds-button_brand tool-active" title="Select and edit existing geometry">Select</button>
+                  <button data-tool="marker" class="slds-button slds-button_neutral" title="Draw a point">Point</button>
+                  <button data-tool="polyline" class="slds-button slds-button_neutral" title="Draw a line">Line</button>
+                  <button data-tool="polygon" class="slds-button slds-button_neutral" title="Draw a polygon">Polygon</button>
+                </div>
+              </fieldset>
+            </div>
+            <div class="slds-form-element slds-form-element_inline slds-var-m-bottom_none slds-var-m-left_medium">
+              <fieldset class="slds-form-element__fieldset slds-var-m-bottom_none">
+                <legend class="slds-form-element__legend slds-form-element__label slds-text-body_small">Actions</legend>
+                <div class="slds-button-group" role="group">
+                  <button id="rename-btn" class="slds-button slds-button_neutral" title="Rename selected feature">Rename</button>
+                  <button id="delete-btn" class="slds-button slds-button_destructive" title="Delete selected feature">Delete</button>
+                  <button id="save-btn" class="slds-button slds-button_success" title="Save to storage">Save</button>
+                  <button id="reload-btn" class="slds-button slds-button_neutral" title="Reload from storage">Reload</button>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          <div class="slds-card__body slds-card__body_inner">
+            <div id="map-root" class="map-root slds-box slds-box_border"></div>
+          </div>
+          <div class="slds-card__footer slds-var-p-vertical_small slds-border_top">
+            <p id="status" class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_none">Initializing...</p>
+          </div>
         </div>
-
-        <div id="map-root" class="map-root"></div>
-        <p id="status" class="status">Initializing...</p>
       </section>
     </section>
   </main>
 
-  <dialog id="rename-dialog" class="rename-dialog">
-    <div class="dialog-content">
-      <h3>Rename Feature</h3>
-      <input id="rename-input" type="text" placeholder="Feature name" />
-      <div class="dialog-buttons">
-        <button id="rename-confirm" class="btn-confirm">OK</button>
-        <button id="rename-cancel" class="btn-cancel">Cancel</button>
+  <dialog id="rename-dialog" class="slds-modal slds-fade-in-open">
+    <div class="slds-modal__container">
+      <div class="slds-modal__header">
+        <h2 class="slds-modal__title slds-hyphenate">Rename Feature</h2>
+        <button id="rename-cancel-header" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 24 24"><use xlink:href="#"></use></svg>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+      </div>
+      <div class="slds-modal__content slds-var-p-around_medium">
+        <div class="slds-form-element slds-var-m-bottom_medium">
+          <label class="slds-form-element__label" for="rename-input">
+            <span class="slds-text-required slds-required">*</span>
+            Feature Name
+          </label>
+          <div class="slds-form-element__control">
+            <input id="rename-input" class="slds-input" type="text" placeholder="Enter feature name" required />
+          </div>
+        </div>
+      </div>
+      <div class="slds-modal__footer slds-grid slds-grid_align-end slds-gap_x-small">
+        <button id="rename-cancel" class="slds-button slds-button_neutral">Cancel</button>
+        <button id="rename-confirm" class="slds-button slds-button_brand">Save</button>
       </div>
     </div>
   </dialog>
+  <div id="rename-backdrop" class="slds-backdrop slds-backdrop_hide"></div>
 
   <script type="module" src="app.js"></script>
 </body>

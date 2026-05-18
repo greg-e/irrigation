@@ -90,7 +90,7 @@ function renderFeatureList() {
 function setTool(mode) {
   state.tool = mode;
   ui.toolButtons.forEach((button) => {
-    button.classList.toggle("active", button.dataset.tool === mode);
+    button.classList.toggle("tool-active", button.dataset.tool === mode);
   });
   mapAdapter.setMode(mode);
   setStatus(mode === TOOL_MODES.SELECT ? "Select and edit existing geometry." : `Drawing ${mode}.`);
@@ -174,19 +174,28 @@ async function renameSelectedFeature() {
   if (!feature) return;
 
   const dialog = document.getElementById("rename-dialog");
+  const backdrop = document.getElementById("rename-backdrop");
   const input = document.getElementById("rename-input");
   const confirmBtn = document.getElementById("rename-confirm");
   const cancelBtn = document.getElementById("rename-cancel");
+  const cancelHeaderBtn = document.getElementById("rename-cancel-header");
 
   input.value = feature.name;
   input.select();
+  
+  // Show modal with backdrop
   dialog.showModal();
+  backdrop.classList.remove("slds-backdrop_hide");
+  backdrop.classList.add("slds-backdrop_open");
 
   return new Promise((resolve) => {
     const cleanup = () => {
       dialog.close();
+      backdrop.classList.add("slds-backdrop_hide");
+      backdrop.classList.remove("slds-backdrop_open");
       confirmBtn.removeEventListener("click", onConfirm);
       cancelBtn.removeEventListener("click", onCancel);
+      cancelHeaderBtn.removeEventListener("click", onCancel);
       input.removeEventListener("keydown", onKeyDown);
     };
 
@@ -224,6 +233,7 @@ async function renameSelectedFeature() {
 
     confirmBtn.addEventListener("click", onConfirm);
     cancelBtn.addEventListener("click", onCancel);
+    cancelHeaderBtn.addEventListener("click", onCancel);
     input.addEventListener("keydown", onKeyDown);
   });
 }
