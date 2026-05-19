@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desktop Asset Setup Prototype</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="slds-scope">
+  <header class="slds-page-header slds-page-header_record-home sf-report-header sf-report-header-tight">
+    <div class="slds-media">
+      <div class="slds-media__figure">
+        <span class="slds-icon_container slds-icon-standard-report" title="Report">
+          <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/standard-sprite/svg/symbols.svg#report"></use>
+          </svg>
+        </span>
+      </div>
+      <div class="slds-media__body">
+        <p class="slds-page-header__name-meta">Report: Irrigation Assets</p>
+        <h1 class="slds-page-header__title slds-truncate" title="Irrigation System Report">Irrigation System Report</h1>
+        <p class="subhead">System and zone summary grouped by property</p>
+      </div>
+    </div>
+    <div class="slds-page-header__row-actions slds-grid slds-gutters_x-small sf-report-controls">
+      <button class="slds-button slds-button_neutral action-green" type="button">
+        <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+          <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+        </svg>
+        Enable Field Editing
+      </button>
+
+      <button class="slds-button slds-button_icon slds-button_icon-border-filled" type="button" title="Search">
+        <svg class="slds-button__icon" aria-hidden="true">
+          <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#search"></use>
+        </svg>
+      </button>
+
+      <button class="slds-button slds-button_neutral" type="button" disabled>Add Chart</button>
+
+      <button class="slds-button slds-button_icon slds-button_icon-border-filled" type="button" title="Filter">
+        <svg class="slds-button__icon" aria-hidden="true">
+          <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#filterList"></use>
+        </svg>
+      </button>
+
+      <button class="slds-button slds-button_icon slds-button_icon-border-filled" type="button" title="Refresh">
+        <svg class="slds-button__icon" aria-hidden="true">
+          <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#refresh"></use>
+        </svg>
+      </button>
+
+      <div class="split-edit-group">
+        <button class="slds-button slds-button_neutral" type="button">Edit</button>
+        <button id="reset-demo" class="slds-button slds-button_icon slds-button_icon-border-filled" type="button" title="More Actions">
+          <svg class="slds-button__icon" aria-hidden="true">
+            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#down"></use>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="slds-notify slds-notify_alert slds-theme_warning sf-report-warning" role="alert">
+    <span class="slds-assistive-text">warning</span>
+    <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="warning">
+      <svg class="slds-icon slds-icon_x-small" aria-hidden="true">
+        <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#warning"></use>
+      </svg>
+    </span>
+    <h2>
+      This report summarizes irrigation systems by property account. Click the property name to open the system record and view all associated controllers and zones.
+    </h2>
+  </section>
+
+  <main class="layout">
+    <section class="slds-card panel queue-panel report-only">
+      <div class="slds-card__body slds-card__body_inner">
+        <div class="slds-grid slds-gutters slds-m-bottom_small">
+          <div class="slds-col">
+            <p class="slds-text-title_caps">Total Records</p>
+            <p id="total-records" class="report-stat">0</p>
+          </div>
+          <div class="slds-col">
+            <p class="slds-text-title_caps">Displayed</p>
+            <p id="displayed-records" class="report-stat">0</p>
+          </div>
+        </div>
+
+        <div class="queue-table-wrap slds-m-top_small">
+          <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_striped queue-table">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th scope="col"><div class="slds-truncate" title="Branch">Branch</div></th>
+                <th scope="col"><div class="slds-truncate" title="Property Account">Property Account</div></th>
+                <th scope="col"><div class="slds-truncate" title="Irrigation System">Irrigation System</div></th>
+                <th scope="col"><div class="slds-truncate" title="Controllers">Controllers</div></th>
+                <th scope="col"><div class="slds-truncate" title="Total Zones">Total Zones</div></th>
+                <th scope="col"><div class="slds-truncate" title="Placeholder Zones">Placeholder Zones</div></th>
+                <th scope="col"><div class="slds-truncate" title="Last Updated">Last Updated</div></th>
+              </tr>
+            </thead>
+            <tbody id="queue-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
