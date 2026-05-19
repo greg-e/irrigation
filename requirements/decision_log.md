@@ -130,6 +130,23 @@ Mobile inspection uses a WOLI-first UX. WO Overview includes Service Appointment
 
 ---
 
+### DL-010 — Pipe Modeled as Attributes on System and Zone
+
+**Date:** 2026-05-19 | **Owner:** BA (field operator input) | **Status:** Locked
+
+Pipe is not modeled as a separate Asset component type. Instead, pipe-related metadata is stored as attributes (custom fields) on System and Zone Asset records:
+- **System-level pipe:** `Mainline_Pipe_Type__c` (e.g., PVC, Poly, Copper); `Mainline_Pipe_Size__c` (e.g., 1", 1.5")
+- **Zone-level pipe:** `Zone_Lateral_Type__c` (e.g., Soaker, Drip, Spray); `Zone_Lateral_Size__c`
+- Mainline inspection is captured as a question in Section 7 of the inspection form (visible leak observation + notes)
+- Zone-level distribution method is captured per-zone in Section 6 (Q6.3: Spray/Rotor/Bubbler/Drip)
+
+**Rationale:** Field teams report that pipe data is descriptive/operational context, not a discrete component requiring serial numbers, repair history, or independent asset lifecycle. Storing as attributes keeps setup fast and hierarchy flat. Pipe geometry (mainline routing, lateral branches) is captured in spatial map as polylines on `Map_Feature__c`, not as a separate Asset.
+
+**Supersedes:** Deprecated Pipe as Asset Type in [irrigation_data_dictionary.md](irrigation_data_dictionary.md) § Pipe Component
+**Action:** Remove Pipe from Asset_Type picklist domain; add pipe attributes to System and Zone metadata sections in [fsm_irrigation_requirements.md](fsm_irrigation_requirements.md); mark Pipe Component section in [irrigation_data_dictionary.md](irrigation_data_dictionary.md) as superseded.
+
+---
+
 ## New Entry Template
 
 ```

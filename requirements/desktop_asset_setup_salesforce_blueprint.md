@@ -8,7 +8,7 @@ Goal: deliver property-related irrigation asset setup in Salesforce with the lea
 
 Primary objective:
 
-1. Help BM/AM/IM quickly move a property from Not Started to Complete.
+1. Help BM/AM/IM quickly bring a property to baseline-ready.
 2. Keep user attention on only the next required action.
 3. Prefer Salesforce OOTB behavior and admin config before custom UI.
 
@@ -24,9 +24,9 @@ In scope:
 
 1. Queue-first workflow
 2. Manual asset setup
-3. Setup statuses: Not Started, In Progress, Complete
+3. Readiness stages are derived from baseline checks, not a status field.
 4. Required completion baseline
-5. Reopen Setup action
+5. Baseline validation action
 6. Retire-only behavior (no hard delete)
 7. Visible audit history
 8. Canonical hierarchy in setup flow:
@@ -48,15 +48,15 @@ Out of scope (v1):
 
 ## 3. OOTB vs Low-Code vs Custom Matrix
 
-## 3.1 Queue and Progress
+## 3.1 Queue and Readiness
 
-Requirement: property queue with filters and KPI visibility.
+Requirement: property queue with filters and readiness visibility.
 
 Recommendation:
 
 1. OOTB List View for queue.
 2. OOTB Dashboard for KPI strip.
-3. OOTB Report charts for status and placeholder tracking.
+3. OOTB Report charts for readiness and placeholder tracking.
 
 Implementation level: OOTB
 
@@ -67,21 +67,29 @@ Requirement: focused property workspace with minimal distractions.
 Recommendation:
 
 1. Lightning Record Page for Account (Property).
-2. Dynamic Forms sections for setup summary.
+2. Dynamic Forms sections for baseline summary.
 3. Related List - Single for Assets.
 4. Utility bar or compact related list for audit history.
 
 Implementation level: OOTB
 
-## 3.3 Completion and Reopen Actions
+## 3.3 Baseline Validation and Readiness
 
-Requirement: controlled status transitions and validation gates.
+Requirement: controlled baseline validation with clear pass/fail output and no manual status workflow.
 
 Recommendation:
 
-1. Screen Flow action: Mark Setup Complete.
-2. Screen Flow action: Reopen Setup.
-3. Validation logic in flow + validation rules.
+1. Single Screen Flow action: Validate Baseline.
+2. Validation output grouped into:
+   - Blockers (must fix before baseline-ready)
+   - Warnings (non-blocking, visible to user)
+3. Readiness stage derived from validation results (not user-entered):
+   - Needs Asset Build
+   - Data Build
+   - Ready for Field
+4. Validation logic split by responsibility:
+   - Flow for cross-record baseline checks and user-facing results
+   - Validation Rules for field-level constraints
 
 Implementation level: OOTB + Flow
 
@@ -119,17 +127,16 @@ Implementation level: Custom (deferred)
 
 ## 4. Minimal Salesforce Page Blueprint
 
-## 4.1 Account Record Page (Property Setup)
+## 4.1 Account Record Page (Property Baseline)
 
 Section order (top to bottom):
 
 1. Setup Header
-   - Irrigation Setup Status
+   - Property Readiness
    - System Root Present
    - Placeholder Zone Count
 2. Actions
-   - Mark Setup Complete
-   - Reopen Setup
+   - Validate Baseline
 3. Blockers Card (Flow output)
 4. Assets Related List
 5. Audit History Related List
@@ -140,15 +147,13 @@ Keep everything else in secondary tabs or collapsed sections.
 
 Landing page should be a list view with default sort:
 
-1. In Progress
-2. Not Started
-3. Complete
-4. Oldest updated first within each status
+1. Branch
+2. Most recently updated first within each branch
 
 Filters:
 
 1. Branch
-2. Setup Status
+2. Process Stage
 3. Assigned Manager
 4. Has Placeholders
 
@@ -156,9 +161,8 @@ Filters:
 
 On Account:
 
-1. Irrigation_Setup_Status__c (Not Started, In Progress, Complete)
-2. Has_System_Root__c (Checkbox)
-3. Placeholder_Zone_Count__c (Number)
+1. Has_System_Root__c (Checkbox)
+2. Placeholder_Zone_Count__c (Number)
 
 On Asset (confirm existing fields from canonical model):
 
@@ -195,7 +199,7 @@ Audit object:
 
 ## 6.1 Completion Blockers
 
-Mark Setup Complete checks:
+Baseline validation checks:
 
 1. At least one active Controller
 2. At least one active Zone
@@ -204,7 +208,7 @@ Mark Setup Complete checks:
 5. If active System exists, each active Controller must have ParentId -> System
 6. If active System exists, at least one active Backflow must have ParentId -> System
 
-If any fail: block completion and show detailed list.
+If any fail: block validation and show detailed list.
 
 ## 6.2 Zone Integrity
 
@@ -216,7 +220,7 @@ If any fail: block completion and show detailed list.
 ## 6.3 Retire Rules
 
 1. Cannot retire a Controller if active Zones still linked.
-2. If property status = Complete, block retire when resulting state violates completion baseline.
+2. If property currently meets baseline, block retire when resulting state violates baseline.
 3. Cannot retire System when active Controller or Backflow assets are still linked.
 
 ## 6.4 Optional System Root Save Rules
@@ -228,11 +232,11 @@ On Account save:
 
 ## 7. Automation Sequence
 
-## 7.1 Auto Status to In Progress
+## 7.1 Readiness Recalculation
 
-When first setup asset is created:
+When asset records change:
 
-- If status = Not Started, set status = In Progress.
+- Recalculate readiness stage from baseline checks.
 
 ## 7.2 Placeholder Count Maintenance
 
@@ -247,9 +251,8 @@ On key actions:
 1. Create Asset
 2. Edit Asset
 3. Retire Asset
-4. Mark Complete
-5. Reopen Setup
-6. Validate
+4. Validate Baseline
+5. Validate
 
 Write one immutable audit row per action.
 
@@ -259,14 +262,14 @@ Write one immutable audit row per action.
 2. Never show non-blocking warnings in red; reserve red for blockers.
 3. Keep optional details collapsed by default.
 4. Do not show decorative visual noise in operational pages.
-5. Use concise labels and avoid duplicate status wording.
+5. Use concise labels and avoid duplicate readiness wording.
 
 ## 9. Acceptance Tests
 
-1. User can complete setup in under 5 minutes for one property.
+1. User can satisfy baseline in under 5 minutes for one property.
 2. Blockers are clear and actionable.
 3. Placeholder zones allow completion but show warning count.
-4. Reopen works without ownership or notification side effects.
+4. Re-validation works without ownership or notification side effects.
 5. Retire safeguards prevent invalid baseline breaks.
 
 ## 10. Delivery Recommendation

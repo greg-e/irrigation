@@ -58,6 +58,8 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Description` | No | Optional system context shown in detail panel. |
 | `Install Date` | No | Useful for lifecycle context. |
 | `Serial Number` | No | Displayed in detail panel; currently edit flow clears this value (known prototype gap). |
+| `Mainline Pipe Type` | No | Descriptive pipe material (PVC, Poly, Copper, etc.). Optional; captured at setup. |
+| `Mainline Pipe Size` | No | Descriptive pipe diameter (e.g., 1", 1.5"). Optional; captured at setup. |
 
 ### 2.3 Controller Metadata
 
@@ -85,6 +87,9 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Area Served` | No | Human-readable area description. |
 | `Flow Rate (GPM)` | No | Operational or design flow rate. |
 | `Primary Head Type` | No | Useful when the zone is mapped to a head subtype. |
+| `Distribution Method` | No | Spray / Rotor / Bubbler / Drip. Captured during inspection per Q6.3. |
+| `Lateral Pipe Type` | No | Descriptive lateral/drip line material. Optional; examples: soaker hose, drip tape, mainline lateral. |
+| `Lateral Pipe Size` | No | Descriptive diameter/designation. Optional. |
 | `Solenoid Resistance (Ω)` | No | Last measured solenoid resistance in ohms. Nominal range 20–60 Ω; out-of-range flags valve diagnostic need. Written by inspection checkout via Q6.13c. |
 | `Install Date` | No | Optional lifecycle date. |
 

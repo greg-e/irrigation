@@ -100,6 +100,7 @@ function getSampleRelatedData(propertyId) {
 
 function migratePropertyToHierarchy(property) {
   property.assets = Array.isArray(property.assets) ? property.assets : [];
+  delete property.status;
 
   const hasSystemRoot = typeof property.hasSystemRoot === "boolean" ? property.hasSystemRoot : Boolean(property.hasPumpSystem);
   const trackZoneComponents =
@@ -242,6 +243,7 @@ const els = {
   recordTitle: document.getElementById("record-title"),
   headerEditBtn: document.getElementById("header-edit-btn"),
   detailEditBtns: document.querySelectorAll(".detail-edit-btn"),
+  detailFieldEditTriggers: document.querySelectorAll("[data-open-asset-editor]"),
   hierarchyNewBtn: document.getElementById("hierarchy-new-btn"),
   relatedTabButton: document.querySelector("[data-tab-target='inspections']"),
   relatedTabPanel: document.querySelector("[data-tab-panel='inspections']"),
@@ -260,9 +262,15 @@ const els = {
   createName: document.getElementById("create-name"),
   createControllerLabel: document.getElementById("create-controller-label"),
   createMakeModel: document.getElementById("create-make-model"),
+  createMainlinePipeType: document.getElementById("create-mainline-pipe-type"),
+  createMainlinePipeSize: document.getElementById("create-mainline-pipe-size"),
   createTotalZones: document.getElementById("create-total-zones"),
   createZoneNumber: document.getElementById("create-zone-number"),
   createZoneController: document.getElementById("create-zone-controller"),
+  createDistributionMethod: document.getElementById("create-distribution-method"),
+  createLateralPipeType: document.getElementById("create-lateral-pipe-type"),
+  createLateralPipeSize: document.getElementById("create-lateral-pipe-size"),
+  createSolenoidResistanceOhms: document.getElementById("create-solenoid-resistance-ohms"),
   createBackflowType: document.getElementById("create-backflow-type"),
   createHeadSubtype: document.getElementById("create-head-subtype"),
   createParentZone: document.getElementById("create-parent-zone"),
@@ -277,6 +285,8 @@ const els = {
   editParentSystem: document.getElementById("edit-parent-system"),
   editControllerLabel: document.getElementById("edit-controller-label"),
   editMakeModel: document.getElementById("edit-make-model"),
+  editMainlinePipeType: document.getElementById("edit-mainline-pipe-type"),
+  editMainlinePipeSize: document.getElementById("edit-mainline-pipe-size"),
   editTotalZones: document.getElementById("edit-total-zones"),
   editConnectivityType: document.getElementById("edit-connectivity-type"),
   editSmartController: document.getElementById("edit-smart-controller"),
@@ -286,6 +296,10 @@ const els = {
   editAreaServed: document.getElementById("edit-area-served"),
   editFlowRateGpm: document.getElementById("edit-flow-rate-gpm"),
   editPrimaryHeadType: document.getElementById("edit-primary-head-type"),
+  editDistributionMethod: document.getElementById("edit-distribution-method"),
+  editLateralPipeType: document.getElementById("edit-lateral-pipe-type"),
+  editLateralPipeSize: document.getElementById("edit-lateral-pipe-size"),
+  editSolenoidResistanceOhms: document.getElementById("edit-solenoid-resistance-ohms"),
   editBackflowType: document.getElementById("edit-backflow-type"),
   editLastTestDate: document.getElementById("edit-last-test-date"),
   editLastTestResult: document.getElementById("edit-last-test-result"),
@@ -344,7 +358,6 @@ const els = {
   detailCtrlLabel: document.getElementById("detail-ctrl-label"),
   detailMakeModel: document.getElementById("detail-make-model"),
   detailDescription: document.getElementById("detail-description"),
-  detailAssetStatus: document.getElementById("detail-asset-status"),
   detailTotalZones: document.getElementById("detail-total-zones"),
   detailSerial: document.getElementById("detail-serial"),
   detailInstallDate: document.getElementById("detail-install-date"),
@@ -355,7 +368,6 @@ const els = {
   detailRowL3: document.getElementById("detail-row-l3"),
   detailRowL4: document.getElementById("detail-row-l4"),
   detailRowL5: document.getElementById("detail-row-l5"),
-  detailRowR1: document.getElementById("detail-row-r1"),
   detailRowR2: document.getElementById("detail-row-r2"),
   detailRowR3: document.getElementById("detail-row-r3"),
   detailRowR4: document.getElementById("detail-row-r4"),
@@ -364,7 +376,6 @@ const els = {
   detailLabelL3: document.getElementById("detail-label-l3"),
   detailLabelL4: document.getElementById("detail-label-l4"),
   detailLabelL5: document.getElementById("detail-label-l5"),
-  detailLabelR1: document.getElementById("detail-label-r1"),
   detailLabelR2: document.getElementById("detail-label-r2"),
   detailLabelR3: document.getElementById("detail-label-r3"),
   detailLabelR4: document.getElementById("detail-label-r4"),
@@ -378,7 +389,7 @@ const els = {
   detailAssetLevel: document.getElementById("detail-asset-level"),
   hlProperty: document.getElementById("hl-property"),
   hlOwner: document.getElementById("hl-owner"),
-  hlStatus: document.getElementById("hl-status"),
+  hlReadiness: document.getElementById("hl-readiness"),
   hlBranch: document.getElementById("hl-branch"),
   hlUpdated: document.getElementById("hl-updated"),
   railRelatedList: document.getElementById("rail-related-list"),
@@ -729,6 +740,7 @@ function syncZoneNameField(nameField, zoneNumberField, isZone) {
 function configureCreateFormByType() {
   const type = els.createType.value;
 
+  const isSystem = type === "System";
   const isController = type === "Controller";
   const isPump = type === "Pump";
   const isZone = type === "Zone";
@@ -738,10 +750,16 @@ function configureCreateFormByType() {
 
   setFormFieldState(els.createControllerLabel, { visible: isController, required: isController });
   setFormFieldState(els.createMakeModel, { visible: isController || isPump, required: false });
+  setFormFieldState(els.createMainlinePipeType, { visible: isSystem, required: false });
+  setFormFieldState(els.createMainlinePipeSize, { visible: isSystem, required: false });
   setFormFieldState(els.createTotalZones, { visible: isController, required: isController });
 
   setFormFieldState(els.createZoneNumber, { visible: isZone, required: isZone });
   setFormFieldState(els.createZoneController, { visible: isZone, required: isZone });
+  setFormFieldState(els.createDistributionMethod, { visible: isZone, required: false });
+  setFormFieldState(els.createLateralPipeType, { visible: isZone, required: false });
+  setFormFieldState(els.createLateralPipeSize, { visible: isZone, required: false });
+  setFormFieldState(els.createSolenoidResistanceOhms, { visible: isZone, required: false });
 
   setFormFieldState(els.createBackflowType, { visible: isBackflow, required: isBackflow });
   setFormFieldState(els.createHeadSubtype, { visible: type === "Head", required: false });
@@ -773,6 +791,8 @@ function configureEditFormByType(type) {
   setFormFieldState(els.editParentSystem, { visible: usesSystemParent, required: false });
   setFormFieldState(els.editControllerLabel, { visible: isController, required: isController });
   setFormFieldState(els.editMakeModel, { visible: isController || isPump, required: false });
+  setFormFieldState(els.editMainlinePipeType, { visible: isSystem, required: false });
+  setFormFieldState(els.editMainlinePipeSize, { visible: isSystem, required: false });
   setFormFieldState(els.editTotalZones, { visible: isController, required: isController });
   setFormFieldState(els.editConnectivityType, { visible: isController, required: false });
   setFormFieldState(els.editSmartController, { visible: isController, required: false });
@@ -783,6 +803,10 @@ function configureEditFormByType(type) {
   setFormFieldState(els.editAreaServed, { visible: isZone, required: false });
   setFormFieldState(els.editFlowRateGpm, { visible: isZone, required: false });
   setFormFieldState(els.editPrimaryHeadType, { visible: isZone, required: false });
+  setFormFieldState(els.editDistributionMethod, { visible: isZone, required: false });
+  setFormFieldState(els.editLateralPipeType, { visible: isZone, required: false });
+  setFormFieldState(els.editLateralPipeSize, { visible: isZone, required: false });
+  setFormFieldState(els.editSolenoidResistanceOhms, { visible: isZone, required: false });
 
   setFormFieldState(els.editBackflowType, { visible: isBackflow, required: isBackflow });
   setFormFieldState(els.editLastTestDate, { visible: isBackflow, required: false });
@@ -1009,6 +1033,8 @@ function setSelectedAsset(assetId, options = {}) {
   els.editStatus.value = asset.status || "Active";
   els.editControllerLabel.value = asset.controllerLabel || "";
   els.editMakeModel.value = asset.makeModel || "";
+  els.editMainlinePipeType.value = asset.mainlinePipeType || "";
+  els.editMainlinePipeSize.value = asset.mainlinePipeSize || "";
   els.editTotalZones.value = asset.totalZones ?? "";
   els.editConnectivityType.value = asset.connectivityType || "";
   els.editSmartController.value =
@@ -1018,6 +1044,10 @@ function setSelectedAsset(assetId, options = {}) {
   els.editAreaServed.value = asset.areaServed || "";
   els.editFlowRateGpm.value = asset.flowRateGpm ?? "";
   els.editPrimaryHeadType.value = asset.primaryHeadType || "";
+  els.editDistributionMethod.value = asset.distributionMethod || "";
+  els.editLateralPipeType.value = asset.lateralPipeType || "";
+  els.editLateralPipeSize.value = asset.lateralPipeSize || "";
+  els.editSolenoidResistanceOhms.value = asset.solenoidResistanceOhms ?? "";
   els.editBackflowType.value = asset.backflowType || "";
   els.editLastTestDate.value = asset.lastTestDate || "";
   els.editLastTestResult.value = asset.lastTestResult || "";
@@ -1066,8 +1096,14 @@ function applyEditGuards(asset) {
     asset.description = els.editDescription.value.trim();
     asset.installDate = els.editInstallDate.value || "";
     asset.serialNumber = els.editSerial.value.trim();
+    asset.mainlinePipeType = els.editMainlinePipeType.value.trim();
+    asset.mainlinePipeSize = els.editMainlinePipeSize.value.trim();
     asset.zoneNumber = null;
     asset.parentId = null;
+    asset.distributionMethod = "";
+    asset.lateralPipeType = "";
+    asset.lateralPipeSize = "";
+    asset.solenoidResistanceOhms = null;
     asset.backflowType = "";
     asset.headSubtype = "";
     return { ok: true };
@@ -1096,6 +1132,12 @@ function applyEditGuards(asset) {
     const system = property ? activeAssets(property).find((a) => a.type === "System" && a.id === els.editParentSystem.value) || activeAssets(property).find((a) => a.type === "System") : null;
     asset.zoneNumber = null;
     asset.parentId = system ? system.id : null;
+    asset.mainlinePipeType = "";
+    asset.mainlinePipeSize = "";
+    asset.distributionMethod = "";
+    asset.lateralPipeType = "";
+    asset.lateralPipeSize = "";
+    asset.solenoidResistanceOhms = null;
     asset.backflowType = "";
     asset.headSubtype = "";
     asset.serialNumber = "";
@@ -1111,6 +1153,12 @@ function applyEditGuards(asset) {
     const system = property ? activeAssets(property).find((a) => a.type === "System" && a.id === els.editParentSystem.value) || activeAssets(property).find((a) => a.type === "System") : null;
     asset.zoneNumber = null;
     asset.parentId = system ? system.id : null;
+    asset.mainlinePipeType = "";
+    asset.mainlinePipeSize = "";
+    asset.distributionMethod = "";
+    asset.lateralPipeType = "";
+    asset.lateralPipeSize = "";
+    asset.solenoidResistanceOhms = null;
     asset.backflowType = "";
     asset.headSubtype = "";
     asset.controllerLabel = "";
@@ -1132,11 +1180,18 @@ function applyEditGuards(asset) {
     asset.flowRateGpm =
       els.editFlowRateGpm.value === "" ? null : Number(els.editFlowRateGpm.value);
     asset.primaryHeadType = els.editPrimaryHeadType.value || "";
+    asset.distributionMethod = els.editDistributionMethod.value || "";
+    asset.lateralPipeType = els.editLateralPipeType.value.trim();
+    asset.lateralPipeSize = els.editLateralPipeSize.value.trim();
+    asset.solenoidResistanceOhms =
+      els.editSolenoidResistanceOhms.value === "" ? null : Number(els.editSolenoidResistanceOhms.value);
     asset.installDate = els.editInstallDate.value || "";
 
     asset.controllerLabel = "";
     asset.makeModel = "";
     asset.totalZones = null;
+    asset.mainlinePipeType = "";
+    asset.mainlinePipeSize = "";
     asset.backflowType = "";
     asset.headSubtype = "";
     asset.serialNumber = "";
@@ -1165,6 +1220,12 @@ function applyEditGuards(asset) {
     asset.zoneNumber = null;
     asset.parentId = system ? system.id : null;
     asset.isPlaceholder = false;
+    asset.mainlinePipeType = "";
+    asset.mainlinePipeSize = "";
+    asset.distributionMethod = "";
+    asset.lateralPipeType = "";
+    asset.lateralPipeSize = "";
+    asset.solenoidResistanceOhms = null;
     asset.headSubtype = "";
     return { ok: true };
   }
@@ -1183,6 +1244,12 @@ function applyEditGuards(asset) {
     asset.totalZones = null;
     asset.zoneNumber = null;
     asset.isPlaceholder = false;
+    asset.mainlinePipeType = "";
+    asset.mainlinePipeSize = "";
+    asset.distributionMethod = "";
+    asset.lateralPipeType = "";
+    asset.lateralPipeSize = "";
+    asset.solenoidResistanceOhms = null;
     asset.backflowType = "";
     if (asset.type === "Valve") {
       asset.valveType = els.editValveType.value || "";
@@ -1240,6 +1307,12 @@ function applyEditGuards(asset) {
   asset.zoneNumber = null;
   asset.parentId = null;
   asset.isPlaceholder = false;
+  asset.mainlinePipeType = "";
+  asset.mainlinePipeSize = "";
+  asset.distributionMethod = "";
+  asset.lateralPipeType = "";
+  asset.lateralPipeSize = "";
+  asset.solenoidResistanceOhms = null;
   asset.backflowType = "";
   asset.headSubtype = "";
   asset.serialNumber = "";
@@ -1323,9 +1396,20 @@ function renderContextRail(property) {
   const zones = assets.filter((a) => a.type === "Zone").length;
   const components = assets.filter((a) => a.type === "Valve" || a.type === "Head" || a.type === "Drip").length;
   const backflows = assets.filter((a) => a.type === "Backflow").length;
+  const hasController = assets.some((a) => a.type === "Controller");
+  const hasZone = assets.some((a) => a.type === "Zone");
+  const hasBackflow = assets.some((a) => a.type === "Backflow");
+  const hasZoneWithoutController = assets.some((a) => a.type === "Zone" && !a.parentId);
+
+  const readiness = !assets.length
+    ? "Needs Asset Build"
+    : hasController && hasZone && hasBackflow && !hasZoneWithoutController
+    ? "Ready for Field"
+    : "Data Build";
+
   els.hlProperty.textContent = property.name;
   els.hlOwner.textContent = property.assignedManager;
-  els.hlStatus.textContent = property.status;
+  els.hlReadiness.textContent = readiness;
   els.hlBranch.textContent = property.branch;
   els.hlUpdated.textContent = fmtDate(property.updatedAt);
 
@@ -1578,7 +1662,6 @@ function renderDetailsTab(property, controllerAsset) {
   ];
 
   const rightSlots = [
-    { row: els.detailRowR1, label: els.detailLabelR1, value: els.detailAssetStatus },
     { row: els.detailRowR2, label: els.detailLabelR2, value: els.detailTotalZones },
     { row: els.detailRowR3, label: els.detailLabelR3, value: els.detailSerial },
     { row: els.detailRowR4, label: els.detailLabelR4, value: els.detailInstallDate },
@@ -1598,7 +1681,7 @@ function renderDetailsTab(property, controllerAsset) {
 
   if (!asset) {
     leftSlots.forEach((slot, idx) => applySlot(slot, idx === 0 ? { label: "Name", value: blank } : null));
-    rightSlots.forEach((slot, idx) => applySlot(slot, idx === 0 ? { label: "Status", value: blank } : null));
+    rightSlots.forEach((slot) => applySlot(slot, null));
   } else {
     const parent = property.assets.find((a) => a.id === asset.parentId);
     const childCount = activeAssets(property).filter((a) => a.parentId === asset.id).length;
@@ -1632,7 +1715,6 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Make / Model", value: firstValue(asset.makeModel, asset.controllerMake) },
       ];
       rightFields = [
-        { label: "Status", value: asset.status },
         { label: "Total Zones", value: firstValue(asset.totalZones, asset.zoneCount) },
         { label: "Connectivity Type", value: firstValue(asset.connectivityType) },
         { label: "App / Platform", value: firstValue(asset.controllerApp, asDate(firstValue(asset.installDate))) },
@@ -1646,7 +1728,6 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Description", value: asset.description },
       ];
       rightFields = [
-        { label: "Status", value: asset.status },
         { label: "Serial Number", value: firstValue(asset.serialNumber) },
         { label: "Install Date", value: asDate(asset.installDate) },
         { label: "Linked Child Assets", value: childCount },
@@ -1657,13 +1738,19 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Asset Type", value: asset.type },
         { label: "Zone Number", value: asset.zoneNumber },
         { label: "Area Served", value: firstValue(asset.areaServed, asset.description) },
-        { label: "Flow Rate (GPM)", value: firstValue(asset.flowRateGpm) },
+        { label: "Distribution Method", value: firstValue(asset.distributionMethod) },
       ];
+      const lateralSummary = [asset.lateralPipeType, asset.lateralPipeSize].filter(Boolean).join(" ");
       rightFields = [
-        { label: "Primary Head Type", value: firstValue(asset.primaryHeadType) },
-        { label: "Controller Asset", value: parentName },
-        { label: "Status", value: asset.status },
-        { label: "Install Date", value: asDate(asset.installDate) },
+        { label: "Flow Rate (GPM)", value: firstValue(asset.flowRateGpm) },
+        {
+          label: "Primary / Lateral",
+          value: joinValues("Head", firstValue(asset.primaryHeadType), "Lateral", lateralSummary || blank),
+        },
+        {
+          label: "Install / Solenoid",
+          value: joinValues("Install", asDate(asset.installDate), "Solenoid ohms", firstValue(asset.solenoidResistanceOhms)),
+        },
       ];
     } else if (asset.type === "Backflow") {
       leftFields = [
@@ -1675,7 +1762,6 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Compliance Status", value: firstValue(asset.complianceStatus) },
       ];
       rightFields = [
-        { label: "Status", value: asset.status },
         { label: "Install Date", value: asDate(firstValue(asset.installDate)) },
         {
           label: "Last Test",
@@ -1683,7 +1769,7 @@ function renderDetailsTab(property, controllerAsset) {
         },
         {
           label: "Compliance / Next Due",
-          value: joinValues("Status", firstValue(asset.complianceStatus), "Due", asDate(firstValue(asset.nextTestDue))),
+          value: joinValues("Compliance", firstValue(asset.complianceStatus), "Due", asDate(firstValue(asset.nextTestDue))),
         },
       ];
     } else if (asset.type === "Valve") {
@@ -1697,7 +1783,6 @@ function renderDetailsTab(property, controllerAsset) {
       rightFields = [
         { label: "Condition", value: firstValue(asset.valveCondition) },
         { label: "Parent Asset", value: parentName },
-        { label: "Status", value: asset.status },
         { label: "Install Date", value: asDate(asset.installDate) },
       ];
     } else if (asset.type === "Head") {
@@ -1711,7 +1796,6 @@ function renderDetailsTab(property, controllerAsset) {
       rightFields = [
         { label: "Arc (degrees)", value: firstValue(asset.arcDegrees) },
         { label: "Zone Association", value: parentName },
-        { label: "Status", value: asset.status },
         { label: "Install Date", value: asDate(asset.installDate) },
       ];
     } else if (asset.type === "Drip") {
@@ -1725,7 +1809,6 @@ function renderDetailsTab(property, controllerAsset) {
       rightFields = [
         { label: "Coverage Area (sq ft)", value: firstValue(asset.coverageAreaSqft) },
         { label: "Zone Association", value: parentName },
-        { label: "Status", value: asset.status },
         { label: "Install Date", value: asDate(asset.installDate) },
       ];
     } else if (asset.type === "System") {
@@ -1734,13 +1817,12 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Asset Type", value: asset.type },
         { label: "Property Account", value: property.name },
         { label: "Description", value: asset.description },
-        null,
+        { label: "Mainline Pipe Type", value: firstValue(asset.mainlinePipeType) },
       ];
       rightFields = [
-        { label: "Status", value: asset.status },
         { label: "Install Date", value: asDate(asset.installDate) },
         { label: "Serial Number", value: firstValue(asset.serialNumber) },
-        { label: "Linked Child Assets", value: childCount },
+        { label: "Mainline Pipe Size", value: firstValue(asset.mainlinePipeSize) },
       ];
     } else {
       leftFields = [
@@ -1751,7 +1833,6 @@ function renderDetailsTab(property, controllerAsset) {
         { label: "Description", value: asset.description },
       ];
       rightFields = [
-        { label: "Status", value: asset.status },
         { label: "Serial Number", value: asset.serialNumber },
         { label: "Install Date", value: asDate(asset.installDate) },
         { label: "Linked Child Assets", value: childCount },
@@ -2173,6 +2254,7 @@ function openCurrentAssetEditor() {
 
   if (!currentAssetId) return;
   setSelectedAsset(currentAssetId, { suppressTabSwitch: true });
+  openEditModal();
 }
 
 function bindEvents() {
@@ -2233,6 +2315,17 @@ function bindEvents() {
   els.headerEditBtn?.addEventListener("click", openCurrentAssetEditor);
   els.detailEditBtns?.forEach((button) => {
     button.addEventListener("click", openCurrentAssetEditor);
+  });
+  els.detailFieldEditTriggers?.forEach((row) => {
+    row.addEventListener("click", (event) => {
+      if (event.target.closest("button")) return;
+      openCurrentAssetEditor();
+    });
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openCurrentAssetEditor();
+    });
   });
 
   function getMapContext() {
@@ -2525,7 +2618,18 @@ function bindEvents() {
       backflowType: "",
       headSubtype: "",
       serialNumber: "",
+      mainlinePipeType: "",
+      mainlinePipeSize: "",
+      distributionMethod: "",
+      lateralPipeType: "",
+      lateralPipeSize: "",
+      solenoidResistanceOhms: null,
     };
+
+    if (type === "System") {
+      base.mainlinePipeType = els.createMainlinePipeType.value.trim();
+      base.mainlinePipeSize = els.createMainlinePipeSize.value.trim();
+    }
 
     if (type === "Controller") {
       const controllerLabel = els.createControllerLabel.value.trim();
@@ -2570,6 +2674,11 @@ function bindEvents() {
       base.zoneNumber = Number(zoneNumber);
       base.name = `Zone ${zoneNumber}`;
       base.parentId = parentId;
+      base.distributionMethod = els.createDistributionMethod.value || "";
+      base.lateralPipeType = els.createLateralPipeType.value.trim();
+      base.lateralPipeSize = els.createLateralPipeSize.value.trim();
+      base.solenoidResistanceOhms =
+        els.createSolenoidResistanceOhms.value === "" ? null : Number(els.createSolenoidResistanceOhms.value);
 
       if (!uniqueZonePerController(property, base)) {
         els.createMsg.textContent = "Zone Number must be unique per Controller.";
@@ -2603,10 +2712,6 @@ function bindEvents() {
     }
 
     property.assets.push(base);
-    if (property.status === "Not Started") {
-      property.status = "In Progress";
-      addAudit(property, "Auto Status", property.name, "Moved to In Progress after first asset activity");
-    }
     addAudit(property, "Create Asset", base.name, `${base.type} created`);
     els.createMsg.textContent = `${base.type} created.`;
 

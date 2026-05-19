@@ -91,6 +91,9 @@
               <button type="button" class="slds-tabs_default__link tab active" data-tab-target="details">Details</button>
             </li>
             <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="map">Map</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
               <button type="button" class="slds-tabs_default__link tab" data-tab-target="hierarchy">Hierarchy</button>
             </li>
             <li class="slds-tabs_default__item" role="presentation">
@@ -205,6 +208,15 @@
                           </svg>
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Location row -->
+                <div id="detail-location-row" class="slds-m-top_x-small hidden">
+                  <div class="slds-form-element slds-form-element_stacked detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                    <label class="slds-form-element__label">Location (Lat / Lon)</label>
+                    <div class="slds-form-element__control slds-border_bottom">
+                      <span id="detail-location" class="slds-form-element__static slds-grow">—</span>
                     </div>
                   </div>
                 </div>
@@ -788,6 +800,18 @@
                         <input id="edit-install-date" type="date" class="slds-input" />
                       </div>
                     </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element" id="edit-lat-row">
+                      <label class="slds-form-element__label" for="edit-lat">Latitude</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lat" type="number" step="any" class="slds-input" placeholder="e.g. 33.4484" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element" id="edit-lon-row">
+                      <label class="slds-form-element__label" for="edit-lon">Longitude</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lon" type="number" step="any" class="slds-input" placeholder="e.g. -112.0740" />
+                      </div>
+                    </div>
                     <div class="slds-col slds-size_1-of-1 slds-form-element">
                       <label class="slds-form-element__label" for="edit-description">Description</label>
                       <div class="slds-form-element__control">
@@ -1046,6 +1070,17 @@
           <!-- Hidden compatibility placeholders for existing JS bindings -->
           <ul id="rail-recent-activity" class="hidden"></ul>
           <table class="hidden"><tbody id="audit-body"></tbody></table>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="map">
+          <div style="height:800px;">
+            <iframe
+              id="spatial-map-frame"
+              style="width:100%;height:100%;border:none;display:block;"
+              title="Spatial Map Prototype"
+              allowfullscreen
+            ></iframe>
+          </div>
         </section>
       </section>
     </section>

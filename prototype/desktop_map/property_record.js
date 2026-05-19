@@ -321,6 +321,8 @@ const els = {
   editParentLabel: document.querySelector("label[for='edit-parent-zone']"),
   editSerial: document.getElementById("edit-serial"),
   editInstallDate: document.getElementById("edit-install-date"),
+  editLat: document.getElementById("edit-lat"),
+  editLon: document.getElementById("edit-lon"),
   editDescription: document.getElementById("edit-description"),
   relatedContext: document.getElementById("related-context"),
   relatedSummary: document.getElementById("related-summary"),
@@ -396,6 +398,9 @@ const els = {
   railRecentActivity: document.getElementById("rail-recent-activity"),
   tabButtons: document.querySelectorAll("[data-tab-target]"),
   tabPanels: document.querySelectorAll("[data-tab-panel]"),
+  spatialMapFrame: document.getElementById("spatial-map-frame"),
+  detailLocationRow: document.getElementById("detail-location-row"),
+  detailLocation: document.getElementById("detail-location"),
 };
 
 function setActiveTab(tabKey) {
@@ -411,23 +416,48 @@ function setActiveTab(tabKey) {
   els.tabPanels.forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.tabPanel === tabKey);
   });
+
+  if (tabKey === "map") {
+    const frame = els.spatialMapFrame;
+    if (frame) {
+      if (!frame.dataset.loaded) {
+        frame.dataset.loaded = "true";
+        frame.addEventListener("load", pushAssetsToMapFrame, { once: true });
+        frame.src = `../spatial_portable/index.html?propertyId=${encodeURIComponent(propertyId || "")}`;
+      } else {
+        pushAssetsToMapFrame();
+      }
+    }
+  }
+}
+
+function pushAssetsToMapFrame() {
+  const frame = els.spatialMapFrame;
+  if (!frame || !frame.contentWindow) return;
+  const property = getProperty();
+  if (!property) return;
+  frame.contentWindow.postMessage(
+    { type: "SPATIAL_PROTO_ASSETS", propertyId: property.id, assets: property.assets },
+    "*"
+  );
 }
 
 function updateRelatedTabVisibility(asset) {
   const isParentAsset = Boolean(asset) && !asset.parentId;
+  const canShowMap = Boolean(asset);
 
   const mapTabButton = document.querySelector("[data-tab-target='map']");
   const mapTabItem = mapTabButton ? mapTabButton.closest(".slds-tabs_default__item") : null;
   const mapTabPanel = document.querySelector("[data-tab-panel='map']");
 
   if (mapTabButton) {
-    mapTabButton.style.display = isParentAsset ? "" : "none";
+    mapTabButton.style.display = canShowMap ? "" : "none";
   }
   if (mapTabItem) {
-    mapTabItem.style.display = isParentAsset ? "" : "none";
+    mapTabItem.style.display = canShowMap ? "" : "none";
   }
   if (mapTabPanel) {
-    mapTabPanel.style.display = isParentAsset ? "" : "none";
+    mapTabPanel.style.display = canShowMap ? "" : "none";
   }
 
   if (els.relatedTabButton) {
@@ -442,7 +472,7 @@ function updateRelatedTabVisibility(asset) {
     els.relatedTabPanel.style.display = isParentAsset ? "" : "none";
   }
 
-  if (!isParentAsset && (activeTab === "inspections" || activeTab === "map")) {
+  if (!canShowMap && (activeTab === "inspections" || activeTab === "map")) {
     setActiveTab("details");
   }
 }
@@ -647,7 +677,7 @@ function navigateToRelatedAsset(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  window.location.assign(`property_record.html?${next.toString()}`);
+  window.location.assign(`desktop_prototype_with_map.html?${next.toString()}`);
 }
 
 function getProperty() {
@@ -1067,6 +1097,8 @@ function setSelectedAsset(assetId, options = {}) {
   els.editCoverageAreaSqft.value = asset.coverageAreaSqft ?? "";
   els.editSerial.value = asset.serialNumber || "";
   els.editInstallDate.value = asset.installDate || "";
+  els.editLat.value = asset.lat ?? "";
+  els.editLon.value = asset.lon ?? "";
   els.editDescription.value = asset.description || "";
   syncZoneNameField(els.editName, els.editZoneNumber, asset.type === "Zone");
   renderControllerOptions(els.editZoneController);
@@ -1090,6 +1122,9 @@ function setSelectedAsset(assetId, options = {}) {
 }
 
 function applyEditGuards(asset) {
+  asset.lat = els.editLat.value === "" ? null : parseFloat(els.editLat.value);
+  asset.lon = els.editLon.value === "" ? null : parseFloat(els.editLon.value);
+
   const property = getProperty();
 
   if (asset.type === "System") {
@@ -1492,7 +1527,7 @@ function assetRecordHref(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  return `property_record.html?${next.toString()}`;
+  return `desktop_prototype_with_map.html?${next.toString()}`;
 }
 
 function getAssetDisplayTitle(asset) {
@@ -1841,6 +1876,22 @@ function renderDetailsTab(property, controllerAsset) {
 
     leftSlots.forEach((slot, idx) => applySlot(slot, leftFields[idx] || null));
     rightSlots.forEach((slot, idx) => applySlot(slot, rightFields[idx] || null));
+
+    if (els.detailLocationRow && els.detailLocation) {
+      if (asset.lat != null || asset.lon != null) {
+        const latStr = asset.lat != null ? Number(asset.lat).toFixed(6) : blank;
+        const lonStr = asset.lon != null ? Number(asset.lon).toFixed(6) : blank;
+        const mapsUrl = (asset.lat != null && asset.lon != null)
+          ? `https://maps.google.com/?q=${encodeURIComponent(asset.lat)},${encodeURIComponent(asset.lon)}`
+          : null;
+        els.detailLocation.innerHTML = mapsUrl
+          ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${latStr} / ${lonStr}</a>`
+          : `${latStr} / ${lonStr}`;
+        els.detailLocationRow.classList.remove("hidden");
+      } else {
+        els.detailLocationRow.classList.add("hidden");
+      }
+    }
   }
 
   const firstAudit = property.audit.length ? property.audit[property.audit.length - 1] : null;
@@ -2028,19 +2079,22 @@ function renderRelated(property) {
 function renderMapTab(property, contextAsset) {
   if (!els.mapStage || !els.mapFeatureList) return;
 
-  if (!contextAsset || contextAsset.parentId) {
+  if (!contextAsset) {
     if (els.mapOverlay) {
-      els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>Map is available only on parent assets.</p>";
+      els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>Open an asset to view its map.</p>";
     }
     els.mapFeatureList.innerHTML = "";
     if (els.mapFeatureCount) els.mapFeatureCount.textContent = "(0)";
     if (els.mapSelection) els.mapSelection.textContent = "No feature selected";
     if (els.mapSyncSummary) els.mapSyncSummary.textContent = "Pending 0 | Synced 0 | Failed 0";
-    if (els.mapContext) els.mapContext.textContent = "Open a parent asset to manage irrigation map features.";
+    if (els.mapContext) els.mapContext.textContent = "Open an asset to view irrigation map features.";
     return;
   }
 
-  const mapState = ensureMapState(property, contextAsset);
+  const mapContextAsset = contextAsset.parentId
+    ? property.assets.find((asset) => asset.id === contextAsset.parentId) || contextAsset
+    : contextAsset;
+  const mapState = ensureMapState(property, mapContextAsset);
   const features = mapState.features;
   const selectedId = mapState.selectedFeatureId;
   const selected = features.find((feature) => feature.id === selectedId) || null;
@@ -2053,7 +2107,9 @@ function renderMapTab(property, contextAsset) {
     els.mapFeatureCount.textContent = `(${features.length}/${MAP_FEATURE_LIMIT})`;
   }
   if (els.mapContext) {
-    els.mapContext.textContent = `${contextAsset.name} map centered from Parent Asset location. Google Maps visual mock.`;
+    els.mapContext.textContent = contextAsset.parentId
+      ? `${contextAsset.name} location view. Map editing stays on the parent asset.`
+      : `${contextAsset.name} map centered from Parent Asset location. Google Maps visual mock.`;
   }
   if (els.mapSyncSummary) {
     els.mapSyncSummary.textContent = `Pending ${pending} | Synced ${synced} | Failed ${failed}`;
@@ -2102,25 +2158,6 @@ function renderMapTab(property, contextAsset) {
 
   if (els.mapOverlay) {
     els.mapOverlay.innerHTML = "";
-  }
-  features.forEach((feature) => {
-    feature.assetType = inferAssetTypeFromName(feature.name, feature.assetType);
-    const featureEl = document.createElement("button");
-    const pos = mapFeaturePosition(feature);
-    const symbol = mapSymbolSpec(feature.assetType);
-    featureEl.type = "button";
-    featureEl.className = `map-feature map-symbol-only feature-${feature.type.toLowerCase()} map-asset-${symbol.key}${selectedId === feature.id ? " map-feature-selected" : ""}`;
-    featureEl.dataset.mapFeatureId = feature.id;
-    featureEl.innerHTML = `<span class="map-feature-symbol">${symbol.code}</span>`;
-    featureEl.setAttribute("aria-label", `${feature.name} (${symbol.label})`);
-    featureEl.style.left = `${pos.left}%`;
-    featureEl.style.top = `${pos.top}%`;
-    featureEl.title = `${symbol.label} | ${feature.type} | ${feature.syncState || "Synced"}`;
-    els.mapOverlay?.appendChild(featureEl);
-  });
-
-  if (!features.length && els.mapOverlay) {
-    els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>No map features yet. Use Add Point/Line/Polygon to begin.</p>";
   }
 
   els.mapFeatureList.innerHTML = features
@@ -2230,6 +2267,7 @@ function renderPage() {
   renderDetailsTab(property, detailAsset);
   renderTimeline(property, detailAsset);
   renderHierarchy(property, detailAsset);
+  renderPrograms(property, detailAsset);
   renderMapTab(property, detailAsset);
   renderRelated(property);
   if (!selectedAssetId && detailAsset) {
@@ -2927,4 +2965,21 @@ async function init() {
 
 init().catch((error) => {
   console.error("Failed to initialize property record", error);
+});
+
+// Listen for messages from the spatial map iframe
+window.addEventListener("message", (event) => {
+  const msg = event.data;
+  if (!msg || msg.type !== "SPATIAL_ASSET_LOCATION") return;
+  if (typeof msg.lat !== "number" || typeof msg.lon !== "number" || !msg.assetId) return;
+
+  const property = getProperty();
+  if (!property) return;
+  const asset = property.assets.find((a) => a.id === msg.assetId);
+  if (!asset) return;
+
+  asset.lat = msg.lat;
+  asset.lon = msg.lon;
+  saveState();
+  renderPage();
 });

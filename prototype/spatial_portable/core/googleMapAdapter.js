@@ -129,6 +129,9 @@ export class GoogleMapAdapter {
 
   addFeature(feature, prebuiltOverlay) {
     const overlay = prebuiltOverlay || this.createOverlay(feature);
+    if (!overlay) {
+      return;
+    }
     overlay.__featureId = feature.id;
     overlay.__readOnly = Boolean(feature.isAuto);
 
@@ -200,10 +203,15 @@ export class GoogleMapAdapter {
 
   createOverlay(feature) {
     if (feature.type === FEATURE_TYPES.MARKER) {
-      return new google.maps.Marker({
+      // Skip rendering lat/lon auto-markers — locations already visible on map
+      if (feature.isLatLon) {
+        return null;
+      }
+      const markerOpts = {
         position: feature.geometry,
         draggable: false,
-      });
+      };
+      return new google.maps.Marker(markerOpts);
     }
 
     if (feature.type === FEATURE_TYPES.POLYLINE) {

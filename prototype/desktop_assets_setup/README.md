@@ -1,14 +1,14 @@
-# Desktop Assets Setup Prototype
+# Desktop Assets Baseline Prototype
 
-Separate desktop prototype artifact for property-linked irrigation asset setup.
+Separate desktop prototype artifact for property-linked irrigation asset baseline.
 
 ## Scope Locked in This Prototype
 
-- Queue-first desktop workflow
+- Queue-first desktop view
 - Shared BM/AM/IM UI and permissions
 - Lightweight AM queue for post-inspection callout triage
-- Manual asset setup only (import intentionally out of scope)
-- Canonical setup hierarchy:
+- Manual asset updates only (import intentionally out of scope)
+- Canonical hierarchy:
   - Account (Property)
   - Optional System root asset
   - Controller assets
@@ -16,7 +16,7 @@ Separate desktop prototype artifact for property-linked irrigation asset setup.
   - Zone component assets: Valve, Head, Drip
   - Backflow asset under System
   - Irrigation programs as `Irrigation_Program__c` child records of Controller
-- Required baseline for completion:
+- Required baseline:
   - At least 1 Controller
   - At least 1 Zone
   - Every Zone linked to a Controller
@@ -32,7 +32,7 @@ Open index.html in a browser.
 
 ## Demo Success Benchmark
 
-Target scenario: move one property from Not Started to Complete in under 5 minutes, including at least one blocker resolution and one placeholder warning acknowledgment.
+Target scenario: bring one property to baseline-ready in under 5 minutes, including at least one blocker resolution and one placeholder warning acknowledgment.
 
 ## AM Queue Actions
 
@@ -42,7 +42,7 @@ Target scenario: move one property from Not Started to Complete in under 5 minut
 
 ## Guided End-to-End Demo Flow
 
-1. Desktop: complete setup baseline for one property in index.html.
+1. Desktop: complete baseline requirements for one property in index.html.
 2. Mobile: run irrigation WOLI flow in ../mobile/ui/fsm_mobile_inspection_standalone.html.
 3. Desktop: return to index.html and process AM queue items.
 

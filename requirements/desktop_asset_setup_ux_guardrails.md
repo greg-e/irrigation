@@ -1,6 +1,6 @@
 # Desktop Asset Setup - UX Guardrails (Do / Don't)
 
-Purpose: keep the Salesforce setup experience focused, low-noise, and fast for BM/AM/IM.
+Purpose: keep the Salesforce asset-baseline experience focused, low-noise, and fast for BM/AM/IM.
 
 ## Do
 
@@ -9,13 +9,12 @@ Purpose: keep the Salesforce setup experience focused, low-noise, and fast for B
 3. Do keep only essential actions visible:
    - Add Asset
    - Validate
-   - Mark Setup Complete
-   - Reopen Setup
+    - Validate Baseline
 4. Do keep warning language neutral and concise.
 5. Do use progressive disclosure for secondary details.
 6. Do keep labels operational and plain-language.
 7. Do preserve standard Salesforce interaction patterns where possible.
-8. Do make status and readiness obvious without extra clicks.
+8. Do make readiness obvious without extra clicks.
 9. Do default to compact list/table density for queue operations.
 10. Do keep color semantics consistent:
     - Red: blocking errors only
@@ -28,7 +27,7 @@ Purpose: keep the Salesforce setup experience focused, low-noise, and fast for B
 2. Don't create multiple primary CTAs in the same section.
 3. Don't force users to parse long prose before acting.
 4. Don't hide blockers behind tabs or collapsible sections.
-5. Don't duplicate status messages in multiple components.
+5. Don't duplicate readiness messages in multiple components.
 6. Don't require modal confirmations unless risk is meaningful.
 7. Don't use custom UI patterns if OOTB solves the use case.
 8. Don't surface non-essential metrics in the workspace body.
@@ -39,13 +38,13 @@ Purpose: keep the Salesforce setup experience focused, low-noise, and fast for B
 
 ## Queue
 
-1. Keep filters to: Branch, Setup Status, Assigned Manager, Has Placeholders.
+1. Keep filters to: Branch, Process Stage, Assigned Manager, Has Placeholders.
 2. Keep sort deterministic and obvious.
 3. Keep KPI strip to five numbers max.
 
 ## Workspace Overview
 
-1. Place setup status and rule meter above the fold.
+1. Place readiness and rule meter above the fold.
 2. Keep applicability flags in one compact card.
 3. Show placeholder count as warning, not blocker.
 
@@ -70,7 +69,7 @@ Purpose: keep the Salesforce setup experience focused, low-noise, and fast for B
 
 ## Definition of Done (UX)
 
-1. New user can complete one property setup in under 5 minutes.
+1. New user can validate one property baseline in under 5 minutes.
 2. User can identify blockers in under 10 seconds.
 3. User can complete without opening more than one secondary section.
 4. No decorative element competes with primary CTA visibility.

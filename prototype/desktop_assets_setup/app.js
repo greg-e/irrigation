@@ -1,11 +1,5 @@
 const STORAGE_KEY = "desktopAssetSetupPrototypeV1";
 
-const STATUS_ORDER = {
-  "In Progress": 0,
-  "Not Started": 1,
-  Complete: 2,
-};
-
 function createSeedData() {
   return {
     amQueue: [
@@ -46,7 +40,6 @@ function createSeedData() {
         name: "Oak Ridge HOA Campus",
         branch: "Northeast",
         assignedManager: "Jamie Rivers",
-        status: "In Progress",
         hasSystemRoot: true,
         trackZoneComponents: false,
         updatedAt: "2026-05-10T13:12:00.000Z",
@@ -123,7 +116,6 @@ function createSeedData() {
         name: "Willow Park Retail Center",
         branch: "Northeast",
         assignedManager: "Alex Patel",
-        status: "Not Started",
         hasSystemRoot: false,
         trackZoneComponents: false,
         updatedAt: "2026-05-08T15:30:00.000Z",
@@ -135,7 +127,6 @@ function createSeedData() {
         name: "Hillside Commons",
         branch: "Southeast",
         assignedManager: "Morgan Chen",
-        status: "Complete",
         hasSystemRoot: true,
         trackZoneComponents: false,
         updatedAt: "2026-05-07T10:05:00.000Z",
@@ -184,9 +175,9 @@ function createSeedData() {
           {
             when: "2026-05-07T10:05:00.000Z",
             user: "Prototype User",
-            action: "Mark Complete",
+            action: "Baseline Verified",
             entity: "Hillside Commons",
-            details: "Setup marked complete",
+            details: "Baseline requirements verified",
           },
         ],
       },
@@ -377,29 +368,25 @@ function addDays(iso, days) {
 }
 
 function processStageFor(property) {
-  if (property.status === "Complete") return "Active";
-  if (property.status === "In Progress") return "Category Review";
-  return "Ready for Work";
+  const assets = activeAssets(property);
+  if (!assets.length) return "Needs Asset Build";
+
+  const hasController = assets.some((a) => a.type === "Controller");
+  const hasZone = assets.some((a) => a.type === "Zone");
+  const hasBackflow = assets.some((a) => a.type === "Backflow");
+  const hasOrphans = assets.some((a) => a.type === "Zone" && !a.parentId);
+
+  if (hasController && hasZone && hasBackflow && !hasOrphans) return "Ready for Field";
+  if (placeholderCount(property) > 0) return "Review Placeholders";
+  return "Data Build";
 }
 
 function reportQueue() {
   return state.properties
     .sort((a, b) => {
-      const aOrder = STATUS_ORDER[a.status] ?? 9;
-      const bOrder = STATUS_ORDER[b.status] ?? 9;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+      if (a.branch !== b.branch) return a.branch.localeCompare(b.branch);
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
-}
-
-function statusChip(status) {
-  const cls =
-    status === "Complete"
-      ? "status-complete"
-      : status === "In Progress"
-      ? "status-in-progress"
-      : "status-not-started";
-  return `<span class="status-chip ${cls}">${status}</span>`;
 }
 
 function renderQueue() {

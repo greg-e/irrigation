@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Irrigation Asset Record - Setup</title>
+  <title>Irrigation Asset Record - Baseline</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -25,7 +25,7 @@
               <div class="slds-page-header__name-title">
                 <h1>
                   <span class="slds-page-header__name-meta" title="Asset">Asset</span>
-                  <span id="record-title" class="slds-page-header__title slds-truncate">Irrigation Asset Setup</span>
+                  <span id="record-title" class="slds-page-header__title slds-truncate">Irrigation Asset Baseline</span>
                 </h1>
               </div>
             </div>
@@ -71,8 +71,8 @@
             <div class="slds-truncate" id="hl-owner">-</div>
           </li>
           <li class="slds-page-header__detail-block">
-            <div class="slds-text-title slds-truncate" title="Setup Status">Setup Status</div>
-            <div class="slds-truncate" id="hl-status">-</div>
+            <div class="slds-text-title slds-truncate" title="Readiness">Readiness</div>
+            <div class="slds-truncate" id="hl-readiness">-</div>
           </li>
           <li class="slds-page-header__detail-block">
             <div class="slds-text-title slds-truncate" title="Branch">Branch</div>
@@ -367,6 +367,18 @@
                       </div>
                     </div>
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-mainline-pipe-type">Mainline Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-mainline-pipe-type" type="text" class="slds-input" placeholder="System only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-mainline-pipe-size">Mainline Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-mainline-pipe-size" type="text" class="slds-input" placeholder="System only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
                       <label class="slds-form-element__label" for="create-total-zones">Total Zones</label>
                       <div class="slds-form-element__control">
                         <input id="create-total-zones" type="number" min="0" class="slds-input" placeholder="Optional" />
@@ -382,6 +394,36 @@
                       <label class="slds-form-element__label" for="create-zone-controller">Parent Controller</label>
                       <div class="slds-form-element__control">
                         <select id="create-zone-controller" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-distribution-method">Distribution Method</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-distribution-method" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Drip">Drip</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-lateral-pipe-type">Lateral Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-lateral-pipe-type" type="text" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-lateral-pipe-size">Lateral Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-lateral-pipe-size" type="text" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-solenoid-resistance-ohms">Solenoid Resistance (ohms)</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-solenoid-resistance-ohms" type="number" step="0.1" min="0" class="slds-input" placeholder="Zone only" />
                       </div>
                     </div>
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
@@ -464,6 +506,18 @@
                       </div>
                     </div>
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-mainline-pipe-type">Mainline Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-mainline-pipe-type" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-mainline-pipe-size">Mainline Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-mainline-pipe-size" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
                       <label class="slds-form-element__label" for="edit-total-zones">Total Zones</label>
                       <div class="slds-form-element__control">
                         <input id="edit-total-zones" type="number" min="0" class="slds-input" />
@@ -530,6 +584,36 @@
                           <option value="Bubbler">Bubbler</option>
                           <option value="Drip">Drip</option>
                         </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-distribution-method">Distribution Method</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-distribution-method" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Drip">Drip</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-lateral-pipe-type">Lateral Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lateral-pipe-type" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-lateral-pipe-size">Lateral Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lateral-pipe-size" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-solenoid-resistance-ohms">Solenoid Resistance (ohms)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-solenoid-resistance-ohms" type="number" step="0.1" min="0" class="slds-input" />
                       </div>
                     </div>
                     <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">

@@ -235,7 +235,7 @@ function renderQueue() {
       const lastAssetUpdate = fmtDateOnly(p.updatedAt);
       const systemName = systemRoot ? systemRoot.name : "No System";
       const systemCell = topAsset
-        ? `<a href="property_record.html?property=${p.id}&asset=${topAsset.id}" target="_blank" rel="noopener">${systemName}</a>`
+        ? `<a href="desktop_prototype_with_map.html?property=${p.id}&asset=${topAsset.id}" target="_blank" rel="noopener">${systemName}</a>`
         : systemName;
       return `<tr>
         <td>${p.branch}</td>

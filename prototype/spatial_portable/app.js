@@ -31,6 +31,7 @@ const state = {
   tool: TOOL_MODES.SELECT,
   selectedFeatureId: null,
   selectedAssetId: null,
+  hasAppliedSystemZoom: false,
   features: [],
   assets: [], // Will store the property's asset hierarchy
   assetMap: {}, // Map for quick asset lookup by ID
@@ -61,9 +62,21 @@ function assetById(id) {
 // Load seed data and register assets with API
 async function loadAndRegisterAssets() {
   try {
-    // Try to load seed data (same location as property_record.js uses)
-    const response = await fetch("../desktop/seed_data.json");
-    if (!response.ok) {
+    // If parent already pushed the live asset payload, keep it and avoid overwriting.
+    if (state.assets.length > 0) {
+      api.registerAssets(context.propertyId, state.assets);
+      return;
+    }
+
+    // Try desktop_map seed data first (when embedded in that prototype), then desktop/
+    let response = null;
+    for (const path of ["../desktop_map/seed_data.json", "../desktop/seed_data.json"]) {
+      try {
+        const r = await fetch(path);
+        if (r.ok) { response = r; break; }
+      } catch (_) { /* try next */ }
+    }
+    if (!response) {
       console.warn("Could not load seed_data.json, proceeding without asset hierarchy");
       return;
     }
@@ -73,6 +86,13 @@ async function loadAndRegisterAssets() {
     const property = data.properties?.find((p) => p.id === context.propertyId);
     if (!property || !property.assets) {
       console.warn(`No assets found for property ${context.propertyId}`);
+      return;
+    }
+
+    // Parent iframe message may have arrived while seed fetch was in-flight.
+    // If so, do not overwrite richer live asset payload.
+    if (state.assets.length > 0) {
+      api.registerAssets(context.propertyId, state.assets);
       return;
     }
     
@@ -118,7 +138,7 @@ function getParentSystemForAsset(asset) {
   const visited = new Set();
 
   while (current && !visited.has(current.id)) {
-    if (current.type === "System") {
+    if (String(current.type || "").toLowerCase() === "system") {
       return current;
     }
 
@@ -130,7 +150,33 @@ function getParentSystemForAsset(asset) {
 }
 
 function getPropertySystem() {
-  return state.assets.find((asset) => asset.type === "System" && asset.status !== "Retired") || null;
+  return (
+    state.assets.find(
+      (asset) =>
+        String(asset.type || "").toLowerCase() === "system" && asset.status !== "Retired"
+    ) || null
+  );
+}
+
+function centerMapOnSystem() {
+  if (!mapAdapter.map) return false;
+  const systemAsset = getPropertySystem();
+  if (!systemAsset || systemAsset.lat == null || systemAsset.lon == null) return false;
+  const lat = Number(systemAsset.lat);
+  const lon = Number(systemAsset.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
+  mapAdapter.map.setCenter({ lat, lng: lon });
+
+  // Apply a tighter default zoom only once so user zoom changes are preserved.
+  if (!state.hasAppliedSystemZoom) {
+    const systemZoom = Number(config.systemCenterZoom || 18);
+    if (Number.isFinite(systemZoom) && systemZoom > 0) {
+      mapAdapter.map.setZoom(systemZoom);
+    }
+    state.hasAppliedSystemZoom = true;
+  }
+
+  return true;
 }
 
 function upsertLocal(feature) {
@@ -151,6 +197,20 @@ function removeLocal(featureId) {
 
 function linkedFeatureName(assetId, fallbackName = "") {
   return assetById(assetId)?.name || fallbackName;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function assetRecordUrl(assetId) {
+  if (!context.propertyId || !assetId) return "#";
+  return `../desktop_map/desktop_prototype_with_map.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
 }
 
 function normalizeFeatureNames(features) {
@@ -342,9 +402,17 @@ function renderFeatureList() {
 
     const icon = getAssetTypeIcon(asset.type);
     const linkedFeatures = featuresByAssetId.get(asset.id) || [];
+    const assetUrl = assetRecordUrl(asset.id);
+
+    const hasLatLon = asset.lat != null && asset.lon != null;
+    const hasDrawnGeometry = linkedFeatures.some((f) => !f.isLatLon);
+    const gpsBadge =
+      hasLatLon && !hasDrawnGeometry
+        ? `<span class="latlon-badge" title="Placed by GPS coordinates only">GPS</span>`
+        : "";
 
     li.innerHTML = `
-      <p class="feature-label"><span class="hierarchy-label">${toggleControl}<span class="feature-type-icon ${asset.type}">${icon}</span>${asset.name}</span></p>
+      <p class="feature-label"><span class="hierarchy-label">${toggleControl}<button type="button" class="asset-selector" data-select-asset="${asset.id}" title="Select for map context"><span class="feature-type-icon ${asset.type}">${icon}</span></button><span class="asset-name">${escapeHtml(asset.name)}</span><a class="record-link" href="${assetUrl}" target="_parent" title="Open component record" aria-label="Open ${escapeHtml(asset.name)} record"><svg viewBox="0 0 520 520" aria-hidden="true"><use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#open"></use></svg></a>${gpsBadge}</span></p>
     `;
 
     const toggleEl = li.querySelector("[data-tree-toggle]");
@@ -359,6 +427,28 @@ function renderFeatureList() {
           state.collapsedAssetIds.add(asset.id);
           state.expandedAssetIds.delete(asset.id);
         }
+        renderFeatureList();
+      });
+    }
+
+    const assetSelector = li.querySelector("[data-select-asset]");
+    if (assetSelector) {
+      assetSelector.addEventListener("click", (event) => {
+        event.stopPropagation();
+        state.selectedAssetId = asset.id;
+        ensureAssetPathExpanded(asset.id);
+
+        const linkedFeature = linkedFeatures[0] || null;
+        if (linkedFeature) {
+          state.selectedFeatureId = linkedFeature.id;
+          mapAdapter.selectFeature(linkedFeature.id);
+          setStatus(`Selected ${asset.name} with mapped geometry ${linkedFeature.name}.`);
+        } else {
+          state.selectedFeatureId = null;
+          setStatus(`Selected ${asset.name}. No mapped geometry yet.`);
+        }
+
+        updateActionButtons();
         renderFeatureList();
       });
     }
@@ -400,6 +490,59 @@ function setTool(mode) {
   });
   mapAdapter.setMode(mode);
   setStatus(mode === TOOL_MODES.SELECT ? "Select and edit existing geometry." : `Drawing ${mode}.`);
+}
+
+function extractCentroid(feature) {
+  const g = feature.geometry;
+  if (!g) return null;
+  if (feature.type === "marker") {
+    return { lat: g.lat, lon: g.lng };
+  }
+  const pts = g.path || [];
+  if (!pts.length) return null;
+  const lat = pts.reduce((s, p) => s + p.lat, 0) / pts.length;
+  const lon = pts.reduce((s, p) => s + p.lng, 0) / pts.length;
+  return { lat, lon };
+}
+
+function notifyParentAssetLocation(assetId, feature) {
+  if (!assetId || window.parent === window) return;
+  const coord = extractCentroid(feature);
+  if (!coord) return;
+  window.parent.postMessage(
+    { type: "SPATIAL_ASSET_LOCATION", assetId, lat: coord.lat, lon: coord.lon },
+    "*"
+  );
+}
+
+function syncLatLonFeatures() {
+  if (!mapAdapter.map) return;
+
+  // Remove stale lat/lon auto-markers
+  state.features
+    .filter((f) => f.isLatLon)
+    .forEach((f) => mapAdapter.removeFeature(f.id));
+  state.features = state.features.filter((f) => !f.isLatLon);
+
+  // Add a marker for every active asset that has lat+lon
+  state.assets
+    .filter((a) => a.status !== "Retired" && a.lat != null && a.lon != null)
+    .forEach((asset) => {
+      const feature = {
+        id: `latlon-${asset.id}`,
+        propertyId: context.propertyId,
+        assetId: asset.id,
+        assetType: asset.type,
+        type: "marker",
+        name: asset.name,
+        geometry: { lat: asset.lat, lng: asset.lon },
+        isAuto: true,
+        isLatLon: true,
+        modifiedAt: Date.now(),
+      };
+      state.features.push(feature);
+      mapAdapter.addFeature(feature);
+    });
 }
 
 function getStorageKey() {
@@ -521,6 +664,13 @@ function wireEvents() {
   });
 }
 
+function scrollActiveItemIntoView() {
+  const activeItem = ui.featureList.querySelector(".feature-item.active");
+  if (activeItem) {
+    activeItem.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+}
+
 async function start() {
   wireEvents();
 
@@ -539,6 +689,7 @@ async function start() {
     if (feature) {
       setStatus(`Selected ${feature.name}`);
     }
+    scrollActiveItemIntoView();
   };
 
   mapAdapter.onFeatureChanged = async (featureId, geometry) => {
@@ -555,6 +706,7 @@ async function start() {
       geometry,
     });
     upsertLocal(updated);
+    notifyParentAssetLocation(updated.assetId, updated);
     renderFeatureList();
     setStatus(`Updated ${updated.name}.`);
   };
@@ -580,6 +732,7 @@ async function start() {
     upsertLocal(created);
     state.selectedFeatureId = created.id;
     mapAdapter.selectFeature(created.id);
+    notifyParentAssetLocation(created.assetId, created);
     renderFeatureList();
     setTool(TOOL_MODES.SELECT);
     setStatus(`Created ${created.name}.`);
@@ -587,7 +740,11 @@ async function start() {
 
   await mapAdapter.init();
   await loadFeatures();
-  
+  syncLatLonFeatures();
+
+  // Center map on system if it has lat/lon
+  centerMapOnSystem();
+
   // Set tool based on context mode (for asset-first workflows)
   if (context.mode === TOOL_MODES.POLYGON && context.assetId) {
     setTool(TOOL_MODES.POLYGON);
@@ -605,4 +762,24 @@ async function start() {
 
 start().catch((error) => {
   setStatus(`Initialization error: ${error.message}`);
+});
+
+// Listen for live asset data pushed from parent page (when embedded as iframe in desktop_map)
+window.addEventListener("message", (event) => {
+  const msg = event.data;
+  if (!msg || msg.type !== "SPATIAL_PROTO_ASSETS") return;
+  if (!Array.isArray(msg.assets)) return;
+
+  state.assets = msg.assets;
+  state.assetMap = {};
+  msg.assets.forEach((asset) => {
+    state.assetMap[asset.id] = asset;
+  });
+  api.registerAssets(msg.propertyId || context.propertyId, msg.assets);
+  syncLatLonFeatures();
+
+  // Center map on system if it has lat/lon
+  centerMapOnSystem();
+
+  renderFeatureList();
 });

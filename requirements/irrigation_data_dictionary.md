@@ -44,7 +44,7 @@ Define the canonical, Salesforce-only data dictionary for irrigation asset opera
 | Canonical Field | SF Object.Field | Data Type | Allowed Values / Format | Default | Validation Rule | Schema Required | Process Required | Source of Truth | Reporting Use | Data Owner | System Owner |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | asset_uid | Asset.Id | Id | Salesforce Id | System generated | N/A | Yes | Yes | Salesforce | Joins and lineage | Operations | Salesforce Admin |
-| asset_type | Asset.Asset_Type__c | Picklist | System, Controller, Zone, Backflow, Valve, Head, Drip, Pipe, Wire | None | Must be in approved domain set | No | Yes | Asset | Asset mix and coverage | Operations | Salesforce Admin |
+| asset_type | Asset.Asset_Type__c | Picklist | System, Controller, Zone, Backflow, Valve, Head, Drip, Wire | None | Must be in approved domain set | No | Yes | Asset | Asset mix and coverage | Operations | Salesforce Admin |
 | asset_name | Asset.Name | Text | Human-readable label | None | Non-blank | Yes | Yes | Asset | Technician UX and exports | Operations | Salesforce Admin |
 | parent_asset_uid | Asset.ParentId | Lookup(Asset) | Valid Asset Id | Null | Required for child components in hierarchy | No | Conditional | Asset | Hierarchy analysis | Operations | Salesforce Admin |
 | lifecycle_status | Asset.Status | Picklist | Installed, Needs Repair, Repair In Progress, Decommissioned | Installed | Must follow lifecycle transitions | No | Yes | Asset | Lifecycle KPIs | Operations | Salesforce Admin |
@@ -66,7 +66,9 @@ Define the canonical, Salesforce-only data dictionary for irrigation asset opera
 
 ### Asset Type Domain
 
-System, Controller, Zone, Backflow, Valve, Head, Drip, Pipe, Wire
+System, Controller, Zone, Backflow, Valve, Head, Drip, Wire
+
+**Note:** Pipe is superseded as a separate asset type by [DL-010](decision_log.md#DL-010). Pipe data is now stored as attributes on System and Zone records.
 
 ### Condition Domain (Dual Standard)
 
@@ -159,13 +161,19 @@ Unknown, High, Medium, Low
 | flow_rate_gph | Asset.Flow_Rate_GPH__c | Number(6,2) | >= 0 | Null | Must be >= 0 when populated | No | Conditional | Asset | Drip performance analysis | Operations | Salesforce Admin |
 | map_feature_required | Map_Feature__c.Feature_Type__c | Picklist | Point or LineString | Point | Drip must have mapped geometry | No | Yes | Map_Feature__c | Drip network visualization | Field Operations | Salesforce Admin |
 
-### Pipe Component
+### Pipe Attributes (Superseded — DL-010)
 
-| Field | SF Object.Field | Data Type | Allowed Values / Format | Default | Validation Rule | Schema Required | Process Required | Source of Truth | Reporting Use | Data Owner | System Owner |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| component_type | Asset.Asset_Type__c | Picklist | Pipe | None | Must equal Pipe | No | Yes | Asset | Component classification | Operations | Salesforce Admin |
-| parent_asset_uid | Asset.ParentId | Lookup(Asset) | Valid parent Asset Id | Null | Must link to parent asset in modeled hierarchy | No | Conditional | Asset | Network structure and traversal | Operations | Salesforce Admin |
-| map_feature_required | Map_Feature__c.Feature_Type__c | Picklist | LineString | LineString | Pipe must have line geometry | No | Yes | Map_Feature__c | Network tracing and impact | Field Operations | Salesforce Admin |
+**Status:** Superseded by [decision_log.md § DL-010](decision_log.md#DL-010).
+
+Pipe is no longer modeled as a separate Asset component type. Instead, pipe-related data is stored as optional descriptive attributes on System and Zone Asset records:
+
+- **System.Mainline_Pipe_Type__c** — Pipe material (PVC, Poly, Copper, etc.)
+- **System.Mainline_Pipe_Size__c** — Pipe diameter (1", 1.5", etc.)
+- **Zone.Lateral_Pipe_Type__c** — Lateral/drip line material (soaker hose, drip tape, etc.)
+- **Zone.Lateral_Pipe_Size__c** — Lateral diameter
+- **Zone.Distribution_Method__c** — Spray / Rotor / Bubbler / Drip (from inspection Q6.3)
+
+Pipe geometry (mainline routing, lateral branches) is stored in `Map_Feature__c` as GeoJSON LineStrings, independent of Asset records. This keeps the asset hierarchy flat and simplifies setup.
 
 ### Wire Component
 

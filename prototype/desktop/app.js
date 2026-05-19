@@ -1,11 +1,5 @@
 const STORAGE_KEY = "desktopAssetSetupPrototypeV3";
 
-const STATUS_ORDER = {
-  "In Progress": 0,
-  "Not Started": 1,
-  Complete: 2,
-};
-
 const SEED_DATA_URL = "seed_data.json";
 let seedDataCache = null;
 
@@ -34,6 +28,7 @@ function normalizeAssetType(type) {
 
 function migratePropertyToHierarchy(property) {
   property.assets = Array.isArray(property.assets) ? property.assets : [];
+  delete property.status;
 
   const hasSystemRoot = typeof property.hasSystemRoot === "boolean" ? property.hasSystemRoot : Boolean(property.hasPumpSystem);
   const trackZoneComponents =
@@ -220,21 +215,9 @@ function addDays(iso, days) {
 function reportQueue() {
   return state.properties
     .sort((a, b) => {
-      const aOrder = STATUS_ORDER[a.status] ?? 9;
-      const bOrder = STATUS_ORDER[b.status] ?? 9;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-      return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+      if (a.branch !== b.branch) return a.branch.localeCompare(b.branch);
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
     });
-}
-
-function statusChip(status) {
-  const cls =
-    status === "Complete"
-      ? "status-complete"
-      : status === "In Progress"
-      ? "status-in-progress"
-      : "status-not-started";
-  return `<span class="status-chip ${cls}">${status}</span>`;
 }
 
 function renderQueue() {
@@ -257,7 +240,6 @@ function renderQueue() {
       return `<tr>
         <td>${p.branch}</td>
         <td>${p.name}</td>
-        <td>${statusChip(p.status)}</td>
         <td>${systemCell}</td>
         <td>${controllerCount}</td>
         <td>${totalZones}</td>

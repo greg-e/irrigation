@@ -147,7 +147,7 @@ Everything else is OOTB Salesforce FSM objects, standard automation, and configu
 ## 6. Architecture Decisions (Locked)
 
 1. System of record for asset and geometry metadata is Salesforce.
-2. OOTB Asset object is the record for all irrigation components with canonical hierarchy: optional System root, Controller, Zone, Backflow, Head, Valve, Drip. No custom asset-class objects.
+2. OOTB Asset object is the record for all irrigation components with canonical hierarchy: optional System root, Controller, Zone, Pump, Backflow, Head, Valve, Drip. No custom asset-class objects.
 3. Service Appointment is the inspection runtime container. It uses polymorphic `ParentRecordId` (WO, WOLI, or Asset depending on journey).
 4. Inspection responses are a child object (`Inspection_Response__c`), not hardcoded fields on SA. This preserves versioning and prevents field-count bloat.
 5. Geometry is stored in `Map_Feature__c` as GeoJSON. Renderer is a custom LWC with provider selected by decision gate (Mapbox GL JS or Google Maps JavaScript API).
@@ -184,11 +184,33 @@ Every feature decision starts here: **Can FSM or standard Salesforce deliver thi
 **Delivers:** JTBD-4 (standards enforcement on data quality before inspection can run)
 
 1. Queue-based property setup view: unsetup properties with completion status and blockers.
-2. OOTB Asset taxonomy: System (optional) -> Controller -> Zone -> (Head, Valve, Drip) with Backflow under System, using `Asset.ParentId`.
+2. OOTB Asset taxonomy: System (optional) -> Controller -> Zone -> (Head, Valve, Drip), with Pump and Backflow under System, using `Asset.ParentId`.
 3. Completion guard: minimum active asset baseline required before Work Type is schedulable.
 4. Controlled edit workflow: controller fields, zone reassignment, backflow type/serial, retire/reopen with audit trail.
 
 **Not custom-built:** The record model is OOTB Assets with custom fields. The setup view is a Lightning App Page with OOTB list views and standard record pages.
+
+#### 8.1.1 Asset Metadata Contract (Synced to Official Requirements)
+
+This PRD follows the official requirements baseline in `requirements/fsm_irrigation_requirements.md` for per-type metadata.
+
+1. Common fields across all asset types: Name, Asset Type, Status, Parent (except System root), and type-appropriate Install Date support.
+2. System metadata includes optional Mainline Pipe Type and Mainline Pipe Size in addition to Name/Description/Install Date/Serial Number.
+3. Zone metadata includes optional Distribution Method, Lateral Pipe Type, Lateral Pipe Size, and Solenoid Resistance in addition to Zone Number, Area Served, Flow Rate (GPM), Primary Head Type, and Install Date.
+4. Controller, Backflow, Valve, Head, Drip, and Pump metadata align to the official per-type definitions and parent rules.
+
+Create-time required fields (official prototype baseline):
+
+| Asset Type | Required Fields at Create |
+|---|---|
+| `System` | `Name` |
+| `Controller` | `Name`, `Controller Label`, `Total Zones` |
+| `Pump` | `Name` |
+| `Zone` | `Zone Number`, `Parent Controller` (name auto-normalized) |
+| `Backflow` | `Name`, `Backflow Type` |
+| `Valve` | `Name`, `Parent Zone` |
+| `Head` | `Name`, `Parent Zone` |
+| `Drip` | `Name`, `Parent Zone` |
 
 ---
 
