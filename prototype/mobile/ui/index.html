@@ -14,7 +14,7 @@
       <header class="global-header">
         <div class="brand-row">
           <p class="brand-kicker">Field Service</p>
-          <span class="sync-pill">Synced</span>
+          <span id="sync-pill" class="sync-pill">Synced</span>
         </div>
         <h1>Irrigation Service Appointment</h1>
         <p>FSM-style mobile prototype for technician checkup and checkout.</p>
@@ -44,6 +44,10 @@
         </div>
       </section>
 
+      <section id="pending-banner" class="pending-banner" aria-live="polite" hidden>
+        Pending map edits will sync when connection is available.
+      </section>
+
       <section id="viewport" class="viewport map-canvas">
         <article class="panel panel-map nav-panel active" data-panel="map">
           <h2>Property Coverage Map</h2>
@@ -68,7 +72,48 @@
             <span class="legend-pill legend-ok">Stable</span>
             <span class="legend-pill legend-alert">Follow-up</span>
           </div>
-          <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
+
+          <section class="mobile-map-stage" aria-label="Map stage">
+            <iframe id="mobile-map-frame" class="mobile-map-frame" loading="lazy" title="Property map"></iframe>
+            <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
+          </section>
+
+          <section id="map-bottom-sheet" class="map-bottom-sheet peek" aria-label="Map action panel">
+            <header class="sheet-header">
+              <div>
+                <p class="sheet-kicker">Selected Asset</p>
+                <p id="sheet-asset-title" class="sheet-asset-title">No asset selected</p>
+              </div>
+              <div class="sheet-header-actions">
+                <span id="map-save-chip" class="chip chip-neutral">Saved</span>
+                <button id="sheet-toggle" class="btn btn-neutral sheet-toggle" type="button" aria-expanded="false">Expand</button>
+              </div>
+            </header>
+
+            <div class="sheet-peek-actions" aria-label="Pinned quick actions">
+              <button id="quick-edit-details" class="btn btn-neutral" type="button">Edit Details</button>
+              <button id="quick-photo" class="btn btn-neutral" type="button">Photo</button>
+              <button id="quick-notes" class="btn btn-neutral" type="button">Notes</button>
+            </div>
+
+            <div class="sheet-expanded">
+              <div class="map-action-row" aria-label="Geometry actions">
+                <button id="mobile-enter-edit" class="btn btn-brand" type="button">Edit Geometry</button>
+                <button id="mobile-add-point" class="btn btn-neutral" type="button">Add Point</button>
+                <button id="mobile-add-line" class="btn btn-neutral" type="button">Add Line</button>
+                <button id="mobile-add-polygon" class="btn btn-neutral" type="button">Add Polygon</button>
+                <button id="mobile-undo" class="btn btn-neutral" type="button">Undo</button>
+                <button id="mobile-redo" class="btn btn-neutral" type="button">Redo</button>
+              </div>
+              <div class="map-action-row" aria-label="Import and export actions">
+                <button id="mobile-export-kml" class="btn btn-neutral" type="button">Export KML</button>
+                <button id="mobile-import-kml" class="btn btn-neutral" type="button">Import KML</button>
+                <input id="mobile-import-kml-input" type="file" accept=".kml,application/vnd.google-earth.kml+xml" hidden />
+              </div>
+              <p id="mobile-map-message" class="panel-subtitle">Map ready.</p>
+              <ul id="mobile-feature-list" class="mobile-feature-list"></ul>
+            </div>
+          </section>
         </article>
 
         <article class="panel panel-assets nav-panel" data-panel="map">

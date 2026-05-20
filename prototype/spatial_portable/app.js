@@ -8,6 +8,11 @@ import { GoogleMapAdapter } from "./core/googleMapAdapter.js";
 
 const config = window.SPATIAL_PROTO_CONFIG || {};
 const context = parseContextFromUrl();
+const layoutMode = new URLSearchParams(window.location.search).get("layout") || "default";
+
+if (layoutMode === "map-only") {
+  document.body.classList.add("map-only-layout");
+}
 
 const ui = {
   featureList: document.getElementById("feature-list"),

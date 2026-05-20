@@ -300,19 +300,43 @@
             </div>
           </div>
 
-          <!-- Programs related list — shown only when context asset is a Controller -->
-          <article id="programs-card" class="slds-m-top_small hidden">
-            <iframe
-              src="../program/controller_program.html"
-              title="Controller Programs"
-              class="programs-embed"
-              style="width:100%; min-height:900px; border:0; display:block;"
-            ></iframe>
-          </article>
-
         </section>
 
         <section class="asset-overlays">
+
+          <!-- Programs related list — shown only when context asset is a Controller -->
+          <article id="programs-card" class="slds-card slds-card_boundary slds-m-top_small hidden">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">
+                    Irrigation Programs (Irrigation_Program__c) <span id="programs-count" class="slds-text-body_regular slds-text-color_weak"></span>
+                  </h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">One-to-many schedule records per Controller Asset</p>
+                </div>
+              </header>
+              <div class="slds-no-flex">
+                <button id="program-new-btn" class="slds-button slds-button_neutral" type="button">New Program</button>
+              </div>
+            </div>
+            <div class="slds-card__body">
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout" role="grid">
+                <thead>
+                  <tr class="slds-line-height_reset">
+                    <th scope="col"><div class="slds-truncate" title="Program Name">Program Name</div></th>
+                    <th scope="col" style="width:11rem"><div class="slds-truncate" title="Days">Schedule Days</div></th>
+                    <th scope="col" style="width:6rem"><div class="slds-truncate" title="Start Time">Start</div></th>
+                    <th scope="col"><div class="slds-truncate" title="Zone">Zone</div></th>
+                    <th scope="col" style="width:6.5rem"><div class="slds-truncate" title="Run (min)">Run (min)</div></th>
+                    <th scope="col" style="width:7rem"><div class="slds-truncate" title="Seasonal %">Seasonal %</div></th>
+                    <th scope="col" style="width:5.5rem"><div class="slds-truncate" title="Active">Active</div></th>
+                    <th scope="col" style="width:3rem"><span class="slds-assistive-text">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody id="programs-table-body"></tbody>
+              </table>
+            </div>
+          </article>
 
           <!-- Hidden list used by JS for context rail (kept for compatibility) -->
           <ul id="rail-related-list" class="hidden"></ul>

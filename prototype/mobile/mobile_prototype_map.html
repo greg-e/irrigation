@@ -1,0 +1,4943 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSM Mobile Inspection Prototype</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <style>
+    body {
+      margin: 0;
+      background: #111214;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: #f3f4f6;
+    }
+
+    .app-shell {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+      font-family: inherit;
+    }
+
+    .phone-shell {
+      width: min(430px, 100%);
+      min-height: 880px;
+      margin: 0 auto;
+      border: 1px solid #2e3138;
+      border-radius: 0;
+      background: #1c1f25;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .status-bar {
+      background: #1d1f24;
+      color: #f4f4f4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px 8px;
+      font-size: 1.02rem;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .mobile-page-header {
+      background: #1d1f24;
+      color: #fff;
+      flex-shrink: 0;
+      padding: 0;
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 10px 10px 8px;
+      border-bottom: 2px solid #0176d3;
+    }
+
+    .header-back {
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 2.2rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .header-title {
+      margin: 0;
+      font-size: 1.17rem;
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      line-height: 1.08;
+    }
+
+    .header-meta {
+      padding: 12px 18px 14px;
+      border-bottom: 1px solid #31343d;
+    }
+
+    .header-meta .meta-title {
+      margin: 0;
+      font-size: 1.07rem;
+      color: rgba(255,255,255,0.86);
+      font-weight: 400;
+    }
+
+    .header-meta .meta-sub {
+      margin: 8px 0 0;
+      font-size: 0.97rem;
+      color: rgba(255,255,255,0.79);
+      font-weight: 300;
+      line-height: 1.12;
+    }
+
+    .header-kpis {
+      display: none;
+    }
+
+    .header-kpi {
+      background: #272a31;
+      border: 1px solid #383c46;
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    .header-kpi p {
+      margin: 0;
+      color: #b9bec8;
+      font-size: 0.72rem;
+      letter-spacing: 0.01em;
+    }
+
+    .header-kpi strong {
+      display: block;
+      margin-top: 3px;
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .app-tabs {
+      flex-shrink: 0;
+      background: #1d1f24;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .nav-btn {
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,0.77);
+      font-size: 0.68rem;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      font-weight: 500;
+      padding: 10px 2px 9px;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+
+    .nav-btn.active {
+      color: #fff;
+      border-bottom-color: #f4f4f4;
+    }
+
+    .header-runtime {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .woli-parent-bar {
+      background: #53555b;
+      color: #e7eaf1;
+      font-size: 0.95rem;
+      padding: 10px 16px;
+      border-bottom: 1px solid #5f6168;
+    }
+
+    .phone-shell.mode-woli #woli-context {
+      display: block;
+      margin-bottom: 6px;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .phone-shell.mode-wo #woli-context,
+    .phone-shell.mode-woli #tab-overview {
+      display: none;
+    }
+
+    .woli-list {
+      display: grid;
+      gap: 10px;
+    }
+
+.woli-item {
+      border: 1px solid #3a3f48;
+      border-radius: 10px;
+      background: #20232a;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 12px;
+      align-items: center;
+      cursor: pointer;
+    }
+
+.wo-progress-ring {
+      width: 100px;
+      height: 100px;
+      border-radius: 999px;
+      border: 6px solid #3f4650;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #eaf0fa;
+      font-weight: 600;
+      margin: 0 auto 20px;
+    }
+
+    .woli-ring {
+      width: 62px;
+      height: 62px;
+      border-radius: 999px;
+      border: 5px solid #3f4650;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: #eaf0fa;
+      font-weight: 500;
+    }
+
+    .woli-main p {
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .woli-number {
+      font-size: 1.9rem;
+      color: #f4f5f7;
+      font-weight: 600;
+    }
+
+    .woli-type {
+      font-size: 1.05rem;
+      color: #d6dbe5;
+      margin-top: 6px;
+    }
+
+    .woli-action {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .woli-status {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .woli-status-new {
+      background: #dce6f9;
+      color: #0f4f91;
+    }
+
+    .woli-status-progress {
+      background: #f9e8c5;
+      color: #8a5000;
+    }
+
+    .woli-status-complete {
+      background: #d8f0df;
+      color: #1f6a36;
+    }
+
+    .woli-action-btn {
+      border: 1px solid #4f5969;
+      border-radius: 8px;
+      background: #2c3645;
+      color: #e9edf6;
+      padding: 5px 10px;
+      font-size: 0.85rem;
+    }
+
+    .woli-action-btn.start {
+      background: #e2e8f6;
+      color: #0e4b87;
+      border-color: #d6def1;
+    }
+
+    .woli-action-btn[disabled] {
+      opacity: 0.45;
+    }
+
+    .woli-details-list {
+      margin: 0;
+      border: 1px solid #3b4049;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .woli-details-row {
+      padding: 12px 14px;
+      border-bottom: 1px solid #3b4049;
+      display: grid;
+      gap: 8px;
+    }
+
+    .woli-details-row:last-child {
+      border-bottom: none;
+    }
+
+    .woli-details-row dt {
+      color: #d2d8e3;
+      font-size: 0.9rem;
+    }
+
+    .woli-details-row dd {
+      margin: 0;
+      color: #f4f5f7;
+      font-size: 0.94rem;
+    }
+
+    .woli-details-row dd.linkish {
+      color: #0b8cff;
+    }
+
+    .related-collapsible.is-collapsed .related-section-body {
+      display: none;
+    }
+
+    .related-collapsible .slds-card__header,
+    .gis-map-shell.related-collapsible .slds-card__header {
+      border-bottom: 1px solid #3a3e48;
+      padding: 0;
+    }
+
+    .wo-related-summary {
+      border: 1px solid #3a3f48;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #20232a;
+    }
+
+    .wo-related-row {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 14px;
+      border-bottom: 1px solid #3a3f48;
+      font-size: 1.05rem;
+      color: #eef1f7;
+    }
+
+    .wo-related-row:last-child {
+      border-bottom: none;
+    }
+
+    .wo-related-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .wo-related-icon.woli { background: #1890ff; }
+    .wo-related-icon.sa { background: #5f6fff; }
+    .wo-related-icon.files { background: #7c828d; }
+
+    .divider-green {
+      height: 6px;
+      background: #262a31;
+    }
+
+    #viewport {
+      padding: 8px;
+      overflow-y: auto;
+      flex: 1;
+      background: #2a2c32;
+    }
+
+    .slds-card,
+    .slds-box,
+    .slds-theme_shade {
+      background: #23262d !important;
+      border-color: #3b4049 !important;
+      color: #f4f4f4 !important;
+      box-shadow: none !important;
+    }
+
+    .slds-card__header {
+      border-bottom: 1px solid #3a3e48;
+    }
+
+    .slds-card__body {
+      background: transparent !important;
+    }
+
+    .slds-card__header-title,
+    .slds-item_detail,
+    .slds-text-title,
+    .slds-form-element__label,
+    .slds-button,
+    .slds-list_dotted li,
+    .slds-item {
+      color: #f1f2f4 !important;
+    }
+
+    .slds-text-body_small,
+    .slds-text-color_weak,
+    .slds-form-element__help,
+    .inspection-timeline li {
+      color: #c6ceda !important;
+    }
+
+    .slds-card__header-title {
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .overview-collapsible .slds-card__header {
+      padding: 0;
+    }
+
+    .section-toggle {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: #f1f2f4;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-align: left;
+    }
+
+    .section-chevron {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      color: #d8dde8;
+      transition: transform 120ms ease;
+      transform: rotate(0deg);
+    }
+
+    .overview-collapsible.is-collapsed .section-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .overview-collapsible.is-collapsed .slds-card__body {
+      display: none;
+    }
+
+    .slds-input,
+    .slds-select,
+    .slds-textarea {
+      background: #1b1d22 !important;
+      border-color: #4a505c !important;
+      color: #f4f4f4 !important;
+      -webkit-text-fill-color: #f4f4f4 !important;
+      caret-color: #f4f4f4;
+      font-family: inherit !important;
+    }
+
+    .slds-input:focus,
+    .slds-select:focus,
+    .slds-textarea:focus {
+      border-color: #8fc7ff !important;
+      box-shadow: 0 0 0 1px #8fc7ff inset !important;
+    }
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+      -webkit-text-fill-color: #f4f4f4 !important;
+      box-shadow: 0 0 0 1000px #1b1d22 inset !important;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    .slds-input::placeholder,
+    .slds-textarea::placeholder {
+      color: #8f96a3 !important;
+    }
+
+    .nav-panel { display: none; }
+    .nav-panel.active { display: block; }
+    .hidden { display: none !important; }
+
+    .fullscreen-sheet {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      background: #171a20;
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid #343a45;
+      animation: sheet-in 150ms ease-out;
+    }
+
+    .fullscreen-sheet.hidden {
+      display: none;
+    }
+
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid #343a45;
+      background: #1b1e25;
+    }
+
+    .sheet-title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f4f6fb;
+    }
+
+    .sheet-close {
+      border: 1px solid #475062;
+      background: #2a313d;
+      color: #e7ebf4;
+      border-radius: 8px;
+      min-height: 36px;
+      min-width: 36px;
+      cursor: pointer;
+    }
+
+    .sheet-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .sheet-section {
+      border: 1px solid #39414f;
+      background: #1f242d;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .sheet-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sheet-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .sheet-actions .slds-button {
+      min-height: 44px;
+      justify-content: center;
+      transition: transform 140ms ease, background 140ms ease;
+    }
+
+    .sheet-actions .slds-button:hover,
+    .sheet-actions .slds-button:focus {
+      transform: translateY(-1px);
+    }
+
+    .sheet-actions .primary-callout {
+      grid-column: 1 / -1;
+    }
+
+    .context-meta {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #b6bfcc;
+    }
+
+    .decision-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      background: rgba(7, 9, 12, 0.7);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+    }
+
+    .decision-modal.hidden {
+      display: none;
+    }
+
+    .decision-card {
+      width: 100%;
+      border: 1px solid #3d4452;
+      background: #1d222b;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+      animation: sheet-in 140ms ease-out;
+    }
+
+    @keyframes sheet-in {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .decision-card h3 {
+      margin: 0 0 6px;
+      font-size: 0.92rem;
+      color: #f2f4f9;
+    }
+
+    .decision-card p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #b8c0cd;
+    }
+
+    .decision-actions {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .decision-actions .slds-button {
+      min-height: 44px;
+      justify-content: center;
+    }
+
+    /* GIS map experience */
+    .gis-map-shell {
+      background: #23262d;
+      border: 1px solid #3b4049;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .gis-map-titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: 1px solid #1e2738;
+      background: #1a2132;
+    }
+
+    .gis-map-title {
+      margin: 0;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #cdd4e0;
+      letter-spacing: 0.01em;
+    }
+
+    .mapbox-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .mapbox-wordmark-text {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #cdd4e0;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .gis-map-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .gis-mini-btn {
+      border: 1px solid #2d3a52;
+      background: #1e2738;
+      color: #9eb3cc;
+      border-radius: 4px;
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: background 120ms ease, border-color 120ms ease;
+    }
+
+    .gis-mini-btn:hover {
+      background: #26334a;
+      border-color: #3d5070;
+    }
+
+    .gis-status-strip {
+      text-align: right;
+      font-size: 0.68rem;
+      color: #6b7a96;
+      background: #111827;
+      padding: 3px 10px;
+      border-bottom: 1px solid #1a2132;
+      letter-spacing: 0.01em;
+    }
+
+    .gis-map-canvas {
+      position: relative;
+      min-height: 620px;
+      background: #121922;
+      overflow: hidden;
+    }
+
+    .gis-map-canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.35) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Mapbox SVG basemap layer */
+    .mapbox-basemap-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Mapbox zoom controls */
+    .mapbox-zoom-ctrl {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      display: flex;
+      flex-direction: column;
+      z-index: 4;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.4);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .mapbox-zoom-btn {
+      width: 30px;
+      height: 30px;
+      background: #283044;
+      border: none;
+      color: #cdd4e0;
+      font-size: 1.2rem;
+      font-weight: 400;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 120ms ease;
+    }
+
+    .mapbox-zoom-btn:first-child {
+      border-bottom: 1px solid #1a2030;
+    }
+
+    .mapbox-zoom-btn:hover {
+      background: #354158;
+    }
+
+    /* Mapbox compass */
+    .mapbox-compass-btn {
+      position: absolute;
+      right: 12px;
+      top: 76px;
+      width: 30px !important;
+      height: 30px !important;
+      border-radius: 4px !important;
+      background: #283044 !important;
+      border: none !important;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.4) !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 4;
+      font-size: 0 !important;
+    }
+
+    /* Mapbox scale bar */
+    .mapbox-scale {
+      position: absolute;
+      left: 10px;
+      bottom: 28px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .mapbox-scale-bar {
+      width: 60px;
+      height: 4px;
+      background: transparent;
+      border: 1px solid rgba(200,210,225,0.6);
+      border-top: none;
+    }
+
+    .mapbox-scale span {
+      font-size: 0.6rem;
+      color: rgba(200,210,225,0.7);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Mapbox attribution bar */
+    .mapbox-attribution {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 2;
+      background: rgba(14,18,28,0.72);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 3px 8px;
+      font-size: 0.6rem;
+      color: rgba(180,192,210,0.75);
+      pointer-events: none;
+    }
+
+    .mapbox-attribution a {
+      color: rgba(180,192,210,0.85);
+      text-decoration: none;
+      pointer-events: auto;
+    }
+
+    .mapbox-logo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: auto;
+    }
+
+    .gis-map-canvas.list-mode {
+      background: #111827;
+    }
+
+    .gis-map-canvas.list-mode .mapbox-basemap-svg,
+    .gis-map-canvas.list-mode .mapbox-zoom-ctrl,
+    .gis-map-canvas.list-mode .mapbox-compass-btn,
+    .gis-map-canvas.list-mode .mapbox-scale,
+    .gis-map-canvas.list-mode .mapbox-attribution {
+      display: none;
+    }
+
+    .gis-map-canvas.list-mode::before {
+      display: none;
+    }
+
+    .gis-map-canvas.list-mode .gis-floating-btn {
+      display: none;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Mapbox teardrop pin markers */
+    .zone {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      transform: translate(-50%, -88%) rotate(-45deg);
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.65));
+      transition: filter 140ms ease, transform 140ms ease;
+      z-index: 2;
+      padding: 0;
+    }
+
+    .zone:hover {
+      filter: drop-shadow(0 3px 8px rgba(0,0,0,0.75)) brightness(1.1);
+    }
+
+    .zone.has-callout::before {
+      content: "";
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f97316;
+      border: 1px solid rgba(0,0,0,0.4);
+      z-index: 2;
+      transform: rotate(45deg);
+    }
+
+    .zone::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      transform: rotate(45deg);
+    }
+
+    .zone-ok {
+      background: #3fb1ce;
+    }
+
+    .zone-alert {
+      background: #f5a623;
+    }
+
+    .zone.is-selected {
+      filter: drop-shadow(0 0 6px rgba(66,100,251,0.7)) drop-shadow(0 3px 8px rgba(0,0,0,0.7));
+      z-index: 3;
+    }
+
+    .zone.is-selected::after {
+      background: #fff;
+    }
+
+    .zone.marker-controller {
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      background: #4264fb;
+    }
+
+    .zone.marker-backflow {
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      background: #a855f7;
+    }
+
+    .zone.marker-controller::after,
+    .zone.marker-backflow::after {
+      width: 9px;
+      height: 9px;
+    }
+
+    .gis-floating-btn {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      border: none;
+      background: #283044;
+      color: #cdd4e0;
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.4);
+      z-index: 4;
+      transition: background 120ms ease;
+    }
+
+    .gis-floating-btn:hover {
+      background: #354158;
+    }
+
+    .gis-floating-btn.locate {
+      /* Overridden by .mapbox-compass-btn */
+      display: none;
+    }
+
+    .gis-floating-btn.add {
+      right: 14px;
+      bottom: 32px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #4264fb;
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 300;
+      box-shadow: 0 2px 12px rgba(66,100,251,0.5), 0 0 0 1px rgba(0,0,0,0.2);
+    }
+
+    .gis-floating-btn.add:hover {
+      background: #3a57e8;
+    }
+
+    .gis-layers-sheet {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: rgba(24, 26, 31, 0.93);
+      border: 1px solid #3b4049;
+      border-radius: 16px 16px 0 0;
+      z-index: 4;
+      overflow: hidden;
+      box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .gis-sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid #3b4049;
+    }
+
+    .gis-sheet-header p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #eef1f8;
+      font-weight: 700;
+    }
+
+    .gis-sheet-header button {
+      border: none;
+      background: transparent;
+      color: #9ea5b3;
+      font-size: 1.15rem;
+      cursor: pointer;
+    }
+
+    .gis-sheet-body {
+      padding: 10px 12px 12px;
+      display: grid;
+      gap: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .gis-sheet-body .slds-box {
+      border-radius: 10px;
+      background: rgba(40, 45, 55, 0.75) !important;
+    }
+
+    .gis-selection-card {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      width: auto;
+      background: rgba(24, 26, 31, 0.95);
+      border: 1px solid #3b4049;
+      border-radius: 16px 16px 0 0;
+      z-index: 4;
+      padding: 10px 12px 12px;
+      max-height: 56vh;
+      overflow-y: auto;
+      box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .gis-sheet-grabber {
+      width: 68px;
+      height: 6px;
+      margin: 0 auto 10px;
+      border-radius: 999px;
+      background: #6d7480;
+      opacity: 0.9;
+    }
+
+    .gis-selection-card.hidden,
+    .gis-layers-sheet.hidden,
+    .gis-collect-sheet.hidden {
+      display: none;
+    }
+
+    .gis-selection-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f2f4f8;
+    }
+
+    .gis-selection-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .gis-selection-close {
+      border: none;
+      background: transparent;
+      color: #97a0ae;
+      font-size: 1.05rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 1px;
+    }
+
+    .gis-selection-close:hover,
+    .gis-selection-close:focus {
+      color: #d5dce8;
+    }
+
+    .gis-selection-meta {
+      margin: 0 0 8px;
+      color: #9ba3b1;
+      font-size: 0.79rem;
+    }
+
+    .gis-selection-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .gis-selection-actions button {
+      border: 1px solid #4d5563;
+      border-radius: 10px;
+      background: #333842;
+      color: #f0f3fa;
+      font-size: 0.71rem;
+      font-weight: 700;
+      padding: 8px 4px;
+      cursor: pointer;
+    }
+
+    .gis-selection-fields {
+      border-top: 1px solid #39404a;
+      padding-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 8px;
+    }
+
+    .gis-selection-fields p {
+      margin: 0;
+      font-size: 0.79rem;
+      color: #aeb6c3;
+    }
+
+    .gis-field {
+      display: grid;
+      gap: 5px;
+      align-content: start;
+    }
+
+    .gis-field span {
+      color: #aeb6c3;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .gis-field-span-2 {
+      grid-column: 1 / -1;
+    }
+
+    .gis-selection-fields strong {
+      display: block;
+      color: #f2f4f8;
+      margin-top: 0;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .gis-selection-fields .slds-input,
+    .gis-selection-fields .slds-select,
+    .gis-selection-fields .slds-textarea {
+      width: 100%;
+      min-height: 34px;
+      font-size: 0.84rem;
+    }
+
+    .gis-collect-sheet {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: rgba(24, 26, 31, 0.94);
+      border: 1px solid #3b4049;
+      border-radius: 16px 16px 0 0;
+      z-index: 5;
+      padding: 10px 12px 12px;
+      max-height: 40vh;
+      overflow-y: auto;
+      box-shadow: 0 -12px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .gis-collect-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .gis-collect-top p {
+      margin: 0;
+      color: #f2f4f8;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .gis-collect-top button {
+      border: none;
+      background: transparent;
+      color: #8fc7ff;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .gis-collect-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+      display: grid;
+      gap: 6px;
+    }
+
+    .gis-collect-list li {
+      border-top: 1px solid #393f4a;
+      padding-top: 8px;
+      font-size: 0.92rem;
+      color: #e6ebf5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gis-dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      border: 2px solid #4c39b6;
+      background: #7ded52;
+      flex-shrink: 0;
+    }
+
+    /* System cards */
+    .system-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .actions-tray {
+      flex-shrink: 0;
+      background: #24272d;
+      border-top: 1px solid #393d45;
+      text-align: center;
+      padding: 12px 10px 10px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+    }
+
+    .actions-handle {
+      width: 74px;
+      height: 9px;
+      border-radius: 999px;
+      background: #6b707a;
+      margin: 0 auto 10px;
+    }
+
+    .actions-label {
+      color: #0176d3;
+      font-size: 0.86rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .actions-icon {
+      width: 10px;
+      height: 16px;
+      display: inline-block;
+      background: currentColor;
+      clip-path: polygon(45% 0, 100% 0, 62% 40%, 100% 40%, 26% 100%, 40% 56%, 0 56%);
+    }
+
+    .bottom-nav {
+      flex-shrink: 0;
+      border-top: 1px solid #393d45;
+      padding: 8px 10px;
+      background: #090a0c;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    .device-nav-btn {
+      border: none;
+      background: transparent;
+      color: #c0c4cb;
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .device-nav-btn.active {
+      color: #0176d3;
+    }
+
+    .device-nav-icon {
+      width: 20px;
+      height: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .icon-calendar::before,
+    .icon-calendar::after,
+    .icon-bell::before,
+    .icon-bell::after,
+    .icon-profile::before,
+    .icon-profile::after {
+      content: "";
+      position: absolute;
+      display: block;
+    }
+
+    .icon-calendar::before {
+      inset: 4px 2px 2px;
+      border: 2px solid currentColor;
+      border-radius: 3px;
+    }
+
+    .icon-calendar::after {
+      left: 4px;
+      right: 4px;
+      top: 2px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 1px;
+      box-shadow: -4px 0 0 currentColor, 4px 0 0 currentColor;
+    }
+
+    .icon-bell::before {
+      left: 4px;
+      right: 4px;
+      top: 3px;
+      bottom: 5px;
+      border: 2px solid currentColor;
+      border-bottom: none;
+      border-radius: 8px 8px 2px 2px;
+    }
+
+    .icon-bell::after {
+      left: 5px;
+      right: 5px;
+      bottom: 3px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 999px;
+      box-shadow: 0 4px 0 -1px currentColor;
+    }
+
+    .icon-profile::before {
+      width: 8px;
+      height: 8px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      top: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .icon-profile::after {
+      left: 3px;
+      right: 3px;
+      bottom: 2px;
+      height: 8px;
+      border: 2px solid currentColor;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom: none;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: -7px;
+      right: -9px;
+      min-width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #c23934;
+      color: #fff;
+      font-size: 0.52rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2px;
+      border: 1px solid #090a0d;
+    }
+
+    /* Stage / severity badge color variants */
+    .stage-inspecting { background: #d6ecff !important; color: #0b4f94 !important; }
+    .stage-review     { background: #4a3720 !important; color: #ffd98c !important; }
+    .stage-completed  { background: #1f3d2a !important; color: #9ee2b8 !important; }
+    .stage-other      { background: #4a2024 !important; color: #ffb8bf !important; }
+
+    .sev-high,
+    .sev-medium,
+    .sev-low {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 700;
+    }
+
+    .sev-high   { background: #4a2024; border-color: #8e2c36; color: #ffced3; }
+    .sev-medium { background: #4c3a20; border-color: #9d6d22; color: #ffe0a1; }
+    .sev-low    { background: #1f3b2b; border-color: #2e844a; color: #b7ebc9; }
+
+    /* Callout left-border accent */
+    .callout-item { border-left: 4px solid #e07012 !important; background: #23262d; }
+
+    /* Create sheet type selector */
+    .gis-type-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .gis-type-btn { padding: 14px 6px; background: #252c3c; color: #aeb6c3; border: 2px solid #3e4455; border-radius: 4px; cursor: pointer; font-size: 0.9rem; font-weight: 600; text-align: center; transition: all 0.15s; }
+    .gis-type-btn.active { background: #0176d3; color: #fff; border-color: #0176d3; }
+
+    .callout-context-dark {
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-width: 1px;
+      border-style: solid;
+    }
+
+    .callout-context-dark.alert {
+      color: #ffe0a1 !important;
+      background: #3a2d1d !important;
+      border-color: #9d6d22 !important;
+    }
+
+    .callout-context-dark.ok {
+      color: #b8d9ff !important;
+      background: #1d2b3b !important;
+      border-color: #2f5f93 !important;
+    }
+
+
+
+    .slds-button_neutral {
+      background: #2e333c !important;
+      border-color: #5b6371 !important;
+      color: #f3f4f6 !important;
+    }
+
+    .slds-button_neutral:hover,
+    .slds-button_neutral:focus {
+      background: #383e48 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_reset {
+      color: inherit !important;
+    }
+
+    .asset-row-title {
+      margin: 0;
+      font-weight: 700;
+      color: #f7f9fd;
+      display: block;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .asset-row-meta {
+      margin: 0;
+      font-size: 0.76rem;
+      color: #d6deea;
+      display: block;
+      letter-spacing: 0.01em;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .asset-row-selected .asset-row-title {
+      color: #8fc7ff;
+    }
+
+    .asset-row-selected .asset-row-meta {
+      color: #d7e9ff;
+    }
+
+    .asset-list-shell {
+      border-top: 1px solid #505562;
+      padding-top: 4px;
+    }
+
+    .asset-row-button {
+      width: 100%;
+      text-align: left;
+      border: 1px solid #454b57;
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: #232831;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+
+    .asset-callout-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f39c1a;
+      border: 1px solid #1d232d;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .asset-row-main {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .asset-row-button:hover,
+    .asset-row-button:focus {
+      border-color: #6d7688;
+      background: #272d37;
+    }
+
+    .asset-inline-editor {
+      margin-top: 10px;
+      padding: 14px;
+      border: 1px solid #49505d;
+      border-radius: 12px;
+      background: #191d24;
+    }
+
+    .asset-inline-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .asset-note-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .asset-note-actions .asset-action {
+      width: 100%;
+      justify-content: center;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.79rem;
+      min-height: 36px;
+    }
+
+    .asset-note-actions .asset-action-primary {
+      background: #0b69c7 !important;
+      border-color: #0b69c7 !important;
+      color: #fff !important;
+    }
+
+    .asset-note-actions .asset-action-danger {
+      background: #3a1d23 !important;
+      border-color: #8e2c36 !important;
+      color: #ffc6ce !important;
+    }
+
+    .slds-button_brand {
+      background: #0b69c7 !important;
+      border-color: #0b69c7 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_brand:hover,
+    .slds-button_brand:focus {
+      background: #0959a7 !important;
+      border-color: #0959a7 !important;
+    }
+
+    .slds-button_destructive {
+      background: #ba0517 !important;
+      border-color: #ba0517 !important;
+      color: #ffffff !important;
+    }
+
+    .slds-button_destructive:hover,
+    .slds-button_destructive:focus {
+      background: #930412 !important;
+      border-color: #930412 !important;
+    }
+
+    .slds-button[disabled],
+    .slds-button:disabled {
+      opacity: 0.45;
+    }
+
+    /* Stage timeline */
+    .inspection-timeline {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: grid; gap: 6px;
+    }
+    .inspection-timeline li {
+      border-left: 3px solid #c3d6ea;
+      padding-left: 10px;
+      color: #5c6f82;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .inspection-timeline li.done   { border-left-color: #2e844a; color: #0b5a2b; }
+    .inspection-timeline li.active { border-left-color: #0176d3; color: #032d60; }
+
+    /* Required question checkbox accent */
+    input[type="checkbox"] { accent-color: #0176d3; }
+
+    @media (max-width: 700px) {
+      .phone-shell { width: 100%; min-height: 100dvh; }
+      .system-cards { grid-template-columns: 1fr; }
+      .app-tabs { grid-template-columns: repeat(4, 1fr); }
+      .asset-inline-grid { grid-template-columns: 1fr; }
+      .gis-map-shell { margin-bottom: 16px; }
+      .gis-map-canvas {
+        min-height: 760px;
+      }
+      .gis-selection-card {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        width: auto;
+      }
+      .gis-collect-sheet {
+        max-height: 340px;
+      }
+      .gis-selection-fields {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="phone-shell" aria-label="FSM mobile prototype">
+      <div class="status-bar" aria-hidden="true">
+        <span>AT&amp;T LTE</span>
+        <strong>9:41 AM</strong>
+        <span>&#x1F50B;</span>
+      </div>
+
+      <header class="mobile-page-header">
+        <div class="header-row">
+          <button type="button" class="header-back" aria-label="Go back">&#x2039;</button>
+        </div>
+        <div id="woli-parent-bar" class="woli-parent-bar hidden" aria-hidden="true"></div>
+        <div class="header-meta">
+          <p id="woli-context" class="meta-title hidden"></p>
+          <h1 id="page-title" class="header-title">Work Order</h1>
+          <p id="page-subtitle" class="meta-title">05703179 &middot; Irrigation Services</p>
+          <p class="header-runtime" hidden aria-hidden="true">
+            <span id="system-scope">Loading&hellip;</span>
+            <span id="am-status-header">Not assigned</span>
+          </p>
+        </div>
+      </header>
+
+      <nav class="app-tabs" aria-label="Work order sections">
+        <button id="tab-overview" class="nav-btn active" data-tab="overview" type="button">OVERVIEW</button>
+          <button class="nav-btn" data-tab="details" type="button">DETAILS</button>
+        <button class="nav-btn" data-tab="related" type="button">RELATED</button>
+        <button class="nav-btn" data-tab="feed" type="button">FEED</button>
+      </nav>
+      <div class="divider-green" aria-hidden="true"></div>
+
+      <!-- Tab panels -->
+      <section id="viewport">
+
+        <!-- Tab 1: Overview (≈ Details) -->
+        <article class="nav-panel active" data-panel="overview">
+          <div class="slds-card slds-m-bottom_x-small overview-collapsible is-collapsed" data-section-id="overview-appointment">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="overview-appointment-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Service Appointment</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="overview-appointment-body" class="slds-card__body slds-card__body_inner">
+              <div id="sa-map-container" style="width: 100%; height: 220px; border-radius: 4px; background: #121922; margin-bottom: 16px; position: relative; overflow: hidden;">
+                <!-- Mapbox mini basemap -->
+                <svg style="position:absolute;inset:0;width:100%;height:100%;display:block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" preserveAspectRatio="xMidYMid slice">
+                  <rect width="400" height="220" fill="#121922"/>
+                  <rect x="0" y="60" width="400" height="100" fill="#0d2118" opacity="0.4"/>
+                  <rect x="30" y="30" width="80" height="50" rx="2" fill="#1e2e3e"/>
+                  <rect x="120" y="20" width="100" height="60" rx="2" fill="#1a2738"/>
+                  <rect x="230" y="35" width="70" height="45" rx="2" fill="#1e2e3e"/>
+                  <rect x="310" y="25" width="75" height="55" rx="2" fill="#1a2738"/>
+                  <rect x="20" y="130" width="90" height="55" rx="2" fill="#1a2738"/>
+                  <rect x="120" y="140" width="110" height="50" rx="2" fill="#1e2e3e"/>
+                  <rect x="240" y="125" width="80" height="60" rx="2" fill="#1a2738"/>
+                  <rect x="330" y="135" width="70" height="55" rx="2" fill="#1e2e3e"/>
+                  <line x1="0" y1="110" x2="400" y2="110" stroke="#3d4a5e" stroke-width="4"/>
+                  <line x1="0" y1="115" x2="400" y2="115" stroke="#3d4a5e" stroke-width="1"/>
+                  <line x1="190" y1="0" x2="190" y2="220" stroke="#2b3650" stroke-width="2"/>
+                  <line x1="0" y1="75" x2="400" y2="75" stroke="#2b3650" stroke-width="1.5"/>
+                  <line x1="0" y1="160" x2="400" y2="160" stroke="#2b3650" stroke-width="1.5"/>
+                  <!-- Location pin -->
+                  <circle cx="200" cy="108" r="10" fill="#4264fb" opacity="0.25"/>
+                  <circle cx="200" cy="108" r="5" fill="#4264fb"/>
+                  <circle cx="200" cy="108" r="2.5" fill="white"/>
+                </svg>
+                <!-- Mapbox attribution -->
+                <span style="position:absolute;bottom:4px;right:6px;font-size:0.6rem;color:rgba(180,192,210,0.7);background:rgba(14,18,28,0.6);padding:2px 5px;border-radius:2px;">© Mapbox © OpenStreetMap</span>
+                <!-- Mapbox logo -->
+                <span style="position:absolute;bottom:4px;left:6px;display:flex;align-items:center;gap:4px;">
+                  <svg width="12" height="12" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="10" fill="#4264fb"/><path d="M10 3.5C7 3.5 4.5 6 4.5 9c0 3.6 4.6 8 5.5 8s5.5-4.4 5.5-8c0-3-2.5-5.5-5.5-5.5zm0 7.25a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5z" fill="white"/></svg>
+                </span>
+              </div>
+              <div style="margin-bottom: 16px;">
+                <p style="margin: 0 0 6px; font-size: 1.05rem; color: #f7f9fd; font-weight: 500;">9:37 AM – 12:07 PM</p>
+                <p style="margin: 0 0 12px; font-size: 0.9rem; color: #aeb6c3;">Wednesday, May 13, 2026</p>
+                <p style="margin: 0 0 6px; font-size: 0.9rem; color: #f7f9fd;">8954 Park Trail Drive, Elk Grove, California 95624 United States</p>
+                <p style="margin: 0; font-size: 0.9rem; color: #aeb6c3;">ETA: Not Available</p>
+              </div>
+              <button type="button" class="slds-button slds-button_outline-brand" style="width: 100%; border-color: #0176d3; color: #0176d3; padding: 12px; background: transparent;">Get Directions</button>
+            </div>
+          </div>
+
+          <div class="slds-card slds-m-bottom_x-small overview-collapsible" data-section-id="overview-woli">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="true" aria-controls="overview-woli-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span id="woli-section-title">Work Order Line Items (0)</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="overview-woli-body" class="slds-card__body slds-card__body_inner">
+              <div id="wo-progress-container"></div>
+              <div id="woli-overview-list" class="woli-list"></div>
+              <p id="woli-overview-message" class="slds-text-body_small slds-text-color_weak hidden"></p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 2: DETAILS (WOLI read-only details) -->
+        <article class="nav-panel" data-panel="details">
+          <div class="slds-card">
+            <div class="slds-card__body slds-card__body_inner">
+              <dl id="woli-details-list" class="woli-details-list">
+                <div class="woli-details-row"><dt>Work Order Line Item Number</dt><dd id="woli-detail-number">00000001</dd></div>
+                <div class="woli-details-row"><dt>Work Order</dt><dd id="woli-detail-wo" class="linkish">05703179</dd></div>
+                <div class="woli-details-row"><dt>Service Territory</dt><dd id="woli-detail-territory" class="linkish">4439 BVLS Shamong FSM</dd></div>
+                <div class="woli-details-row"><dt>Work Type</dt><dd id="woli-detail-type">Inspect Irrigation</dd></div>
+                <div class="woli-details-row"><dt>Man-Hours</dt><dd id="woli-detail-hours">12.50</dd></div>
+                <div class="woli-details-row"><dt>Duration</dt><dd id="woli-detail-duration">12.50</dd></div>
+              </dl>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 3: RELATED (irrigation sections) -->
+        <article class="nav-panel" data-panel="related">
+          <div id="wo-related-summary" class="wo-related-summary hidden">
+            <div class="wo-related-row">
+              <span class="wo-related-icon woli" aria-hidden="true">LI</span>
+              <span>Work Order Line Items - (<span id="wo-related-woli-count">0</span>)</span>
+            </div>
+            <div class="wo-related-row">
+              <span class="wo-related-icon sa" aria-hidden="true">SA</span>
+              <span>Service Appointments - (<span id="wo-related-sa-count">1</span>)</span>
+            </div>
+            <div class="wo-related-row">
+              <span class="wo-related-icon files" aria-hidden="true">F</span>
+              <span>Files - (<span id="wo-related-files-count">0</span>)</span>
+            </div>
+          </div>
+          <p id="non-irrigation-note" class="slds-text-body_small slds-text-color_weak hidden" style="margin: 2px 2px 10px;">Read-only placeholder for non-irrigation work. Use standard FSM flow.</p>
+          <section class="gis-map-shell related-collapsible is-collapsed" data-section-id="related-map">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-map-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Map</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="related-map-body" class="related-section-body">
+            <div class="gis-map-titlebar">
+              <div class="mapbox-wordmark">
+                <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="10" cy="10" r="10" fill="#4264fb"/>
+                  <path d="M10 3.5C7 3.5 4.5 6 4.5 9c0 3.6 4.6 8 5.5 8s5.5-4.4 5.5-8c0-3-2.5-5.5-5.5-5.5zm0 7.25a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5z" fill="white"/>
+                </svg>
+                <span class="mapbox-wordmark-text">Mapbox</span>
+              </div>
+              <div class="gis-map-actions">
+                <button id="gis-filter-toggle" class="gis-mini-btn" type="button" aria-label="Filter map">Filter</button>
+                <button id="gis-layers-toggle" class="gis-mini-btn" type="button">Layers</button>
+              </div>
+            </div>
+
+            <div class="gis-status-strip">Zoom 16 · navigation-night · GPS unavailable</div>
+
+            <div class="gis-map-canvas">
+              <!-- Mapbox-style dark basemap -->
+              <svg class="mapbox-basemap-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 620" preserveAspectRatio="xMidYMid slice">
+                <!-- Land -->
+                <rect width="400" height="620" fill="#121922"/>
+                <!-- Water body -->
+                <path d="M0,490 Q80,468 132,494 Q162,510 152,545 L0,545Z" fill="#193349"/>
+                <path d="M0,488 Q78,466 130,492" stroke="#1d4568" stroke-width="1" fill="none" opacity="0.6"/>
+                <!-- Parks / greenspace -->
+                <rect x="178" y="73" width="108" height="88" rx="3" fill="#0d2118"/>
+                <rect x="53" y="283" width="78" height="68" rx="3" fill="#0d2118"/>
+                <rect x="293" y="438" width="107" height="82" rx="3" fill="#0d2118"/>
+                <!-- Buildings -->
+                <rect x="26" y="98" width="44" height="34" rx="2" fill="#1e2e3e"/>
+                <rect x="78" y="106" width="60" height="26" rx="2" fill="#1a2738"/>
+                <rect x="28" y="144" width="112" height="20" rx="2" fill="#1a2738" opacity="0.8"/>
+                <rect x="153" y="243" width="30" height="40" rx="2" fill="#1a2738"/>
+                <rect x="193" y="233" width="54" height="38" rx="2" fill="#1e2e3e"/>
+                <rect x="255" y="261" width="40" height="34" rx="2" fill="#1a2738"/>
+                <rect x="300" y="96" width="54" height="46" rx="2" fill="#1e2e3e"/>
+                <rect x="310" y="196" width="60" height="50" rx="2" fill="#1a2738"/>
+                <rect x="100" y="376" width="50" height="40" rx="2" fill="#1e2e3e"/>
+                <rect x="160" y="365" width="34" height="30" rx="2" fill="#1a2738"/>
+                <rect x="220" y="396" width="54" height="40" rx="2" fill="#1e2e3e"/>
+                <rect x="286" y="375" width="44" height="54" rx="2" fill="#1a2738"/>
+                <rect x="26" y="206" width="34" height="30" rx="2" fill="#1e2e3e"/>
+                <rect x="70" y="196" width="54" height="40" rx="2" fill="#1a2738"/>
+                <!-- Minor roads -->
+                <line x1="0" y1="166" x2="400" y2="166" stroke="#2b3650" stroke-width="2"/>
+                <line x1="0" y1="241" x2="400" y2="241" stroke="#2b3650" stroke-width="1.5"/>
+                <line x1="0" y1="336" x2="400" y2="336" stroke="#2b3650" stroke-width="1.5"/>
+                <line x1="0" y1="458" x2="400" y2="458" stroke="#2b3650" stroke-width="2"/>
+                <line x1="66" y1="0" x2="66" y2="620" stroke="#2b3650" stroke-width="1.5"/>
+                <line x1="150" y1="0" x2="150" y2="620" stroke="#2b3650" stroke-width="1.5"/>
+                <line x1="291" y1="0" x2="291" y2="620" stroke="#2b3650" stroke-width="1.5"/>
+                <!-- Major roads -->
+                <line x1="0" y1="315" x2="400" y2="315" stroke="#3d4a5e" stroke-width="4"/>
+                <line x1="196" y1="0" x2="196" y2="620" stroke="#3d4a5e" stroke-width="4"/>
+                <!-- Highway with center dash -->
+                <path d="M0,532 Q100,512 200,526 Q300,540 400,520" stroke="#586a84" stroke-width="7" fill="none"/>
+                <path d="M0,532 Q100,512 200,526 Q300,540 400,520" stroke="#121922" stroke-width="2.5" fill="none" stroke-dasharray="12,9"/>
+                <!-- Road label placeholders -->
+                <rect x="203" y="303" width="58" height="9" rx="2" fill="#1e2e3e" opacity="0.75"/>
+                <rect x="100" y="303" width="44" height="9" rx="2" fill="#1e2e3e" opacity="0.75"/>
+                <rect x="160" y="175" width="30" height="8" rx="2" fill="#1e2e3e" opacity="0.6"/>
+                <rect x="210" y="175" width="40" height="8" rx="2" fill="#1e2e3e" opacity="0.6"/>
+              </svg>
+
+              <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation GIS map"></div>
+
+              <!-- Mapbox zoom controls -->
+              <div class="mapbox-zoom-ctrl" aria-label="Map zoom controls">
+                <button type="button" class="mapbox-zoom-btn" id="gis-zoom-in" aria-label="Zoom in">+</button>
+                <button type="button" class="mapbox-zoom-btn" id="gis-zoom-out" aria-label="Zoom out">−</button>
+              </div>
+
+              <!-- Mapbox compass -->
+              <button class="mapbox-compass-btn" type="button" id="gis-locate" aria-label="Reset bearing to north">
+                <svg viewBox="0 0 20 20" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 1 L11.4 8.6 L10 10 L8.6 8.6 Z" fill="#e55e5e"/>
+                  <path d="M10 19 L11.4 11.4 L10 10 L8.6 11.4 Z" fill="#c8ccd8"/>
+                  <path d="M1 10 L8.6 8.6 L10 10 L8.6 11.4 Z" fill="#c8ccd8"/>
+                  <path d="M19 10 L11.4 8.6 L10 10 L11.4 11.4 Z" fill="#c8ccd8"/>
+                  <circle cx="10" cy="10" r="1.5" fill="#283044"/>
+                </svg>
+              </button>
+
+              <button id="gis-add-point" class="gis-floating-btn add" type="button" aria-label="Create new asset">+</button>
+
+              <!-- Mapbox scale bar -->
+              <div class="mapbox-scale">
+                <div class="mapbox-scale-bar"></div>
+                <span>200 ft</span>
+              </div>
+
+              <!-- Mapbox attribution -->
+              <div class="mapbox-attribution">
+                <div class="mapbox-logo">
+                  <svg width="14" height="14" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <circle cx="10" cy="10" r="10" fill="#4264fb"/>
+                    <path d="M10 3.5C7 3.5 4.5 6 4.5 9c0 3.6 4.6 8 5.5 8s5.5-4.4 5.5-8c0-3-2.5-5.5-5.5-5.5zm0 7.25a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5z" fill="white"/>
+                  </svg>
+                </div>
+                <span>© <a href="#" tabindex="-1">Mapbox</a> © <a href="#" tabindex="-1">OpenStreetMap</a></span>
+                <a href="#" tabindex="-1">Improve this map</a>
+              </div>
+
+              <div id="gis-selection-card" class="gis-selection-card hidden">
+                <div class="gis-sheet-grabber" aria-hidden="true"></div>
+                <div class="gis-selection-head">
+                  <p id="gis-selection-title" class="gis-selection-title">Asset</p>
+                  <button id="gis-selection-close" class="gis-selection-close" type="button" aria-label="Close selected asset">x</button>
+                </div>
+                <p id="gis-selection-meta" class="gis-selection-meta">Coordinates</p>
+                <div class="gis-selection-actions">
+                  <button type="button" data-map-action="save">Save</button>
+                  <button type="button" data-map-action="toggle-status">Status</button>
+                  <button type="button" data-map-action="callout">Callout</button>
+                  <button type="button" data-map-action="remove">Remove</button>
+                </div>
+                <div id="gis-selection-fields" class="gis-selection-fields"></div>
+              </div>
+
+              <div id="gis-layers-sheet" class="gis-layers-sheet hidden">
+                <div class="gis-sheet-header">
+                  <p>Layers</p>
+                  <button id="gis-layers-close" type="button" aria-label="Close layers">x</button>
+                </div>
+                <div class="gis-sheet-body">
+                  <div class="slds-box slds-box_x-small">
+                    <p class="slds-text-title slds-m-bottom_xx-small">Controllers</p>
+                    <ul id="controller-list" class="slds-list_dotted slds-text-body_small"></ul>
+                  </div>
+                  <div class="slds-box slds-box_x-small">
+                    <p class="slds-text-title slds-m-bottom_xx-small">Backflows</p>
+                    <ul id="backflow-list" class="slds-list_dotted slds-text-body_small"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div id="gis-filter-sheet" class="gis-collect-sheet hidden">
+                <div class="gis-collect-top">
+                  <button id="gis-filter-clear" type="button">Reset</button>
+                  <p>Filter</p>
+                  <button id="gis-filter-done" type="button">Done</button>
+                </div>
+                <div class="gis-sheet-body">
+                  <div class="slds-box slds-box_x-small">
+                    <p class="slds-text-title slds-m-bottom_xx-small">Marker Types</p>
+                    <div class="gis-filter-grid">
+                      <label><input id="filter-zones" type="checkbox" checked /> Zones</label>
+                      <label><input id="filter-controllers" type="checkbox" checked /> Controllers</label>
+                      <label><input id="filter-backflows" type="checkbox" checked /> Backflows</label>
+                    </div>
+                  </div>
+                  <div class="slds-box slds-box_x-small">
+                    <p class="slds-text-title slds-m-bottom_xx-small">Search Map</p>
+                    <input id="gis-filter-search" class="slds-input" type="text" placeholder="Zone 3, Controller A..." />
+                  </div>
+                </div>
+              </div>
+
+              <div id="gis-create-sheet" class="gis-collect-sheet hidden">
+                <div class="gis-collect-top">
+                  <button id="gis-create-cancel" type="button">Cancel</button>
+                  <p>New Asset</p>
+                  <button id="gis-create-save" type="button">Save</button>
+                </div>
+                <div class="gis-sheet-body">
+                  <div class="slds-box slds-box_x-small">
+                <div class="gis-type-selector slds-m-bottom_small">
+                      <button type="button" class="gis-type-btn active" id="gis-type-zone" data-type="zone">Zone</button>
+                      <button type="button" class="gis-type-btn" id="gis-type-controller" data-type="controller">Controller</button>
+                      <button type="button" class="gis-type-btn" id="gis-type-backflow" data-type="backflow">Backflow</button>
+                    </div>
+                    <div class="slds-form-element slds-m-bottom_small">
+                      <label class="slds-form-element__label" for="gis-create-name">Name</label>
+                      <div class="slds-form-element__control">
+                        <input id="gis-create-name" class="slds-input" type="text" placeholder="Zone 25 / Controller D / Backflow East" />
+                      </div>
+                    </div>
+                    <div class="slds-form-element slds-m-bottom_small">
+                      <label class="slds-form-element__label" for="gis-create-notes">Notes</label>
+                      <div class="slds-form-element__control">
+                        <textarea id="gis-create-notes" class="slds-textarea" rows="3" placeholder="Optional details"></textarea>
+                      </div>
+                    </div>
+                    <div class="gis-create-coordinates" id="gis-create-coordinates">
+                      <p class="slds-text-title slds-m-bottom_x-small" style="margin-top: 12px;">Coordinates (Optional)</p>
+                      <div class="slds-grid slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-2 slds-form-element">
+                          <label class="slds-form-element__label" for="gis-create-mapx">Map X (%)</label>
+                          <div class="slds-form-element__control">
+                            <input id="gis-create-mapx" class="slds-input" type="number" min="0" max="100" step="0.1" placeholder="0-100" />
+                          </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-form-element">
+                          <label class="slds-form-element__label" for="gis-create-mapy">Map Y (%)</label>
+                          <div class="slds-form-element__control">
+                            <input id="gis-create-mapy" class="slds-input" type="number" min="0" max="100" step="0.1" placeholder="0-100" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="gis-create-zone-fields">
+                      <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="gis-create-controller">Clock</label>
+                        <div class="slds-form-element__control">
+                          <div class="slds-select_container">
+                            <select id="gis-create-controller" class="slds-select"></select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="gis-create-backflow">Backflow</label>
+                        <div class="slds-form-element__control">
+                          <div class="slds-select_container">
+                            <select id="gis-create-backflow" class="slds-select"></select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="slds-p-around_small">
+              <p id="map-caption" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Tap map markers to inspect assets and perform edits directly from GIS.</p>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="clock-filter">Clock Filter</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="clock-filter" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </section>
+
+          <div class="slds-card related-collapsible is-collapsed" data-section-id="related-assets">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-assets-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Components</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="related-assets-body" class="slds-card__body slds-card__body_inner related-section-body">
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Browse the full system, edit existing assets, and add new components to controllers, zones, and backflows.</p>
+              <div class="slds-box slds-m-bottom_small">
+                <p class="slds-text-title slds-m-bottom_x-small">Add Asset</p>
+                <div class="slds-grid slds-gutters_small slds-wrap">
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="add-asset-type">Type</label>
+                    <div class="slds-form-element__control">
+                      <div class="slds-select_container">
+                        <select id="add-asset-type" class="slds-select">
+                          <option value="zone">Zone</option>
+                          <option value="controller">Controller</option>
+                          <option value="backflow">Backflow</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="add-asset-name">Name</label>
+                    <div class="slds-form-element__control">
+                      <input id="add-asset-name" type="text" class="slds-input" placeholder="Zone 25 / Controller D / Backflow East" />
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="add-zone-controller">Controller (for Zone)</label>
+                    <div class="slds-form-element__control">
+                      <div class="slds-select_container">
+                        <select id="add-zone-controller" class="slds-select"></select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="add-zone-backflow">Backflow (for Zone)</label>
+                    <div class="slds-form-element__control">
+                      <div class="slds-select_container">
+                        <select id="add-zone-backflow" class="slds-select"></select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-m-top_x-small">
+                  <button id="add-asset-button" class="slds-button slds-button_brand" type="button">Add Asset</button>
+                </div>
+                <p id="asset-admin-message" class="slds-text-body_small slds-m-top_xx-small" style="min-height:18px;"></p>
+              </div>
+
+              <div class="slds-grid slds-gutters_small slds-wrap slds-m-bottom_x-small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-filter">Asset Type</label>
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <select id="asset-filter" class="slds-select">
+                        <option value="all">All</option>
+                        <option value="zone">Zones</option>
+                        <option value="controller">Controllers</option>
+                        <option value="backflow">Backflows</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-search">Search</label>
+                  <div class="slds-form-element__control">
+                    <input id="asset-search" type="text" class="slds-input" placeholder="Zone 11 / Controller B / Backflow South" />
+                  </div>
+                </div>
+              </div>
+              <p id="asset-list-summary" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small"></p>
+              <div class="asset-list-shell">
+                <ul id="asset-list" class="slds-has-dividers_top-space"></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="slds-card related-collapsible is-collapsed" data-section-id="related-required-questions">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-required-questions-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Inspection Guide</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="related-required-questions-body" class="slds-card__body slds-card__body_inner related-section-body">
+              <div class="slds-m-bottom_small">
+                <div class="slds-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Checklist completion">
+                  <span id="meter-fill" class="slds-progress-bar__value" style="width:0%">
+                    <span class="slds-assistive-text">Progress: 0%</span>
+                  </span>
+                </div>
+                <p id="meter-label" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">0 of 12 answered</p>
+                <p id="resolver-meta" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Resolver pending...</p>
+              </div>
+              <ul id="required-list" class="slds-has-dividers_top-space"></ul>
+            </div>
+          </div>
+
+          <div class="slds-card slds-m-bottom_x-small related-collapsible is-collapsed" data-section-id="related-callouts">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-callouts-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Callouts</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="related-callouts-body" class="slds-card__body slds-card__body_inner related-section-body">
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Log issues inline from the map or list — tap <strong>Log Issue</strong> on any expanded asset card.</p>
+              <label id="no-issues-toggle" class="slds-checkbox_toggle slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                <input id="no-issues-checkbox" type="checkbox" />
+                <span class="slds-checkbox_faux_container" aria-hidden="true"><span class="slds-checkbox_faux"></span></span>
+                <span class="slds-form-element__label">No irrigation issues found</span>
+              </label>
+              <ul id="callout-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
+            </div>
+          </div>
+
+          <!-- Approvals & Checkout -->
+          <div class="slds-card slds-m-bottom_x-small related-collapsible is-collapsed" data-section-id="related-approvals">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-approvals-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Submit Report</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div id="related-approvals-body" class="slds-card__body slds-card__body_inner related-section-body">
+              <div class="slds-form-element slds-m-bottom_x-small">
+                <label class="slds-form-element__label" for="am-name">Account Manager</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="am-name" class="slds-select">
+                      <option value="">Select AM</option>
+                      <option value="Jamie Rivers">Jamie Rivers</option>
+                      <option value="Alex Patel">Alex Patel</option>
+                      <option value="Morgan Chen">Morgan Chen</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <button id="toggle-am" class="slds-button slds-button_neutral slds-m-bottom_x-small" type="button">Assign / Clear AM</button>
+              <p id="am-status" class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">AM not assigned.</p>
+              <div class="slds-button-group slds-m-bottom_x-small" role="group">
+                <button id="open-review" class="slds-button slds-button_neutral" type="button">Open Review</button>
+                <button id="simulate-submit" class="slds-button slds-button_brand" type="button">Submit Irrigation Report</button>
+                <button id="reset-flow" class="slds-button slds-button_destructive" type="button">Reset</button>
+              </div>
+              <p id="submit-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Submit blocks on callout policy and AM assignment. Required questions are advisory.</p>
+              <p id="submit-result" class="slds-text-body_small slds-m-top_xx-small" style="font-weight:600;min-height:20px;">Waiting for action.</p>
+            </div>
+          </div>
+        </article>
+
+        <!-- Tab 4: FEED (static for prototype) -->
+        <article class="nav-panel" data-panel="feed">
+          <div class="slds-card">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title"><span>Activity Feed</span></h2>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <p class="slds-text-body_small slds-text-color_weak">No activity in prototype mode.</p>
+            </div>
+          </div>
+        </article>
+
+      </section>
+
+      <section id="asset-detail-sheet" class="fullscreen-sheet hidden" aria-label="Asset detail sheet">
+        <div class="sheet-header">
+          <h2 id="detail-sheet-title" class="sheet-title">Asset Detail</h2>
+          <button id="detail-sheet-close" class="sheet-close" type="button" aria-label="Close detail">x</button>
+        </div>
+        <div class="sheet-body">
+          <div class="sheet-section">
+            <p id="detail-context" class="context-meta">Type • Status</p>
+          </div>
+
+          <div class="sheet-section">
+            <div class="slds-form-element slds-m-bottom_small">
+              <label class="slds-form-element__label" for="detail-name">Name</label>
+              <div class="slds-form-element__control">
+                <input id="detail-name" class="slds-input" type="text" />
+              </div>
+            </div>
+            <div id="detail-zone-links" class="sheet-grid-2 slds-m-bottom_small">
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="detail-controller">Clock</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="detail-controller" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="detail-backflow">Backflow</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="detail-backflow" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sheet-grid-2 slds-m-bottom_small">
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="detail-mapx">Map X (%)</label>
+                <div class="slds-form-element__control">
+                  <input id="detail-mapx" class="slds-input" type="number" min="0" max="100" step="0.1" />
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="detail-mapy">Map Y (%)</label>
+                <div class="slds-form-element__control">
+                  <input id="detail-mapy" class="slds-input" type="number" min="0" max="100" step="0.1" />
+                </div>
+              </div>
+            </div>
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="detail-notes">Notes</label>
+              <div class="slds-form-element__control">
+                <textarea id="detail-notes" class="slds-textarea" rows="3"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div id="detail-programs-section" class="sheet-section hidden">
+            <h3 style="margin: 0 0 4px; font-size: 0.9rem; font-weight: 700; color: #f7f9fd;">
+              Programs (Irrigation_Program__c) <span id="detail-programs-count" style="font-weight: 400; font-size: 0.75rem; color: #8e9aac;"></span>
+            </h3>
+            <p style="font-size: 0.75rem; color: #8e9aac; margin: 0 0 10px;">Reference schedule — read-only during PMI. Edit via Controller Program Audit work type.</p>
+            <ul id="detail-programs-list" style="list-style: none; margin: 0; padding: 0; font-size: 0.8rem;"></ul>
+          </div>
+
+          <div id="detail-asset-callouts" class="sheet-section hidden">
+            <h3 style="margin: 0 0 10px; font-size: 0.9rem; font-weight: 700; color: #f7f9fd;">Callouts for This Asset</h3>
+            <ul id="detail-callouts-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
+          </div>
+
+          <div id="detail-callout-composer" class="sheet-section hidden">
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="detail-callout-text">Create Callout</label>
+              <div class="slds-form-element__control">
+                <textarea id="detail-callout-text" class="slds-textarea" rows="3" placeholder="Describe the issue"></textarea>
+              </div>
+            </div>
+            <div class="slds-form-element slds-m-top_x-small">
+              <label class="slds-form-element__label" for="detail-callout-type">Callout Type</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container">
+                  <select id="detail-callout-type" class="slds-select">
+                    <option value="Repair">Repair</option>
+                    <option value="Enhancement">Enhancement</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="sheet-actions">
+              <button id="detail-callout-submit" class="slds-button slds-button_brand" type="button">Save Callout</button>
+              <button id="detail-callout-cancel" class="slds-button slds-button_neutral" type="button">Cancel</button>
+            </div>
+          </div>
+
+          <div class="sheet-section">
+            <div class="sheet-actions">
+              <button id="detail-create-callout" class="slds-button slds-button_brand primary-callout" type="button">Create Callout</button>
+              <button id="detail-save" class="slds-button slds-button_neutral" type="button">Save</button>
+              <button id="detail-toggle-status" class="slds-button slds-button_neutral" type="button">Toggle Status</button>
+              <button id="detail-remove" class="slds-button slds-button_destructive" type="button">Remove</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="asset-create-sheet" class="fullscreen-sheet hidden" aria-label="Create asset sheet">
+        <div class="sheet-header">
+          <h2 class="sheet-title">New Asset</h2>
+          <button id="create-sheet-close" class="sheet-close" type="button" aria-label="Close create">x</button>
+        </div>
+        <div class="sheet-body">
+          <div class="sheet-section">
+            <div class="slds-form-element slds-m-bottom_small">
+              <label class="slds-form-element__label" for="create-type">Type</label>
+              <div class="slds-form-element__control">
+                <div class="slds-select_container">
+                  <select id="create-type" class="slds-select">
+                    <option value="zone">Zone</option>
+                    <option value="controller">Controller</option>
+                    <option value="backflow">Backflow</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="slds-form-element slds-m-bottom_small">
+              <label class="slds-form-element__label" for="create-name">Name</label>
+              <div class="slds-form-element__control">
+                <input id="create-name" class="slds-input" type="text" />
+              </div>
+            </div>
+            <div id="create-zone-links" class="sheet-grid-2 slds-m-bottom_small">
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="create-controller">Clock</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="create-controller" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="create-backflow">Backflow</label>
+                <div class="slds-form-element__control">
+                  <div class="slds-select_container">
+                    <select id="create-backflow" class="slds-select"></select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sheet-grid-2 slds-m-bottom_small">
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="create-mapx">Map X (%)</label>
+                <div class="slds-form-element__control">
+                  <input id="create-mapx" class="slds-input" type="number" min="0" max="100" step="0.1" />
+                </div>
+              </div>
+              <div class="slds-form-element">
+                <label class="slds-form-element__label" for="create-mapy">Map Y (%)</label>
+                <div class="slds-form-element__control">
+                  <input id="create-mapy" class="slds-input" type="number" min="0" max="100" step="0.1" />
+                </div>
+              </div>
+            </div>
+            <div class="slds-form-element">
+              <label class="slds-form-element__label" for="create-notes">Notes</label>
+              <div class="slds-form-element__control">
+                <textarea id="create-notes" class="slds-textarea" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="sheet-actions">
+              <button id="create-save" class="slds-button slds-button_brand" type="button">Save</button>
+              <button id="create-cancel" class="slds-button slds-button_neutral" type="button">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="decision-modal" class="decision-modal hidden" aria-label="Decision modal">
+        <div class="decision-card">
+          <h3 id="decision-title">Confirm</h3>
+          <p id="decision-message"></p>
+          <div id="decision-actions" class="decision-actions"></div>
+        </div>
+      </section>
+
+      <section class="actions-tray" aria-label="Actions drawer">
+        <div class="actions-handle" aria-hidden="true"></div>
+        <div class="actions-label"><span class="actions-icon" aria-hidden="true"></span><span>Actions</span></div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="FSM shell navigation">
+        <button class="device-nav-btn active" type="button">
+          <span class="device-nav-icon icon-calendar" aria-hidden="true"></span>
+          <span>Schedule</span>
+        </button>
+        <button class="device-nav-btn" type="button">
+          <span class="device-nav-icon icon-bell" aria-hidden="true"><span class="badge-dot">2</span></span>
+          <span>Notifications</span>
+        </button>
+        <button class="device-nav-btn" type="button">
+          <span class="device-nav-icon icon-profile" aria-hidden="true"></span>
+          <span>Profile</span>
+        </button>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+function createInitialIrrigationSession() {
+  return {
+    stage: "INSPECTING",
+    hasMap: true,
+    controllers: [
+    {
+      id: "controller-a",
+      name: "Controller A",
+      model: "Hydrawise HC-12",
+      description: "North lawn and clubhouse frontage clock.",
+      zones: [1, 2, 3, 4, 5, 6, 7, 8],
+      programs: [
+        { id: "mp-a1", programName: "Program A", scheduleDays: ["Mon", "Wed", "Fri"], startTime: "06:00", zone: "Zone 1", runTimeMinutes: 15, seasonalAdjustPct: 0, isActive: true },
+        { id: "mp-a2", programName: "Program B", scheduleDays: ["Tue", "Thu", "Sat"], startTime: "05:30", zone: "Zone 2", runTimeMinutes: 20, seasonalAdjustPct: 10, isActive: true },
+        { id: "mp-a3", programName: "Program C (Drip)", scheduleDays: ["Mon", "Thu"], startTime: "07:00", zone: "Zone 5", runTimeMinutes: 45, seasonalAdjustPct: 0, isActive: false },
+      ],
+    },
+    {
+      id: "controller-b",
+      name: "Controller B",
+      model: "Rain Bird ESP-LX",
+      description: "Athletic field and east perimeter clock.",
+      zones: [9, 10, 11, 12, 13, 14, 15, 16],
+      programs: [
+        { id: "mp-b1", programName: "Program A", scheduleDays: ["Mon", "Tue", "Wed", "Thu", "Fri"], startTime: "05:30", zone: "Zone 9", runTimeMinutes: 20, seasonalAdjustPct: 0, isActive: true },
+        { id: "mp-b2", programName: "Program B (Weekend)", scheduleDays: ["Sat", "Sun"], startTime: "06:00", zone: "Zone 10", runTimeMinutes: 25, seasonalAdjustPct: 0, isActive: true },
+      ],
+    },
+    {
+      id: "controller-c",
+      name: "Controller C",
+      model: "Toro Tempus Pro",
+      description: "Pool deck and south slope clock.",
+      zones: [17, 18, 19, 20, 21, 22, 23, 24],
+      programs: [
+        { id: "mp-c1", programName: "Program A", scheduleDays: ["Sun", "Wed"], startTime: "06:30", zone: "Zone 17", runTimeMinutes: 25, seasonalAdjustPct: 5, isActive: true },
+      ],
+    },
+  ],
+  backflows: [
+    {
+      id: "bf-01",
+      name: "Backflow North",
+      serial: "BFN-44210",
+      status: "Pass",
+      description: "Feeds north campus mainline.",
+    },
+    {
+      id: "bf-02",
+      name: "Backflow South",
+      serial: "BFS-44211",
+      status: "Due Test",
+      description: "Feeds south and pool line.",
+    },
+  ],
+  zones: Array.from({ length: 24 }, (_, idx) => {
+    const zoneNumber = idx + 1;
+    const localIndex = (zoneNumber - 1) % 8;
+    const angle = (Math.PI * 2 * localIndex) / 8;
+    const base = zoneNumber <= 8 ? { x: 52, y: 26 } : zoneNumber <= 16 ? { x: 67, y: 56 } : { x: 38, y: 60 };
+    const radius = zoneNumber <= 8 ? 10 : zoneNumber <= 16 ? 13 : 12;
+    return {
+      id: `zone-${zoneNumber}`,
+      label: `Zone ${zoneNumber}`,
+      status: [3, 11, 18, 22].includes(zoneNumber) ? "alert" : "ok",
+      controller: zoneNumber <= 8 ? "Controller A" : zoneNumber <= 16 ? "Controller B" : "Controller C",
+      backflow: zoneNumber <= 12 ? "Backflow North" : "Backflow South",
+      description: `Coverage area for ${zoneNumber <= 12 ? "north/east" : "south/west"} campus section.`,
+      mapX: Number((base.x + radius * Math.cos(angle)).toFixed(2)),
+      mapY: Number((base.y + radius * Math.sin(angle)).toFixed(2)),
+    };
+  }),
+  requiredQuestions: [
+    { id: "q1",  text: "Controller A serial captured",               answered: true  },
+    { id: "q2",  text: "Controller B serial captured",               answered: true  },
+    { id: "q3",  text: "Controller C serial captured",               answered: true  },
+    { id: "q4",  text: "Backflow North compliance verified",          answered: true  },
+    { id: "q5",  text: "Backflow South compliance verified",          answered: false },
+    { id: "q6",  text: "Zone pressure sample for Zones 1-8",         answered: false },
+    { id: "q7",  text: "Zone pressure sample for Zones 9-16",        answered: false },
+    { id: "q8",  text: "Zone pressure sample for Zones 17-24",       answered: false },
+    { id: "q9",  text: "Valve conditions recorded",                  answered: false },
+    { id: "q10", text: "Coverage audit photos uploaded",             answered: false },
+    { id: "q11", text: "Flow variance captured",                     answered: false },
+    { id: "q12", text: "Customer walkthrough completed",             answered: false },
+  ],
+  callouts: [],
+    clockFilter: "ALL",
+    amAssigned: false,
+    amName: "",
+    noIssuesFound: false,
+  };
+}
+
+const workOrder = {
+  id: "05703179",
+  typeLabel: "Irrigation Services",
+  serviceAppointmentId: "SA-004281",
+  account: "Oak Ridge HOA Campus - Northeast",
+  wolis: [
+    {
+      id: "woli-00000001",
+      number: "00000001",
+      name: "Inspect Irrigation",
+      category: "irrigation",
+      status: "NEW",
+      manHours: "12.50",
+      duration: "12.50",
+      serviceTerritory: "4439 BVLS Shamong FSM",
+    },
+  ],
+};
+
+const resolverContext = {
+  region: "Northeast",
+  inspectionType: "Quarterly",
+  season: "Spring",
+  questionSetVersion: "NE-Quarterly-PMI-v3",
+};
+
+const woliSessions = new Map();
+let activeWoliId = "";
+let appMode = "wo";
+let state = createInitialIrrigationSession();
+
+const meterFill         = document.getElementById("meter-fill");
+const meterLabel        = document.getElementById("meter-label");
+const resolverMeta      = document.getElementById("resolver-meta");
+const requiredList      = document.getElementById("required-list");
+const calloutList       = document.getElementById("callout-list");
+const amName            = document.getElementById("am-name");
+const amStatus          = document.getElementById("am-status");
+const amStatusHeader    = document.getElementById("am-status-header");
+const submitResult      = document.getElementById("submit-result");
+const navButtons        = document.querySelectorAll(".nav-btn");
+const navPanels         = document.querySelectorAll(".nav-panel");
+const mapGrid           = document.getElementById("map-grid");
+const gisMapCanvas      = document.querySelector(".gis-map-canvas");
+const controllerList    = document.getElementById("controller-list");
+const backflowList      = document.getElementById("backflow-list");
+const systemScope       = document.getElementById("system-scope");
+const systemScopeDetail = document.getElementById("system-scope-detail");
+const assetSnapshot     = document.getElementById("asset-snapshot");
+const mapCaption        = document.getElementById("map-caption");
+const clockFilter       = document.getElementById("clock-filter");
+const calloutContextHint= null; // removed
+const assetFilter       = document.getElementById("asset-filter");
+const assetSearch       = document.getElementById("asset-search");
+const assetList         = document.getElementById("asset-list");
+const assetListSummary  = document.getElementById("asset-list-summary");
+const gisLayersToggle   = document.getElementById("gis-layers-toggle");
+const gisLayersClose    = document.getElementById("gis-layers-close");
+const gisLayersSheet    = document.getElementById("gis-layers-sheet");
+const gisSelectionCard  = document.getElementById("gis-selection-card");
+const gisSelectionClose = document.getElementById("gis-selection-close");
+const gisSelectionTitle = document.getElementById("gis-selection-title");
+const gisSelectionMeta  = document.getElementById("gis-selection-meta");
+const gisSelectionFields= document.getElementById("gis-selection-fields");
+const gisViewToggle     = document.getElementById("gis-view-toggle");
+const gisFilterToggle   = document.getElementById("gis-filter-toggle");
+const gisFilterSheet    = document.getElementById("gis-filter-sheet");
+const gisFilterClear    = document.getElementById("gis-filter-clear");
+const gisFilterDone     = document.getElementById("gis-filter-done");
+const gisFilterSearch   = document.getElementById("gis-filter-search");
+const filterZones       = document.getElementById("filter-zones");
+const filterControllers = document.getElementById("filter-controllers");
+const filterBackflows   = document.getElementById("filter-backflows");
+const gisCreateSheet    = document.getElementById("gis-create-sheet");
+const gisCreateCancel   = document.getElementById("gis-create-cancel");
+const gisCreateSave     = document.getElementById("gis-create-save");
+const gisCreateName     = document.getElementById("gis-create-name");
+const gisCreateNotes    = document.getElementById("gis-create-notes");
+const gisCreateController = document.getElementById("gis-create-controller");
+const gisCreateBackflow = document.getElementById("gis-create-backflow");
+const gisCreateMapX     = document.getElementById("gis-create-mapx");
+const gisCreateMapY     = document.getElementById("gis-create-mapy");
+const gisAddPoint       = document.getElementById("gis-add-point");
+const gisLocate         = document.getElementById("gis-locate");
+const addAssetType      = document.getElementById("add-asset-type");
+const addAssetName      = document.getElementById("add-asset-name");
+const addZoneController = document.getElementById("add-zone-controller");
+const addZoneBackflow   = document.getElementById("add-zone-backflow");
+const addAssetButton    = document.getElementById("add-asset-button");
+const assetAdminMessage = document.getElementById("asset-admin-message");
+const assetDetailSheet  = document.getElementById("asset-detail-sheet");
+const detailSheetTitle  = document.getElementById("detail-sheet-title");
+const detailSheetClose  = document.getElementById("detail-sheet-close");
+const detailContext     = document.getElementById("detail-context");
+const detailName        = document.getElementById("detail-name");
+const detailController  = document.getElementById("detail-controller");
+const detailBackflow    = document.getElementById("detail-backflow");
+const detailMapX        = document.getElementById("detail-mapx");
+const detailMapY        = document.getElementById("detail-mapy");
+const detailNotes       = document.getElementById("detail-notes");
+const detailZoneLinks   = document.getElementById("detail-zone-links");
+const detailCalloutComposer = document.getElementById("detail-callout-composer");
+const detailCalloutText = document.getElementById("detail-callout-text");
+const detailCalloutType = document.getElementById("detail-callout-type");
+const detailCreateCallout = document.getElementById("detail-create-callout");
+const detailCalloutSubmit = document.getElementById("detail-callout-submit");
+const detailCalloutCancel = document.getElementById("detail-callout-cancel");
+const detailAssetCallouts = document.getElementById("detail-asset-callouts");
+const detailCalloutsList  = document.getElementById("detail-callouts-list");
+const detailSave        = document.getElementById("detail-save");
+const detailToggleStatus= document.getElementById("detail-toggle-status");
+const detailRemove      = document.getElementById("detail-remove");
+const assetCreateSheet  = document.getElementById("asset-create-sheet");
+const createSheetClose  = document.getElementById("create-sheet-close");
+const createType        = document.getElementById("create-type");
+const createName        = document.getElementById("create-name");
+const createController  = document.getElementById("create-controller");
+const createBackflow    = document.getElementById("create-backflow");
+const createMapX        = document.getElementById("create-mapx");
+const createMapY        = document.getElementById("create-mapy");
+const createNotes       = document.getElementById("create-notes");
+const createZoneLinks   = document.getElementById("create-zone-links");
+const createSave        = document.getElementById("create-save");
+const createCancel      = document.getElementById("create-cancel");
+const decisionModal     = document.getElementById("decision-modal");
+const decisionTitle     = document.getElementById("decision-title");
+const decisionMessage   = document.getElementById("decision-message");
+const decisionActions   = document.getElementById("decision-actions");
+const phoneShell        = document.querySelector(".phone-shell");
+const pageTitle         = document.getElementById("page-title");
+const pageSubtitle      = document.getElementById("page-subtitle");
+const woliContext       = document.getElementById("woli-context");
+const woliParentBar     = document.getElementById("woli-parent-bar");
+const overviewTabBtn    = document.getElementById("tab-overview");
+const woliOverviewList  = document.getElementById("woli-overview-list");
+const woProgressContainer = document.getElementById("wo-progress-container");
+const woliOverviewMsg   = document.getElementById("woli-overview-message");
+const woliSectionTitle  = document.getElementById("woli-section-title");
+const noIssuesCheckbox  = document.getElementById("no-issues-checkbox");
+const noIssuesToggle    = document.getElementById("no-issues-toggle");
+const submitHelper      = document.getElementById("submit-helper");
+const woliDetailNumber  = document.getElementById("woli-detail-number");
+const woliDetailWo      = document.getElementById("woli-detail-wo");
+const woliDetailTerritory = document.getElementById("woli-detail-territory");
+const woliDetailType    = document.getElementById("woli-detail-type");
+const woliDetailHours   = document.getElementById("woli-detail-hours");
+const woliDetailDuration= document.getElementById("woli-detail-duration");
+const nonIrrigationNote = document.getElementById("non-irrigation-note");
+const woRelatedSummary  = document.getElementById("wo-related-summary");
+const woRelatedWoliCount = document.getElementById("wo-related-woli-count");
+const woRelatedSaCount   = document.getElementById("wo-related-sa-count");
+const woRelatedFilesCount = document.getElementById("wo-related-files-count");
+
+const assetTab = {
+  filter: "all",
+  search: "",
+  selectedKey: "",
+};
+
+const mapTab = {
+  selectedKey: "",
+  calloutFormKey: "",
+  gisCreateType: "zone",
+};
+
+const mapFilters = {
+  zones: true,
+  controllers: true,
+  backflows: true,
+  query: "",
+};
+
+const sheetState = {
+  activeAssetKey: "",
+  detailLaunchTab: "details",
+  createLaunchTab: "details",
+};
+
+function getWoliById(woliId) {
+  return workOrder.wolis.find((w) => w.id === woliId) || null;
+}
+
+function getActiveWoli() {
+  return getWoliById(activeWoliId);
+}
+
+function isIrrigationWoli(woli) {
+  return Boolean(woli && woli.category === "irrigation");
+}
+
+function getOrCreateWoliSession(woliId) {
+  if (!woliSessions.has(woliId)) {
+    woliSessions.set(woliId, createInitialIrrigationSession());
+  }
+  return woliSessions.get(woliId);
+}
+
+function setActiveWoli(woliId) {
+  activeWoliId = woliId;
+  const woli = getActiveWoli();
+  if (isIrrigationWoli(woli)) {
+    state = getOrCreateWoliSession(woliId);
+  }
+  renderModeChrome();
+  renderWoliDetails();
+}
+
+function getCalloutRequirementMet(session) {
+  const hasCallouts = session.callouts.some(
+    (c) => (c.issue || "").trim().length > 0 && (c.calloutType === "Repair" || c.calloutType === "Enhancement")
+  );
+  return hasCallouts || Boolean(session.noIssuesFound);
+}
+
+function getApprovalRequirementMet(session) {
+  return Boolean(session.amAssigned && session.amName);
+}
+
+function getWoliProgress(woli) {
+  if (!isIrrigationWoli(woli)) return 0;
+  const session = getOrCreateWoliSession(woli.id);
+  let score = 0;
+  if (getCalloutRequirementMet(session)) score += 50;
+  if (getApprovalRequirementMet(session)) score += 50;
+  return score;
+}
+
+function updateSubmitEligibility() {
+  const active = getActiveWoli();
+  if (!active || !isIrrigationWoli(active)) {
+    document.getElementById("simulate-submit").disabled = true;
+    if (submitHelper) submitHelper.textContent = "Irrigation submit is only available for irrigation line items.";
+    return;
+  }
+
+  const calloutMet = getCalloutRequirementMet(state);
+  const approvalMet = getApprovalRequirementMet(state);
+  const blockers = [];
+  if (!calloutMet) blockers.push("Callouts");
+  if (!approvalMet) blockers.push("Account Manager assignment");
+
+  const submitBtn = document.getElementById("simulate-submit");
+  submitBtn.disabled = blockers.length > 0;
+  const requiredRemaining = state.requiredQuestions.length - getRequiredAnswered();
+  if (submitHelper) {
+    submitHelper.textContent = blockers.length
+      ? `Complete: ${blockers.join(" and ")}. Required questions remaining: ${requiredRemaining} (advisory).`
+      : `Ready to submit irrigation report. Required questions remaining: ${requiredRemaining} (advisory).`;
+  }
+}
+
+function renderResolverContext() {
+  if (!resolverMeta) return;
+  resolverMeta.textContent = `Resolved set: ${resolverContext.questionSetVersion} (Region: ${resolverContext.region}, Type: ${resolverContext.inspectionType}, Season: ${resolverContext.season}).`;
+}
+
+function renderModeChrome() {
+  phoneShell.classList.toggle("mode-woli", appMode === "woli");
+  phoneShell.classList.toggle("mode-wo", appMode !== "woli");
+
+  if (appMode === "wo") {
+    pageTitle.textContent = "Work Order";
+    pageSubtitle.textContent = `${workOrder.id} · ${workOrder.typeLabel}`;
+    woliParentBar.classList.add("hidden");
+    woliContext.classList.add("hidden");
+    nonIrrigationNote?.classList.add("hidden");
+    woRelatedSummary?.classList.remove("hidden");
+    document.querySelectorAll(".related-collapsible").forEach((section) => section.classList.add("hidden"));
+    document.querySelectorAll(".related-section-body input, .related-section-body select, .related-section-body textarea, .related-section-body button").forEach((el) => {
+      if (el.id === "open-review" || el.id === "simulate-submit" || el.id === "reset-flow") return;
+      el.disabled = false;
+    });
+    return;
+  }
+
+  const woli = getActiveWoli();
+  if (!woli) return;
+  woliParentBar.textContent = workOrder.id;
+  woliParentBar.classList.remove("hidden");
+  woliContext.textContent = "↳ Work Order Line Item";
+  woliContext.classList.remove("hidden");
+  pageTitle.textContent = workOrder.id;
+  pageSubtitle.textContent = `${woli.status} · ${woli.manHours} · ${woli.name}`;
+
+  woRelatedSummary?.classList.add("hidden");
+  document.querySelectorAll(".related-collapsible").forEach((section) => section.classList.remove("hidden"));
+
+  const isIrrigation = isIrrigationWoli(woli);
+  nonIrrigationNote?.classList.toggle("hidden", isIrrigation);
+  document.querySelectorAll(".related-section-body input, .related-section-body select, .related-section-body textarea, .related-section-body button").forEach((el) => {
+    if (el.id === "open-review" || el.id === "simulate-submit" || el.id === "reset-flow") return;
+    el.disabled = !isIrrigation;
+  });
+}
+
+function renderWoliDetails() {
+  const woli = getActiveWoli();
+  if (!woli) return;
+  woliDetailNumber.textContent = woli.number;
+  woliDetailWo.textContent = workOrder.id;
+  woliDetailTerritory.textContent = woli.serviceTerritory;
+  woliDetailType.textContent = woli.name;
+  woliDetailHours.textContent = woli.manHours;
+  woliDetailDuration.textContent = woli.duration;
+}
+
+function getWoliStatusBadgeClass(status) {
+  if (status === "COMPLETED") return "woli-status-complete";
+  if (status === "IN PROGRESS") return "woli-status-progress";
+  return "woli-status-new";
+}
+
+function getWoProgress() {
+  if (!workOrder.wolis.length) return 0;
+  const totalProgress = workOrder.wolis.reduce((sum, woli) => sum + getWoliProgress(woli), 0);
+  return Math.round(totalProgress / workOrder.wolis.length);
+}
+
+function renderWoliOverviewList() {
+  if (!woliOverviewList) return;
+  if (woliSectionTitle) woliSectionTitle.textContent = `Work Order Line Items (${workOrder.wolis.length})`;
+  woliOverviewList.innerHTML = "";
+
+  // Render WO-level progress ring
+  if (woProgressContainer) {
+    const woProgress = getWoProgress();
+    woProgressContainer.innerHTML = `<div class="wo-progress-ring">${woProgress}%</div>`;
+  }
+
+  workOrder.wolis.forEach((woli) => {
+    const item = document.createElement("article");
+    item.className = "woli-item";
+    item.dataset.woliId = woli.id;
+
+    const startDisabled = !isIrrigationWoli(woli);
+    const actionHtml = woli.status === "NEW"
+      ? `<button class="woli-action-btn start" data-woli-action="start" data-woli-id="${woli.id}" ${startDisabled ? "disabled" : ""}>NEW</button>`
+      : woli.status === "COMPLETED"
+        ? `<button class="woli-action-btn" data-woli-action="reopen" data-woli-id="${woli.id}">Reopen</button>`
+        : "";
+
+    item.innerHTML = `
+      <div class="woli-main">
+        <p class="woli-number">${woli.number}</p>
+        <p class="woli-type">${woli.name}</p>
+        ${startDisabled && woli.status === "NEW" ? '<p class="slds-text-body_small slds-text-color_weak">Use standard FSM flow.</p>' : ""}
+      </div>
+      <div class="woli-action">
+        ${actionHtml}
+      </div>
+    `;
+
+    woliOverviewList.appendChild(item);
+  });
+}
+
+function renderWoRelatedSummary() {
+  if (woRelatedWoliCount) woRelatedWoliCount.textContent = String(workOrder.wolis.length);
+  if (woRelatedSaCount) woRelatedSaCount.textContent = "1";
+  if (woRelatedFilesCount) woRelatedFilesCount.textContent = "0";
+}
+
+function openWoliWorkspace(woliId, launchReason = "open") {
+  const woli = getWoliById(woliId);
+  if (!woli) return;
+
+  if (launchReason === "start" && woli.status === "NEW" && isIrrigationWoli(woli)) {
+    woli.status = "IN PROGRESS";
+  }
+  if (launchReason === "reopen" && isIrrigationWoli(woli)) {
+    woli.status = "IN PROGRESS";
+  }
+
+  appMode = "woli";
+  setActiveWoli(woliId);
+  if (isIrrigationWoli(woli)) {
+    updateSubmitEligibility();
+    const targetTab = (launchReason === "start") ? "details" : (woli.status === "COMPLETED" ? "details" : "related");
+    setActiveTab(targetTab);
+  } else {
+    setActiveTab("details");
+  }
+  renderWoliOverviewList();
+}
+
+function returnToWorkOrderOverview() {
+  appMode = "wo";
+  activeWoliId = "";
+  setActiveTab("overview");
+  renderModeChrome();
+  renderWoliOverviewList();
+}
+
+function updateRelatedGuidanceExpansion() {
+  if (appMode !== "woli") return;
+  document.querySelectorAll(".related-collapsible").forEach((section) => setSectionCollapsed(section, true));
+
+  const session = state;
+  const calloutIncomplete = !getCalloutRequirementMet(session);
+  const approvalIncomplete = !getApprovalRequirementMet(session);
+
+  const firstTarget = calloutIncomplete
+    ? document.querySelector(".related-collapsible[data-section-id='related-callouts']")
+    : approvalIncomplete
+      ? document.querySelector(".related-collapsible[data-section-id='related-approvals']")
+      : document.querySelector(".related-collapsible[data-section-id='related-assets']");
+
+  if (firstTarget) setSectionCollapsed(firstTarget, false);
+}
+
+function getRequiredAnswered()  { return state.requiredQuestions.filter((q) => q.answered).length; }
+function getConfirmedCallouts() { return state.callouts.filter((c) => !c.resolved).length; }
+function getAlertZonesCount()   { return state.zones.filter((z) => z.status === "alert").length; }
+
+function getFilteredZones() {
+  if (state.clockFilter === "ALL") return state.zones;
+  return state.zones.filter((z) => z.controller === state.clockFilter);
+}
+
+function getAllAssets() {
+  return [
+    ...state.controllers.map((c) => ({ key: `controller:${c.id}`, type: "controller", name: c.name, description: c.description || "", ref: c })),
+    ...state.backflows.map((b)  => ({ key: `backflow:${b.id}`,    type: "backflow",   name: b.name, description: b.description || "", ref: b })),
+    ...state.zones.map((z)      => ({ key: `zone:${z.id}`,        type: "zone",       name: z.label,description: z.description || "", ref: z })),
+  ];
+}
+
+function getFilteredMapAssets() {
+  const query = mapFilters.query.trim().toLowerCase();
+  const clockFilteredZones = getFilteredZones();
+  const clockFilteredZoneNames = new Set(clockFilteredZones.map((zone) => zone.label));
+
+  return getAllAssets().filter((asset) => {
+    if (asset.type === "zone" && !clockFilteredZoneNames.has(asset.name)) return false;
+    if (asset.type === "zone" && !mapFilters.zones) return false;
+    if (asset.type === "controller" && !mapFilters.controllers) return false;
+    if (asset.type === "backflow" && !mapFilters.backflows) return false;
+    if (!query) return true;
+    return [asset.name, asset.description, asset.type].join(" ").toLowerCase().includes(query);
+  });
+}
+
+function setStage(nextStage) {
+  state.stage = nextStage;
+  document.querySelectorAll("#timeline li").forEach((item) => {
+    const order = ["RESOLVED", "BOOTSTRAP", "INSPECTING", "REVIEW", "COMPLETED"];
+    const currentIdx = order.indexOf(nextStage);
+    const itemIdx    = order.indexOf(item.dataset.stage);
+    item.classList.remove("active", "done");
+    if      (itemIdx < currentIdx)  item.classList.add("done");
+    else if (itemIdx === currentIdx) item.classList.add("active");
+  });
+}
+
+function setActiveTab(tabName) {
+  // Normalize legacy tab references so old handlers keep working.
+  const tabMap = {
+    map: "related",
+    assets: "related",
+    callouts: "related",
+    checklist: "related",
+  };
+  const mappedTabName = tabMap[tabName] || tabName;
+  navButtons.forEach((btn) => {
+    const shouldShow = !(appMode === "woli" && btn.dataset.tab === "overview");
+    btn.classList.toggle("hidden", !shouldShow);
+    btn.classList.toggle("active", btn.dataset.tab === mappedTabName && shouldShow);
+  });
+  navPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === mappedTabName));
+
+  if (appMode === "woli" && mappedTabName === "related") {
+    updateRelatedGuidanceExpansion();
+  }
+}
+
+function setSectionCollapsed(section, collapsed) {
+  section.classList.toggle("is-collapsed", collapsed);
+  const toggle = section.querySelector(".section-toggle");
+  if (toggle) toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+}
+
+function initOverviewSectionToggles() {
+  document.querySelectorAll(".overview-collapsible .section-toggle, .related-collapsible .section-toggle").forEach((toggle) => {
+    if (toggle.dataset.bound === "true") return;
+    toggle.dataset.bound = "true";
+    toggle.addEventListener("click", () => {
+      const section = toggle.closest(".overview-collapsible") || toggle.closest(".related-collapsible");
+      if (!section) return;
+      const collapsed = section.classList.contains("is-collapsed");
+      setSectionCollapsed(section, !collapsed);
+    });
+  });
+}
+
+function setSubmitMessage(message, tone) {
+  submitResult.textContent = message;
+  if      (tone === "ok")   submitResult.style.color = "#2e844a";
+  else if (tone === "warn") submitResult.style.color = "#8f4b00";
+  else                      submitResult.style.color = "#ba0517";
+}
+
+function routeZoneToCalloutContext(zone) {
+  // Navigate to map/list and open inline callout form for this zone
+  assetTab.selectedKey = `zone:${zone.id}`;
+  mapTab.selectedKey = `zone:${zone.id}`;
+  mapTab.calloutFormKey = `zone:${zone.id}`;
+  setActiveTab("related");
+}
+
+function renderSystemScope() {
+  const text = `${state.controllers.length} controllers / ${state.backflows.length} backflows / ${state.zones.length} zones`;
+  systemScope.textContent = text;
+  if (systemScopeDetail) systemScopeDetail.textContent = text;
+}
+
+function renderSystemCards() {
+  controllerList.innerHTML = "";
+  backflowList.innerHTML   = "";
+  state.controllers.forEach((c) => {
+    const li = document.createElement("li");
+    li.textContent = `${c.name} - ${c.model} (${c.zones.length}z)`;
+    controllerList.appendChild(li);
+  });
+  state.backflows.forEach((b) => {
+    const li = document.createElement("li");
+    li.textContent = `${b.name} - ${b.serial} (${b.status})`;
+    backflowList.appendChild(li);
+  });
+}
+
+function renderAssetSnapshot() {
+  if (!assetSnapshot || !mapCaption) return;
+  const filteredAlerts = getFilteredZones().filter((z) => z.status === "alert").length;
+  assetSnapshot.textContent = `${filteredAlerts} flagged in view (${getAlertZonesCount()} total).`;
+
+  if (!state.hasMap) {
+    mapCaption.textContent = `Map data unavailable. Manage assets directly via the list below.`;
+  } else if (state.clockFilter === "ALL") {
+    mapCaption.textContent = `Tap any of ${state.zones.length} zones to toggle status across ${state.controllers.length} clocks and ${state.backflows.length} backflows.`;
+  } else {
+    mapCaption.textContent = `Clock filter: ${state.clockFilter}. Showing ${getFilteredZones().length} zones in this clock.`;
+  }
+}
+
+function getPseudoCoordinates(x, y) {
+  const lat = (38.52 + (100 - y) * 0.0008).toFixed(6);
+  const lon = (121.762 + x * 0.00045).toFixed(6);
+  return `${lat}N  ${lon}W`;
+}
+
+function getControllerAnchor(name) {
+  if (name === "Controller A") return { x: 52, y: 18 };
+  if (name === "Controller B") return { x: 72, y: 48 };
+  return { x: 37, y: 50 };
+}
+
+function getMarkerPosition(asset) {
+  if (asset.type === "zone") return { x: asset.ref.mapX, y: asset.ref.mapY };
+  if (asset.type === "controller") {
+    if (asset.ref.mapX !== undefined && asset.ref.mapY !== undefined) {
+      return { x: asset.ref.mapX, y: asset.ref.mapY };
+    }
+    return getControllerAnchor(asset.name);
+  }
+  if (asset.type === "backflow") {
+    if (asset.ref.mapX !== undefined && asset.ref.mapY !== undefined) {
+      return { x: asset.ref.mapX, y: asset.ref.mapY };
+    }
+    return asset.name.includes("North") ? { x: 57, y: 14 } : { x: 63, y: 28 };
+  }
+  return { x: 50, y: 50 };
+}
+
+function closeMapSelectionCard() {
+  mapTab.selectedKey = "";
+  gisSelectionCard.classList.add("hidden");
+  renderMapGrid();
+}
+
+function closeMapDrawers() {
+  gisLayersSheet.classList.add("hidden");
+  gisFilterSheet.classList.add("hidden");
+  gisCreateSheet.classList.add("hidden");
+}
+
+function saveMapCardEdits() {
+  const selected = getAllAssets().find((a) => a.key === mapTab.selectedKey);
+  if (!selected) return;
+
+  const nameInput = document.getElementById("gis-edit-name");
+  const notesInput = document.getElementById("gis-edit-notes");
+  const controllerInput = document.getElementById("gis-edit-controller");
+  const backflowInput = document.getElementById("gis-edit-backflow");
+  const mapXInput = document.getElementById("gis-edit-mapx");
+  const mapYInput = document.getElementById("gis-edit-mapy");
+
+  const nextName = nameInput instanceof HTMLInputElement ? nameInput.value.trim() : selected.name;
+  if (!nextName) {
+    setSubmitMessage("Asset name cannot be blank.", "error");
+    return;
+  }
+
+  if (nextName !== selected.name && getAllAssets().some((a) => a.key !== selected.key && a.name.toLowerCase() === nextName.toLowerCase())) {
+    setSubmitMessage("Asset name already exists.", "error");
+    return;
+  }
+
+  renameAssetReferences(selected, selected.name, nextName);
+  selected.ref.description = notesInput instanceof HTMLTextAreaElement ? notesInput.value.trim() : selected.ref.description;
+
+  if (selected.type === "zone") {
+    if (controllerInput instanceof HTMLSelectElement) selected.ref.controller = controllerInput.value;
+    if (backflowInput instanceof HTMLSelectElement) selected.ref.backflow = backflowInput.value;
+  }
+
+  if (mapXInput instanceof HTMLInputElement) {
+    const x = parseFloat(mapXInput.value);
+    if (!isNaN(x)) selected.ref.mapX = Number(x.toFixed(2));
+  }
+  if (mapYInput instanceof HTMLInputElement) {
+    const y = parseFloat(mapYInput.value);
+    if (!isNaN(y)) selected.ref.mapY = Number(y.toFixed(2));
+  }
+
+  assetTab.selectedKey = selected.key;
+  setSubmitMessage(`Saved ${nextName}.`, "ok");
+  renderAll();
+}
+
+function removeMapSelectedAsset() {
+  const selected = getAllAssets().find((a) => a.key === mapTab.selectedKey);
+  if (!selected) return;
+  removeAssetFromSystem(selected);
+  if (assetTab.selectedKey === selected.key) assetTab.selectedKey = "";
+  mapTab.selectedKey = "";
+  setSubmitMessage(`${selected.name} removed from map.`, "warn");
+  renderAll();
+}
+
+function renderMapGrid() {
+  mapGrid.innerHTML = "";
+  gisMapCanvas.classList.remove("list-mode");
+  
+  if (!state.hasMap) {
+    renderMapListView();
+    return;
+  }
+
+  // Restore canvas overflow for map view
+  gisMapCanvas.style.overflow = "hidden";
+  
+  const visibleZones = getFilteredZones().filter((zone) => {
+    if (!mapFilters.zones) return false;
+    if (!mapFilters.query.trim()) return true;
+    const query = mapFilters.query.trim().toLowerCase();
+    return [zone.label, zone.description, zone.controller, zone.backflow, zone.status].join(" ").toLowerCase().includes(query);
+  });
+  const controllerNames = new Set(visibleZones.map((z) => z.controller));
+  const backflowNames = new Set(visibleZones.map((z) => z.backflow));
+  const mapAssets = [
+    ...state.controllers.filter((c) => mapFilters.controllers && controllerNames.has(c.name)).map((c) => ({ key: `controller:${c.id}`, type: "controller", name: c.name, ref: c })),
+    ...state.backflows.filter((b) => mapFilters.backflows && backflowNames.has(b.name)).map((b) => ({ key: `backflow:${b.id}`, type: "backflow", name: b.name, ref: b })),
+    ...visibleZones.map((z) => ({ key: `zone:${z.id}`, type: "zone", name: z.label, ref: z })),
+  ];
+
+  mapAssets.forEach((asset) => {
+    const pos = getMarkerPosition(asset);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `zone ${asset.type === "zone" ? (asset.ref.status === "alert" ? "zone-alert" : "zone-ok") : "zone-ok"}`;
+    if (asset.type === "controller") btn.classList.add("marker-controller");
+    if (asset.type === "backflow") btn.classList.add("marker-backflow");
+    if (mapTab.selectedKey === asset.key) btn.classList.add("is-selected");
+    if (hasOpenCalloutForAsset(asset)) btn.classList.add("has-callout");
+    btn.style.left = `${pos.x}%`;
+    btn.style.top = `${pos.y}%`;
+    btn.dataset.assetKey = asset.key;
+    if (asset.type === "zone") btn.dataset.zoneId = asset.ref.id;
+    btn.setAttribute("aria-label", `${asset.name} ${asset.type}`);
+    btn.title = asset.type === "zone"
+      ? `${asset.name} - ${asset.ref.controller} / ${asset.ref.backflow}`
+      : asset.name;
+    mapGrid.appendChild(btn);
+  });
+
+  if (!mapAssets.length) {
+    const p = document.createElement("p");
+    p.className = "slds-text-body_small slds-text-color_weak";
+    p.style.position = "absolute";
+    p.style.left = "12px";
+    p.style.bottom = "12px";
+    p.textContent = "No assets match this map filter.";
+    mapGrid.appendChild(p);
+  }
+
+  renderMapSelectionCard();
+}
+
+function renderMapListView() {
+  // Adjust canvas overflow for list view to show selection card
+  gisMapCanvas.style.overflow = "visible";
+  gisMapCanvas.classList.add("list-mode");
+
+  const visibleZones = getFilteredZones().filter((zone) => {
+    if (!mapFilters.zones) return false;
+    if (!mapFilters.query.trim()) return true;
+    const query = mapFilters.query.trim().toLowerCase();
+    return [zone.label, zone.description, zone.controller, zone.backflow, zone.status].join(" ").toLowerCase().includes(query);
+  });
+  const controllerNames = new Set(visibleZones.map((z) => z.controller));
+  const backflowNames = new Set(visibleZones.map((z) => z.backflow));
+  const listAssets = [
+    ...state.controllers.filter((c) => mapFilters.controllers && controllerNames.has(c.name)).map((c) => ({ key: `controller:${c.id}`, type: "controller", name: c.name, ref: c })),
+    ...state.backflows.filter((b) => mapFilters.backflows && backflowNames.has(b.name)).map((b) => ({ key: `backflow:${b.id}`, type: "backflow", name: b.name, ref: b })),
+    ...visibleZones.map((z) => ({ key: `zone:${z.id}`, type: "zone", name: z.label, ref: z })),
+  ];
+
+  if (!listAssets.length) {
+    const p = document.createElement("p");
+    p.className = "slds-text-body_small slds-text-color_weak slds-p-around_small";
+    p.textContent = "No assets match this filter.";
+    mapGrid.appendChild(p);
+    gisSelectionCard.classList.add("hidden");
+    return;
+  }
+
+  const list = document.createElement("div");
+  list.style.cssText = "padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; max-height: 90vh; background: #161c26;";
+
+  listAssets.forEach((asset) => {
+    const isExpanded = mapTab.selectedKey === asset.key;
+    const pos = getMarkerPosition(asset);
+    const status = getAssetStatusText(asset);
+    const subtype = getAssetTypeLabel(asset.type);
+    
+    const itemContainer = document.createElement("div");
+    itemContainer.style.cssText = "flex: 0 0 auto; border: 1px solid #bec7d8; border-radius: 8px; overflow: hidden; background: #eef3fc;";
+    
+    const itemButton = document.createElement("div");
+    itemButton.setAttribute("role", "button");
+    itemButton.tabIndex = 0;
+    itemButton.style.cssText = `
+      appearance: none;
+      -webkit-appearance: none;
+      width: 100%;
+      padding: 14px 12px;
+      background: ${isExpanded ? "#dbeafe" : "#eef3fc"};
+      color: #111827;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.35;
+      min-height: 60px;
+    `;
+    
+    const typeLabel = asset.type === "zone" ? "Z" : asset.type === "controller" ? "C" : "B";
+    const statusIcon = asset.type === "zone" && asset.ref.status === "alert" ? "⚠️ " : "";
+    
+    itemButton.innerHTML = `
+      <span style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 26px;">
+        <span style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #334155; border-radius: 4px; font-size: 0.9rem; font-weight: 800; color: #ffffff; flex: 0 0 auto; line-height: 1;">${typeLabel}</span>
+        <span style="color: #0f172a; font-size: 1.14rem; font-weight: 800; letter-spacing: 0.01em; line-height: 1.25; flex: 1 1 auto;">${statusIcon}${asset.name}</span>
+        <span style="margin-left: auto; color: #0f172a; font-size: 1.3rem; font-weight: 800; line-height: 1; flex: 0 0 auto;">${isExpanded ? "-" : "+"}</span>
+      </span>
+    `;
+    
+    const toggleExpanded = () => {
+      mapTab.selectedKey = isExpanded ? null : asset.key;
+      renderMapGrid();
+    };
+    itemButton.onclick = toggleExpanded;
+    itemButton.onkeydown = (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleExpanded();
+      }
+    };
+    
+    itemContainer.appendChild(itemButton);
+    
+    if (isExpanded) {
+      const expandedContent = document.createElement("div");
+      expandedContent.style.cssText = "padding: 12px; border-top: 1px solid #3e4455; background: #1b2028; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;";
+      
+      const zoneControls = asset.type === "zone"
+        ? `
+          <div style="grid-column: 1 / -1;">
+            <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Clock</label>
+            <select class="gis-list-controller slds-select" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 6px; border-radius: 6px;" data-asset-key="${asset.key}">
+              ${state.controllers.map((c) => `<option value="${c.name}" ${c.name === asset.ref.controller ? "selected" : ""}>${c.name}</option>`).join("")}
+            </select>
+          </div>
+          <div style="grid-column: 1 / -1;">
+            <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Backflow</label>
+            <select class="gis-list-backflow slds-select" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 6px; border-radius: 6px;" data-asset-key="${asset.key}">
+              ${state.backflows.map((b) => `<option value="${b.name}" ${b.name === asset.ref.backflow ? "selected" : ""}>${b.name}</option>`).join("")}
+            </select>
+          </div>
+        `
+        : "";
+      
+      expandedContent.innerHTML = `
+        <div>
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Type</label>
+          <div style="color: #f2f4f8; font-size: 0.84rem;">${subtype}</div>
+        </div>
+        <div>
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Status</label>
+          <div style="color: #f2f4f8; font-size: 0.84rem;">${status}</div>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Name</label>
+          <input class="gis-list-edit-name slds-input" type="text" value="${asset.name}" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 6px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}" />
+        </div>
+        ${zoneControls}
+        <div>
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Map X (%)</label>
+          <input class="gis-list-edit-mapx slds-input" type="number" min="0" max="100" step="0.1" value="${asset.ref.mapX || pos.x}" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 6px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}" />
+        </div>
+        <div>
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Map Y (%)</label>
+          <input class="gis-list-edit-mapy slds-input" type="number" min="0" max="100" step="0.1" value="${asset.ref.mapY || pos.y}" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 6px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label style="display: block; color: #aeb6c3; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">Notes</label>
+          <textarea class="gis-list-edit-notes slds-textarea" rows="2" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #465062; padding: 8px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}">${asset.ref.description || ""}</textarea>
+        </div>
+        <div style="grid-column: 1 / -1; display: flex; gap: 6px; padding-top: 8px;">
+          <button type="button" class="gis-list-save" style="flex: 1; padding: 8px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Save</button>
+          <button type="button" class="gis-list-toggle-status" style="flex: 1; padding: 8px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Status</button>
+          <button type="button" class="gis-list-callout" style="flex: 1; padding: 8px; background: ${mapTab.calloutFormKey === asset.key ? '#3b4454' : '#2f3744'}; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Callout</button>
+          <button type="button" class="gis-list-remove" style="flex: 1; padding: 8px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Remove</button>
+        </div>
+        ${mapTab.calloutFormKey === asset.key ? `
+        <div style="grid-column: 1 / -1; border-top: 1px solid #3e4455; padding-top: 10px; margin-top: 4px;">
+          <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Callout — ${asset.name}</label>
+          <textarea class="gis-callout-issue-textarea" placeholder="Describe the issue..." style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #5a6475; padding: 8px; border-radius: 6px; font-size: 0.84rem; min-height: 64px; box-sizing: border-box; resize: vertical;" data-asset-key="${asset.key}"></textarea>
+          <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin: 8px 0 6px;">Callout Type</label>
+          <select class="gis-callout-type-select" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #5a6475; padding: 8px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}">
+            <option value="Repair">Repair</option>
+            <option value="Enhancement">Enhancement</option>
+          </select>
+          <div style="display: flex; gap: 6px; margin-top: 6px;">
+            <button type="button" class="gis-callout-submit" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Save Callout</button>
+            <button type="button" class="gis-callout-cancel" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Cancel</button>
+          </div>
+        </div>
+        ` : ""}
+      `;
+      
+      itemContainer.appendChild(expandedContent);
+    }
+    
+    list.appendChild(itemContainer);
+  });
+
+  mapGrid.appendChild(list);
+  mapGrid.querySelectorAll(".gis-list-save").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      const asset = getAllAssets().find((a) => a.key === assetKey);
+      if (!asset) return;
+      const nameInput = mapGrid.querySelector(`.gis-list-edit-name[data-asset-key="${assetKey}"]`);
+      const mapxInput = mapGrid.querySelector(`.gis-list-edit-mapx[data-asset-key="${assetKey}"]`);
+      const mapyInput = mapGrid.querySelector(`.gis-list-edit-mapy[data-asset-key="${assetKey}"]`);
+      const notesInput = mapGrid.querySelector(`.gis-list-edit-notes[data-asset-key="${assetKey}"]`);
+      const controllerSelect = mapGrid.querySelector(`.gis-list-controller[data-asset-key="${assetKey}"]`);
+      const backflowSelect = mapGrid.querySelector(`.gis-list-backflow[data-asset-key="${assetKey}"]`);
+      const newName = nameInput.value.trim();
+      if (!newName) { alert("Asset name is required."); return; }
+      const duplicate = getAllAssets().find((a) => a.key !== assetKey && a.name === newName);
+      if (duplicate) { alert("An asset with this name already exists."); return; }
+      if (asset.type === "zone") {
+        asset.ref.label = newName;
+      } else {
+        asset.ref.name = newName;
+      }
+      asset.ref.mapX = parseFloat(mapxInput.value) || 0;
+      asset.ref.mapY = parseFloat(mapyInput.value) || 0;
+      asset.ref.description = notesInput.value;
+      if (controllerSelect) asset.ref.controller = controllerSelect.value;
+      if (backflowSelect) asset.ref.backflow = backflowSelect.value;
+      renderAssetRegistryList();
+      renderCallouts();
+      renderMapGrid();
+    });
+  });
+  mapGrid.querySelectorAll(".gis-list-toggle-status").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      const asset = getAllAssets().find((a) => a.key === assetKey);
+      if (!asset || asset.type !== "zone") return;
+      asset.ref.status = asset.ref.status === "alert" ? "ok" : "alert";
+      renderAssetSnapshot();
+      renderCallouts();
+      renderAssetRegistryList();
+      renderMapGrid();
+    });
+  });
+  mapGrid.querySelectorAll(".gis-list-callout").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      mapTab.calloutFormKey = mapTab.calloutFormKey === assetKey ? "" : assetKey;
+      renderMapGrid();
+    });
+  });
+  mapGrid.querySelectorAll(".gis-callout-submit").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      const textarea = mapGrid.querySelector(`.gis-callout-issue-textarea[data-asset-key="${assetKey}"]`);
+      const calloutTypeSelect = mapGrid.querySelector(`.gis-callout-type-select[data-asset-key="${assetKey}"]`);
+      const issue = textarea ? textarea.value.trim() : "";
+      const calloutType = calloutTypeSelect ? calloutTypeSelect.value : "";
+      if (!issue) {
+        if (textarea) textarea.style.borderColor = "#8a3540";
+        return;
+      }
+      if (!calloutType) {
+        return;
+      }
+      const asset = getAllAssets().find((a) => a.key === assetKey);
+      if (!asset) return;
+      if (!state.callouts) state.callouts = [];
+      state.callouts.push({
+        id: Date.now(),
+        assetKey,
+        title: asset.name,
+        issue,
+        calloutType,
+        timestamp: new Date().toISOString(),
+        resolved: false,
+      });
+      if (asset.type === "zone") asset.ref.status = "alert";
+      mapTab.calloutFormKey = "";
+      renderCallouts();
+      renderAssetSnapshot();
+      renderMapGrid();
+    });
+  });
+  mapGrid.querySelectorAll(".gis-callout-cancel").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      mapTab.calloutFormKey = "";
+      renderMapGrid();
+    });
+  });
+  mapGrid.querySelectorAll(".gis-list-remove").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      if (!confirm("Remove this asset?")) return;
+      const asset = getAllAssets().find((a) => a.key === assetKey);
+      if (!asset) return;
+      if (asset.type === "zone") {
+        state.zones = state.zones.filter((z) => z.id !== asset.ref.id);
+      } else if (asset.type === "controller") {
+        state.controllers = state.controllers.filter((c) => c.id !== asset.ref.id);
+      } else if (asset.type === "backflow") {
+        state.backflows = state.backflows.filter((b) => b.id !== asset.ref.id);
+      }
+      mapTab.selectedKey = null;
+      renderAssetSnapshot();
+      renderCallouts();
+      renderAssetRegistryList();
+      renderMapGrid();
+    });
+  });
+  gisSelectionCard.classList.add("hidden");
+}
+
+function renderMapSelectionCard() {
+  gisSelectionCard.classList.add("hidden");
+}
+
+function renderClockFilterOptions() {
+  clockFilter.innerHTML = `<option value="ALL">All Clocks</option>`;
+  state.controllers.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c.name;
+    opt.textContent = c.name;
+    clockFilter.appendChild(opt);
+  });
+  clockFilter.value = state.clockFilter;
+}
+
+function renderMapFilterControls() {
+  filterZones.checked = mapFilters.zones;
+  filterControllers.checked = mapFilters.controllers;
+  filterBackflows.checked = mapFilters.backflows;
+  gisFilterSearch.value = mapFilters.query;
+}
+
+function renderCreateAssetSelectors() {
+  gisCreateController.innerHTML = "";
+  state.controllers.forEach((controller) => {
+    const opt = document.createElement("option");
+    opt.value = controller.name;
+    opt.textContent = controller.name;
+    gisCreateController.appendChild(opt);
+  });
+
+  gisCreateBackflow.innerHTML = "";
+  state.backflows.forEach((backflow) => {
+    const opt = document.createElement("option");
+    opt.value = backflow.name;
+    opt.textContent = backflow.name;
+    gisCreateBackflow.appendChild(opt);
+  });
+}
+
+function renderAssetAdminSelectors() {
+  addZoneController.innerHTML = "";
+  addZoneBackflow.innerHTML = "";
+  state.controllers.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c.name;
+    opt.textContent = c.name;
+    addZoneController.appendChild(opt);
+  });
+  state.backflows.forEach((b) => {
+    const opt = document.createElement("option");
+    opt.value = b.name;
+    opt.textContent = b.name;
+    addZoneBackflow.appendChild(opt);
+  });
+}
+
+function renderCreateAssetDefaults() {
+  renderCreateAssetSelectors();
+  const zoneDefaults = state.controllers[0]?.name || "";
+  const backflowDefaults = state.backflows[0]?.name || "";
+  if (!gisCreateController.value) gisCreateController.value = zoneDefaults;
+  if (!gisCreateBackflow.value) gisCreateBackflow.value = backflowDefaults;
+  // Auto-fill name based on current type
+  if (gisCreateName && !gisCreateName.value.trim()) {
+    gisCreateName.value = getAutoName(mapTab.gisCreateType || "zone");
+  }
+}
+
+function showAssetAdminMessage(message, tone = "warn") {
+  assetAdminMessage.textContent = message;
+  if (tone === "ok") assetAdminMessage.style.color = "#2e844a";
+  else if (tone === "error") assetAdminMessage.style.color = "#ba0517";
+  else assetAdminMessage.style.color = "#8f4b00";
+}
+
+function renameAssetReferences(selected, oldName, nextName) {
+  if (selected.type === "zone") {
+    selected.ref.label = nextName;
+    state.callouts.forEach((callout) => {
+      if (callout.title === oldName) callout.title = nextName;
+    });
+    return;
+  }
+
+  if (selected.type === "controller") {
+    selected.ref.name = nextName;
+    state.zones.forEach((zone) => {
+      if (zone.controller === oldName) zone.controller = nextName;
+    });
+    return;
+  }
+
+  if (selected.type === "backflow") {
+    selected.ref.name = nextName;
+    state.zones.forEach((zone) => {
+      if (zone.backflow === oldName) zone.backflow = nextName;
+    });
+  }
+}
+
+function removeAssetFromSystem(selected) {
+  if (selected.type === "zone") {
+    state.zones = state.zones.filter((z) => z.id !== selected.ref.id);
+    state.callouts = state.callouts.filter((c) => c.assetKey !== selected.key && c.title !== selected.name);
+    return;
+  }
+
+  if (selected.type === "controller") {
+    const zoneNames = state.zones.filter((z) => z.controller === selected.name).map((z) => z.label);
+    state.controllers = state.controllers.filter((c) => c.id !== selected.ref.id);
+    state.zones = state.zones.filter((z) => z.controller !== selected.name);
+    state.callouts = state.callouts.filter((c) => !zoneNames.includes(c.title));
+    return;
+  }
+
+  if (selected.type === "backflow") {
+    state.backflows = state.backflows.filter((b) => b.id !== selected.ref.id);
+    state.zones.forEach((z) => {
+      if (z.backflow === selected.name) z.backflow = "Unassigned Backflow";
+    });
+  }
+}
+
+function getAutoName(type) {
+  if (type === "zone") return `Zone ${state.zones.length + 1}`;
+  if (type === "controller") {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    return `Controller ${letters[state.controllers.length] || (state.controllers.length + 1)}`;
+  }
+  if (type === "backflow") {
+    const dirs = ["North", "South", "East", "West", "Main"];
+    return `Backflow ${dirs[state.backflows.length] || (state.backflows.length + 1)}`;
+  }
+  return "";
+}
+
+function addAssetToSystem() {
+  const type = mapTab.gisCreateType || "zone";
+  const name = gisCreateName.value.trim();
+  if (!name) {
+    setSubmitMessage("Name is required to add an asset.", "warn");
+    return;
+  }
+
+  if (getAllAssets().some((a) => a.name.toLowerCase() === name.toLowerCase())) {
+    setSubmitMessage("Asset name already exists. Use a unique name.", "warn");
+    return;
+  }
+
+  const userMapX = gisCreateMapX && gisCreateMapX.value.trim() ? parseFloat(gisCreateMapX.value) : null;
+  const userMapY = gisCreateMapY && gisCreateMapY.value.trim() ? parseFloat(gisCreateMapY.value) : null;
+
+  if (type === "controller") {
+    const id = `controller-${Date.now()}`;
+    const controller = {
+      id,
+      name,
+      model: "ArcGIS Integrated Controller",
+      description: "Added from FSM Native GIS map.",
+      zones: [],
+    };
+    if (!isNaN(userMapX)) controller.mapX = Number(userMapX.toFixed(2));
+    if (!isNaN(userMapY)) controller.mapY = Number(userMapY.toFixed(2));
+    state.controllers.push(controller);
+    assetTab.selectedKey = `controller:${id}`;
+    mapTab.selectedKey = assetTab.selectedKey;
+    gisCreateName.value = "";
+    gisCreateNotes.value = "";
+    if (gisCreateMapX) gisCreateMapX.value = "";
+    if (gisCreateMapY) gisCreateMapY.value = "";
+    setSubmitMessage(`${name} added as Controller.`, "ok");
+    renderAll();
+    return;
+  }
+
+  if (type === "backflow") {
+    const id = `bf-${Date.now()}`;
+    const backflow = {
+      id,
+      name,
+      serial: `BFS-${String(Date.now()).slice(-5)}`,
+      status: "Pass",
+      description: "Added from FSM Native GIS map.",
+    };
+    if (!isNaN(userMapX)) backflow.mapX = Number(userMapX.toFixed(2));
+    if (!isNaN(userMapY)) backflow.mapY = Number(userMapY.toFixed(2));
+    state.backflows.push(backflow);
+    assetTab.selectedKey = `backflow:${id}`;
+    mapTab.selectedKey = assetTab.selectedKey;
+    gisCreateName.value = "";
+    gisCreateNotes.value = "";
+    if (gisCreateMapX) gisCreateMapX.value = "";
+    if (gisCreateMapY) gisCreateMapY.value = "";
+    setSubmitMessage(`${name} added as Backflow.`, "ok");
+    renderAll();
+    return;
+  }
+
+  const zoneIdNum = state.zones.length + 1;
+  const zoneId = `zone-${zoneIdNum}`;
+  const anchor = getControllerAnchor(gisCreateController.value || state.controllers[0]?.name || "Controller A");
+  let mapX = userMapX !== null && !isNaN(userMapX) ? Number(userMapX.toFixed(2)) : Number((anchor.x + (Math.random() * 8 - 4)).toFixed(2));
+  let mapY = userMapY !== null && !isNaN(userMapY) ? Number(userMapY.toFixed(2)) : Number((anchor.y + 20 + (Math.random() * 8 - 4)).toFixed(2));
+  
+  state.zones.push({
+    id: zoneId,
+    label: name,
+    status: "ok",
+    controller: gisCreateController.value || "Controller A",
+    backflow: gisCreateBackflow.value || "Backflow North",
+    description: gisCreateNotes.value.trim() || "New zone added from FSM Native GIS map.",
+    mapX,
+    mapY,
+  });
+
+  assetTab.selectedKey = `zone:${zoneId}`;
+  mapTab.selectedKey = assetTab.selectedKey;
+  gisCreateName.value = "";
+  gisCreateNotes.value = "";
+  if (gisCreateMapX) gisCreateMapX.value = "";
+  if (gisCreateMapY) gisCreateMapY.value = "";
+  setSubmitMessage(`${name} added as Zone.`, "ok");
+  renderAll();
+}
+
+function renderAssetOptions() {
+  // No-op — callout form removed; assets logged inline from map
+}
+
+function getAssetTypeLabel(type) {
+  if (type === "zone") return "Zone";
+  if (type === "controller") return "Controller";
+  if (type === "backflow") return "Backflow";
+  return type;
+}
+
+function getAssetStatusText(asset) {
+  if (asset.type === "zone") {
+    return asset.ref.status === "alert" ? "Follow-up" : "Stable";
+  }
+  if (asset.type === "backflow") {
+    return asset.ref.status || "Unknown";
+  }
+  return "Active";
+}
+
+function getFilteredAssetsForTab() {
+  const allAssets = getAllAssets();
+  const typeFiltered = assetTab.filter === "all"
+    ? allAssets
+    : allAssets.filter((a) => a.type === assetTab.filter);
+
+  const query = assetTab.search.trim().toLowerCase();
+  if (!query) return typeFiltered;
+
+  return typeFiltered.filter((a) => {
+    const haystack = `${a.name} ${a.description} ${a.type}`.toLowerCase();
+    return haystack.includes(query);
+  });
+}
+
+function getSelectedAsset() {
+  return getAllAssets().find((a) => a.key === assetTab.selectedKey) || null;
+}
+
+function hasOpenCalloutForAsset(asset) {
+  if (asset.type === "zone") {
+    return state.callouts.some((c) => !c.resolved && c.assetKey === asset.key);
+  }
+  if (asset.type === "controller") {
+    return state.callouts.some((c) => {
+      if (c.resolved) return false;
+      const zone = state.zones.find((z) => `zone:${z.id}` === c.assetKey);
+      return Boolean(zone && zone.controller === asset.name);
+    });
+  }
+  if (asset.type === "backflow") {
+    return state.callouts.some((c) => {
+      if (c.resolved) return false;
+      if (c.assetKey === asset.key) return true;
+      const zone = state.zones.find((z) => `zone:${z.id}` === c.assetKey);
+      return Boolean(zone && zone.backflow === asset.name);
+    });
+  }
+  return false;
+}
+
+function getActiveDetailAsset() {
+  return getAllAssets().find((a) => a.key === sheetState.activeAssetKey) || null;
+}
+
+function closeDecisionModal() {
+  decisionModal.classList.add("hidden");
+  decisionActions.innerHTML = "";
+}
+
+function openDecisionModal(title, message, actions) {
+  decisionTitle.textContent = title;
+  decisionMessage.textContent = message;
+  decisionActions.innerHTML = "";
+
+  actions.forEach((action) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = action.variant || "slds-button slds-button_neutral";
+    btn.textContent = action.label;
+    btn.addEventListener("click", () => {
+      closeDecisionModal();
+      action.onClick();
+    });
+    decisionActions.appendChild(btn);
+  });
+
+  decisionModal.classList.remove("hidden");
+}
+
+function populateDetailSelectors() {
+  detailController.innerHTML = "";
+  state.controllers.forEach((controller) => {
+    const opt = document.createElement("option");
+    opt.value = controller.name;
+    opt.textContent = controller.name;
+    detailController.appendChild(opt);
+  });
+
+  detailBackflow.innerHTML = "";
+  state.backflows.forEach((backflow) => {
+    const opt = document.createElement("option");
+    opt.value = backflow.name;
+    opt.textContent = backflow.name;
+    detailBackflow.appendChild(opt);
+  });
+}
+
+function readDetailDraft() {
+  return {
+    name: detailName.value.trim(),
+    notes: detailNotes.value.trim(),
+    mapX: detailMapX.value.trim(),
+    mapY: detailMapY.value.trim(),
+    controller: detailController.value,
+    backflow: detailBackflow.value,
+  };
+}
+
+function isDetailDirty() {
+  const asset = getActiveDetailAsset();
+  if (!asset) return false;
+  const draft = readDetailDraft();
+  const currentPos = getMarkerPosition(asset);
+  const currentName = asset.name;
+  const currentNotes = (asset.ref.description || "").trim();
+  const currentMapX = String(asset.ref.mapX ?? currentPos.x);
+  const currentMapY = String(asset.ref.mapY ?? currentPos.y);
+
+  if (draft.name !== currentName) return true;
+  if (draft.notes !== currentNotes) return true;
+  if (draft.mapX && draft.mapX !== currentMapX) return true;
+  if (draft.mapY && draft.mapY !== currentMapY) return true;
+  if (asset.type === "zone") {
+    if (draft.controller !== asset.ref.controller) return true;
+    if (draft.backflow !== asset.ref.backflow) return true;
+  }
+  return false;
+}
+
+function applyDetailSave() {
+  const asset = getActiveDetailAsset();
+  if (!asset) return false;
+  const draft = readDetailDraft();
+
+  if (!draft.name) {
+    setSubmitMessage("Asset name cannot be blank.", "error");
+    return false;
+  }
+
+  if (draft.name !== asset.name && getAllAssets().some((a) => a.key !== asset.key && a.name.toLowerCase() === draft.name.toLowerCase())) {
+    setSubmitMessage("Asset name already exists.", "error");
+    return false;
+  }
+
+  renameAssetReferences(asset, asset.name, draft.name);
+  asset.ref.description = draft.notes;
+
+  if (asset.type === "zone") {
+    asset.ref.controller = draft.controller;
+    asset.ref.backflow = draft.backflow;
+  }
+
+  const nextX = parseFloat(draft.mapX);
+  const nextY = parseFloat(draft.mapY);
+  if (!isNaN(nextX)) asset.ref.mapX = Number(nextX.toFixed(2));
+  if (!isNaN(nextY)) asset.ref.mapY = Number(nextY.toFixed(2));
+
+  setSubmitMessage(`Saved ${draft.name}.`, "ok");
+  assetTab.selectedKey = asset.key;
+  mapTab.selectedKey = asset.key;
+  renderAll();
+  openDetailSheet(asset.key, sheetState.detailLaunchTab);
+  return true;
+}
+
+function closeDetailSheet(force = false) {
+  if (!force && isDetailDirty()) {
+    openDecisionModal(
+      "Unsaved Changes",
+      "Save changes before closing this asset?",
+      [
+        {
+          label: "Save and Close",
+          variant: "slds-button slds-button_brand",
+          onClick: () => {
+            if (applyDetailSave()) closeDetailSheet(true);
+          },
+        },
+        {
+          label: "Discard Changes",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => closeDetailSheet(true),
+        },
+        {
+          label: "Keep Editing",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => {},
+        },
+      ]
+    );
+    return;
+  }
+
+  assetDetailSheet.classList.add("hidden");
+  detailCalloutComposer.classList.add("hidden");
+  detailCalloutText.value = "";
+}
+
+function openDetailSheet(assetKey, launchTab = "details") {
+  const asset = getAllAssets().find((a) => a.key === assetKey);
+  if (!asset) return;
+
+  sheetState.activeAssetKey = assetKey;
+  sheetState.detailLaunchTab = launchTab;
+  mapTab.selectedKey = assetKey;
+  assetTab.selectedKey = assetKey;
+
+  populateDetailSelectors();
+
+  detailSheetTitle.textContent = asset.name;
+  detailContext.textContent = `${getAssetTypeLabel(asset.type)} • ${getAssetStatusText(asset)}`;
+  detailName.value = asset.name;
+  detailNotes.value = asset.ref.description || "";
+  const pos = getMarkerPosition(asset);
+  detailMapX.value = asset.ref.mapX ?? pos.x;
+  detailMapY.value = asset.ref.mapY ?? pos.y;
+  detailToggleStatus.disabled = asset.type !== "zone";
+
+  if (asset.type === "zone") {
+    detailZoneLinks.style.display = "grid";
+    detailController.value = asset.ref.controller;
+    detailBackflow.value = asset.ref.backflow;
+  } else {
+    detailZoneLinks.style.display = "none";
+  }
+
+  const detailProgramsSection = document.getElementById("detail-programs-section");
+  const detailProgramsList    = document.getElementById("detail-programs-list");
+  const detailProgramsCount   = document.getElementById("detail-programs-count");
+  if (detailProgramsSection && detailProgramsList && detailProgramsCount) {
+    if (asset.type === "controller") {
+      const programs = asset.ref.programs || [];
+      detailProgramsCount.textContent = `(${programs.length})`;
+      detailProgramsList.innerHTML = programs.length
+        ? programs.map((p) => {
+            const days    = (p.scheduleDays || []).join("/") || "—";
+            const dot     = p.isActive ? "🟢" : "⚪";
+            const seasonal = p.seasonalAdjustPct ? ` · ${p.seasonalAdjustPct}% adj.` : "";
+            return `<li style="padding:6px 0;border-bottom:1px solid #3e4a5b;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-weight:600;color:#d0d8e4;">${dot} ${p.programName}</span>
+              <span style="color:#8e9aac;">${days} · ${p.startTime || "—"} · ${p.zone || "—"} · ${p.runTimeMinutes != null ? p.runTimeMinutes + " min" : "—"}${seasonal}</span>
+            </li>`;
+          }).join("")
+        : `<li style="color:#8e9aac;padding:6px 0;">No programs recorded for this controller.</li>`;
+      detailProgramsSection.classList.remove("hidden");
+    } else {
+      detailProgramsSection.classList.add("hidden");
+    }
+  }
+
+
+  detailCalloutText.value = "";
+  renderDetailAssetCallouts();
+  assetDetailSheet.classList.remove("hidden");
+}
+
+function openCreateSheet(launchTab = "details") {
+  sheetState.createLaunchTab = launchTab;
+  createType.value = "zone";
+  createName.value = getAutoName("zone");
+  createMapX.value = "";
+  createMapY.value = "";
+  createNotes.value = "";
+
+  createController.innerHTML = "";
+  state.controllers.forEach((controller) => {
+    const opt = document.createElement("option");
+    opt.value = controller.name;
+    opt.textContent = controller.name;
+    createController.appendChild(opt);
+  });
+
+  createBackflow.innerHTML = "";
+  state.backflows.forEach((backflow) => {
+    const opt = document.createElement("option");
+    opt.value = backflow.name;
+    opt.textContent = backflow.name;
+    createBackflow.appendChild(opt);
+  });
+
+  createZoneLinks.style.display = "grid";
+  assetCreateSheet.classList.remove("hidden");
+}
+
+function closeCreateSheet() {
+  assetCreateSheet.classList.add("hidden");
+}
+
+function saveCreateSheet() {
+  const type = createType.value;
+  const name = createName.value.trim();
+  if (!name) {
+    setSubmitMessage("Name is required to add an asset.", "error");
+    return;
+  }
+
+  if (getAllAssets().some((a) => a.name.toLowerCase() === name.toLowerCase())) {
+    setSubmitMessage("Asset name already exists.", "error");
+    return;
+  }
+
+  const x = parseFloat(createMapX.value);
+  const y = parseFloat(createMapY.value);
+
+  if (type === "controller") {
+    const id = `controller-${Date.now()}`;
+    const controller = {
+      id,
+      name,
+      model: "ArcGIS Integrated Controller",
+      description: createNotes.value.trim() || "Added from mobile workspace.",
+      zones: [],
+    };
+    if (!isNaN(x)) controller.mapX = Number(x.toFixed(2));
+    if (!isNaN(y)) controller.mapY = Number(y.toFixed(2));
+    state.controllers.push(controller);
+    assetTab.selectedKey = `controller:${id}`;
+    mapTab.selectedKey = assetTab.selectedKey;
+  } else if (type === "backflow") {
+    const id = `bf-${Date.now()}`;
+    const backflow = {
+      id,
+      name,
+      serial: `BFS-${String(Date.now()).slice(-5)}`,
+      status: "Pass",
+      description: createNotes.value.trim() || "Added from mobile workspace.",
+    };
+    if (!isNaN(x)) backflow.mapX = Number(x.toFixed(2));
+    if (!isNaN(y)) backflow.mapY = Number(y.toFixed(2));
+    state.backflows.push(backflow);
+    assetTab.selectedKey = `backflow:${id}`;
+    mapTab.selectedKey = assetTab.selectedKey;
+  } else {
+    if (state.controllers.length > 0 && !createController.value) {
+      setSubmitMessage("Select a Clock for this zone.", "error");
+      return;
+    }
+    if (state.backflows.length > 0 && !createBackflow.value) {
+      setSubmitMessage("Select a Backflow for this zone.", "error");
+      return;
+    }
+    const zoneIdNum = state.zones.length + 1;
+    const zoneId = `zone-${zoneIdNum}`;
+    const anchor = getControllerAnchor(createController.value || state.controllers[0]?.name || "Controller A");
+    state.zones.push({
+      id: zoneId,
+      label: name,
+      status: "ok",
+      controller: createController.value || "Controller A",
+      backflow: createBackflow.value || "Backflow North",
+      description: createNotes.value.trim() || "Added from mobile workspace.",
+      mapX: !isNaN(x) ? Number(x.toFixed(2)) : Number((anchor.x + (Math.random() * 8 - 4)).toFixed(2)),
+      mapY: !isNaN(y) ? Number(y.toFixed(2)) : Number((anchor.y + 20 + (Math.random() * 8 - 4)).toFixed(2)),
+    });
+    assetTab.selectedKey = `zone:${zoneId}`;
+    mapTab.selectedKey = assetTab.selectedKey;
+  }
+
+  setSubmitMessage(`${name} added as ${getAssetTypeLabel(type)}.`, "ok");
+  closeCreateSheet();
+  setActiveTab(sheetState.createLaunchTab);
+  renderAll();
+}
+
+function renderAssetRegistryList() {
+  const filtered = getFilteredAssetsForTab();
+  assetList.innerHTML = "";
+  assetListSummary.textContent = `${filtered.length} assets shown (${state.zones.length + state.controllers.length + state.backflows.length} total in scope).`;
+
+  if (!filtered.length) {
+    const item = document.createElement("li");
+    item.className = "slds-item";
+    item.style.padding = "8px 0";
+    item.textContent = "No assets match this filter.";
+    assetList.appendChild(item);
+    return;
+  }
+
+  filtered.forEach((asset) => {
+    const item = document.createElement("li");
+    item.className = "slds-item";
+    item.style.padding = "8px 0";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.dataset.assetKey = asset.key;
+    button.className = "slds-button slds-button_reset asset-row-button";
+
+    const title = document.createElement("p");
+    title.className = "asset-row-title";
+    title.textContent = asset.name;
+
+    const meta = document.createElement("p");
+    meta.className = "asset-row-meta";
+    meta.textContent = `${getAssetTypeLabel(asset.type)}  •  ${getAssetStatusText(asset)}`;
+    if (hasOpenCalloutForAsset(asset)) {
+      const dot = document.createElement("span");
+      dot.className = "asset-callout-dot";
+      dot.setAttribute("aria-label", "Open callout");
+      dot.title = "Open callout";
+      meta.appendChild(dot);
+    }
+
+    const rowMain = document.createElement("div");
+    rowMain.className = "asset-row-main";
+    rowMain.append(title, meta);
+    button.appendChild(rowMain);
+    item.appendChild(button);
+
+    assetList.appendChild(item);
+  });
+}
+
+function getCalloutsForAsset(selected) {
+  return state.callouts.filter((c) => {
+    if (selected.type === "zone") return c.assetKey === selected.key;
+    if (selected.type === "controller") return state.zones.find((z) => `zone:${z.id}` === c.assetKey)?.controller === selected.name;
+    if (selected.type === "backflow") return c.assetKey === selected.key || (state.zones.find((z) => `zone:${z.id}` === c.assetKey)?.backflow === selected.name);
+    return false;
+  });
+}
+
+function renderProgress() {
+  const answered = getRequiredAnswered();
+  const total    = state.requiredQuestions.length;
+  const pct      = Math.round((answered / total) * 100);
+  meterFill.style.width = `${pct}%`;
+  const assistive = meterFill.querySelector(".slds-assistive-text");
+  if (assistive) assistive.textContent = `Progress: ${pct}%`;
+  const bar = meterFill.closest(".slds-progress-bar");
+  if (bar) bar.setAttribute("aria-valuenow", pct);
+  meterLabel.textContent = `${answered} of ${total} answered`;
+}
+
+function renderRequiredQuestions() {
+  requiredList.innerHTML = "";
+  state.requiredQuestions.forEach((question) => {
+    const item = document.createElement("li");
+    item.className = "slds-item";
+    item.style.cssText = "padding:8px 0;";
+
+    const label = document.createElement("label");
+    label.style.cssText = "display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;";
+
+    const check = document.createElement("input");
+    check.type = "checkbox";
+    check.dataset.questionId = question.id;
+    check.checked = question.answered;
+
+    const span = document.createElement("span");
+    span.textContent = question.text;
+
+    label.append(check, span);
+    item.appendChild(label);
+    requiredList.appendChild(item);
+  });
+}
+
+function renderCallouts() {
+  calloutList.innerHTML = "";
+
+  const open = state.callouts.filter((c) => !c.resolved);
+  if (noIssuesToggle) noIssuesToggle.classList.toggle("hidden", open.length > 0);
+  if (!open.length) {
+    const empty = document.createElement("li");
+    empty.className = "slds-item";
+    empty.style.padding = "8px 0";
+    empty.textContent = "No open callouts.";
+    calloutList.appendChild(empty);
+    renderAssetSnapshot();
+    return;
+  }
+
+  open.forEach((callout) => {
+    const timeAgo = (() => {
+      const diff = Date.now() - new Date(callout.timestamp).getTime();
+      if (diff < 60000) return "just now";
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      return `${Math.floor(diff / 3600000)}h ago`;
+    })();
+
+    const item = document.createElement("li");
+    item.className = "slds-item callout-item";
+    item.style.cssText = "padding: 10px 8px; display: flex; flex-direction: column; gap: 4px;";
+
+    item.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
+        <span style="background: #1f2a38; color: #d9dee8; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.calloutType || "Repair"}</span>
+        <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
+      </div>
+      <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
+      <div style="display: flex; gap: 6px;">
+        <button type="button" class="slds-button slds-button_neutral slds-button_small" data-action="resolve" data-callout-id="${callout.id}" style="background:#2e844a;color:#fff;border-color:#2e844a;">Resolve</button>
+        <button type="button" class="slds-button slds-button_destructive slds-button_small" data-action="remove" data-callout-id="${callout.id}">Remove</button>
+      </div>
+    `;
+    calloutList.appendChild(item);
+  });
+
+  renderAssetSnapshot();
+}
+
+function renderDetailAssetCallouts() {
+  const assetKey = sheetState.activeAssetKey;
+  if (!assetKey) return;
+
+  detailCalloutsList.innerHTML = "";
+  
+  const assetCallouts = state.callouts.filter((c) => c.assetKey === assetKey && !c.resolved);
+  
+  if (!assetCallouts.length) {
+    detailAssetCallouts.classList.add("hidden");
+    return;
+  }
+  
+  detailAssetCallouts.classList.remove("hidden");
+  
+  assetCallouts.forEach((callout) => {
+    const timeAgo = (() => {
+      const diff = Date.now() - new Date(callout.timestamp).getTime();
+      if (diff < 60000) return "just now";
+      if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+      return `${Math.floor(diff / 3600000)}h ago`;
+    })();
+
+    const item = document.createElement("li");
+    item.className = "slds-item callout-item";
+    item.style.cssText = "padding: 10px 8px; display: flex; flex-direction: column; gap: 4px;";
+
+    item.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
+        <span style="background: #1f2a38; color: #d9dee8; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.calloutType || "Repair"}</span>
+        <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
+      </div>
+      <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
+      <div style="display: flex; gap: 6px;">
+        <button type="button" class="slds-button slds-button_neutral slds-button_small" data-action="resolve" data-callout-id="${callout.id}" style="background:#2e844a;color:#fff;border-color:#2e844a;">Resolve</button>
+        <button type="button" class="slds-button slds-button_destructive slds-button_small" data-action="remove" data-callout-id="${callout.id}">Remove</button>
+      </div>
+    `;
+    detailCalloutsList.appendChild(item);
+  });
+}
+
+function simulateSubmit() {
+  const woli = getActiveWoli();
+  if (!woli || !isIrrigationWoli(woli)) {
+    setSubmitMessage("This line item uses standard FSM flow.", "warn");
+    return;
+  }
+
+  updateSubmitEligibility();
+  if (document.getElementById("simulate-submit").disabled) {
+    setSubmitMessage("Blocked: complete callout policy and AM assignment first.", "error");
+    return;
+  }
+
+  const unanswered = state.requiredQuestions.length - getRequiredAnswered();
+
+  woli.status = "COMPLETED";
+  setStage("COMPLETED");
+  if (unanswered > 0) {
+    setSubmitMessage(`Irrigation report submitted with advisory: ${unanswered} required question(s) unanswered.`, "warn");
+  } else {
+    setSubmitMessage("Irrigation report submitted.", "ok");
+  }
+  renderWoliOverviewList();
+  returnToWorkOrderOverview();
+}
+
+function resetFlow() {
+  const woli = getActiveWoli();
+  if (!woli || !isIrrigationWoli(woli)) return;
+  state.requiredQuestions.forEach((q, idx) => { q.answered = idx < 4; });
+  state.zones.forEach((z) => { z.status = [3, 11, 18, 22].includes(Number(z.id.replace("zone-", ""))) ? "alert" : "ok"; });
+  state.callouts = [];
+  state.clockFilter = "ALL";
+  state.amAssigned = false;
+  state.amName = "";
+  amName.value = "";
+  amStatus.textContent = "AM not assigned.";
+  amStatus.style.color = "#5c6f82";
+  if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
+  state.noIssuesFound = false;
+  if (noIssuesCheckbox) noIssuesCheckbox.checked = false;
+  woli.status = "NEW";
+  setStage("INSPECTING");
+  mapTab.selectedKey = "";
+  gisSelectionCard.classList.add("hidden");
+  closeDetailSheet(true);
+  closeCreateSheet();
+  closeDecisionModal();
+  setSubmitMessage("Flow reset for complex system.", "warn");
+  renderAll();
+  renderWoliOverviewList();
+}
+
+function renderAll() {
+  renderModeChrome();
+  renderResolverContext();
+  renderWoliOverviewList();
+  renderWoRelatedSummary();
+  renderWoliDetails();
+  renderSystemScope();
+  renderSystemCards();
+  renderClockFilterOptions();
+  renderAssetAdminSelectors();
+  renderAssetOptions();
+  renderMapGrid();
+  renderProgress();
+  renderRequiredQuestions();
+  renderCallouts();
+  renderAssetSnapshot();
+  renderAssetRegistryList();
+  renderCreateAssetDefaults();
+  renderMapFilterControls();
+  if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
+  updateSubmitEligibility();
+}
+
+// Event listeners
+navButtons.forEach((btn) => btn.addEventListener("click", () => setActiveTab(btn.dataset.tab)));
+
+document.querySelector(".header-back")?.addEventListener("click", () => {
+  if (appMode === "woli") {
+    returnToWorkOrderOverview();
+    return;
+  }
+  setSubmitMessage("Back from Work Order is outside prototype scope.", "warn");
+});
+
+woliOverviewList?.addEventListener("click", (event) => {
+  const target = event.target instanceof HTMLElement ? event.target : null;
+  if (!target) return;
+  const actionBtn = target.closest("button[data-woli-action]");
+  if (actionBtn) {
+    const woliId = actionBtn.dataset.woliId || "";
+    const action = actionBtn.dataset.woliAction || "open";
+    if (action === "start") {
+      openWoliWorkspace(woliId, "start");
+      renderAll();
+      return;
+    }
+    if (action === "reopen") {
+      openWoliWorkspace(woliId, "reopen");
+      renderAll();
+      return;
+    }
+  }
+
+  const row = target.closest(".woli-item");
+  if (!row) return;
+  const woliId = row.dataset.woliId || "";
+  const woli = getWoliById(woliId);
+  if (!woli) return;
+
+  if (woli.status === "NEW" && isIrrigationWoli(woli)) {
+    openWoliWorkspace(woliId, "start");
+  } else {
+    openWoliWorkspace(woliId, "open");
+  }
+  renderAll();
+});
+
+noIssuesCheckbox?.addEventListener("change", () => {
+  state.noIssuesFound = noIssuesCheckbox.checked;
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+});
+
+assetFilter.addEventListener("change", () => {
+  assetTab.filter = assetFilter.value;
+  renderAssetRegistryList();
+});
+
+assetSearch.addEventListener("input", () => {
+  assetTab.search = assetSearch.value;
+  renderAssetRegistryList();
+});
+
+assetList.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLElement ? event.target.closest("button[data-asset-key]") : null;
+  if (!button) return;
+  const assetKey = button.dataset.assetKey || "";
+  const selected = getAllAssets().find((a) => a.key === assetKey);
+  if (!selected) return;
+  assetTab.selectedKey = assetKey;
+  mapTab.selectedKey = assetKey;
+  openDetailSheet(assetKey, "related");
+});
+
+clockFilter.addEventListener("change", () => {
+  state.clockFilter = clockFilter.value;
+  renderMapGrid();
+  renderAssetSnapshot();
+});
+
+mapGrid.addEventListener("click", (event) => {
+  const markerButton = event.target instanceof HTMLElement ? event.target.closest("button.zone") : null;
+  if (!markerButton) return;
+  const nextKey = markerButton.dataset.assetKey || "";
+  mapTab.selectedKey = nextKey;
+  assetTab.selectedKey = nextKey;
+  renderMapGrid();
+  closeMapDrawers();
+  openDetailSheet(nextKey, "details");
+});
+
+gisSelectionClose.addEventListener("click", () => {
+  closeMapSelectionCard();
+});
+
+gisMapCanvas.addEventListener("click", (event) => {
+  if (!state.hasMap) return; // list mode manages its own click state
+  const target = event.target instanceof HTMLElement ? event.target : null;
+  if (!target) return;
+
+  const tappedMarker = target.closest("button.zone");
+  const tappedSelection = target.closest("#gis-selection-card");
+  const tappedLayers = target.closest("#gis-layers-sheet");
+  const tappedCollect = target.closest("#gis-filter-sheet") || target.closest("#gis-create-sheet");
+  const tappedFloating = target.closest("#gis-add-point") || target.closest("#gis-locate");
+
+  if (tappedMarker || tappedSelection || tappedLayers || tappedCollect || tappedFloating) return;
+
+  closeMapDrawers();
+  if (mapTab.selectedKey) closeMapSelectionCard();
+});
+
+gisSelectionCard.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLButtonElement ? event.target : null;
+  if (!button) return;
+  const action = button.dataset.mapAction;
+  const selected = getAllAssets().find((a) => a.key === mapTab.selectedKey);
+  if (!selected || !action) return;
+
+  if (action === "save") {
+    saveMapCardEdits();
+    return;
+  }
+
+  if (action === "remove") {
+    removeMapSelectedAsset();
+    return;
+  }
+
+  if (action === "toggle-status" && selected.type === "zone") {
+    selected.ref.status = selected.ref.status === "alert" ? "ok" : "alert";
+    setSubmitMessage(selected.ref.status === "alert" ? `${selected.name} flagged for follow-up.` : `${selected.name} marked stable.`, "warn");
+    renderMapGrid();
+    renderAssetSnapshot();
+    renderAssetRegistryList();
+    return;
+  }
+
+  if (action === "callout") {
+    // Open inline callout form for this asset in the map/list view
+    mapTab.selectedKey = selected.key;
+    mapTab.calloutFormKey = selected.key;
+    setActiveTab("related");
+  }
+});
+
+if (gisViewToggle) {
+  gisViewToggle.addEventListener("click", () => {
+    state.hasMap = !state.hasMap;
+    gisViewToggle.textContent = state.hasMap ? "List" : "Map";
+    closeMapDrawers();
+    renderAll();
+  });
+}
+
+gisLayersToggle.addEventListener("click", () => {
+  gisLayersSheet.classList.toggle("hidden");
+  if (!gisLayersSheet.classList.contains("hidden")) gisSelectionCard.classList.add("hidden");
+  gisFilterSheet.classList.add("hidden");
+  gisCreateSheet.classList.add("hidden");
+});
+
+gisLayersClose.addEventListener("click", () => {
+  gisLayersSheet.classList.add("hidden");
+});
+
+gisFilterToggle.addEventListener("click", () => {
+  gisFilterSheet.classList.toggle("hidden");
+  if (!gisFilterSheet.classList.contains("hidden")) gisSelectionCard.classList.add("hidden");
+  gisLayersSheet.classList.add("hidden");
+  gisCreateSheet.classList.add("hidden");
+  renderMapFilterControls();
+});
+
+gisFilterClear.addEventListener("click", () => {
+  mapFilters.zones = true;
+  mapFilters.controllers = true;
+  mapFilters.backflows = true;
+  mapFilters.query = "";
+  renderMapFilterControls();
+  renderMapGrid();
+});
+
+gisFilterDone.addEventListener("click", () => {
+  gisFilterSheet.classList.add("hidden");
+});
+
+filterZones.addEventListener("change", () => {
+  mapFilters.zones = filterZones.checked;
+  renderMapGrid();
+});
+
+filterControllers.addEventListener("change", () => {
+  mapFilters.controllers = filterControllers.checked;
+  renderMapGrid();
+});
+
+filterBackflows.addEventListener("change", () => {
+  mapFilters.backflows = filterBackflows.checked;
+  renderMapGrid();
+});
+
+gisFilterSearch.addEventListener("input", () => {
+  mapFilters.query = gisFilterSearch.value;
+  renderMapGrid();
+});
+
+gisAddPoint.addEventListener("click", () => {
+  openCreateSheet("details");
+});
+
+gisCreateCancel.addEventListener("click", () => {
+  gisCreateSheet.classList.add("hidden");
+});
+
+gisCreateSave.addEventListener("click", () => {
+  const type = mapTab.gisCreateType || "zone";
+  if (type === "zone") {
+    if (state.controllers.length > 0 && !gisCreateController.value) {
+      setSubmitMessage("Select a Clock for this zone.", "error");
+      return;
+    }
+    if (state.backflows.length > 0 && !gisCreateBackflow.value) {
+      setSubmitMessage("Select a Backflow for this zone.", "error");
+      return;
+    }
+  }
+  addAssetToSystem();
+  gisCreateSheet.classList.add("hidden");
+  // Reset name field after save
+  if (gisCreateName) gisCreateName.value = "";
+});
+
+// Type buttons for create sheet
+(function() {
+  const typeBtns = document.querySelectorAll(".gis-type-btn");
+  const zoneFields = document.querySelector(".gis-create-zone-fields");
+  function applyType(type) {
+    mapTab.gisCreateType = type;
+    typeBtns.forEach((b) => b.classList.toggle("active", b.dataset.type === type));
+    if (zoneFields) zoneFields.style.display = type === "zone" ? "" : "none";
+    if (gisCreateName) {
+      gisCreateName.value = getAutoName(type);
+    }
+  }
+  typeBtns.forEach((btn) => btn.addEventListener("click", () => applyType(btn.dataset.type)));
+  // Init zone fields visibility
+  if (zoneFields) zoneFields.style.display = mapTab.gisCreateType === "zone" ? "" : "none";
+})();
+
+detailSheetClose.addEventListener("click", () => {
+  closeDetailSheet();
+});
+
+detailSave.addEventListener("click", () => {
+  applyDetailSave();
+});
+
+detailToggleStatus.addEventListener("click", () => {
+  const asset = getActiveDetailAsset();
+  if (!asset || asset.type !== "zone") return;
+  asset.ref.status = asset.ref.status === "alert" ? "ok" : "alert";
+  setSubmitMessage(asset.ref.status === "alert" ? `${asset.name} flagged for follow-up.` : `${asset.name} marked stable.`, "warn");
+  renderAll();
+  openDetailSheet(asset.key, sheetState.detailLaunchTab);
+});
+
+detailCreateCallout.addEventListener("click", () => {
+  const proceed = () => {
+    detailCalloutComposer.classList.remove("hidden");
+    detailCalloutText.focus();
+  };
+
+  if (!isDetailDirty()) {
+    proceed();
+    return;
+  }
+
+  openDecisionModal(
+    "Unsaved Changes",
+    "Save changes before creating a callout?",
+    [
+      {
+        label: "Save + Continue",
+        variant: "slds-button slds-button_brand",
+        onClick: () => {
+          if (applyDetailSave()) proceed();
+        },
+      },
+      {
+        label: "Discard + Continue",
+        variant: "slds-button slds-button_neutral",
+        onClick: proceed,
+      },
+      {
+        label: "Cancel",
+        variant: "slds-button slds-button_neutral",
+        onClick: () => {},
+      },
+    ]
+  );
+});
+
+detailCalloutCancel.addEventListener("click", () => {
+  detailCalloutComposer.classList.add("hidden");
+  detailCalloutText.value = "";
+  detailCalloutType.value = "Repair";
+});
+
+detailCalloutSubmit.addEventListener("click", () => {
+  const asset = getActiveDetailAsset();
+  if (!asset) return;
+  const issue = detailCalloutText.value.trim();
+  const calloutType = detailCalloutType.value;
+  if (!issue) {
+    setSubmitMessage("Callout description is required.", "error");
+    return;
+  }
+  if (!calloutType) {
+    setSubmitMessage("Callout type is required.", "error");
+    return;
+  }
+
+  state.callouts.push({
+    id: Date.now(),
+    assetKey: asset.key,
+    title: asset.name,
+    issue,
+    calloutType,
+    timestamp: new Date().toISOString(),
+    resolved: false,
+  });
+  if (asset.type === "zone") asset.ref.status = "alert";
+  state.noIssuesFound = false;
+  if (noIssuesCheckbox) noIssuesCheckbox.checked = false;
+  detailCalloutComposer.classList.add("hidden");
+  detailCalloutText.value = "";
+  detailCalloutType.value = "Repair";
+  setSubmitMessage(`Callout created for ${asset.name}.`, "ok");
+  renderAll();
+  renderWoliOverviewList();
+  openDetailSheet(asset.key, sheetState.detailLaunchTab);
+});
+
+detailRemove.addEventListener("click", () => {
+  const asset = getActiveDetailAsset();
+  if (!asset) return;
+  openDecisionModal(
+    "Remove Asset",
+    `Remove ${asset.name}? This action updates map/list scope immediately.`,
+    [
+      {
+        label: "Remove Asset",
+        variant: "slds-button slds-button_destructive",
+        onClick: () => {
+          removeAssetFromSystem(asset);
+          setSubmitMessage(`${asset.name} removed from system.`, "warn");
+          closeDetailSheet(true);
+          renderAll();
+        },
+      },
+      {
+        label: "Cancel",
+        variant: "slds-button slds-button_neutral",
+        onClick: () => {},
+      },
+    ]
+  );
+});
+
+createType.addEventListener("change", () => {
+  const type = createType.value;
+  createZoneLinks.style.display = type === "zone" ? "grid" : "none";
+  if (!createName.value.trim()) createName.value = getAutoName(type);
+});
+
+createSave.addEventListener("click", saveCreateSheet);
+createCancel.addEventListener("click", closeCreateSheet);
+createSheetClose.addEventListener("click", closeCreateSheet);
+
+gisLocate.addEventListener("click", () => {
+  setSubmitMessage("Device location request sent to ArcGIS location service.", "warn");
+});
+
+addAssetButton.addEventListener("click", () => {
+  openCreateSheet("related");
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  if (!decisionModal.classList.contains("hidden")) {
+    closeDecisionModal();
+    return;
+  }
+  if (!assetDetailSheet.classList.contains("hidden")) {
+    closeDetailSheet();
+    return;
+  }
+  if (!assetCreateSheet.classList.contains("hidden")) {
+    closeCreateSheet();
+    return;
+  }
+  closeMapDrawers();
+  if (mapTab.selectedKey) closeMapSelectionCard();
+});
+
+requiredList.addEventListener("change", (event) => {
+  if (!(event.target instanceof HTMLInputElement)) return;
+  const question = state.requiredQuestions.find((q) => q.id === event.target.dataset.questionId);
+  if (!question) return;
+  question.answered = event.target.checked;
+  if (state.stage === "COMPLETED") setStage("INSPECTING");
+  renderProgress();
+});
+
+calloutList.addEventListener("click", (event) => {
+  if (!(event.target instanceof HTMLButtonElement)) return;
+  const calloutId = Number(event.target.dataset.calloutId);
+  const action    = event.target.dataset.action;
+  if (action === "remove") {
+    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
+    if (state.callouts.length > 0) state.noIssuesFound = false;
+    if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
+    renderCallouts();
+    renderAssetRegistryList();
+    updateSubmitEligibility();
+    renderWoliOverviewList();
+    renderDetailAssetCallouts();
+    return;
+  }
+  if (action === "resolve") {
+    const callout = state.callouts.find((c) => c.id === calloutId);
+    if (callout) {
+      state.callouts = state.callouts.filter((c) => c.id !== calloutId);
+      const hasOtherCallouts = state.callouts.some((c) => c.assetKey === callout.assetKey && !c.resolved);
+      const asset = getAllAssets().find((a) => a.key === callout.assetKey);
+      if (asset && asset.type === "zone" && !hasOtherCallouts) {
+        asset.ref.status = "ok";
+      }
+      renderCallouts();
+      renderMapGrid();
+      renderAssetRegistryList();
+      updateSubmitEligibility();
+      renderWoliOverviewList();
+      renderDetailAssetCallouts();
+    }
+  }
+});
+
+detailCalloutsList.addEventListener("click", (event) => {
+  if (!(event.target instanceof HTMLButtonElement)) return;
+  const calloutId = Number(event.target.dataset.calloutId);
+  const action    = event.target.dataset.action;
+  if (action === "remove") {
+    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
+    if (state.callouts.length > 0) state.noIssuesFound = false;
+    if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
+    renderCallouts();
+    renderAssetRegistryList();
+    updateSubmitEligibility();
+    renderWoliOverviewList();
+    renderDetailAssetCallouts();
+    return;
+  }
+  if (action === "resolve") {
+    const callout = state.callouts.find((c) => c.id === calloutId);
+    if (callout) {
+      state.callouts = state.callouts.filter((c) => c.id !== calloutId);
+      const hasOtherCallouts = state.callouts.some((c) => c.assetKey === callout.assetKey && !c.resolved);
+      const asset = getAllAssets().find((a) => a.key === callout.assetKey);
+      if (asset && asset.type === "zone" && !hasOtherCallouts) {
+        asset.ref.status = "ok";
+      }
+      renderCallouts();
+      renderMapGrid();
+      renderAssetRegistryList();
+      updateSubmitEligibility();
+      renderWoliOverviewList();
+      renderDetailAssetCallouts();
+    }
+  }
+});
+
+document.getElementById("toggle-am").addEventListener("click", () => {
+  if (state.amAssigned) {
+    state.amAssigned = false;
+    state.amName = "";
+    amName.value = "";
+    amStatus.textContent = "AM cleared.";
+    amStatus.style.color = "#8f4b00";
+    if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
+    updateSubmitEligibility();
+    renderWoliOverviewList();
+    return;
+  }
+  if (!amName.value) {
+    amStatus.textContent = "Select an AM before assigning.";
+    amStatus.style.color = "#ba0517";
+    updateSubmitEligibility();
+    return;
+  }
+  state.amAssigned = true;
+  state.amName = amName.value;
+  amStatus.textContent = `AM assigned: ${state.amName}`;
+  amStatus.style.color = "#2e844a";
+  if (amStatusHeader) amStatusHeader.textContent = state.amName;
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+});
+
+document.getElementById("open-review").addEventListener("click", () => {
+  setStage("REVIEW");
+  setSubmitMessage("Review opened. Confirm callouts and AM before submit.", "warn");
+});
+
+document.getElementById("simulate-submit").addEventListener("click", simulateSubmit);
+document.getElementById("reset-flow").addEventListener("click", resetFlow);
+
+initOverviewSectionToggles();
+
+// Init
+setStage("INSPECTING");
+setSubmitMessage("Complex campus system loaded.", "warn");
+assetTab.selectedKey = `zone:${state.zones[0].id}`;
+mapTab.selectedKey = "";
+addZoneController.disabled = false;
+addZoneBackflow.disabled = false;
+setActiveTab("overview");
+renderAll();
+  </script>
+</body>
+</html>

@@ -105,6 +105,17 @@ body {
   margin-bottom: 12px;
 }
 
+.pending-banner {
+  border: 1px solid #f1be6a;
+  background: #fff4df;
+  color: #8f4b00;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
 .context-row {
   display: flex;
   justify-content: space-between;
@@ -267,6 +278,11 @@ body {
   font-size: 0.78rem;
 }
 
+.map-action-row .btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
 .legend-pill {
   border-radius: 999px;
   padding: 3px 8px;
@@ -290,7 +306,7 @@ body {
   border: 1px solid #c6def3;
   border-radius: 10px;
   overflow: hidden;
-  min-height: 220px;
+  min-height: 250px;
 }
 
 .mobile-map-frame {
@@ -308,6 +324,74 @@ body {
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   padding: 8px;
+}
+
+.map-bottom-sheet {
+  margin-top: 10px;
+  border: 1px solid #c6def3;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f1f8ff 100%);
+  padding: 10px;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.sheet-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+.sheet-asset-title {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.sheet-header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+
+.sheet-toggle {
+  min-width: 92px;
+}
+
+.sheet-peek-actions {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.sheet-peek-actions .btn {
+  padding: 7px 8px;
+  font-size: 0.8rem;
+}
+
+.sheet-expanded {
+  margin-top: 10px;
+  border-top: 1px solid #c6def3;
+  padding-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.map-bottom-sheet.peek .sheet-expanded {
+  display: none;
+}
+
+.map-bottom-sheet.expanded .sheet-expanded {
+  display: grid;
 }
 
 .mobile-feature-list {
@@ -775,6 +859,10 @@ body {
   }
 
   .zone-links {
+    grid-template-columns: 1fr;
+  }
+
+  .sheet-peek-actions {
     grid-template-columns: 1fr;
   }
 }

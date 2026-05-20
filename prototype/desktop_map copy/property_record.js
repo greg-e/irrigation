@@ -1921,9 +1921,9 @@ function renderDetailsTab(property, controllerAsset) {
 
 function renderPrograms(property, controllerAsset) {
   const programsCard = document.getElementById("programs-card");
-  const programsEmbed = document.querySelector("#programs-card iframe.programs-embed");
+  const programsTableBody = document.getElementById("programs-table-body");
   const programsCount = document.getElementById("programs-count");
-  if (!programsCard) return;
+  if (!programsCard || !programsTableBody) return;
 
   if (!controllerAsset || controllerAsset.type !== "Controller") {
     programsCard.classList.add("hidden");
@@ -1934,23 +1934,43 @@ function renderPrograms(property, controllerAsset) {
   const programs = controllerAsset.programs || [];
   if (programsCount) programsCount.textContent = `(${programs.length})`;
 
-  if (programsEmbed) {
-    const controllerId = encodeURIComponent(controllerAsset.id || "");
-    const controllerName = encodeURIComponent(controllerAsset.name || "Controller");
-    const relatedZones = activeAssets(property)
-      .filter((asset) => asset.type === "Zone" && asset.parentId === controllerAsset.id)
-      .sort((a, b) => Number(a.zoneNumber || 0) - Number(b.zoneNumber || 0))
-      .map((zone) => ({
-        id: zone.id,
-        name: zone.name || `Zone ${zone.zoneNumber ?? ""}`.trim(),
-        zoneNumber: zone.zoneNumber ?? null,
-      }));
-    const zonesParam = encodeURIComponent(JSON.stringify(relatedZones));
-    const embedSrc = `../program/controller_program.html?embedded=1&controllerId=${controllerId}&controllerName=${controllerName}&zones=${zonesParam}`;
-    if (programsEmbed.getAttribute("src") !== embedSrc) {
-      programsEmbed.setAttribute("src", embedSrc);
-    }
+  if (!programs.length) {
+    programsTableBody.innerHTML = `<tr><td colspan="8" class="slds-text-align_center slds-p-around_medium slds-text-color_weak">No programs. Click New Program to create the first schedule.</td></tr>`;
+    return;
   }
+
+  const zones = activeAssets(property).filter((a) => a.type === "Zone");
+  const ICON_BASE = "https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons";
+  programsTableBody.innerHTML = programs
+    .map((prog) => {
+      const zone = zones.find((z) => z.id === prog.zoneAssetId);
+      const zoneName = zone ? zone.name : (prog.zoneAssetId ? prog.zoneAssetId : "—");
+      const days = prog.scheduleDays && prog.scheduleDays.length ? prog.scheduleDays.join("/") : "—";
+      const activeBadge = prog.isActive
+        ? `<span class="slds-badge slds-theme_success" style="font-size:0.7rem">Active</span>`
+        : `<span class="slds-badge" style="font-size:0.7rem">Inactive</span>`;
+      const adjust = prog.seasonalAdjustPct != null ? prog.seasonalAdjustPct + "%" : "—";
+      return `<tr class="slds-hint-parent">
+        <td data-label="Program Name">
+          <button class="slds-button slds-button_reset slds-text-link" type="button" data-edit-program="${prog.id}">${prog.programName}</button>
+        </td>
+        <td data-label="Days">${days}</td>
+        <td data-label="Start">${prog.startTime || "—"}</td>
+        <td data-label="Zone">${zoneName}</td>
+        <td data-label="Run (min)">${prog.runTimeMinutes != null ? prog.runTimeMinutes : "—"}</td>
+        <td data-label="Seasonal %">${adjust}</td>
+        <td data-label="Active">${activeBadge}</td>
+        <td style="width:3rem">
+          <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" data-delete-program="${prog.id}" type="button" title="Delete Program">
+            <svg class="slds-button__icon" aria-hidden="true">
+              <use xlink:href="${ICON_BASE}/utility-sprite/svg/symbols.svg#delete"></use>
+            </svg>
+            <span class="slds-assistive-text">Delete Program</span>
+          </button>
+        </td>
+      </tr>`;
+    })
+    .join("");
 }
 
 function renderRelated(property) {

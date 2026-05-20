@@ -77,6 +77,13 @@ const state = {
   clockFilter: "ALL",
   amAssigned: false,
   amName: "",
+  mapContext: {
+    propertyId: "prop-002",
+    workOrderId: "wo-004281",
+    mode: "field",
+  },
+  geometryEditing: false,
+  isSheetExpanded: false,
 };
 
 const meterFill = document.getElementById("meter-fill");
@@ -133,6 +140,15 @@ const mobileImportKml = document.getElementById("mobile-import-kml");
 const mobileImportKmlInput = document.getElementById("mobile-import-kml-input");
 const mobileFeatureList = document.getElementById("mobile-feature-list");
 const mobileMapMessage = document.getElementById("mobile-map-message");
+const mapBottomSheet = document.getElementById("map-bottom-sheet");
+const sheetToggle = document.getElementById("sheet-toggle");
+const sheetAssetTitle = document.getElementById("sheet-asset-title");
+const mapSaveChip = document.getElementById("map-save-chip");
+const pendingBanner = document.getElementById("pending-banner");
+const mobileEnterEdit = document.getElementById("mobile-enter-edit");
+const quickEditDetails = document.getElementById("quick-edit-details");
+const quickPhoto = document.getElementById("quick-photo");
+const quickNotes = document.getElementById("quick-notes");
 
 function getRequiredAnswered() {
   return state.requiredQuestions.filter((q) => q.answered).length;
@@ -227,23 +243,37 @@ function mobileSymbolSpec(assetType) {
 }
 
 function refreshSyncPill() {
+  if (!syncPill) return;
   const pending = state.mapFeatures.filter((feature) => feature.syncState === "Pending").length;
   const failed = state.mapFeatures.filter((feature) => feature.syncState === "Failed").length;
   if (failed > 0) {
     syncPill.textContent = `${failed} Failed`;
+    setMapSaveState("Failed");
+    refreshPendingBanner();
     return;
   }
   if (pending > 0) {
     syncPill.textContent = `${pending} Pending`;
+    setMapSaveState("Pending");
+    refreshPendingBanner();
     return;
   }
   syncPill.textContent = "Synced";
+  setMapSaveState("Saved");
+  refreshPendingBanner();
 }
 
 function mobileMapEmbedUrl() {
-  const hint = `Oak Ridge HOA Campus ${state.clockFilter === "ALL" ? "Irrigation" : state.clockFilter}`;
-  const encoded = encodeURIComponent(hint);
-  return `https://maps.google.com/maps?q=${encoded}&t=h&z=18&output=embed`;
+  const selected = state.mapFeatures.find((feature) => feature.id === state.selectedFeatureId);
+  const params = new URLSearchParams({
+    propertyId: state.mapContext.propertyId,
+    mode: state.mapContext.mode,
+    workOrderId: state.mapContext.workOrderId,
+  });
+  if (selected) {
+    params.set("assetId", selected.id);
+  }
+  return `../../spatial_portable/index.html?${params.toString()}`;
 }
 
 function setMobileMapMessage(text, tone = "neutral") {
@@ -261,6 +291,68 @@ function setMobileMapMessage(text, tone = "neutral") {
     return;
   }
   mobileMapMessage.style.color = "#5c6f82";
+}
+
+function setMapSaveState(stateLabel) {
+  if (!mapSaveChip) return;
+  mapSaveChip.classList.remove("chip-neutral", "chip-positive", "chip-warning", "chip-danger");
+  if (stateLabel === "Saving") {
+    mapSaveChip.classList.add("chip-warning");
+    mapSaveChip.textContent = "Saving";
+    return;
+  }
+  if (stateLabel === "Failed") {
+    mapSaveChip.classList.add("chip-danger");
+    mapSaveChip.textContent = "Failed";
+    return;
+  }
+  if (stateLabel === "Pending") {
+    mapSaveChip.classList.add("chip-warning");
+    mapSaveChip.textContent = "Pending";
+    return;
+  }
+  mapSaveChip.classList.add("chip-positive");
+  mapSaveChip.textContent = "Saved";
+}
+
+function refreshPendingBanner() {
+  if (!pendingBanner) return;
+  const hasPending = state.mapFeatures.some((feature) => feature.syncState === "Pending");
+  pendingBanner.hidden = !hasPending;
+}
+
+function updateSheetSelectionTitle() {
+  if (!sheetAssetTitle) return;
+  const selected = state.mapFeatures.find((feature) => feature.id === state.selectedFeatureId);
+  sheetAssetTitle.textContent = selected ? selected.name : "No asset selected";
+}
+
+function setSheetExpanded(isExpanded) {
+  if (!mapBottomSheet || !sheetToggle) return;
+  state.isSheetExpanded = isExpanded;
+  mapBottomSheet.classList.toggle("expanded", isExpanded);
+  mapBottomSheet.classList.toggle("peek", !isExpanded);
+  sheetToggle.setAttribute("aria-expanded", String(isExpanded));
+  sheetToggle.textContent = isExpanded ? "Collapse" : "Expand";
+}
+
+function beginAutoSave() {
+  setMapSaveState("Saving");
+  window.setTimeout(() => {
+    const hasPending = state.mapFeatures.some((feature) => feature.syncState === "Pending");
+    setMapSaveState(hasPending ? "Pending" : "Saved");
+  }, 280);
+}
+
+function refreshGeometryEditActions() {
+  const disabled = !state.geometryEditing;
+  [mobileAddPoint, mobileAddLine, mobileAddPolygon].forEach((button) => {
+    if (!button) return;
+    button.disabled = disabled;
+  });
+  if (mobileEnterEdit) {
+    mobileEnterEdit.textContent = state.geometryEditing ? "Editing Active" : "Edit Geometry";
+  }
 }
 
 function addMobileFeature(type) {
@@ -289,7 +381,9 @@ function addMobileFeature(type) {
   };
   state.mapFeatures.push(feature);
   state.selectedFeatureId = feature.id;
+  updateSheetSelectionTitle();
   setMobileMapMessage(`${type} created and queued for sync.`, "ok");
+  beginAutoSave();
   renderMapFeatureList();
   refreshSyncPill();
 }
@@ -324,6 +418,10 @@ function renderMapFeatureList() {
     item.innerHTML = `<span><span class="asset-symbol asset-${symbol.key}">${symbol.code}</span> ${feature.name} (${symbol.label})</span><span class="sync-state ${syncClass(feature.syncState)}">${feature.syncState}</span>`;
     item.addEventListener("click", () => {
       state.selectedFeatureId = feature.id;
+      updateSheetSelectionTitle();
+      if (mobileMapFrame) {
+        mobileMapFrame.src = mobileMapEmbedUrl();
+      }
       setMobileMapMessage(`Selected ${feature.name}.`, "warn");
     });
     mobileFeatureList.appendChild(item);
@@ -738,6 +836,8 @@ function resetFlow() {
   state.mapUndoStack = [];
   state.mapRedoStack = [];
   state.selectedFeatureId = "";
+  state.geometryEditing = false;
+  state.isSheetExpanded = false;
 
   state.amAssigned = false;
   state.amName = "";
@@ -764,6 +864,9 @@ function renderAll() {
   renderCallouts();
   renderAssetSnapshot();
   renderFeedback();
+  updateSheetSelectionTitle();
+  setSheetExpanded(false);
+  refreshGeometryEditActions();
 }
 
 navButtons.forEach((btn) => {
@@ -903,6 +1006,45 @@ clockFilter.addEventListener("change", () => {
   renderAssetSnapshot();
 });
 
+if (sheetToggle) {
+  sheetToggle.addEventListener("click", () => {
+    setSheetExpanded(!state.isSheetExpanded);
+  });
+}
+
+if (mobileEnterEdit) {
+  mobileEnterEdit.addEventListener("click", () => {
+    state.geometryEditing = !state.geometryEditing;
+    refreshGeometryEditActions();
+    if (state.geometryEditing) {
+      setSheetExpanded(true);
+      setMobileMapMessage("Geometry edit mode active.", "ok");
+      return;
+    }
+    setMobileMapMessage("Geometry edit mode paused.", "warn");
+  });
+}
+
+if (quickEditDetails) {
+  quickEditDetails.addEventListener("click", () => {
+    setActiveTab("map");
+    setSheetExpanded(true);
+    setMobileMapMessage("Open asset detail editor from Assets tab for full edit.", "neutral");
+  });
+}
+
+if (quickPhoto) {
+  quickPhoto.addEventListener("click", () => {
+    setMobileMapMessage("Photo capture placeholder triggered.", "warn");
+  });
+}
+
+if (quickNotes) {
+  quickNotes.addEventListener("click", () => {
+    setMobileMapMessage("Notes capture placeholder triggered.", "warn");
+  });
+}
+
 mobileAddPoint.addEventListener("click", () => addMobileFeature("Point"));
 mobileAddLine.addEventListener("click", () => addMobileFeature("Line"));
 mobileAddPolygon.addEventListener("click", () => addMobileFeature("Polygon"));
@@ -915,6 +1057,8 @@ mobileUndo.addEventListener("click", () => {
   }
   state.mapRedoStack.push(mapSnapshot());
   applyMapSnapshot(previous);
+  updateSheetSelectionTitle();
+  beginAutoSave();
   renderMapFeatureList();
   refreshSyncPill();
   setMobileMapMessage("Undo applied.", "ok");
@@ -928,6 +1072,8 @@ mobileRedo.addEventListener("click", () => {
   }
   state.mapUndoStack.push(mapSnapshot());
   applyMapSnapshot(next);
+  updateSheetSelectionTitle();
+  beginAutoSave();
   renderMapFeatureList();
   refreshSyncPill();
   setMobileMapMessage("Redo applied.", "ok");
@@ -971,6 +1117,7 @@ mobileImportKmlInput.addEventListener("change", async () => {
     });
   });
   mobileImportKmlInput.value = "";
+  beginAutoSave();
   renderMapFeatureList();
   refreshSyncPill();
   setMobileMapMessage(`Imported ${names.length} KML features.`, "ok");
@@ -994,6 +1141,8 @@ mapGrid.addEventListener("click", (event) => {
   if (linkedFeature) {
     linkedFeature.syncState = "Pending";
   }
+
+  beginAutoSave();
 
   if (zone.status === "alert") {
     setSubmitMessage(`${zone.label} flagged for follow-up.`, "warn");
