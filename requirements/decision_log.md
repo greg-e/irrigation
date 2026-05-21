@@ -147,6 +147,39 @@ Pipe is not modeled as a separate Asset component type. Instead, pipe-related me
 
 ---
 
+### DL-011 — Mobile Prototype Refinement Decisions (FSM Irrigation)
+
+**Date:** 2026-05-21 | **Owner:** BA (G. Ehrenberg) | **Status:** Locked
+
+Refinement decisions captured for the mobile prototype in [prototype/mobile/ui/fsm_mobile_inspection_standalone_working.html](../prototype/mobile/ui/fsm_mobile_inspection_standalone_working.html). This entry records selected behavior and UX direction prior to implementation.
+
+**Selected decisions:**
+- Submit callout gate accepts any callout type (Repair or Enhancement) or No irrigation issues found.
+- Single source of truth for asset creation: full-screen New Asset flow.
+- Callout resolve behavior: conditional status reset only when issue fixed on-site is confirmed.
+- Re-enable native mobile map interactions for this standalone prototype.
+- Required questions gate: soft gate with required justification when unanswered.
+- AM assignment flow: auto-assign on selection with separate clear action.
+- Remove browser-native dialogs; use only in-app modal/toast patterns.
+- Post-submit navigation: show success choice to stay on WOLI or return to WO.
+- WOLI/WO progress uses weighted model rather than binary gate.
+- No issues toggle remains visible; disabled with guidance when open callouts exist.
+- Non-irrigation WOLI handling: show sections collapsed with lock badges and not applicable guidance.
+- Map/list mode: keep list mode as automatic fallback only when map fails.
+- Resolved callouts retained as history (not deleted).
+- Add compact visible stage tracker in WOLI header.
+- Standardize map language to vendor-neutral spatial terminology.
+- Add unsaved-changes confirmation to New Asset sheet.
+- Callout history location: same Callouts list with resolved subsection.
+- Remove legacy inline GIS create implementation; keep full-screen New Asset implementation.
+- Provide two reset options: Reset Inspection (soft) and Reset All Data (hard).
+- Progress weighting selected: 60% checklist, 20% callout policy, 20% AM assignment.
+
+**Implementation note:**
+- Implementation intentionally deferred in this step; code changes are not included in DL-011.
+
+---
+
 ## New Entry Template
 
 ```

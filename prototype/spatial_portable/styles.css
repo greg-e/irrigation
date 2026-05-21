@@ -13,6 +13,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background: linear-gradient(180deg, #f8fbfe 0%, var(--bg) 100%);
@@ -21,14 +26,22 @@ body {
 body.map-only-layout main {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body.map-only-layout {
   overflow: hidden;
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+  background: transparent;
 }
 
 body.map-only-layout main > section {
   margin: 0;
+  padding: 0;
+  display: block;
+  height: 100%;
 }
 
 body.map-only-layout aside {
@@ -40,12 +53,14 @@ body.map-only-layout section.slds-col.slds-size_9-of-12 {
   max-width: 100%;
   flex: 0 0 100%;
   padding: 0;
+  height: 100%;
 }
 
 body.map-only-layout .slds-card {
   border-radius: 0;
   box-shadow: none;
   border: none;
+  height: 100%;
 }
 
 body.map-only-layout .slds-card__header,
@@ -55,10 +70,18 @@ body.map-only-layout .slds-card__footer {
 
 body.map-only-layout .slds-card__body_inner {
   padding: 0;
+  height: 100%;
+}
+
+body.map-only-layout .slds-card__body {
+  display: block;
+  height: 100%;
 }
 
 body.map-only-layout .map-root {
-  min-height: clamp(320px, 58vh, 700px);
+  min-height: 100%;
+  height: 100%;
+  max-height: none;
   border: none;
 }
 

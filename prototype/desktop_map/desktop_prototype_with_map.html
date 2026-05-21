@@ -97,6 +97,9 @@
               <button type="button" class="slds-tabs_default__link tab" data-tab-target="hierarchy">Hierarchy</button>
             </li>
             <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="program">Program</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
               <button type="button" class="slds-tabs_default__link tab" data-tab-target="inspections">Related</button>
             </li>
             <li class="slds-tabs_default__item" role="presentation">
@@ -299,16 +302,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Programs related list — shown only when context asset is a Controller -->
-          <article id="programs-card" class="slds-m-top_small hidden">
-            <iframe
-              src="../program/controller_program.html"
-              title="Controller Programs"
-              class="programs-embed"
-              style="width:100%; min-height:900px; border:0; display:block;"
-            ></iframe>
-          </article>
 
         </section>
 
@@ -1013,6 +1006,18 @@
             <footer class="slds-card__footer">
               <a class="slds-card__footer-action" href="#">View All in Salesforce <span class="slds-assistive-text">Proposals</span></a>
             </footer>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="program">
+          <!-- Programs related list — shown only when context asset is a Controller -->
+          <article id="programs-card" class="slds-m-top_small hidden">
+            <iframe
+              src="../program/controller_program.html"
+              title="Controller Programs"
+              class="programs-embed"
+              style="width:100%; min-height:900px; border:0; display:block;"
+            ></iframe>
           </article>
         </section>
 

@@ -245,6 +245,8 @@ const els = {
   detailEditBtns: document.querySelectorAll(".detail-edit-btn"),
   detailFieldEditTriggers: document.querySelectorAll("[data-open-asset-editor]"),
   hierarchyNewBtn: document.getElementById("hierarchy-new-btn"),
+  programTabButton: document.querySelector("[data-tab-target='program']"),
+  programTabPanel: document.querySelector("[data-tab-panel='program']"),
   relatedTabButton: document.querySelector("[data-tab-target='inspections']"),
   relatedTabPanel: document.querySelector("[data-tab-panel='inspections']"),
   assetModal: document.getElementById("asset-modal"),
@@ -443,7 +445,8 @@ function pushAssetsToMapFrame() {
 }
 
 function updateRelatedTabVisibility(asset) {
-  const isParentAsset = Boolean(asset) && !asset.parentId;
+  const isSystemAsset = Boolean(asset) && asset.type === "System";
+  const isControllerAsset = Boolean(asset) && asset.type === "Controller";
   const canShowMap = Boolean(asset);
 
   const mapTabButton = document.querySelector("[data-tab-target='map']");
@@ -460,19 +463,34 @@ function updateRelatedTabVisibility(asset) {
     mapTabPanel.style.display = canShowMap ? "" : "none";
   }
 
+  if (els.programTabButton) {
+    els.programTabButton.style.display = isControllerAsset ? "" : "none";
+    const programTabItem = els.programTabButton.closest(".slds-tabs_default__item");
+    if (programTabItem) {
+      programTabItem.style.display = isControllerAsset ? "" : "none";
+    }
+  }
+
+  if (els.programTabPanel) {
+    els.programTabPanel.style.display = isControllerAsset ? "" : "none";
+  }
+
   if (els.relatedTabButton) {
-    els.relatedTabButton.style.display = isParentAsset ? "" : "none";
+    els.relatedTabButton.style.display = isSystemAsset ? "" : "none";
     const relatedTabItem = els.relatedTabButton.closest(".slds-tabs_default__item");
     if (relatedTabItem) {
-      relatedTabItem.style.display = isParentAsset ? "" : "none";
+      relatedTabItem.style.display = isSystemAsset ? "" : "none";
     }
   }
 
   if (els.relatedTabPanel) {
-    els.relatedTabPanel.style.display = isParentAsset ? "" : "none";
+    els.relatedTabPanel.style.display = isSystemAsset ? "" : "none";
   }
 
-  if (!canShowMap && (activeTab === "inspections" || activeTab === "map")) {
+  const isMapHidden = activeTab === "map" && !canShowMap;
+  const isRelatedHidden = activeTab === "inspections" && !isSystemAsset;
+  const isProgramHidden = activeTab === "program" && !isControllerAsset;
+  if (isMapHidden || isRelatedHidden || isProgramHidden) {
     setActiveTab("details");
   }
 }

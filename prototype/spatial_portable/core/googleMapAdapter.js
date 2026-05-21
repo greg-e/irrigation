@@ -43,6 +43,8 @@ export class GoogleMapAdapter {
     this.onFeatureChanged = null;
     this.onFeatureSelected = null;
     this.selectedFeatureId = null;
+    this.resizeObserver = null;
+    this.onWindowResize = null;
   }
 
   async init() {
@@ -87,6 +89,35 @@ export class GoogleMapAdapter {
         this.onFeatureCreated(feature, event.overlay);
       }
     });
+
+    this.attachResizeHandling();
+    this.syncMapSize();
+  }
+
+  attachResizeHandling() {
+    if (this.resizeObserver || !this.rootEl) return;
+
+    this.onWindowResize = () => this.syncMapSize();
+    window.addEventListener("resize", this.onWindowResize);
+
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver(() => this.syncMapSize());
+      this.resizeObserver.observe(this.rootEl);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => this.syncMapSize());
+    });
+  }
+
+  syncMapSize() {
+    if (!this.map || !this.rootEl || !window.google?.maps) return;
+
+    const center = this.map.getCenter();
+    google.maps.event.trigger(this.map, "resize");
+    if (center) {
+      this.map.setCenter(center);
+    }
   }
 
   setMode(mode) {
@@ -207,10 +238,29 @@ export class GoogleMapAdapter {
       if (feature.isLatLon) {
         return null;
       }
+      const isClockSimulation =
+        feature.isAuto && String(feature.assetType || "").toLowerCase() === "controller";
       const markerOpts = {
         position: feature.geometry,
         draggable: false,
+        title: feature.name || "Simulated clock",
       };
+      if (isClockSimulation) {
+        markerOpts.label = {
+          text: "C",
+          color: "#0f1419",
+          fontWeight: "700",
+          fontSize: "11px",
+        };
+        markerOpts.icon = {
+          path: google.maps.SymbolPath.CIRCLE,
+          fillColor: "#f9a826",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+          scale: 10,
+        };
+      }
       return new google.maps.Marker(markerOpts);
     }
 
