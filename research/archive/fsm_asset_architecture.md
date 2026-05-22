@@ -162,7 +162,7 @@ Validation checklist in sandbox (recommended):
 
 Execution runbook:
 
-- [Mobile prototype notes and walkthrough](../prototype/mobile/ui/notes.md)
+- [Mobile prototype notes and walkthrough](../prototype/mobile/notes.md)
 
 Source evidence:
 

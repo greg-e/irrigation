@@ -695,7 +695,7 @@ function navigateToRelatedAsset(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  window.location.assign(`desktop_prototype_with_map.html?${next.toString()}`);
+  window.location.assign(`desktop_v3.1.html?${next.toString()}`);
 }
 
 function getProperty() {
@@ -1545,7 +1545,7 @@ function assetRecordHref(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  return `desktop_prototype_with_map.html?${next.toString()}`;
+  return `desktop_v3.1.html?${next.toString()}`;
 }
 
 function getAssetDisplayTitle(asset) {

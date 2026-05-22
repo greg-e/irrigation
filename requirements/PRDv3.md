@@ -562,7 +562,7 @@ Test subtasks:
 
 Internal repository sources:
 
-1. prototype/desktop_map/desktop_prototype_with_map_feature_inventory.md
+1. prototype/desktop/desktop_prototype_with_map_feature_inventory.md
 2. requirements/desktop_map_prototype_prd.md
 3. requirements/irrigation_prd_v2.md
 4. requirements/map_lwc_v1_implementation_checklist.md

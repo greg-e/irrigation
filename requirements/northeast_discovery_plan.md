@@ -91,7 +91,7 @@ These are the design decisions most likely to shift once NE is in the room:
 | Winterization Question Set | [requirements/inspection_question_library.md](inspection_question_library.md) Variants | Currently a stub. Winterization is the **major** seasonal event in NE and needs a real fill-in. |
 | Pattern C "Suggested Repairs" review screen at checkout | [research/automation_flows_design.md](../research/automation_flows_design.md) Flow 3 / Flow 4 | IrrigationCheckups auto-builds quotes during the checkup, not at checkout. NE techs may expect inline quote-build, not end-of-visit review. |
 | PDF report content + style | [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §9 | Use NE's IrrigationCheckups PDFs as reference benchmark. |
-| Per-zone grid UX (mobile) | [prototype/mobile/ui/fsm_mobile_inspection_standalone.html](../prototype/mobile/ui/fsm_mobile_inspection_standalone.html) | NE will say whether IrrigationCheckups' per-zone UX (which is well-regarded) sets the bar — or if our card-based design is acceptable. |
+| Per-zone grid UX (mobile) | [prototype/mobile/mobile_v3.1.html](../prototype/mobile/mobile_v3.1.html) | NE will say whether IrrigationCheckups' per-zone UX (which is well-regarded) sets the bar — or if our card-based design is acceptable. |
 | GPS site map | [research/spatial_mapping_options.md](../research/spatial_mapping_options.md) | NE actively uses IrrigationCheckups' site map. Confirm utility expectation. |
 | Conservation/water-efficiency audit | [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §11 (out of scope) | Currently deferred. NE may have municipal contracts that require it — could pull this back into scope. |
 

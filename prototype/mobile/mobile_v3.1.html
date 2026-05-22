@@ -23,14 +23,15 @@
 
     .phone-shell {
       width: min(430px, 100%);
-      min-height: 880px;
+      min-height: 100dvh;
+      height: auto;
       margin: 0 auto;
       border: 1px solid #2e3138;
       border-radius: 0;
       background: #1c1f25;
       box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       display: flex;
       flex-direction: column;
     }
@@ -140,11 +141,12 @@
       border-bottom: 3px solid transparent;
       background: transparent;
       color: rgba(255,255,255,0.77);
-      font-size: 0.68rem;
+      font-size: 0.74rem;
       letter-spacing: 0.01em;
       text-transform: uppercase;
-      font-weight: 500;
-      padding: 10px 2px 9px;
+      font-weight: 600;
+      min-height: 42px;
+      padding: 11px 4px 10px;
       cursor: pointer;
       font-family: inherit;
       display: inline-flex;
@@ -186,6 +188,7 @@
     }
 
     .phone-shell.mode-wo #woli-context,
+    .phone-shell.mode-wo #tab-map,
     .phone-shell.mode-woli #tab-overview {
       display: none;
     }
@@ -389,9 +392,45 @@
 
     #viewport {
       padding: 8px;
-      overflow-y: auto;
-      flex: 1;
+      overflow: visible;
+      flex: 1 0 auto;
       background: #2a2c32;
+    }
+
+    #viewport.map-workspace {
+      overflow: visible;
+      padding: 8px;
+    }
+
+    #viewport.map-workspace .nav-panel[data-panel="map"].active {
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    #viewport.map-workspace .gis-map-canvas {
+      min-height: 420px;
+      height: clamp(420px, 64vh, 680px);
+      max-height: 680px;
+    }
+
+    #viewport.map-workspace .map-bottom-sheet-expanded {
+      display: none;
+    }
+
+    #viewport.map-workspace .map-bottom-sheet.expanded .map-bottom-sheet-expanded {
+      display: block;
+    }
+
+    #viewport.map-workspace,
+    #viewport.map-workspace * {
+      scrollbar-width: auto;
+    }
+
+    #viewport.map-workspace *::-webkit-scrollbar {
+      width: initial;
+      height: initial;
+      display: initial;
     }
 
     .slds-card,
@@ -446,12 +485,34 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 12px;
+      min-height: 44px;
+      padding: 12px 14px;
       font-family: inherit;
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       text-align: left;
+    }
+
+    .slds-form-element__label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      margin-bottom: 4px;
+    }
+
+    .slds-button {
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      touch-action: manipulation;
     }
 
     .section-chevron {
@@ -481,6 +542,16 @@
       -webkit-text-fill-color: #f4f4f4 !important;
       caret-color: #f4f4f4;
       font-family: inherit !important;
+      font-size: 16px !important;
+      border-radius: 8px;
+      padding: 0 11px;
+      min-height: 40px;
+    }
+
+    .slds-textarea {
+      min-height: 86px;
+      padding: 10px 11px;
+      line-height: 1.35;
     }
 
     .slds-input:focus,
@@ -709,6 +780,124 @@
       align-items: center;
     }
 
+    .map-asset-picker {
+      min-width: 138px;
+      max-width: 180px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #33445f;
+      background: #121d2e;
+      color: #dbe6f6;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0 8px;
+      text-transform: uppercase;
+    }
+
+    .map-select-hint {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #f7c37a;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+
+    .map-select-hint.ready {
+      color: #9fe2ba;
+    }
+
+    .map-compact-actions {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #1a2132;
+      background: #111827;
+    }
+
+    .map-icon-btn {
+      border: 1px solid #344157;
+      background: #1a2536;
+      color: #d2dbea;
+      border-radius: 8px;
+      min-height: 38px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      gap: 1px;
+      padding: 3px 2px;
+      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    .map-icon-btn:hover {
+      background: #23324a;
+      border-color: #4b658f;
+      transform: translateY(-1px);
+    }
+
+    .map-icon-btn .glyph {
+      font-size: 0.74rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #e4ebf9;
+    }
+
+    .map-icon-btn .label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .map-icon-btn.primary {
+      border-color: #2e844a;
+      background: #1f3d2a;
+      color: #b9f1cf;
+    }
+
+    .map-icon-btn.primary .glyph,
+    .map-icon-btn.primary .label {
+      color: #c6f5da;
+    }
+
+    .map-icon-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      background: #1a2130;
+      border-color: #30394a;
+    }
+
+    .components-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-right: 8px;
+    }
+
+    .new-asset-mini {
+      height: 29px;
+      min-height: 29px;
+      padding: 0 8px;
+      border: none;
+      background: transparent;
+      color: #8fb9ff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .new-asset-mini:hover,
+    .new-asset-mini:focus {
+      color: #b7d4ff;
+      background: rgba(143, 185, 255, 0.08);
+      outline: none;
+    }
+
     .gis-mini-btn {
       border: 1px solid #2d3a52;
       background: #1e2738;
@@ -727,6 +916,107 @@
       border-color: #3d5070;
     }
 
+    .nav-panel[data-panel="related"].map-first .related-collapsible:not([data-section-id="related-map"]):not([data-section-id="related-assets"]):not([data-section-id="related-required-questions"]):not(.map-first-visible) {
+      display: none;
+    }
+
+    .nav-panel[data-panel="related"].map-first .related-collapsible[data-section-id="related-approvals"] {
+      display: block !important;
+    }
+
+    .nav-panel[data-panel="related"].map-first .related-collapsible[data-section-id="related-assets"] {
+      margin-top: 8px;
+    }
+
+    .nav-panel[data-panel="related"].map-first #related-assets-body {
+      padding: 10px;
+    }
+
+    .nav-panel[data-panel="related"].map-first #related-assets-body > .slds-box:first-of-type {
+      display: none;
+    }
+
+    .nav-panel[data-panel="related"].map-first #related-assets-body .asset-list-shell {
+      max-height: 42vh;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .nav-panel[data-panel="related"].map-first .asset-row-main {
+      align-items: flex-start;
+    }
+
+    .nav-panel[data-panel="related"].map-first .asset-row-meta {
+      white-space: normal;
+      text-align: right;
+    }
+
+    .map-bottom-sheet {
+      position: sticky;
+      bottom: 8px;
+      z-index: 6;
+      margin-top: 10px;
+      border: 1px solid #3b4049;
+      border-radius: 12px;
+      background: rgba(26, 31, 40, 0.96);
+      padding: 10px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(4px);
+    }
+
+    .map-bottom-sheet-handle {
+      width: 38px;
+      height: 4px;
+      border-radius: 99px;
+      background: #6f7a8f;
+      margin: 0 auto 8px;
+      opacity: 0.85;
+      cursor: pointer;
+    }
+
+    .map-bottom-sheet-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .map-bottom-sheet-title {
+      margin: 0;
+      font-size: 0.82rem;
+      color: #d7deeb;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .map-bottom-sheet-peek {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .map-bottom-sheet-expanded {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #313948;
+      display: none;
+    }
+
+    .map-bottom-sheet.expanded .map-bottom-sheet-expanded {
+      display: block;
+      max-height: min(42vh, 380px);
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .map-bottom-sheet-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
     .gis-status-strip {
       text-align: right;
       font-size: 0.68rem;
@@ -739,9 +1029,23 @@
 
     .gis-map-canvas {
       position: relative;
-      min-height: 620px;
+      min-height: 264px;
+      height: 264px;
+      max-height: 264px;
       background: #121922;
       overflow: hidden;
+      isolation: isolate;
+    }
+
+    .spatial-base-frame {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      z-index: 0;
+      background: #121922;
     }
 
     .gis-map-canvas::before {
@@ -759,7 +1063,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      display: block;
+      display: none;
       pointer-events: none;
     }
 
@@ -899,6 +1203,7 @@
     .map-grid {
       position: absolute;
       inset: 0;
+      z-index: 2;
     }
 
     /* Mapbox teardrop pin markers */
@@ -1541,7 +1846,8 @@
       text-align: left;
       border: 1px solid #454b57;
       border-radius: 10px;
-      padding: 9px 10px;
+      min-height: 44px;
+      padding: 10px 12px;
       background: #232831;
       transition: border-color 120ms ease, background 120ms ease;
     }
@@ -1662,13 +1968,20 @@
     input[type="checkbox"] { accent-color: #0176d3; }
 
     @media (max-width: 700px) {
-      .phone-shell { width: 100%; min-height: 100dvh; }
+      .phone-shell { width: 100%; height: auto; min-height: 100dvh; }
       .system-cards { grid-template-columns: 1fr; }
       .app-tabs { grid-template-columns: repeat(4, 1fr); }
       .asset-inline-grid { grid-template-columns: 1fr; }
+      .slds-button { min-height: 42px; }
       .gis-map-shell { margin-bottom: 16px; }
       .gis-map-canvas {
-        min-height: 760px;
+        min-height: 264px;
+        height: 264px;
+        max-height: 264px;
+      }
+      .map-bottom-sheet-peek,
+      .map-bottom-sheet-grid {
+        grid-template-columns: 1fr;
       }
       .gis-selection-card {
         left: 8px;
@@ -1713,6 +2026,7 @@
       <nav class="app-tabs" aria-label="Work order sections">
         <button id="tab-overview" class="nav-btn active" data-tab="overview" type="button">OVERVIEW</button>
           <button class="nav-btn" data-tab="details" type="button">DETAILS</button>
+        <button id="tab-map" class="nav-btn" data-tab="map" type="button">MAP</button>
         <button class="nav-btn" data-tab="related" type="button">RELATED</button>
         <button class="nav-btn" data-tab="feed" type="button">FEED</button>
       </nav>
@@ -1814,139 +2128,68 @@
           </div>
         </article>
 
-        <!-- Tab 3: RELATED (irrigation sections) -->
-        <article class="nav-panel" data-panel="related">
-          <div id="wo-related-summary" class="wo-related-summary hidden">
-            <div class="wo-related-row">
-              <span class="wo-related-icon woli" aria-hidden="true">LI</span>
-              <span>Work Order Line Items - (<span id="wo-related-woli-count">0</span>)</span>
-            </div>
-            <div class="wo-related-row">
-              <span class="wo-related-icon sa" aria-hidden="true">SA</span>
-              <span>Service Appointments - (<span id="wo-related-sa-count">1</span>)</span>
-            </div>
-            <div class="wo-related-row">
-              <span class="wo-related-icon files" aria-hidden="true">F</span>
-              <span>Files - (<span id="wo-related-files-count">0</span>)</span>
-            </div>
-          </div>
-          <p id="non-irrigation-note" class="slds-text-body_small slds-text-color_weak hidden" style="margin: 2px 2px 10px;">Read-only placeholder for non-irrigation work. Use standard FSM flow.</p>
-          <section class="gis-map-shell related-collapsible is-collapsed" data-section-id="related-map">
-            <div class="slds-card__header slds-grid">
-              <header class="slds-media slds-media_center slds-has-flexi-truncate">
-                <div class="slds-media__body">
-                  <h2 class="slds-card__header-title">
-                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-map-body">
-                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
-                      <span>Map</span>
-                    </button>
-                  </h2>
-                </div>
-              </header>
-            </div>
-            <div id="related-map-body" class="related-section-body">
+        <!-- Tab 3: MAP -->
+        <article class="nav-panel" data-panel="map">
+          <div class="gis-map-shell">
             <div class="gis-map-titlebar">
-              <div class="mapbox-wordmark">
-                <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <circle cx="10" cy="10" r="10" fill="#4264fb"/>
-                  <path d="M10 3.5C7 3.5 4.5 6 4.5 9c0 3.6 4.6 8 5.5 8s5.5-4.4 5.5-8c0-3-2.5-5.5-5.5-5.5zm0 7.25a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5z" fill="white"/>
-                </svg>
-                <span class="mapbox-wordmark-text">Mapbox</span>
-              </div>
+              <p class="gis-map-title">Spatial Map</p>
               <div class="gis-map-actions">
-                <button id="gis-filter-toggle" class="gis-mini-btn" type="button" aria-label="Filter map">Filter</button>
-                <button id="gis-layers-toggle" class="gis-mini-btn" type="button">Layers</button>
+                <select id="map-asset-picker" class="map-asset-picker" aria-label="Select asset for map actions">
+                  <option value="">Select asset</option>
+                </select>
+                <span id="map-sheet-selected" class="map-select-hint">Pick asset to enable actions</span>
               </div>
             </div>
 
-            <div class="gis-status-strip">Zoom 16 · navigation-night · GPS unavailable</div>
+            <div class="map-compact-actions" aria-label="Map quick actions">
+              <button id="map-quick-details" class="map-icon-btn" type="button" aria-label="Open selected asset details">
+                <span class="glyph" aria-hidden="true">D</span>
+                <span class="label">Details</span>
+              </button>
+              <button id="map-quick-photo" class="map-icon-btn" type="button" aria-label="Attach photo to selected asset">
+                <span class="glyph" aria-hidden="true">P</span>
+                <span class="label">Photo</span>
+              </button>
+              <button id="map-quick-notes" class="map-icon-btn" type="button" aria-label="Log note for selected asset">
+                <span class="glyph" aria-hidden="true">N</span>
+                <span class="label">Notes</span>
+              </button>
+              <button id="gis-filter-toggle" class="map-icon-btn" type="button" aria-label="Filter map">
+                <span class="glyph" aria-hidden="true">F</span>
+                <span class="label">Filter</span>
+              </button>
+              <button id="gis-layers-toggle" class="map-icon-btn" type="button" aria-label="Open map layers">
+                <span class="glyph" aria-hidden="true">L</span>
+                <span class="label">Layers</span>
+              </button>
+              <button id="gis-locate" class="map-icon-btn" type="button" aria-label="Center on location">
+                <span class="glyph" aria-hidden="true">G</span>
+                <span class="label">Locate</span>
+              </button>
+              <button id="gis-drop-pin" class="map-icon-btn" type="button" aria-label="Drop pin on map">
+                <span class="glyph" aria-hidden="true">.</span>
+                <span class="label">Pin</span>
+              </button>
+              <button id="gis-draw-geometry" class="map-icon-btn" type="button" aria-label="Draw geometry on map">
+                <span class="glyph" aria-hidden="true">S</span>
+                <span class="label">Shape</span>
+              </button>
+              <button id="gis-add-point" class="map-icon-btn primary" type="button" aria-label="Create new asset">
+                <span class="glyph" aria-hidden="true">+</span>
+                <span class="label">New</span>
+              </button>
+            </div>
+
+            <div class="gis-status-strip">Spatial base map · property context · GPS unavailable</div>
 
             <div class="gis-map-canvas">
-              <!-- Mapbox-style dark basemap -->
-              <svg class="mapbox-basemap-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 620" preserveAspectRatio="xMidYMid slice">
-                <!-- Land -->
-                <rect width="400" height="620" fill="#121922"/>
-                <!-- Water body -->
-                <path d="M0,490 Q80,468 132,494 Q162,510 152,545 L0,545Z" fill="#193349"/>
-                <path d="M0,488 Q78,466 130,492" stroke="#1d4568" stroke-width="1" fill="none" opacity="0.6"/>
-                <!-- Parks / greenspace -->
-                <rect x="178" y="73" width="108" height="88" rx="3" fill="#0d2118"/>
-                <rect x="53" y="283" width="78" height="68" rx="3" fill="#0d2118"/>
-                <rect x="293" y="438" width="107" height="82" rx="3" fill="#0d2118"/>
-                <!-- Buildings -->
-                <rect x="26" y="98" width="44" height="34" rx="2" fill="#1e2e3e"/>
-                <rect x="78" y="106" width="60" height="26" rx="2" fill="#1a2738"/>
-                <rect x="28" y="144" width="112" height="20" rx="2" fill="#1a2738" opacity="0.8"/>
-                <rect x="153" y="243" width="30" height="40" rx="2" fill="#1a2738"/>
-                <rect x="193" y="233" width="54" height="38" rx="2" fill="#1e2e3e"/>
-                <rect x="255" y="261" width="40" height="34" rx="2" fill="#1a2738"/>
-                <rect x="300" y="96" width="54" height="46" rx="2" fill="#1e2e3e"/>
-                <rect x="310" y="196" width="60" height="50" rx="2" fill="#1a2738"/>
-                <rect x="100" y="376" width="50" height="40" rx="2" fill="#1e2e3e"/>
-                <rect x="160" y="365" width="34" height="30" rx="2" fill="#1a2738"/>
-                <rect x="220" y="396" width="54" height="40" rx="2" fill="#1e2e3e"/>
-                <rect x="286" y="375" width="44" height="54" rx="2" fill="#1a2738"/>
-                <rect x="26" y="206" width="34" height="30" rx="2" fill="#1e2e3e"/>
-                <rect x="70" y="196" width="54" height="40" rx="2" fill="#1a2738"/>
-                <!-- Minor roads -->
-                <line x1="0" y1="166" x2="400" y2="166" stroke="#2b3650" stroke-width="2"/>
-                <line x1="0" y1="241" x2="400" y2="241" stroke="#2b3650" stroke-width="1.5"/>
-                <line x1="0" y1="336" x2="400" y2="336" stroke="#2b3650" stroke-width="1.5"/>
-                <line x1="0" y1="458" x2="400" y2="458" stroke="#2b3650" stroke-width="2"/>
-                <line x1="66" y1="0" x2="66" y2="620" stroke="#2b3650" stroke-width="1.5"/>
-                <line x1="150" y1="0" x2="150" y2="620" stroke="#2b3650" stroke-width="1.5"/>
-                <line x1="291" y1="0" x2="291" y2="620" stroke="#2b3650" stroke-width="1.5"/>
-                <!-- Major roads -->
-                <line x1="0" y1="315" x2="400" y2="315" stroke="#3d4a5e" stroke-width="4"/>
-                <line x1="196" y1="0" x2="196" y2="620" stroke="#3d4a5e" stroke-width="4"/>
-                <!-- Highway with center dash -->
-                <path d="M0,532 Q100,512 200,526 Q300,540 400,520" stroke="#586a84" stroke-width="7" fill="none"/>
-                <path d="M0,532 Q100,512 200,526 Q300,540 400,520" stroke="#121922" stroke-width="2.5" fill="none" stroke-dasharray="12,9"/>
-                <!-- Road label placeholders -->
-                <rect x="203" y="303" width="58" height="9" rx="2" fill="#1e2e3e" opacity="0.75"/>
-                <rect x="100" y="303" width="44" height="9" rx="2" fill="#1e2e3e" opacity="0.75"/>
-                <rect x="160" y="175" width="30" height="8" rx="2" fill="#1e2e3e" opacity="0.6"/>
-                <rect x="210" y="175" width="40" height="8" rx="2" fill="#1e2e3e" opacity="0.6"/>
-              </svg>
-
+              <iframe
+                id="spatial-map-frame"
+                class="spatial-base-frame"
+                title="Spatial Map Prototype"
+                loading="lazy"
+              ></iframe>
               <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation GIS map"></div>
-
-              <!-- Mapbox zoom controls -->
-              <div class="mapbox-zoom-ctrl" aria-label="Map zoom controls">
-                <button type="button" class="mapbox-zoom-btn" id="gis-zoom-in" aria-label="Zoom in">+</button>
-                <button type="button" class="mapbox-zoom-btn" id="gis-zoom-out" aria-label="Zoom out">−</button>
-              </div>
-
-              <!-- Mapbox compass -->
-              <button class="mapbox-compass-btn" type="button" id="gis-locate" aria-label="Reset bearing to north">
-                <svg viewBox="0 0 20 20" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M10 1 L11.4 8.6 L10 10 L8.6 8.6 Z" fill="#e55e5e"/>
-                  <path d="M10 19 L11.4 11.4 L10 10 L8.6 11.4 Z" fill="#c8ccd8"/>
-                  <path d="M1 10 L8.6 8.6 L10 10 L8.6 11.4 Z" fill="#c8ccd8"/>
-                  <path d="M19 10 L11.4 8.6 L10 10 L11.4 11.4 Z" fill="#c8ccd8"/>
-                  <circle cx="10" cy="10" r="1.5" fill="#283044"/>
-                </svg>
-              </button>
-
-              <button id="gis-add-point" class="gis-floating-btn add" type="button" aria-label="Create new asset">+</button>
-
-              <!-- Mapbox scale bar -->
-              <div class="mapbox-scale">
-                <div class="mapbox-scale-bar"></div>
-                <span>200 ft</span>
-              </div>
-
-              <!-- Mapbox attribution -->
-              <div class="mapbox-attribution">
-                <div class="mapbox-logo">
-                  <svg width="14" height="14" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <circle cx="10" cy="10" r="10" fill="#4264fb"/>
-                    <path d="M10 3.5C7 3.5 4.5 6 4.5 9c0 3.6 4.6 8 5.5 8s5.5-4.4 5.5-8c0-3-2.5-5.5-5.5-5.5zm0 7.25a1.75 1.75 0 110-3.5 1.75 1.75 0 010 3.5z" fill="white"/>
-                  </svg>
-                </div>
-                <span>© <a href="#" tabindex="-1">Mapbox</a> © <a href="#" tabindex="-1">OpenStreetMap</a></span>
-                <a href="#" tabindex="-1">Improve this map</a>
-              </div>
 
               <div id="gis-selection-card" class="gis-selection-card hidden">
                 <div class="gis-sheet-grabber" aria-hidden="true"></div>
@@ -2003,172 +2246,27 @@
                 </div>
               </div>
 
-              <div id="gis-create-sheet" class="gis-collect-sheet hidden">
-                <div class="gis-collect-top">
-                  <button id="gis-create-cancel" type="button">Cancel</button>
-                  <p>New Asset</p>
-                  <button id="gis-create-save" type="button">Save</button>
-                </div>
-                <div class="gis-sheet-body">
-                  <div class="slds-box slds-box_x-small">
-                <div class="gis-type-selector slds-m-bottom_small">
-                      <button type="button" class="gis-type-btn active" id="gis-type-zone" data-type="zone">Zone</button>
-                      <button type="button" class="gis-type-btn" id="gis-type-controller" data-type="controller">Controller</button>
-                      <button type="button" class="gis-type-btn" id="gis-type-backflow" data-type="backflow">Backflow</button>
-                    </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                      <label class="slds-form-element__label" for="gis-create-name">Name</label>
-                      <div class="slds-form-element__control">
-                        <input id="gis-create-name" class="slds-input" type="text" placeholder="Zone 25 / Controller D / Backflow East" />
-                      </div>
-                    </div>
-                    <div class="slds-form-element slds-m-bottom_small">
-                      <label class="slds-form-element__label" for="gis-create-notes">Notes</label>
-                      <div class="slds-form-element__control">
-                        <textarea id="gis-create-notes" class="slds-textarea" rows="3" placeholder="Optional details"></textarea>
-                      </div>
-                    </div>
-                    <div class="gis-create-coordinates" id="gis-create-coordinates">
-                      <p class="slds-text-title slds-m-bottom_x-small" style="margin-top: 12px;">Coordinates (Optional)</p>
-                      <div class="slds-grid slds-gutters_small">
-                        <div class="slds-col slds-size_1-of-2 slds-form-element">
-                          <label class="slds-form-element__label" for="gis-create-mapx">Map X (%)</label>
-                          <div class="slds-form-element__control">
-                            <input id="gis-create-mapx" class="slds-input" type="number" min="0" max="100" step="0.1" placeholder="0-100" />
-                          </div>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2 slds-form-element">
-                          <label class="slds-form-element__label" for="gis-create-mapy">Map Y (%)</label>
-                          <div class="slds-form-element__control">
-                            <input id="gis-create-mapy" class="slds-input" type="number" min="0" max="100" step="0.1" placeholder="0-100" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="gis-create-zone-fields">
-                      <div class="slds-form-element">
-                        <label class="slds-form-element__label" for="gis-create-controller">Clock</label>
-                        <div class="slds-form-element__control">
-                          <div class="slds-select_container">
-                            <select id="gis-create-controller" class="slds-select"></select>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="slds-form-element">
-                        <label class="slds-form-element__label" for="gis-create-backflow">Backflow</label>
-                        <div class="slds-form-element__control">
-                          <div class="slds-select_container">
-                            <select id="gis-create-backflow" class="slds-select"></select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="slds-p-around_small">
-              <p id="map-caption" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Tap map markers to inspect assets and perform edits directly from GIS.</p>
-              <div class="slds-form-element">
-                <label class="slds-form-element__label" for="clock-filter">Clock Filter</label>
-                <div class="slds-form-element__control">
-                  <div class="slds-select_container">
-                    <select id="clock-filter" class="slds-select"></select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-          </section>
-
-          <div class="slds-card related-collapsible is-collapsed" data-section-id="related-assets">
-            <div class="slds-card__header slds-grid">
-              <header class="slds-media slds-media_center slds-has-flexi-truncate">
-                <div class="slds-media__body">
-                  <h2 class="slds-card__header-title">
-                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-assets-body">
-                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
-                      <span>Components</span>
-                    </button>
-                  </h2>
-                </div>
-              </header>
-            </div>
-            <div id="related-assets-body" class="slds-card__body slds-card__body_inner related-section-body">
-              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Browse the full system, edit existing assets, and add new components to controllers, zones, and backflows.</p>
-              <div class="slds-box slds-m-bottom_small">
-                <p class="slds-text-title slds-m-bottom_x-small">Add Asset</p>
-                <div class="slds-grid slds-gutters_small slds-wrap">
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                    <label class="slds-form-element__label" for="add-asset-type">Type</label>
-                    <div class="slds-form-element__control">
-                      <div class="slds-select_container">
-                        <select id="add-asset-type" class="slds-select">
-                          <option value="zone">Zone</option>
-                          <option value="controller">Controller</option>
-                          <option value="backflow">Backflow</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                    <label class="slds-form-element__label" for="add-asset-name">Name</label>
-                    <div class="slds-form-element__control">
-                      <input id="add-asset-name" type="text" class="slds-input" placeholder="Zone 25 / Controller D / Backflow East" />
-                    </div>
-                  </div>
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                    <label class="slds-form-element__label" for="add-zone-controller">Controller (for Zone)</label>
-                    <div class="slds-form-element__control">
-                      <div class="slds-select_container">
-                        <select id="add-zone-controller" class="slds-select"></select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                    <label class="slds-form-element__label" for="add-zone-backflow">Backflow (for Zone)</label>
-                    <div class="slds-form-element__control">
-                      <div class="slds-select_container">
-                        <select id="add-zone-backflow" class="slds-select"></select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="slds-m-top_x-small">
-                  <button id="add-asset-button" class="slds-button slds-button_brand" type="button">Add Asset</button>
-                </div>
-                <p id="asset-admin-message" class="slds-text-body_small slds-m-top_xx-small" style="min-height:18px;"></p>
-              </div>
-
-              <div class="slds-grid slds-gutters_small slds-wrap slds-m-bottom_x-small">
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                  <label class="slds-form-element__label" for="asset-filter">Asset Type</label>
-                  <div class="slds-form-element__control">
-                    <div class="slds-select_container">
-                      <select id="asset-filter" class="slds-select">
-                        <option value="all">All</option>
-                        <option value="zone">Zones</option>
-                        <option value="controller">Controllers</option>
-                        <option value="backflow">Backflows</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
-                  <label class="slds-form-element__label" for="asset-search">Search</label>
-                  <div class="slds-form-element__control">
-                    <input id="asset-search" type="text" class="slds-input" placeholder="Zone 11 / Controller B / Backflow South" />
-                  </div>
-                </div>
-              </div>
-              <p id="asset-list-summary" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small"></p>
-              <div class="asset-list-shell">
-                <ul id="asset-list" class="slds-has-dividers_top-space"></ul>
-              </div>
             </div>
           </div>
+        </article>
 
+        <!-- Tab 3: RELATED (irrigation sections) -->
+        <article class="nav-panel" data-panel="related">
+          <div id="wo-related-summary" class="wo-related-summary hidden">
+            <div class="wo-related-row">
+              <span class="wo-related-icon woli" aria-hidden="true">LI</span>
+              <span>Work Order Line Items - (<span id="wo-related-woli-count">0</span>)</span>
+            </div>
+            <div class="wo-related-row">
+              <span class="wo-related-icon sa" aria-hidden="true">SA</span>
+              <span>Service Appointments - (<span id="wo-related-sa-count">1</span>)</span>
+            </div>
+            <div class="wo-related-row">
+              <span class="wo-related-icon files" aria-hidden="true">F</span>
+              <span>Files - (<span id="wo-related-files-count">0</span>)</span>
+            </div>
+          </div>
+          <p id="non-irrigation-note" class="slds-text-body_small slds-text-color_weak hidden" style="margin: 2px 2px 10px;">Read-only placeholder for non-irrigation work. Use standard FSM flow.</p>
           <div class="slds-card related-collapsible is-collapsed" data-section-id="related-required-questions">
             <div class="slds-card__header slds-grid">
               <header class="slds-media slds-media_center slds-has-flexi-truncate">
@@ -2190,9 +2288,50 @@
                   </span>
                 </div>
                 <p id="meter-label" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">0 of 12 answered</p>
-                <p id="resolver-meta" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">Resolver pending...</p>
               </div>
               <ul id="required-list" class="slds-has-dividers_top-space"></ul>
+            </div>
+          </div>
+
+          <div class="slds-card related-collapsible is-collapsed" data-section-id="related-assets">
+            <div class="slds-card__header slds-grid components-header">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h2 class="slds-card__header-title">
+                    <button class="section-toggle" type="button" aria-expanded="false" aria-controls="related-assets-body">
+                      <span class="section-chevron" aria-hidden="true">&#x25BE;</span>
+                      <span>Components</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+              <button id="add-asset-button" class="slds-button new-asset-mini" type="button">+ Add</button>
+            </div>
+            <div id="related-assets-body" class="slds-card__body slds-card__body_inner related-section-body">
+              <div class="slds-grid slds-gutters_small slds-wrap slds-m-bottom_x-small">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-filter">Asset Type</label>
+                  <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                      <select id="asset-filter" class="slds-select">
+                        <option value="all">All</option>
+                        <option value="zone">Zones</option>
+                        <option value="controller">Controllers</option>
+                        <option value="backflow">Backflows</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                  <label class="slds-form-element__label" for="asset-search">Search</label>
+                  <div class="slds-form-element__control">
+                    <input id="asset-search" type="text" class="slds-input" placeholder="Zone 11 / Controller B / Backflow South" />
+                  </div>
+                </div>
+              </div>
+              <div class="asset-list-shell">
+                <ul id="asset-list" class="slds-has-dividers_top-space"></ul>
+              </div>
             </div>
           </div>
 
@@ -2216,7 +2355,12 @@
                 <span class="slds-checkbox_faux_container" aria-hidden="true"><span class="slds-checkbox_faux"></span></span>
                 <span class="slds-form-element__label">No irrigation issues found</span>
               </label>
+              <p id="no-issues-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Available only when there are no open callouts.</p>
               <ul id="callout-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
+              <div id="callout-history-wrap" class="slds-m-top_small hidden">
+                <p class="slds-text-title slds-m-bottom_x-small">Resolved History</p>
+                <ul id="callout-history-list" class="slds-has-dividers_top-space"></ul>
+              </div>
             </div>
           </div>
 
@@ -2248,14 +2392,14 @@
                   </div>
                 </div>
               </div>
-              <button id="toggle-am" class="slds-button slds-button_neutral slds-m-bottom_x-small" type="button">Assign / Clear AM</button>
+              <button id="toggle-am" class="slds-button slds-button_neutral slds-m-bottom_x-small" type="button">Clear AM</button>
               <p id="am-status" class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">AM not assigned.</p>
               <div class="slds-button-group slds-m-bottom_x-small" role="group">
                 <button id="open-review" class="slds-button slds-button_neutral" type="button">Open Review</button>
                 <button id="simulate-submit" class="slds-button slds-button_brand" type="button">Submit Irrigation Report</button>
-                <button id="reset-flow" class="slds-button slds-button_destructive" type="button">Reset</button>
+                <button id="reset-flow" class="slds-button slds-button_destructive" type="button">Reset Options</button>
               </div>
-              <p id="submit-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Submit blocks on callout policy and AM assignment. Required questions are advisory.</p>
+              <p id="submit-helper" class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Submit blocks on callout policy and AM assignment. Required questions are soft-gated with justification.</p>
               <p id="submit-result" class="slds-text-body_small slds-m-top_xx-small" style="font-weight:600;min-height:20px;">Waiting for action.</p>
             </div>
           </div>
@@ -2367,6 +2511,21 @@
                 </div>
               </div>
             </div>
+            <div class="slds-form-element slds-m-top_x-small">
+              <label class="slds-form-element__label" for="detail-callout-photo">Callout Photo</label>
+              <div class="slds-form-element__control">
+                <input id="detail-callout-photo" class="slds-input" type="file" accept="image/*" capture="environment" />
+              </div>
+              <p id="detail-callout-photo-status" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">No photo attached.</p>
+            </div>
+            <div class="slds-form-element slds-m-top_x-small">
+              <label class="slds-form-element__label">Callout Location</label>
+              <div class="slds-form-element__control" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button id="detail-callout-capture-location" class="slds-button slds-button_neutral" type="button">Capture Current Location</button>
+                <button id="detail-callout-clear-location" class="slds-button slds-button_neutral" type="button">Clear</button>
+              </div>
+              <p id="detail-callout-location-status" class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">No location captured.</p>
+            </div>
             <div class="sheet-actions">
               <button id="detail-callout-submit" class="slds-button slds-button_brand" type="button">Save Callout</button>
               <button id="detail-callout-cancel" class="slds-button slds-button_neutral" type="button">Cancel</button>
@@ -2459,6 +2618,10 @@
         <div class="decision-card">
           <h3 id="decision-title">Confirm</h3>
           <p id="decision-message"></p>
+          <div id="decision-input-wrap" class="hidden slds-m-top_small">
+            <label id="decision-input-label" class="slds-form-element__label" for="decision-input">Details</label>
+            <textarea id="decision-input" class="slds-textarea" rows="3" placeholder=""></textarea>
+          </div>
           <div id="decision-actions" class="decision-actions"></div>
         </div>
       </section>
@@ -2559,24 +2722,23 @@ function createInitialIrrigationSession() {
     };
   }),
   requiredQuestions: [
-    { id: "q1",  text: "Controller A serial captured",               answered: true  },
-    { id: "q2",  text: "Controller B serial captured",               answered: true  },
-    { id: "q3",  text: "Controller C serial captured",               answered: true  },
-    { id: "q4",  text: "Backflow North compliance verified",          answered: true  },
-    { id: "q5",  text: "Backflow South compliance verified",          answered: false },
-    { id: "q6",  text: "Zone pressure sample for Zones 1-8",         answered: false },
-    { id: "q7",  text: "Zone pressure sample for Zones 9-16",        answered: false },
-    { id: "q8",  text: "Zone pressure sample for Zones 17-24",       answered: false },
-    { id: "q9",  text: "Valve conditions recorded",                  answered: false },
-    { id: "q10", text: "Coverage audit photos uploaded",             answered: false },
-    { id: "q11", text: "Flow variance captured",                     answered: false },
-    { id: "q12", text: "Customer walkthrough completed",             answered: false },
+    { id: "q1",  text: "Visit reason and inspection type confirmed",                    answered: true  },
+    { id: "q2",  text: "Location scope captured (property/common area/resident)",       answered: true  },
+    { id: "q3",  text: "Weather and site stress recorded (dry spots/pooling)",          answered: true  },
+    { id: "q4",  text: "Water source and restriction status documented",                 answered: true  },
+    { id: "q5",  text: "Controller power state and rain/freeze sensor verified",         answered: false },
+    { id: "q6",  text: "Programs match contract or seasonal schedule",                   answered: false },
+    { id: "q7",  text: "Zone runtime and distribution method recorded",                  answered: false },
+    { id: "q8",  text: "Zone issue checks complete (heads/nozzles/leaks/valves/drip)",  answered: false },
+    { id: "q9",  text: "Mainline leak and pressure stability verified",                  answered: false },
+    { id: "q10", text: "System status and customer summary completed",                   answered: false },
   ],
   callouts: [],
     clockFilter: "ALL",
     amAssigned: false,
     amName: "",
     noIssuesFound: false,
+    submitAdvisoryJustification: "",
   };
 }
 
@@ -2610,6 +2772,8 @@ const woliSessions = new Map();
 let activeWoliId = "";
 let appMode = "wo";
 let state = createInitialIrrigationSession();
+const USE_DESKTOP_MAP_BEHAVIOR = false;
+const USE_MAP_FOCUS_MODE = false;
 
 const meterFill         = document.getElementById("meter-fill");
 const meterLabel        = document.getElementById("meter-label");
@@ -2622,8 +2786,11 @@ const amStatusHeader    = document.getElementById("am-status-header");
 const submitResult      = document.getElementById("submit-result");
 const navButtons        = document.querySelectorAll(".nav-btn");
 const navPanels         = document.querySelectorAll(".nav-panel");
+const viewport          = document.getElementById("viewport");
 const mapGrid           = document.getElementById("map-grid");
 const gisMapCanvas      = document.querySelector(".gis-map-canvas");
+const spatialMapFrame   = document.getElementById("spatial-map-frame");
+const gisStatusStrip    = document.querySelector(".gis-status-strip");
 const controllerList    = document.getElementById("controller-list");
 const backflowList      = document.getElementById("backflow-list");
 const systemScope       = document.getElementById("system-scope");
@@ -2653,23 +2820,19 @@ const gisFilterSearch   = document.getElementById("gis-filter-search");
 const filterZones       = document.getElementById("filter-zones");
 const filterControllers = document.getElementById("filter-controllers");
 const filterBackflows   = document.getElementById("filter-backflows");
-const gisCreateSheet    = document.getElementById("gis-create-sheet");
-const gisCreateCancel   = document.getElementById("gis-create-cancel");
-const gisCreateSave     = document.getElementById("gis-create-save");
-const gisCreateName     = document.getElementById("gis-create-name");
-const gisCreateNotes    = document.getElementById("gis-create-notes");
-const gisCreateController = document.getElementById("gis-create-controller");
-const gisCreateBackflow = document.getElementById("gis-create-backflow");
-const gisCreateMapX     = document.getElementById("gis-create-mapx");
-const gisCreateMapY     = document.getElementById("gis-create-mapy");
+const gisDropPin        = document.getElementById("gis-drop-pin");
+const gisDrawGeometry   = document.getElementById("gis-draw-geometry");
 const gisAddPoint       = document.getElementById("gis-add-point");
 const gisLocate         = document.getElementById("gis-locate");
-const addAssetType      = document.getElementById("add-asset-type");
-const addAssetName      = document.getElementById("add-asset-name");
-const addZoneController = document.getElementById("add-zone-controller");
-const addZoneBackflow   = document.getElementById("add-zone-backflow");
+const mapSheetToggle    = document.getElementById("map-sheet-toggle");
+const mapBottomSheet    = document.getElementById("map-bottom-sheet");
+const mapSheetHandle    = document.getElementById("map-sheet-handle");
+const mapSheetSelected  = document.getElementById("map-sheet-selected");
+const mapAssetPicker    = document.getElementById("map-asset-picker");
+const mapQuickDetails   = document.getElementById("map-quick-details");
+const mapQuickPhoto     = document.getElementById("map-quick-photo");
+const mapQuickNotes     = document.getElementById("map-quick-notes");
 const addAssetButton    = document.getElementById("add-asset-button");
-const assetAdminMessage = document.getElementById("asset-admin-message");
 const assetDetailSheet  = document.getElementById("asset-detail-sheet");
 const detailSheetTitle  = document.getElementById("detail-sheet-title");
 const detailSheetClose  = document.getElementById("detail-sheet-close");
@@ -2684,6 +2847,11 @@ const detailZoneLinks   = document.getElementById("detail-zone-links");
 const detailCalloutComposer = document.getElementById("detail-callout-composer");
 const detailCalloutText = document.getElementById("detail-callout-text");
 const detailCalloutType = document.getElementById("detail-callout-type");
+const detailCalloutPhoto = document.getElementById("detail-callout-photo");
+const detailCalloutPhotoStatus = document.getElementById("detail-callout-photo-status");
+const detailCalloutCaptureLocation = document.getElementById("detail-callout-capture-location");
+const detailCalloutClearLocation = document.getElementById("detail-callout-clear-location");
+const detailCalloutLocationStatus = document.getElementById("detail-callout-location-status");
 const detailCreateCallout = document.getElementById("detail-create-callout");
 const detailCalloutSubmit = document.getElementById("detail-callout-submit");
 const detailCalloutCancel = document.getElementById("detail-callout-cancel");
@@ -2707,6 +2875,9 @@ const createCancel      = document.getElementById("create-cancel");
 const decisionModal     = document.getElementById("decision-modal");
 const decisionTitle     = document.getElementById("decision-title");
 const decisionMessage   = document.getElementById("decision-message");
+const decisionInputWrap = document.getElementById("decision-input-wrap");
+const decisionInputLabel= document.getElementById("decision-input-label");
+const decisionInput     = document.getElementById("decision-input");
 const decisionActions   = document.getElementById("decision-actions");
 const phoneShell        = document.querySelector(".phone-shell");
 const pageTitle         = document.getElementById("page-title");
@@ -2720,6 +2891,9 @@ const woliOverviewMsg   = document.getElementById("woli-overview-message");
 const woliSectionTitle  = document.getElementById("woli-section-title");
 const noIssuesCheckbox  = document.getElementById("no-issues-checkbox");
 const noIssuesToggle    = document.getElementById("no-issues-toggle");
+const noIssuesHelper    = document.getElementById("no-issues-helper");
+const calloutHistoryWrap = document.getElementById("callout-history-wrap");
+const calloutHistoryList = document.getElementById("callout-history-list");
 const submitHelper      = document.getElementById("submit-helper");
 const woliDetailNumber  = document.getElementById("woli-detail-number");
 const woliDetailWo      = document.getElementById("woli-detail-wo");
@@ -2742,7 +2916,11 @@ const assetTab = {
 const mapTab = {
   selectedKey: "",
   calloutFormKey: "",
-  gisCreateType: "zone",
+  context: {
+    propertyId: "prop-002",
+    workOrderId: "wo-004281",
+    mode: "field",
+  },
 };
 
 const mapFilters = {
@@ -2752,10 +2930,18 @@ const mapFilters = {
   query: "",
 };
 
+let detailCalloutLocation = null;
+
+const mapDraft = {
+  mode: "",
+  points: [],
+};
+
 const sheetState = {
   activeAssetKey: "",
   detailLaunchTab: "details",
   createLaunchTab: "details",
+  pendingGeometry: null,
 };
 
 function getWoliById(woliId) {
@@ -2788,9 +2974,7 @@ function setActiveWoli(woliId) {
 }
 
 function getCalloutRequirementMet(session) {
-  const hasCallouts = session.callouts.some(
-    (c) => (c.issue || "").trim().length > 0 && (c.calloutType === "Repair" || c.calloutType === "Enhancement")
-  );
+  const hasCallouts = session.callouts.some((c) => (c.issue || "").trim().length > 0);
   return hasCallouts || Boolean(session.noIssuesFound);
 }
 
@@ -2801,10 +2985,14 @@ function getApprovalRequirementMet(session) {
 function getWoliProgress(woli) {
   if (!isIrrigationWoli(woli)) return 0;
   const session = getOrCreateWoliSession(woli.id);
+  const requiredTotal = session.requiredQuestions.length;
+  const requiredAnswered = session.requiredQuestions.filter((q) => q.answered).length;
+  const requiredPct = requiredTotal ? (requiredAnswered / requiredTotal) : 1;
   let score = 0;
-  if (getCalloutRequirementMet(session)) score += 50;
-  if (getApprovalRequirementMet(session)) score += 50;
-  return score;
+  if (getCalloutRequirementMet(session)) score += 60;
+  if (getApprovalRequirementMet(session)) score += 20;
+  score += Math.round(requiredPct * 20);
+  return Math.min(100, score);
 }
 
 function updateSubmitEligibility() {
@@ -2827,7 +3015,24 @@ function updateSubmitEligibility() {
   if (submitHelper) {
     submitHelper.textContent = blockers.length
       ? `Complete: ${blockers.join(" and ")}. Required questions remaining: ${requiredRemaining} (advisory).`
-      : `Ready to submit irrigation report. Required questions remaining: ${requiredRemaining} (advisory).`;
+      : `Ready to submit irrigation report. Required questions remaining: ${requiredRemaining}${requiredRemaining > 0 ? " (justification required)" : ""}.`;
+  }
+}
+
+function updateNoIssuesToggleState() {
+  if (!noIssuesCheckbox || !noIssuesToggle) return;
+  const openCount = state.callouts.filter((c) => !c.resolved).length;
+  const disabled = openCount > 0;
+  noIssuesCheckbox.disabled = disabled;
+  if (disabled) {
+    noIssuesCheckbox.checked = false;
+    state.noIssuesFound = false;
+  }
+  noIssuesToggle.classList.toggle("slds-is-disabled", disabled);
+  if (noIssuesHelper) {
+    noIssuesHelper.textContent = disabled
+      ? "Disabled while open callouts exist. Resolve or remove open callouts first."
+      : "Mark only when inspection confirms there are no irrigation issues.";
   }
 }
 
@@ -2957,8 +3162,7 @@ function openWoliWorkspace(woliId, launchReason = "open") {
   setActiveWoli(woliId);
   if (isIrrigationWoli(woli)) {
     updateSubmitEligibility();
-    const targetTab = (launchReason === "start") ? "details" : (woli.status === "COMPLETED" ? "details" : "related");
-    setActiveTab(targetTab);
+    setActiveTab("details");
   } else {
     setActiveTab("details");
   }
@@ -2975,7 +3179,13 @@ function returnToWorkOrderOverview() {
 
 function updateRelatedGuidanceExpansion() {
   if (appMode !== "woli") return;
+  document.querySelectorAll(".related-collapsible").forEach((section) => section.classList.remove("map-first-visible"));
   document.querySelectorAll(".related-collapsible").forEach((section) => setSectionCollapsed(section, true));
+
+  const assetsSection = document.querySelector(".related-collapsible[data-section-id='related-assets']");
+  if (assetsSection) setSectionCollapsed(assetsSection, false);
+
+  if (USE_DESKTOP_MAP_BEHAVIOR) return;
 
   const session = state;
   const calloutIncomplete = !getCalloutRequirementMet(session);
@@ -2987,7 +3197,10 @@ function updateRelatedGuidanceExpansion() {
       ? document.querySelector(".related-collapsible[data-section-id='related-approvals']")
       : document.querySelector(".related-collapsible[data-section-id='related-assets']");
 
-  if (firstTarget) setSectionCollapsed(firstTarget, false);
+  if (firstTarget) {
+    firstTarget.classList.add("map-first-visible");
+    setSectionCollapsed(firstTarget, false);
+  }
 }
 
 function getRequiredAnswered()  { return state.requiredQuestions.filter((q) => q.answered).length; }
@@ -3024,7 +3237,9 @@ function getFilteredMapAssets() {
 
 function setStage(nextStage) {
   state.stage = nextStage;
-  document.querySelectorAll("#timeline li").forEach((item) => {
+  const timelineItems = document.querySelectorAll("#timeline li");
+  if (!timelineItems.length) return;
+  timelineItems.forEach((item) => {
     const order = ["RESOLVED", "BOOTSTRAP", "INSPECTING", "REVIEW", "COMPLETED"];
     const currentIdx = order.indexOf(nextStage);
     const itemIdx    = order.indexOf(item.dataset.stage);
@@ -3037,7 +3252,7 @@ function setStage(nextStage) {
 function setActiveTab(tabName) {
   // Normalize legacy tab references so old handlers keep working.
   const tabMap = {
-    map: "related",
+    map: "map",
     assets: "related",
     callouts: "related",
     checklist: "related",
@@ -3048,9 +3263,23 @@ function setActiveTab(tabName) {
     btn.classList.toggle("hidden", !shouldShow);
     btn.classList.toggle("active", btn.dataset.tab === mappedTabName && shouldShow);
   });
-  navPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === mappedTabName));
+  navPanels.forEach((panel) => {
+    panel.classList.toggle("active", panel.dataset.panel === mappedTabName);
+    if (panel.dataset.panel === "related") {
+      panel.classList.toggle("map-first", appMode === "woli" && mappedTabName === "related");
+    }
+  });
+
+  if (viewport) {
+    const isMapWorkspace = appMode === "woli" && mappedTabName === "map";
+    viewport.classList.toggle("map-workspace", isMapWorkspace);
+    if (!isMapWorkspace) {
+      setMapSheetExpanded(false);
+    }
+  }
 
   if (appMode === "woli" && mappedTabName === "related") {
+    setMapSheetExpanded(false);
     updateRelatedGuidanceExpansion();
   }
 }
@@ -3111,9 +3340,13 @@ function renderSystemCards() {
 }
 
 function renderAssetSnapshot() {
-  if (!assetSnapshot || !mapCaption) return;
+  if (!assetSnapshot && !mapCaption) return;
   const filteredAlerts = getFilteredZones().filter((z) => z.status === "alert").length;
-  assetSnapshot.textContent = `${filteredAlerts} flagged in view (${getAlertZonesCount()} total).`;
+  if (assetSnapshot) {
+    assetSnapshot.textContent = `${filteredAlerts} flagged in view (${getAlertZonesCount()} total).`;
+  }
+
+  if (!mapCaption) return;
 
   if (!state.hasMap) {
     mapCaption.textContent = `Map data unavailable. Manage assets directly via the list below.`;
@@ -3153,6 +3386,133 @@ function getMarkerPosition(asset) {
   return { x: 50, y: 50 };
 }
 
+function getSpatialMapUrl() {
+  const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
+  const params = new URLSearchParams({
+    propertyId: mapTab.context.propertyId,
+    workOrderId: mapTab.context.workOrderId,
+    mode: mapTab.context.mode,
+    layout: "map-only",
+  });
+  if (selected) {
+    params.set("assetId", selected.ref?.id || selected.key);
+  }
+  return `../spatial_portable/index.html?${params.toString()}`;
+}
+
+function toSpatialAssetPayload() {
+  return getAllAssets().map((asset) => {
+    const position = getMarkerPosition(asset);
+    return {
+      id: asset.ref?.id || asset.key,
+      name: asset.name,
+      type: asset.type,
+      status: asset.ref?.status || "active",
+      description: asset.ref?.description || "",
+      mapX: Number(position.x),
+      mapY: Number(position.y),
+    };
+  });
+}
+
+function pushAssetsToSpatialMapFrame() {
+  if (!spatialMapFrame || !spatialMapFrame.contentWindow) return;
+  spatialMapFrame.contentWindow.postMessage(
+    {
+      type: "SPATIAL_PROTO_ASSETS",
+      propertyId: mapTab.context.propertyId,
+      assets: toSpatialAssetPayload(),
+    },
+    "*"
+  );
+}
+
+function refreshSpatialMapFrame() {
+  if (!spatialMapFrame) return;
+  const nextSrc = getSpatialMapUrl();
+  if (spatialMapFrame.dataset.lastSrc !== nextSrc) {
+    spatialMapFrame.dataset.lastSrc = nextSrc;
+    spatialMapFrame.addEventListener(
+      "load",
+      () => {
+        pushAssetsToSpatialMapFrame();
+      },
+      { once: true }
+    );
+    spatialMapFrame.src = nextSrc;
+  } else {
+    pushAssetsToSpatialMapFrame();
+  }
+
+  if (gisStatusStrip) {
+    const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
+    gisStatusStrip.textContent = selected
+      ? `Spatial base map · property context · Selected ${selected.name}`
+      : "Spatial base map · property context · GPS unavailable";
+  }
+}
+
+function setMapSheetExpanded(expanded) {
+  if (!mapBottomSheet || !mapSheetToggle) return;
+  mapBottomSheet.classList.toggle("expanded", expanded);
+  mapBottomSheet.classList.toggle("peek", !expanded);
+  mapBottomSheet.setAttribute("data-sheet-state", expanded ? "expanded" : "peek");
+  mapSheetToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+  mapSheetToggle.textContent = expanded ? "Done" : "Controls";
+}
+
+function updateMapSheetSelection() {
+  if (!mapSheetSelected) return;
+  const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
+  const hasSelection = Boolean(selected);
+  mapSheetSelected.textContent = hasSelection
+    ? `Selected: ${selected.name}`
+    : "Pick asset to enable actions";
+  mapSheetSelected.classList.toggle("ready", hasSelection);
+  [mapQuickDetails, mapQuickPhoto, mapQuickNotes].forEach((btn) => {
+    if (!btn) return;
+    btn.disabled = !hasSelection;
+  });
+  if (mapAssetPicker && mapAssetPicker.value !== (mapTab.selectedKey || "")) {
+    mapAssetPicker.value = mapTab.selectedKey || "";
+  }
+}
+
+function renderMapAssetPicker() {
+  if (!mapAssetPicker) return;
+  const selectedKey = mapTab.selectedKey || "";
+  const assets = getFilteredMapAssets();
+  const selected = getAllAssets().find((asset) => asset.key === selectedKey);
+  const canUseSelected = !selected || assets.some((asset) => asset.key === selected.key);
+  const options = canUseSelected || !selected ? assets : [selected, ...assets];
+
+  mapAssetPicker.innerHTML = '<option value="">Select asset</option>';
+  options.forEach((asset) => {
+    const option = document.createElement("option");
+    option.value = asset.key;
+    option.textContent = `${getAssetTypeLabel(asset.type)} · ${asset.name}`;
+    mapAssetPicker.appendChild(option);
+  });
+  mapAssetPicker.value = selectedKey;
+}
+
+function ensureMapSelection() {
+  let selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
+  if (selected) return selected;
+
+  const fallbackKey = getFilteredMapAssets()[0]?.key || getAllAssets()[0]?.key || "";
+  if (!fallbackKey) {
+    setSubmitMessage("No assets available in the current view.", "warn");
+    return null;
+  }
+
+  mapTab.selectedKey = fallbackKey;
+  assetTab.selectedKey = fallbackKey;
+  renderMapAssetPicker();
+  renderMapGrid();
+  return getAllAssets().find((asset) => asset.key === fallbackKey) || null;
+}
+
 function closeMapSelectionCard() {
   mapTab.selectedKey = "";
   gisSelectionCard.classList.add("hidden");
@@ -3162,7 +3522,6 @@ function closeMapSelectionCard() {
 function closeMapDrawers() {
   gisLayersSheet.classList.add("hidden");
   gisFilterSheet.classList.add("hidden");
-  gisCreateSheet.classList.add("hidden");
 }
 
 function saveMapCardEdits() {
@@ -3219,63 +3578,174 @@ function removeMapSelectedAsset() {
   renderAll();
 }
 
-function renderMapGrid() {
+function clearMapDraft() {
+  mapDraft.mode = "";
+  mapDraft.points = [];
+}
+
+function startMapDraftMode(mode) {
+  if (!state.hasMap) {
+    openCreateSheet("related");
+    return;
+  }
+  closeMapDrawers();
+  clearMapDraft();
+  mapDraft.mode = mode;
+  setSubmitMessage(
+    mode === "pin"
+      ? "Tap map to drop a pin."
+      : "Tap map to add vertices. Use Finish to complete geometry.",
+    "warn"
+  );
+  renderMapGrid();
+}
+
+function getDraftCentroid(points) {
+  if (!points.length) return { x: 50, y: 50 };
+  const sum = points.reduce((acc, pt) => ({ x: acc.x + pt.x, y: acc.y + pt.y }), { x: 0, y: 0 });
+  return {
+    x: Number((sum.x / points.length).toFixed(2)),
+    y: Number((sum.y / points.length).toFixed(2)),
+  };
+}
+
+function openMapPlacementDecision(mode, points) {
+  const centroid = getDraftCentroid(points);
+  const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
+  const canLinkSelected = Boolean(selected) && (mode === "pin" || selected.type === "zone");
+
+  clearMapDraft();
+
+  if (canLinkSelected) {
+    selected.ref.mapX = centroid.x;
+    selected.ref.mapY = centroid.y;
+    if (mode === "geometry") {
+      selected.ref.geometry = {
+        type: "polygon",
+        points: points.map((pt) => ({ x: pt.x, y: pt.y })),
+      };
+    }
+    assetTab.selectedKey = selected.key;
+    mapTab.selectedKey = selected.key;
+    setSubmitMessage(
+      mode === "pin"
+        ? `Pin linked to ${selected.name}.`
+        : `Geometry linked to ${selected.name}.`,
+      "ok"
+    );
+    renderAll();
+    return;
+  }
+
+  openCreateSheet("related", {
+    type: "zone",
+    mapX: centroid.x,
+    mapY: centroid.y,
+    notes: mode === "geometry" ? `Geometry captured (${points.length} vertices).` : "",
+    geometry: mode === "geometry" ? points.map((pt) => ({ x: pt.x, y: pt.y })) : null,
+  });
+}
+
+function renderMapDraftOverlay() {
+  mapGrid.style.display = "block";
+  mapGrid.style.cursor = "crosshair";
   mapGrid.innerHTML = "";
+
+  const helper = document.createElement("div");
+  helper.style.cssText = "position:absolute;top:8px;left:8px;right:8px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px;";
+
+  const hint = document.createElement("div");
+  hint.style.cssText = "background:rgba(12,18,28,0.88);border:1px solid #2f3f5a;border-radius:8px;color:#d7e3f7;padding:6px 8px;font-size:0.72rem;font-weight:700;";
+  hint.textContent = mapDraft.mode === "pin"
+    ? "Tap map to drop a pin"
+    : `Tap vertices (${mapDraft.points.length})`;
+  helper.appendChild(hint);
+
+  const actions = document.createElement("div");
+  actions.style.cssText = "display:flex;gap:6px;";
+  if (mapDraft.mode === "geometry") {
+    actions.innerHTML = [
+      '<button type="button" data-map-draft-action="undo" style="border:1px solid #435a7f;background:#1e2c41;color:#dce8fa;border-radius:8px;padding:5px 8px;font-size:0.66rem;font-weight:700;">Undo</button>',
+      '<button type="button" data-map-draft-action="finish" style="border:1px solid #2e844a;background:#1f3d2a;color:#c8f4dc;border-radius:8px;padding:5px 8px;font-size:0.66rem;font-weight:700;">Finish</button>',
+      '<button type="button" data-map-draft-action="cancel" style="border:1px solid #5a6577;background:#2a313e;color:#d9e3f5;border-radius:8px;padding:5px 8px;font-size:0.66rem;font-weight:700;">Cancel</button>'
+    ].join("");
+  } else {
+    actions.innerHTML = '<button type="button" data-map-draft-action="cancel" style="border:1px solid #5a6577;background:#2a313e;color:#d9e3f5;border-radius:8px;padding:5px 8px;font-size:0.66rem;font-weight:700;">Cancel</button>';
+  }
+  helper.appendChild(actions);
+  mapGrid.appendChild(helper);
+
+  if (!mapDraft.points.length) return;
+
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 100 100");
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;";
+
+  if (mapDraft.mode === "geometry" && mapDraft.points.length >= 2) {
+    const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+    polyline.setAttribute("points", mapDraft.points.map((pt) => `${pt.x},${pt.y}`).join(" "));
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "#8bb9ff");
+    polyline.setAttribute("stroke-width", "0.8");
+    svg.appendChild(polyline);
+  }
+
+  if (mapDraft.mode === "geometry" && mapDraft.points.length >= 3) {
+    const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+    polygon.setAttribute("points", mapDraft.points.map((pt) => `${pt.x},${pt.y}`).join(" "));
+    polygon.setAttribute("fill", "rgba(102, 180, 255, 0.2)");
+    polygon.setAttribute("stroke", "#79afff");
+    polygon.setAttribute("stroke-width", "0.6");
+    svg.appendChild(polygon);
+  }
+
+  mapDraft.points.forEach((pt) => {
+    const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    point.setAttribute("cx", String(pt.x));
+    point.setAttribute("cy", String(pt.y));
+    point.setAttribute("r", "1.2");
+    point.setAttribute("fill", "#c7e2ff");
+    point.setAttribute("stroke", "#11325f");
+    point.setAttribute("stroke-width", "0.3");
+    svg.appendChild(point);
+  });
+
+  mapGrid.appendChild(svg);
+}
+
+function renderMapGrid() {
+  refreshSpatialMapFrame();
+  updateMapSheetSelection();
+  mapGrid.innerHTML = "";
+  mapGrid.style.cursor = "default";
   gisMapCanvas.classList.remove("list-mode");
+
+  if (USE_DESKTOP_MAP_BEHAVIOR) {
+    mapGrid.style.display = "none";
+    gisSelectionCard.classList.add("hidden");
+    return;
+  }
+
+  mapGrid.style.display = "block";
   
   if (!state.hasMap) {
     renderMapListView();
     return;
   }
 
-  // Restore canvas overflow for map view
-  gisMapCanvas.style.overflow = "hidden";
-  
-  const visibleZones = getFilteredZones().filter((zone) => {
-    if (!mapFilters.zones) return false;
-    if (!mapFilters.query.trim()) return true;
-    const query = mapFilters.query.trim().toLowerCase();
-    return [zone.label, zone.description, zone.controller, zone.backflow, zone.status].join(" ").toLowerCase().includes(query);
-  });
-  const controllerNames = new Set(visibleZones.map((z) => z.controller));
-  const backflowNames = new Set(visibleZones.map((z) => z.backflow));
-  const mapAssets = [
-    ...state.controllers.filter((c) => mapFilters.controllers && controllerNames.has(c.name)).map((c) => ({ key: `controller:${c.id}`, type: "controller", name: c.name, ref: c })),
-    ...state.backflows.filter((b) => mapFilters.backflows && backflowNames.has(b.name)).map((b) => ({ key: `backflow:${b.id}`, type: "backflow", name: b.name, ref: b })),
-    ...visibleZones.map((z) => ({ key: `zone:${z.id}`, type: "zone", name: z.label, ref: z })),
-  ];
-
-  mapAssets.forEach((asset) => {
-    const pos = getMarkerPosition(asset);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = `zone ${asset.type === "zone" ? (asset.ref.status === "alert" ? "zone-alert" : "zone-ok") : "zone-ok"}`;
-    if (asset.type === "controller") btn.classList.add("marker-controller");
-    if (asset.type === "backflow") btn.classList.add("marker-backflow");
-    if (mapTab.selectedKey === asset.key) btn.classList.add("is-selected");
-    if (hasOpenCalloutForAsset(asset)) btn.classList.add("has-callout");
-    btn.style.left = `${pos.x}%`;
-    btn.style.top = `${pos.y}%`;
-    btn.dataset.assetKey = asset.key;
-    if (asset.type === "zone") btn.dataset.zoneId = asset.ref.id;
-    btn.setAttribute("aria-label", `${asset.name} ${asset.type}`);
-    btn.title = asset.type === "zone"
-      ? `${asset.name} - ${asset.ref.controller} / ${asset.ref.backflow}`
-      : asset.name;
-    mapGrid.appendChild(btn);
-  });
-
-  if (!mapAssets.length) {
-    const p = document.createElement("p");
-    p.className = "slds-text-body_small slds-text-color_weak";
-    p.style.position = "absolute";
-    p.style.left = "12px";
-    p.style.bottom = "12px";
-    p.textContent = "No assets match this map filter.";
-    mapGrid.appendChild(p);
+  if (mapDraft.mode) {
+    gisMapCanvas.style.overflow = "hidden";
+    renderMapDraftOverlay();
+    gisSelectionCard.classList.add("hidden");
+    return;
   }
 
-  renderMapSelectionCard();
+  // Native map markers are now the single marker source in map mode.
+  // Hide synthetic overlay markers so the iframe map owns marker UX.
+  gisMapCanvas.style.overflow = "hidden";
+  mapGrid.style.display = "none";
+  gisSelectionCard.classList.add("hidden");
 }
 
 function renderMapListView() {
@@ -3426,6 +3896,16 @@ function renderMapListView() {
             <option value="Repair">Repair</option>
             <option value="Enhancement">Enhancement</option>
           </select>
+          <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin: 8px 0 6px;">Callout Photo</label>
+          <input class="gis-callout-photo-input" type="file" accept="image/*" capture="environment" style="width: 100%; background: #131821; color: #eef1f8; border: 1px solid #5a6475; padding: 8px; border-radius: 6px; font-size: 0.84rem;" data-asset-key="${asset.key}" />
+          <div class="gis-callout-photo-status" style="font-size: 0.74rem; color: #b9c0cd; margin-top: 4px;" data-asset-key="${asset.key}">No photo attached.</div>
+          <label style="display: block; color: #d9dee8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin: 8px 0 6px;">Callout Location</label>
+          <div style="display: flex; gap: 6px; margin-bottom: 4px;">
+            <button type="button" class="gis-callout-capture-location" style="flex: 1; padding: 8px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.8rem; font-weight: 700;" data-asset-key="${asset.key}">Capture Location</button>
+          </div>
+          <input class="gis-callout-lat" type="hidden" data-asset-key="${asset.key}" value="" />
+          <input class="gis-callout-lng" type="hidden" data-asset-key="${asset.key}" value="" />
+          <div class="gis-callout-location-status" style="font-size: 0.74rem; color: #b9c0cd; margin-bottom: 4px;" data-asset-key="${asset.key}">No location captured.</div>
           <div style="display: flex; gap: 6px; margin-top: 6px;">
             <button type="button" class="gis-callout-submit" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Save Callout</button>
             <button type="button" class="gis-callout-cancel" style="flex: 1; padding: 10px; background: #2f3744; color: #f2f4f8; border: 1px solid #495466; border-radius: 10px; cursor: pointer; font-size: 0.84rem; font-weight: 700;" data-asset-key="${asset.key}">Cancel</button>
@@ -3453,9 +3933,9 @@ function renderMapListView() {
       const controllerSelect = mapGrid.querySelector(`.gis-list-controller[data-asset-key="${assetKey}"]`);
       const backflowSelect = mapGrid.querySelector(`.gis-list-backflow[data-asset-key="${assetKey}"]`);
       const newName = nameInput.value.trim();
-      if (!newName) { alert("Asset name is required."); return; }
+      if (!newName) { setSubmitMessage("Asset name is required.", "error"); return; }
       const duplicate = getAllAssets().find((a) => a.key !== assetKey && a.name === newName);
-      if (duplicate) { alert("An asset with this name already exists."); return; }
+      if (duplicate) { setSubmitMessage("An asset with this name already exists.", "error"); return; }
       if (asset.type === "zone") {
         asset.ref.label = newName;
       } else {
@@ -3490,13 +3970,48 @@ function renderMapListView() {
       renderMapGrid();
     });
   });
+  mapGrid.querySelectorAll(".gis-callout-photo-input").forEach((input) => {
+    input.addEventListener("change", (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      const status = mapGrid.querySelector(`.gis-callout-photo-status[data-asset-key="${assetKey}"]`);
+      const file = e.currentTarget.files && e.currentTarget.files[0];
+      if (!status) return;
+      status.textContent = file ? `Photo attached: ${file.name}` : "No photo attached.";
+    });
+  });
+  mapGrid.querySelectorAll(".gis-callout-capture-location").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const assetKey = e.currentTarget.dataset.assetKey;
+      const status = mapGrid.querySelector(`.gis-callout-location-status[data-asset-key="${assetKey}"]`);
+      const latInput = mapGrid.querySelector(`.gis-callout-lat[data-asset-key="${assetKey}"]`);
+      const lngInput = mapGrid.querySelector(`.gis-callout-lng[data-asset-key="${assetKey}"]`);
+      if (status) status.textContent = "Capturing location...";
+      try {
+        const location = await requestCurrentLocation();
+        if (latInput) latInput.value = String(location.lat);
+        if (lngInput) lngInput.value = String(location.lng);
+        if (status) status.textContent = `${formatCalloutLocation(location)}${location.accuracy ? ` (±${Math.round(location.accuracy)}m)` : ""}`;
+      } catch (error) {
+        if (status) status.textContent = error.message || "Unable to capture location.";
+      }
+    });
+  });
   mapGrid.querySelectorAll(".gis-callout-submit").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const assetKey = e.currentTarget.dataset.assetKey;
       const textarea = mapGrid.querySelector(`.gis-callout-issue-textarea[data-asset-key="${assetKey}"]`);
       const calloutTypeSelect = mapGrid.querySelector(`.gis-callout-type-select[data-asset-key="${assetKey}"]`);
+      const calloutPhotoInput = mapGrid.querySelector(`.gis-callout-photo-input[data-asset-key="${assetKey}"]`);
+      const calloutLatInput = mapGrid.querySelector(`.gis-callout-lat[data-asset-key="${assetKey}"]`);
+      const calloutLngInput = mapGrid.querySelector(`.gis-callout-lng[data-asset-key="${assetKey}"]`);
       const issue = textarea ? textarea.value.trim() : "";
       const calloutType = calloutTypeSelect ? calloutTypeSelect.value : "";
+      const photoFile = calloutPhotoInput && calloutPhotoInput.files ? calloutPhotoInput.files[0] : null;
+      const lat = calloutLatInput ? Number(calloutLatInput.value) : NaN;
+      const lng = calloutLngInput ? Number(calloutLngInput.value) : NaN;
+      const location = Number.isFinite(lat) && Number.isFinite(lng)
+        ? { lat, lng, capturedAt: new Date().toISOString() }
+        : null;
       if (!issue) {
         if (textarea) textarea.style.borderColor = "#8a3540";
         return;
@@ -3513,6 +4028,13 @@ function renderMapListView() {
         title: asset.name,
         issue,
         calloutType,
+        photoMeta: photoFile ? {
+          name: photoFile.name,
+          size: photoFile.size,
+          type: photoFile.type,
+          capturedAt: new Date().toISOString(),
+        } : null,
+        location,
         timestamp: new Date().toISOString(),
         resolved: false,
       });
@@ -3532,21 +4054,31 @@ function renderMapListView() {
   mapGrid.querySelectorAll(".gis-list-remove").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const assetKey = e.currentTarget.dataset.assetKey;
-      if (!confirm("Remove this asset?")) return;
       const asset = getAllAssets().find((a) => a.key === assetKey);
       if (!asset) return;
-      if (asset.type === "zone") {
-        state.zones = state.zones.filter((z) => z.id !== asset.ref.id);
-      } else if (asset.type === "controller") {
-        state.controllers = state.controllers.filter((c) => c.id !== asset.ref.id);
-      } else if (asset.type === "backflow") {
-        state.backflows = state.backflows.filter((b) => b.id !== asset.ref.id);
-      }
-      mapTab.selectedKey = null;
-      renderAssetSnapshot();
-      renderCallouts();
-      renderAssetRegistryList();
-      renderMapGrid();
+      openDecisionModal(
+        "Remove Asset",
+        `Remove ${asset.name}? This updates system scope immediately.`,
+        [
+          {
+            label: "Remove",
+            variant: "slds-button slds-button_destructive",
+            onClick: () => {
+              removeAssetFromSystem(asset);
+              mapTab.selectedKey = "";
+              renderAssetSnapshot();
+              renderCallouts();
+              renderAssetRegistryList();
+              renderMapGrid();
+            },
+          },
+          {
+            label: "Cancel",
+            variant: "slds-button slds-button_neutral",
+            onClick: () => {},
+          },
+        ]
+      );
     });
   });
   gisSelectionCard.classList.add("hidden");
@@ -3557,6 +4089,7 @@ function renderMapSelectionCard() {
 }
 
 function renderClockFilterOptions() {
+  if (!clockFilter) return;
   clockFilter.innerHTML = `<option value="ALL">All Clocks</option>`;
   state.controllers.forEach((c) => {
     const opt = document.createElement("option");
@@ -3572,60 +4105,6 @@ function renderMapFilterControls() {
   filterControllers.checked = mapFilters.controllers;
   filterBackflows.checked = mapFilters.backflows;
   gisFilterSearch.value = mapFilters.query;
-}
-
-function renderCreateAssetSelectors() {
-  gisCreateController.innerHTML = "";
-  state.controllers.forEach((controller) => {
-    const opt = document.createElement("option");
-    opt.value = controller.name;
-    opt.textContent = controller.name;
-    gisCreateController.appendChild(opt);
-  });
-
-  gisCreateBackflow.innerHTML = "";
-  state.backflows.forEach((backflow) => {
-    const opt = document.createElement("option");
-    opt.value = backflow.name;
-    opt.textContent = backflow.name;
-    gisCreateBackflow.appendChild(opt);
-  });
-}
-
-function renderAssetAdminSelectors() {
-  addZoneController.innerHTML = "";
-  addZoneBackflow.innerHTML = "";
-  state.controllers.forEach((c) => {
-    const opt = document.createElement("option");
-    opt.value = c.name;
-    opt.textContent = c.name;
-    addZoneController.appendChild(opt);
-  });
-  state.backflows.forEach((b) => {
-    const opt = document.createElement("option");
-    opt.value = b.name;
-    opt.textContent = b.name;
-    addZoneBackflow.appendChild(opt);
-  });
-}
-
-function renderCreateAssetDefaults() {
-  renderCreateAssetSelectors();
-  const zoneDefaults = state.controllers[0]?.name || "";
-  const backflowDefaults = state.backflows[0]?.name || "";
-  if (!gisCreateController.value) gisCreateController.value = zoneDefaults;
-  if (!gisCreateBackflow.value) gisCreateBackflow.value = backflowDefaults;
-  // Auto-fill name based on current type
-  if (gisCreateName && !gisCreateName.value.trim()) {
-    gisCreateName.value = getAutoName(mapTab.gisCreateType || "zone");
-  }
-}
-
-function showAssetAdminMessage(message, tone = "warn") {
-  assetAdminMessage.textContent = message;
-  if (tone === "ok") assetAdminMessage.style.color = "#2e844a";
-  else if (tone === "error") assetAdminMessage.style.color = "#ba0517";
-  else assetAdminMessage.style.color = "#8f4b00";
 }
 
 function renameAssetReferences(selected, oldName, nextName) {
@@ -3689,95 +4168,6 @@ function getAutoName(type) {
   return "";
 }
 
-function addAssetToSystem() {
-  const type = mapTab.gisCreateType || "zone";
-  const name = gisCreateName.value.trim();
-  if (!name) {
-    setSubmitMessage("Name is required to add an asset.", "warn");
-    return;
-  }
-
-  if (getAllAssets().some((a) => a.name.toLowerCase() === name.toLowerCase())) {
-    setSubmitMessage("Asset name already exists. Use a unique name.", "warn");
-    return;
-  }
-
-  const userMapX = gisCreateMapX && gisCreateMapX.value.trim() ? parseFloat(gisCreateMapX.value) : null;
-  const userMapY = gisCreateMapY && gisCreateMapY.value.trim() ? parseFloat(gisCreateMapY.value) : null;
-
-  if (type === "controller") {
-    const id = `controller-${Date.now()}`;
-    const controller = {
-      id,
-      name,
-      model: "ArcGIS Integrated Controller",
-      description: "Added from FSM Native GIS map.",
-      zones: [],
-    };
-    if (!isNaN(userMapX)) controller.mapX = Number(userMapX.toFixed(2));
-    if (!isNaN(userMapY)) controller.mapY = Number(userMapY.toFixed(2));
-    state.controllers.push(controller);
-    assetTab.selectedKey = `controller:${id}`;
-    mapTab.selectedKey = assetTab.selectedKey;
-    gisCreateName.value = "";
-    gisCreateNotes.value = "";
-    if (gisCreateMapX) gisCreateMapX.value = "";
-    if (gisCreateMapY) gisCreateMapY.value = "";
-    setSubmitMessage(`${name} added as Controller.`, "ok");
-    renderAll();
-    return;
-  }
-
-  if (type === "backflow") {
-    const id = `bf-${Date.now()}`;
-    const backflow = {
-      id,
-      name,
-      serial: `BFS-${String(Date.now()).slice(-5)}`,
-      status: "Pass",
-      description: "Added from FSM Native GIS map.",
-    };
-    if (!isNaN(userMapX)) backflow.mapX = Number(userMapX.toFixed(2));
-    if (!isNaN(userMapY)) backflow.mapY = Number(userMapY.toFixed(2));
-    state.backflows.push(backflow);
-    assetTab.selectedKey = `backflow:${id}`;
-    mapTab.selectedKey = assetTab.selectedKey;
-    gisCreateName.value = "";
-    gisCreateNotes.value = "";
-    if (gisCreateMapX) gisCreateMapX.value = "";
-    if (gisCreateMapY) gisCreateMapY.value = "";
-    setSubmitMessage(`${name} added as Backflow.`, "ok");
-    renderAll();
-    return;
-  }
-
-  const zoneIdNum = state.zones.length + 1;
-  const zoneId = `zone-${zoneIdNum}`;
-  const anchor = getControllerAnchor(gisCreateController.value || state.controllers[0]?.name || "Controller A");
-  let mapX = userMapX !== null && !isNaN(userMapX) ? Number(userMapX.toFixed(2)) : Number((anchor.x + (Math.random() * 8 - 4)).toFixed(2));
-  let mapY = userMapY !== null && !isNaN(userMapY) ? Number(userMapY.toFixed(2)) : Number((anchor.y + 20 + (Math.random() * 8 - 4)).toFixed(2));
-  
-  state.zones.push({
-    id: zoneId,
-    label: name,
-    status: "ok",
-    controller: gisCreateController.value || "Controller A",
-    backflow: gisCreateBackflow.value || "Backflow North",
-    description: gisCreateNotes.value.trim() || "New zone added from FSM Native GIS map.",
-    mapX,
-    mapY,
-  });
-
-  assetTab.selectedKey = `zone:${zoneId}`;
-  mapTab.selectedKey = assetTab.selectedKey;
-  gisCreateName.value = "";
-  gisCreateNotes.value = "";
-  if (gisCreateMapX) gisCreateMapX.value = "";
-  if (gisCreateMapY) gisCreateMapY.value = "";
-  setSubmitMessage(`${name} added as Zone.`, "ok");
-  renderAll();
-}
-
 function renderAssetOptions() {
   // No-op — callout form removed; assets logged inline from map
 }
@@ -3787,6 +4177,54 @@ function getAssetTypeLabel(type) {
   if (type === "controller") return "Controller";
   if (type === "backflow") return "Backflow";
   return type;
+}
+
+function formatCalloutLocation(location) {
+  if (!location || Number.isNaN(Number(location.lat)) || Number.isNaN(Number(location.lng))) {
+    return "No location captured.";
+  }
+  return `Lat ${Number(location.lat).toFixed(6)}, Lng ${Number(location.lng).toFixed(6)}`;
+}
+
+function requestCurrentLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported on this device."));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        });
+      },
+      (error) => {
+        if (error.code === 1) {
+          reject(new Error("Location permission denied."));
+          return;
+        }
+        if (error.code === 2) {
+          reject(new Error("Unable to determine current location."));
+          return;
+        }
+        reject(new Error("Location request timed out."));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  });
+}
+
+function resetDetailCalloutMetadata() {
+  detailCalloutLocation = null;
+  if (detailCalloutPhoto) detailCalloutPhoto.value = "";
+  if (detailCalloutPhotoStatus) detailCalloutPhotoStatus.textContent = "No photo attached.";
+  if (detailCalloutLocationStatus) detailCalloutLocationStatus.textContent = "No location captured.";
 }
 
 function getAssetStatusText(asset) {
@@ -3847,12 +4285,26 @@ function getActiveDetailAsset() {
 function closeDecisionModal() {
   decisionModal.classList.add("hidden");
   decisionActions.innerHTML = "";
+  if (decisionInput) decisionInput.value = "";
+  if (decisionInputWrap) decisionInputWrap.classList.add("hidden");
 }
 
-function openDecisionModal(title, message, actions) {
+function openDecisionModal(title, message, actions, inputConfig = null) {
   decisionTitle.textContent = title;
   decisionMessage.textContent = message;
   decisionActions.innerHTML = "";
+
+  if (decisionInputWrap && decisionInput && decisionInputLabel) {
+    if (inputConfig) {
+      decisionInputWrap.classList.remove("hidden");
+      decisionInputLabel.textContent = inputConfig.label || "Details";
+      decisionInput.placeholder = inputConfig.placeholder || "";
+      decisionInput.value = inputConfig.value || "";
+    } else {
+      decisionInputWrap.classList.add("hidden");
+      decisionInput.value = "";
+    }
+  }
 
   actions.forEach((action) => {
     const btn = document.createElement("button");
@@ -3860,8 +4312,15 @@ function openDecisionModal(title, message, actions) {
     btn.className = action.variant || "slds-button slds-button_neutral";
     btn.textContent = action.label;
     btn.addEventListener("click", () => {
+      const inputValue = decisionInput && decisionInputWrap && !decisionInputWrap.classList.contains("hidden")
+        ? decisionInput.value.trim()
+        : "";
+      if (action.requireInput && !inputValue) {
+        setSubmitMessage(action.validationMessage || "Details are required.", "error");
+        return;
+      }
       closeDecisionModal();
-      action.onClick();
+      action.onClick(inputValue);
     });
     decisionActions.appendChild(btn);
   });
@@ -4042,17 +4501,21 @@ function openDetailSheet(assetKey, launchTab = "details") {
 
 
   detailCalloutText.value = "";
+  resetDetailCalloutMetadata();
   renderDetailAssetCallouts();
   assetDetailSheet.classList.remove("hidden");
 }
 
-function openCreateSheet(launchTab = "details") {
+function openCreateSheet(launchTab = "details", seed = {}) {
+  closeDecisionModal();
+  clearMapDraft();
   sheetState.createLaunchTab = launchTab;
-  createType.value = "zone";
-  createName.value = getAutoName("zone");
-  createMapX.value = "";
-  createMapY.value = "";
-  createNotes.value = "";
+  sheetState.pendingGeometry = Array.isArray(seed.geometry) ? seed.geometry.map((pt) => ({ x: Number(pt.x), y: Number(pt.y) })) : null;
+  createType.value = seed.type || "zone";
+  createName.value = seed.name || getAutoName(createType.value);
+  createMapX.value = seed.mapX || "";
+  createMapY.value = seed.mapY || "";
+  createNotes.value = seed.notes || "";
 
   createController.innerHTML = "";
   state.controllers.forEach((controller) => {
@@ -4070,11 +4533,59 @@ function openCreateSheet(launchTab = "details") {
     createBackflow.appendChild(opt);
   });
 
-  createZoneLinks.style.display = "grid";
+  createZoneLinks.style.display = createType.value === "zone" ? "grid" : "none";
+  if (createType.value === "zone") {
+    if (seed.controller) createController.value = seed.controller;
+    if (seed.backflow) createBackflow.value = seed.backflow;
+  }
   assetCreateSheet.classList.remove("hidden");
 }
 
-function closeCreateSheet() {
+function readCreateDraft() {
+  return {
+    type: createType.value,
+    name: createName.value.trim(),
+    notes: createNotes.value.trim(),
+    mapX: createMapX.value.trim(),
+    mapY: createMapY.value.trim(),
+    controller: createController.value,
+    backflow: createBackflow.value,
+  };
+}
+
+function isCreateDirty() {
+  const draft = readCreateDraft();
+  return Boolean(
+    draft.name ||
+    draft.notes ||
+    draft.mapX ||
+    draft.mapY ||
+    (draft.type === "zone" && (draft.controller || draft.backflow))
+  );
+}
+
+function closeCreateSheet(force = false) {
+  if (!force && isCreateDirty()) {
+    openDecisionModal(
+      "Unsaved New Asset",
+      "Discard unsaved new asset changes?",
+      [
+        {
+          label: "Discard",
+          variant: "slds-button slds-button_destructive",
+          onClick: () => closeCreateSheet(true),
+        },
+        {
+          label: "Keep Editing",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => {},
+        },
+      ]
+    );
+    return;
+  }
+  closeDecisionModal();
+  sheetState.pendingGeometry = null;
   assetCreateSheet.classList.add("hidden");
 }
 
@@ -4143,13 +4654,19 @@ function saveCreateSheet() {
       description: createNotes.value.trim() || "Added from mobile workspace.",
       mapX: !isNaN(x) ? Number(x.toFixed(2)) : Number((anchor.x + (Math.random() * 8 - 4)).toFixed(2)),
       mapY: !isNaN(y) ? Number(y.toFixed(2)) : Number((anchor.y + 20 + (Math.random() * 8 - 4)).toFixed(2)),
+      geometry: sheetState.pendingGeometry && sheetState.pendingGeometry.length >= 3
+        ? {
+            type: "polygon",
+            points: sheetState.pendingGeometry.map((pt) => ({ x: pt.x, y: pt.y })),
+          }
+        : undefined,
     });
     assetTab.selectedKey = `zone:${zoneId}`;
     mapTab.selectedKey = assetTab.selectedKey;
   }
 
   setSubmitMessage(`${name} added as ${getAssetTypeLabel(type)}.`, "ok");
-  closeCreateSheet();
+  closeCreateSheet(true);
   setActiveTab(sheetState.createLaunchTab);
   renderAll();
 }
@@ -4157,7 +4674,9 @@ function saveCreateSheet() {
 function renderAssetRegistryList() {
   const filtered = getFilteredAssetsForTab();
   assetList.innerHTML = "";
-  assetListSummary.textContent = `${filtered.length} assets shown (${state.zones.length + state.controllers.length + state.backflows.length} total in scope).`;
+  if (assetListSummary) {
+    assetListSummary.textContent = `${filtered.length} assets shown (${state.zones.length + state.controllers.length + state.backflows.length} total in scope).`;
+  }
 
   if (!filtered.length) {
     const item = document.createElement("li");
@@ -4252,15 +4771,14 @@ function renderCallouts() {
   calloutList.innerHTML = "";
 
   const open = state.callouts.filter((c) => !c.resolved);
-  if (noIssuesToggle) noIssuesToggle.classList.toggle("hidden", open.length > 0);
+  const resolved = state.callouts.filter((c) => c.resolved);
+  updateNoIssuesToggleState();
   if (!open.length) {
     const empty = document.createElement("li");
     empty.className = "slds-item";
     empty.style.padding = "8px 0";
     empty.textContent = "No open callouts.";
     calloutList.appendChild(empty);
-    renderAssetSnapshot();
-    return;
   }
 
   open.forEach((callout) => {
@@ -4282,6 +4800,10 @@ function renderCallouts() {
         <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
       </div>
       <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px;">
+        ${callout.photoMeta ? `<span style="background: #2a3a4f; color: #dce8ff; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">Photo attached</span>` : ""}
+        ${callout.location ? `<span style="background: #2d3a2a; color: #d9f2d1; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">${formatCalloutLocation(callout.location)}</span>` : ""}
+      </div>
       <div style="display: flex; gap: 6px;">
         <button type="button" class="slds-button slds-button_neutral slds-button_small" data-action="resolve" data-callout-id="${callout.id}" style="background:#2e844a;color:#fff;border-color:#2e844a;">Resolve</button>
         <button type="button" class="slds-button slds-button_destructive slds-button_small" data-action="remove" data-callout-id="${callout.id}">Remove</button>
@@ -4289,6 +4811,29 @@ function renderCallouts() {
     `;
     calloutList.appendChild(item);
   });
+
+  if (calloutHistoryWrap && calloutHistoryList) {
+    calloutHistoryList.innerHTML = "";
+    calloutHistoryWrap.classList.toggle("hidden", !resolved.length);
+    resolved.forEach((callout) => {
+      const item = document.createElement("li");
+      item.className = "slds-item";
+      item.style.padding = "8px 0";
+      item.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
+          <span style="background: #1b3a2a; color: #b9f1cf; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">Resolved</span>
+          <span style="font-size: 0.75rem; color: #706e6b;">${callout.calloutType || "Repair"}</span>
+        </div>
+        <div style="font-size: 0.86rem; color: #d7dde8; margin-top: 2px;">${callout.issue}</div>
+        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px;">
+          ${callout.photoMeta ? `<span style="background: #2a3a4f; color: #dce8ff; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">Photo attached</span>` : ""}
+          ${callout.location ? `<span style="background: #2d3a2a; color: #d9f2d1; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">${formatCalloutLocation(callout.location)}</span>` : ""}
+        </div>
+      `;
+      calloutHistoryList.appendChild(item);
+    });
+  }
 
   renderAssetSnapshot();
 }
@@ -4299,7 +4844,7 @@ function renderDetailAssetCallouts() {
 
   detailCalloutsList.innerHTML = "";
   
-  const assetCallouts = state.callouts.filter((c) => c.assetKey === assetKey && !c.resolved);
+  const assetCallouts = state.callouts.filter((c) => c.assetKey === assetKey);
   
   if (!assetCallouts.length) {
     detailAssetCallouts.classList.add("hidden");
@@ -4324,13 +4869,15 @@ function renderDetailAssetCallouts() {
       <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
         <span style="background: #3e4455; color: #aeb6c3; font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.title}</span>
         <span style="background: #1f2a38; color: #d9dee8; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.calloutType || "Repair"}</span>
+        <span style="background: ${callout.resolved ? "#1b3a2a" : "#3e4455"}; color: ${callout.resolved ? "#b9f1cf" : "#d9dee8"}; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; text-transform: uppercase;">${callout.resolved ? "Resolved" : "Open"}</span>
         <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
       </div>
       <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 6px;">${callout.issue}</div>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="slds-button slds-button_neutral slds-button_small" data-action="resolve" data-callout-id="${callout.id}" style="background:#2e844a;color:#fff;border-color:#2e844a;">Resolve</button>
-        <button type="button" class="slds-button slds-button_destructive slds-button_small" data-action="remove" data-callout-id="${callout.id}">Remove</button>
+      <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 2px;">
+        ${callout.photoMeta ? `<span style="background: #2a3a4f; color: #dce8ff; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">Photo attached</span>` : ""}
+        ${callout.location ? `<span style="background: #2d3a2a; color: #d9f2d1; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;">${formatCalloutLocation(callout.location)}</span>` : ""}
       </div>
+      ${callout.resolved ? "" : `<div style="display: flex; gap: 6px;"><button type="button" class="slds-button slds-button_neutral slds-button_small" data-action="resolve" data-callout-id="${callout.id}" style="background:#2e844a;color:#fff;border-color:#2e844a;">Resolve</button><button type="button" class="slds-button slds-button_destructive slds-button_small" data-action="remove" data-callout-id="${callout.id}">Remove</button></div>`}
     `;
     detailCalloutsList.appendChild(item);
   });
@@ -4351,26 +4898,181 @@ function simulateSubmit() {
 
   const unanswered = state.requiredQuestions.length - getRequiredAnswered();
 
-  woli.status = "COMPLETED";
-  setStage("COMPLETED");
+  const finalizeSubmit = () => {
+    woli.status = "COMPLETED";
+    setStage("COMPLETED");
+    const advisory = unanswered > 0
+      ? ` Submitted with advisory: ${unanswered} required question(s) unanswered.`
+      : " Submitted with all required questions answered.";
+    setSubmitMessage(`Irrigation report submitted.${advisory}`, unanswered > 0 ? "warn" : "ok");
+    renderWoliOverviewList();
+    openDecisionModal(
+      "Submission Complete",
+      "Choose where to go next.",
+      [
+        {
+          label: "Stay on WOLI",
+          variant: "slds-button slds-button_brand",
+          onClick: () => {
+            appMode = "woli";
+            setActiveTab("details");
+            renderAll();
+          },
+        },
+        {
+          label: "Return to Work Order",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => {
+            returnToWorkOrderOverview();
+            renderAll();
+          },
+        },
+      ]
+    );
+  };
+
   if (unanswered > 0) {
-    setSubmitMessage(`Irrigation report submitted with advisory: ${unanswered} required question(s) unanswered.`, "warn");
-  } else {
-    setSubmitMessage("Irrigation report submitted.", "ok");
+    openDecisionModal(
+      "Required Questions Advisory",
+      `You have ${unanswered} unanswered required question(s). Enter a brief justification to proceed.`,
+      [
+        {
+          label: "Submit with Justification",
+          variant: "slds-button slds-button_brand",
+          requireInput: true,
+          validationMessage: "Justification is required to submit with unanswered required questions.",
+          onClick: (inputValue) => {
+            state.submitAdvisoryJustification = inputValue;
+            finalizeSubmit();
+          },
+        },
+        {
+          label: "Go Back",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => {},
+        },
+      ],
+      {
+        label: "Submission Justification",
+        placeholder: "Example: Site access blocked for two checks; follow-up is scheduled.",
+        value: state.submitAdvisoryJustification || "",
+      }
+    );
+    return;
   }
-  renderWoliOverviewList();
-  returnToWorkOrderOverview();
+
+  finalizeSubmit();
 }
 
-function resetFlow() {
+function setAmStatusState() {
+  if (!amName || !amStatus) return;
+  if (!state.amAssigned || !state.amName) {
+    state.amAssigned = false;
+    state.amName = "";
+    amStatus.textContent = "AM not assigned.";
+    amStatus.style.color = "#5c6f82";
+    if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
+    if (amName.value) amName.value = "";
+    return;
+  }
+  if (amName.value !== state.amName) amName.value = state.amName;
+  amStatus.textContent = `AM assigned: ${state.amName}`;
+  amStatus.style.color = "#2e844a";
+  if (amStatusHeader) amStatusHeader.textContent = state.amName;
+}
+
+function assignAmFromSelection() {
+  if (!amName) return;
+  const selected = amName.value;
+  if (!selected) {
+    state.amAssigned = false;
+    state.amName = "";
+    setAmStatusState();
+    updateSubmitEligibility();
+    renderWoliOverviewList();
+    return;
+  }
+
+  state.amAssigned = true;
+  state.amName = selected;
+  setAmStatusState();
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+}
+
+function finalizeCalloutMutation() {
+  if (state.callouts.some((c) => !c.resolved)) {
+    state.noIssuesFound = false;
+    if (noIssuesCheckbox) noIssuesCheckbox.checked = false;
+  }
+  renderCallouts();
+  renderMapGrid();
+  renderAssetRegistryList();
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+  renderDetailAssetCallouts();
+}
+
+function processCalloutAction(action, calloutId) {
+  const callout = state.callouts.find((c) => c.id === calloutId);
+  if (!callout) return;
+
+  if (action === "remove") {
+    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
+    finalizeCalloutMutation();
+    return;
+  }
+
+  if (action !== "resolve") return;
+
+  callout.resolved = true;
+  callout.resolvedAt = new Date().toISOString();
+
+  const hasOtherOpenCallouts = state.callouts.some(
+    (c) => c.id !== callout.id && c.assetKey === callout.assetKey && !c.resolved
+  );
+  const asset = getAllAssets().find((a) => a.key === callout.assetKey);
+
+  if (asset && asset.type === "zone" && !hasOtherOpenCallouts) {
+    openDecisionModal(
+      "Resolve Zone Status",
+      `${asset.name} has no remaining open callouts. Mark zone status as Stable?`,
+      [
+        {
+          label: "Set Stable",
+          variant: "slds-button slds-button_brand",
+          onClick: () => {
+            asset.ref.status = "ok";
+            finalizeCalloutMutation();
+          },
+        },
+        {
+          label: "Keep Current Status",
+          variant: "slds-button slds-button_neutral",
+          onClick: () => finalizeCalloutMutation(),
+        },
+      ]
+    );
+    return;
+  }
+
+  finalizeCalloutMutation();
+}
+
+function resetFlow(mode = "soft") {
   const woli = getActiveWoli();
   if (!woli || !isIrrigationWoli(woli)) return;
-  state.requiredQuestions.forEach((q, idx) => { q.answered = idx < 4; });
-  state.zones.forEach((z) => { z.status = [3, 11, 18, 22].includes(Number(z.id.replace("zone-", ""))) ? "alert" : "ok"; });
-  state.callouts = [];
+  state.requiredQuestions.forEach((q, idx) => { q.answered = mode === "hard" ? false : idx < 4; });
+  state.zones.forEach((z) => { z.status = mode === "hard" ? "ok" : ([3, 11, 18, 22].includes(Number(z.id.replace("zone-", ""))) ? "alert" : "ok"); });
+  if (mode === "hard") {
+    state.callouts = [];
+  } else {
+    state.callouts = state.callouts.filter((c) => c.resolved);
+  }
   state.clockFilter = "ALL";
   state.amAssigned = false;
   state.amName = "";
+  state.submitAdvisoryJustification = "";
   amName.value = "";
   amStatus.textContent = "AM not assigned.";
   amStatus.style.color = "#5c6f82";
@@ -4382,9 +5084,9 @@ function resetFlow() {
   mapTab.selectedKey = "";
   gisSelectionCard.classList.add("hidden");
   closeDetailSheet(true);
-  closeCreateSheet();
+  closeCreateSheet(true);
   closeDecisionModal();
-  setSubmitMessage("Flow reset for complex system.", "warn");
+  setSubmitMessage(mode === "hard" ? "Hard reset complete." : "Soft reset complete.", "warn");
   renderAll();
   renderWoliOverviewList();
 }
@@ -4398,17 +5100,20 @@ function renderAll() {
   renderSystemScope();
   renderSystemCards();
   renderClockFilterOptions();
-  renderAssetAdminSelectors();
   renderAssetOptions();
+  renderMapAssetPicker();
   renderMapGrid();
   renderProgress();
   renderRequiredQuestions();
   renderCallouts();
   renderAssetSnapshot();
   renderAssetRegistryList();
-  renderCreateAssetDefaults();
   renderMapFilterControls();
+  setMapSheetExpanded(false);
+  updateMapSheetSelection();
   if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
+  setAmStatusState();
+  updateNoIssuesToggleState();
   updateSubmitEligibility();
 }
 
@@ -4480,17 +5185,76 @@ assetList.addEventListener("click", (event) => {
   if (!selected) return;
   assetTab.selectedKey = assetKey;
   mapTab.selectedKey = assetKey;
+  renderMapAssetPicker();
+  updateMapSheetSelection();
   openDetailSheet(assetKey, "related");
 });
 
-clockFilter.addEventListener("change", () => {
-  state.clockFilter = clockFilter.value;
-  renderMapGrid();
-  renderAssetSnapshot();
-});
+if (mapAssetPicker) {
+  mapAssetPicker.addEventListener("change", () => {
+    const nextKey = mapAssetPicker.value || "";
+    mapTab.selectedKey = nextKey;
+    assetTab.selectedKey = nextKey;
+    renderMapGrid();
+  });
+}
+
+if (clockFilter) {
+  clockFilter.addEventListener("change", () => {
+    state.clockFilter = clockFilter.value;
+    renderMapGrid();
+    renderAssetSnapshot();
+  });
+}
 
 mapGrid.addEventListener("click", (event) => {
-  const markerButton = event.target instanceof HTMLElement ? event.target.closest("button.zone") : null;
+  if (USE_DESKTOP_MAP_BEHAVIOR) return;
+
+  const target = event.target instanceof HTMLElement ? event.target : null;
+  if (!target) return;
+
+  if (mapDraft.mode) {
+    event.stopPropagation();
+    const draftActionButton = target.closest("button[data-map-draft-action]");
+    if (draftActionButton) {
+      const action = draftActionButton.dataset.mapDraftAction || "";
+      if (action === "cancel") {
+        clearMapDraft();
+        setSubmitMessage("Map placement canceled.", "warn");
+        renderMapGrid();
+        return;
+      }
+      if (action === "undo") {
+        mapDraft.points.pop();
+        renderMapGrid();
+        return;
+      }
+      if (action === "finish") {
+        if (mapDraft.points.length < 3) {
+          setSubmitMessage("Add at least 3 vertices before finishing geometry.", "warn");
+          return;
+        }
+        openMapPlacementDecision("geometry", mapDraft.points.map((pt) => ({ x: pt.x, y: pt.y })));
+        return;
+      }
+    }
+
+    const rect = mapGrid.getBoundingClientRect();
+    const x = Number((((event.clientX - rect.left) / rect.width) * 100).toFixed(2));
+    const y = Number((((event.clientY - rect.top) / rect.height) * 100).toFixed(2));
+    if (x < 0 || x > 100 || y < 0 || y > 100) return;
+
+    if (mapDraft.mode === "pin") {
+      openMapPlacementDecision("pin", [{ x, y }]);
+      return;
+    }
+
+    mapDraft.points.push({ x, y });
+    renderMapGrid();
+    return;
+  }
+
+  const markerButton = target.closest("button.zone");
   if (!markerButton) return;
   const nextKey = markerButton.dataset.assetKey || "";
   mapTab.selectedKey = nextKey;
@@ -4505,6 +5269,8 @@ gisSelectionClose.addEventListener("click", () => {
 });
 
 gisMapCanvas.addEventListener("click", (event) => {
+  if (USE_DESKTOP_MAP_BEHAVIOR) return;
+  if (mapDraft.mode) return;
   if (!state.hasMap) return; // list mode manages its own click state
   const target = event.target instanceof HTMLElement ? event.target : null;
   if (!target) return;
@@ -4512,7 +5278,7 @@ gisMapCanvas.addEventListener("click", (event) => {
   const tappedMarker = target.closest("button.zone");
   const tappedSelection = target.closest("#gis-selection-card");
   const tappedLayers = target.closest("#gis-layers-sheet");
-  const tappedCollect = target.closest("#gis-filter-sheet") || target.closest("#gis-create-sheet");
+  const tappedCollect = target.closest("#gis-filter-sheet");
   const tappedFloating = target.closest("#gis-add-point") || target.closest("#gis-locate");
 
   if (tappedMarker || tappedSelection || tappedLayers || tappedCollect || tappedFloating) return;
@@ -4548,27 +5314,31 @@ gisSelectionCard.addEventListener("click", (event) => {
   }
 
   if (action === "callout") {
-    // Open inline callout form for this asset in the map/list view
-    mapTab.selectedKey = selected.key;
-    mapTab.calloutFormKey = selected.key;
-    setActiveTab("related");
+    openCalloutComposerFromMap(selected.key);
   }
 });
 
-if (gisViewToggle) {
-  gisViewToggle.addEventListener("click", () => {
-    state.hasMap = !state.hasMap;
-    gisViewToggle.textContent = state.hasMap ? "List" : "Map";
-    closeMapDrawers();
-    renderAll();
-  });
+function openCalloutComposerFromMap(preferredKey = "") {
+  const selectedKey = preferredKey || mapTab.selectedKey || getFilteredMapAssets()[0]?.key;
+  if (!selectedKey) {
+    setSubmitMessage("Select an asset in the spatial map first.", "warn");
+    return;
+  }
+  mapTab.selectedKey = selectedKey;
+  assetTab.selectedKey = selectedKey;
+  openDetailSheet(selectedKey, "related");
+  // Defer to ensure detail sheet controls are present before triggering composer.
+  setTimeout(() => {
+    detailCreateCallout?.click();
+  }, 0);
 }
+
+if (gisViewToggle) gisViewToggle.classList.add("hidden");
 
 gisLayersToggle.addEventListener("click", () => {
   gisLayersSheet.classList.toggle("hidden");
   if (!gisLayersSheet.classList.contains("hidden")) gisSelectionCard.classList.add("hidden");
   gisFilterSheet.classList.add("hidden");
-  gisCreateSheet.classList.add("hidden");
 });
 
 gisLayersClose.addEventListener("click", () => {
@@ -4579,7 +5349,6 @@ gisFilterToggle.addEventListener("click", () => {
   gisFilterSheet.classList.toggle("hidden");
   if (!gisFilterSheet.classList.contains("hidden")) gisSelectionCard.classList.add("hidden");
   gisLayersSheet.classList.add("hidden");
-  gisCreateSheet.classList.add("hidden");
   renderMapFilterControls();
 });
 
@@ -4616,48 +5385,65 @@ gisFilterSearch.addEventListener("input", () => {
   renderMapGrid();
 });
 
+if (mapSheetToggle) {
+  mapSheetToggle.addEventListener("click", () => {
+    const expanded = mapBottomSheet?.classList.contains("expanded");
+    setMapSheetExpanded(!expanded);
+  });
+}
+
+if (mapSheetHandle) {
+  mapSheetHandle.addEventListener("click", () => {
+    const expanded = mapBottomSheet?.classList.contains("expanded");
+    setMapSheetExpanded(!expanded);
+  });
+}
+
+if (mapQuickDetails) {
+  mapQuickDetails.addEventListener("click", () => {
+    const selected = ensureMapSelection();
+    if (!selected) {
+      return;
+    }
+    openDetailSheet(selected.key, "related");
+  });
+}
+
+if (mapQuickPhoto) {
+  mapQuickPhoto.addEventListener("click", () => {
+    const selected = ensureMapSelection();
+    if (!selected) {
+      return;
+    }
+    setSubmitMessage(`Photo capture for ${selected.name} selected.`, "warn");
+  });
+}
+
+if (mapQuickNotes) {
+  mapQuickNotes.addEventListener("click", () => {
+    const selected = ensureMapSelection();
+    if (!selected) {
+      return;
+    }
+    openCalloutComposerFromMap(selected.key);
+  });
+}
+
 gisAddPoint.addEventListener("click", () => {
-  openCreateSheet("details");
+  openCreateSheet("related");
 });
 
-gisCreateCancel.addEventListener("click", () => {
-  gisCreateSheet.classList.add("hidden");
+gisDropPin?.addEventListener("click", () => {
+  startMapDraftMode("pin");
 });
 
-gisCreateSave.addEventListener("click", () => {
-  const type = mapTab.gisCreateType || "zone";
-  if (type === "zone") {
-    if (state.controllers.length > 0 && !gisCreateController.value) {
-      setSubmitMessage("Select a Clock for this zone.", "error");
-      return;
-    }
-    if (state.backflows.length > 0 && !gisCreateBackflow.value) {
-      setSubmitMessage("Select a Backflow for this zone.", "error");
-      return;
-    }
-  }
-  addAssetToSystem();
-  gisCreateSheet.classList.add("hidden");
-  // Reset name field after save
-  if (gisCreateName) gisCreateName.value = "";
+gisDrawGeometry?.addEventListener("click", () => {
+  startMapDraftMode("geometry");
 });
 
-// Type buttons for create sheet
-(function() {
-  const typeBtns = document.querySelectorAll(".gis-type-btn");
-  const zoneFields = document.querySelector(".gis-create-zone-fields");
-  function applyType(type) {
-    mapTab.gisCreateType = type;
-    typeBtns.forEach((b) => b.classList.toggle("active", b.dataset.type === type));
-    if (zoneFields) zoneFields.style.display = type === "zone" ? "" : "none";
-    if (gisCreateName) {
-      gisCreateName.value = getAutoName(type);
-    }
-  }
-  typeBtns.forEach((btn) => btn.addEventListener("click", () => applyType(btn.dataset.type)));
-  // Init zone fields visibility
-  if (zoneFields) zoneFields.style.display = mapTab.gisCreateType === "zone" ? "" : "none";
-})();
+decisionModal?.addEventListener("click", (event) => {
+  if (event.target === decisionModal) closeDecisionModal();
+});
 
 detailSheetClose.addEventListener("click", () => {
   closeDetailSheet();
@@ -4716,6 +5502,40 @@ detailCalloutCancel.addEventListener("click", () => {
   detailCalloutComposer.classList.add("hidden");
   detailCalloutText.value = "";
   detailCalloutType.value = "Repair";
+  resetDetailCalloutMetadata();
+});
+
+detailCalloutPhoto?.addEventListener("change", () => {
+  const file = detailCalloutPhoto.files && detailCalloutPhoto.files[0];
+  if (detailCalloutPhotoStatus) {
+    detailCalloutPhotoStatus.textContent = file ? `Photo attached: ${file.name}` : "No photo attached.";
+  }
+});
+
+detailCalloutCaptureLocation?.addEventListener("click", async () => {
+  if (detailCalloutLocationStatus) detailCalloutLocationStatus.textContent = "Capturing location...";
+  try {
+    const location = await requestCurrentLocation();
+    detailCalloutLocation = {
+      lat: location.lat,
+      lng: location.lng,
+      accuracy: location.accuracy,
+      capturedAt: new Date().toISOString(),
+    };
+    if (detailCalloutLocationStatus) {
+      detailCalloutLocationStatus.textContent = `${formatCalloutLocation(detailCalloutLocation)}${location.accuracy ? ` (±${Math.round(location.accuracy)}m)` : ""}`;
+    }
+  } catch (error) {
+    detailCalloutLocation = null;
+    if (detailCalloutLocationStatus) {
+      detailCalloutLocationStatus.textContent = error.message || "Unable to capture location.";
+    }
+  }
+});
+
+detailCalloutClearLocation?.addEventListener("click", () => {
+  detailCalloutLocation = null;
+  if (detailCalloutLocationStatus) detailCalloutLocationStatus.textContent = "No location captured.";
 });
 
 detailCalloutSubmit.addEventListener("click", () => {
@@ -4723,6 +5543,7 @@ detailCalloutSubmit.addEventListener("click", () => {
   if (!asset) return;
   const issue = detailCalloutText.value.trim();
   const calloutType = detailCalloutType.value;
+  const photoFile = detailCalloutPhoto && detailCalloutPhoto.files ? detailCalloutPhoto.files[0] : null;
   if (!issue) {
     setSubmitMessage("Callout description is required.", "error");
     return;
@@ -4738,6 +5559,13 @@ detailCalloutSubmit.addEventListener("click", () => {
     title: asset.name,
     issue,
     calloutType,
+    photoMeta: photoFile ? {
+      name: photoFile.name,
+      size: photoFile.size,
+      type: photoFile.type,
+      capturedAt: new Date().toISOString(),
+    } : null,
+    location: detailCalloutLocation ? { ...detailCalloutLocation } : null,
     timestamp: new Date().toISOString(),
     resolved: false,
   });
@@ -4747,6 +5575,7 @@ detailCalloutSubmit.addEventListener("click", () => {
   detailCalloutComposer.classList.add("hidden");
   detailCalloutText.value = "";
   detailCalloutType.value = "Repair";
+  resetDetailCalloutMetadata();
   setSubmitMessage(`Callout created for ${asset.name}.`, "ok");
   renderAll();
   renderWoliOverviewList();
@@ -4786,8 +5615,8 @@ createType.addEventListener("change", () => {
 });
 
 createSave.addEventListener("click", saveCreateSheet);
-createCancel.addEventListener("click", closeCreateSheet);
-createSheetClose.addEventListener("click", closeCreateSheet);
+createCancel.addEventListener("click", () => closeCreateSheet());
+createSheetClose.addEventListener("click", () => closeCreateSheet(true));
 
 gisLocate.addEventListener("click", () => {
   setSubmitMessage("Device location request sent to ArcGIS location service.", "warn");
@@ -4827,94 +5656,24 @@ requiredList.addEventListener("change", (event) => {
 calloutList.addEventListener("click", (event) => {
   if (!(event.target instanceof HTMLButtonElement)) return;
   const calloutId = Number(event.target.dataset.calloutId);
-  const action    = event.target.dataset.action;
-  if (action === "remove") {
-    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
-    if (state.callouts.length > 0) state.noIssuesFound = false;
-    if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
-    renderCallouts();
-    renderAssetRegistryList();
-    updateSubmitEligibility();
-    renderWoliOverviewList();
-    renderDetailAssetCallouts();
-    return;
-  }
-  if (action === "resolve") {
-    const callout = state.callouts.find((c) => c.id === calloutId);
-    if (callout) {
-      state.callouts = state.callouts.filter((c) => c.id !== calloutId);
-      const hasOtherCallouts = state.callouts.some((c) => c.assetKey === callout.assetKey && !c.resolved);
-      const asset = getAllAssets().find((a) => a.key === callout.assetKey);
-      if (asset && asset.type === "zone" && !hasOtherCallouts) {
-        asset.ref.status = "ok";
-      }
-      renderCallouts();
-      renderMapGrid();
-      renderAssetRegistryList();
-      updateSubmitEligibility();
-      renderWoliOverviewList();
-      renderDetailAssetCallouts();
-    }
-  }
+  const action = event.target.dataset.action;
+  processCalloutAction(action, calloutId);
 });
 
 detailCalloutsList.addEventListener("click", (event) => {
   if (!(event.target instanceof HTMLButtonElement)) return;
   const calloutId = Number(event.target.dataset.calloutId);
-  const action    = event.target.dataset.action;
-  if (action === "remove") {
-    state.callouts = state.callouts.filter((c) => c.id !== calloutId);
-    if (state.callouts.length > 0) state.noIssuesFound = false;
-    if (noIssuesCheckbox) noIssuesCheckbox.checked = Boolean(state.noIssuesFound);
-    renderCallouts();
-    renderAssetRegistryList();
-    updateSubmitEligibility();
-    renderWoliOverviewList();
-    renderDetailAssetCallouts();
-    return;
-  }
-  if (action === "resolve") {
-    const callout = state.callouts.find((c) => c.id === calloutId);
-    if (callout) {
-      state.callouts = state.callouts.filter((c) => c.id !== calloutId);
-      const hasOtherCallouts = state.callouts.some((c) => c.assetKey === callout.assetKey && !c.resolved);
-      const asset = getAllAssets().find((a) => a.key === callout.assetKey);
-      if (asset && asset.type === "zone" && !hasOtherCallouts) {
-        asset.ref.status = "ok";
-      }
-      renderCallouts();
-      renderMapGrid();
-      renderAssetRegistryList();
-      updateSubmitEligibility();
-      renderWoliOverviewList();
-      renderDetailAssetCallouts();
-    }
-  }
+  const action = event.target.dataset.action;
+  processCalloutAction(action, calloutId);
 });
 
+amName?.addEventListener("change", assignAmFromSelection);
+
 document.getElementById("toggle-am").addEventListener("click", () => {
-  if (state.amAssigned) {
-    state.amAssigned = false;
-    state.amName = "";
-    amName.value = "";
-    amStatus.textContent = "AM cleared.";
-    amStatus.style.color = "#8f4b00";
-    if (amStatusHeader) amStatusHeader.textContent = "Not assigned";
-    updateSubmitEligibility();
-    renderWoliOverviewList();
-    return;
-  }
-  if (!amName.value) {
-    amStatus.textContent = "Select an AM before assigning.";
-    amStatus.style.color = "#ba0517";
-    updateSubmitEligibility();
-    return;
-  }
-  state.amAssigned = true;
-  state.amName = amName.value;
-  amStatus.textContent = `AM assigned: ${state.amName}`;
-  amStatus.style.color = "#2e844a";
-  if (amStatusHeader) amStatusHeader.textContent = state.amName;
+  state.amAssigned = false;
+  state.amName = "";
+  if (amName) amName.value = "";
+  setAmStatusState();
   updateSubmitEligibility();
   renderWoliOverviewList();
 });
@@ -4925,7 +5684,29 @@ document.getElementById("open-review").addEventListener("click", () => {
 });
 
 document.getElementById("simulate-submit").addEventListener("click", simulateSubmit);
-document.getElementById("reset-flow").addEventListener("click", resetFlow);
+document.getElementById("reset-flow").addEventListener("click", () => {
+  openDecisionModal(
+    "Reset Inspection",
+    "Choose reset scope for this WOLI session.",
+    [
+      {
+        label: "Soft Reset",
+        variant: "slds-button slds-button_neutral",
+        onClick: () => resetFlow("soft"),
+      },
+      {
+        label: "Hard Reset",
+        variant: "slds-button slds-button_destructive",
+        onClick: () => resetFlow("hard"),
+      },
+      {
+        label: "Cancel",
+        variant: "slds-button slds-button_neutral",
+        onClick: () => {},
+      },
+    ]
+  );
+});
 
 initOverviewSectionToggles();
 
@@ -4934,8 +5715,6 @@ setStage("INSPECTING");
 setSubmitMessage("Complex campus system loaded.", "warn");
 assetTab.selectedKey = `zone:${state.zones[0].id}`;
 mapTab.selectedKey = "";
-addZoneController.disabled = false;
-addZoneBackflow.disabled = false;
 setActiveTab("overview");
 renderAll();
   </script>

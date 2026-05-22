@@ -273,7 +273,7 @@ function mobileMapEmbedUrl() {
   if (selected) {
     params.set("assetId", selected.id);
   }
-  return `../../spatial_portable/index.html?${params.toString()}`;
+  return `../spatial_portable/index.html?${params.toString()}`;
 }
 
 function setMobileMapMessage(text, tone = "neutral") {

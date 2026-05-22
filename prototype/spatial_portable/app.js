@@ -73,9 +73,9 @@ async function loadAndRegisterAssets() {
       return;
     }
 
-    // Try desktop_map seed data first (when embedded in that prototype), then desktop/
+    // Try desktop seed data from the renamed desktop prototype folder.
     let response = null;
-    for (const path of ["../desktop_map/seed_data.json", "../desktop/seed_data.json"]) {
+    for (const path of ["../desktop/seed_data.json"]) {
       try {
         const r = await fetch(path);
         if (r.ok) { response = r; break; }
@@ -215,7 +215,7 @@ function escapeHtml(value) {
 
 function assetRecordUrl(assetId) {
   if (!context.propertyId || !assetId) return "#";
-  return `../desktop_map/desktop_prototype_with_map.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
+  return `../desktop/desktop_v3.1.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
 }
 
 function normalizeFeatureNames(features) {
@@ -769,7 +769,7 @@ start().catch((error) => {
   setStatus(`Initialization error: ${error.message}`);
 });
 
-// Listen for live asset data pushed from parent page (when embedded as iframe in desktop_map)
+// Listen for live asset data pushed from parent page (when embedded as iframe in desktop)
 window.addEventListener("message", (event) => {
   const msg = event.data;
   if (!msg || msg.type !== "SPATIAL_PROTO_ASSETS") return;

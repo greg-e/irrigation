@@ -3,7 +3,7 @@
 Date: May 19, 2026
 Status: Draft
 Owner: FSM Product / UX
-Source Prototype: prototype/desktop_map/desktop_prototype_with_map.html
+Source Prototype: prototype/desktop/desktop_v3.1.html
 
 ## 1. Product Summary
 

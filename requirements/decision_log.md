@@ -116,7 +116,7 @@ Each issue found during inspection = one WOLI with extended custom fields. Repai
 
 Mobile inspection uses a WOLI-first UX. WO Overview includes Service Appointment (collapsed default) and WOLI (expanded default). WOLI workspace uses DETAILS/RELATED/FEED tabs. Submit gated until: (1) Repair Callouts requirement met and (2) AM assigned.
 
-**Reference:** `prototype/mobile/ui/fsm_mobile_inspection_standalone.html`
+**Reference:** `prototype/mobile/mobile_v3.1.html`
 
 ---
 
@@ -151,7 +151,7 @@ Pipe is not modeled as a separate Asset component type. Instead, pipe-related me
 
 **Date:** 2026-05-21 | **Owner:** BA (G. Ehrenberg) | **Status:** Locked
 
-Refinement decisions captured for the mobile prototype in [prototype/mobile/ui/fsm_mobile_inspection_standalone_working.html](../prototype/mobile/ui/fsm_mobile_inspection_standalone_working.html). This entry records selected behavior and UX direction prior to implementation.
+Refinement decisions captured for the mobile prototype in [prototype/mobile/mobile_v3.1.html](../prototype/mobile/mobile_v3.1.html). This entry records selected behavior and UX direction prior to implementation.
 
 **Selected decisions:**
 - Submit callout gate accepts any callout type (Repair or Enhancement) or No irrigation issues found.
