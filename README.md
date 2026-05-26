@@ -6,7 +6,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 
 ## Core Objectives
 
-- **Asset Catalog**: Track individual irrigation system components (zones, controllers, heads, valves, backflow preventers, etc.) as Salesforce Assets linked to their parent Account (property).
+- **Asset Catalog**: Track canonical irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Source, Backflow, Controller, and Zone.
 - **Asset-to-Service Appointment Linkage**: Associate irrigation work type service appointments with specific assets so repair history is captured at the component level.
 - **Estimate Workflow**: Generate estimates (quotes/work orders) directly from a service appointment context, enabling rapid customer review and digital approval so crews can proceed without delays.
 
@@ -42,6 +42,12 @@ All system data is stored and maintained on the **Property Account** record. The
 
 The following irrigation components must be cataloged as discrete Assets under the Property Account, with fields and history tracked at the component level:
 
+#### Systems
+- System identity, install/lifecycle context, and top-level hierarchy anchor
+
+#### Sources
+- Water source type, capacity, notes, and location context
+
 #### Backflows
 - Model, serial number, install date, last test date, test results, compliance status
 
@@ -54,14 +60,8 @@ The following irrigation components must be cataloged as discrete Assets under t
 #### Zones
 - Zone number, description, area served, flow rate, head type, valve association
 
-#### Valves
-- Type (ball, gate, solenoid), zone association, location description, install date, condition
-
-#### Heads
-- Type (rotor, spray, bubbler), model, nozzle size, radius, zone association, location
-
-#### Drip
-- Emitter type, GPH rating, zone association, coverage area
+#### Component Metadata (Non-Hierarchy)
+- Valve, head, drip, and related subcomponent details are captured as metadata on the canonical hierarchy assets rather than separate child assets.
 
 ---
 

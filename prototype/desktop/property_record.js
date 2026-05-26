@@ -201,6 +201,55 @@ function migratePropertyToHierarchy(property) {
       }
     });
   }
+
+  if (Array.isArray(property.inspections)) {
+    property.inspections = property.inspections.map(normalizeInspectionChecklistSummary);
+  }
+}
+
+function buildChecklistSummary(byAssetType, totalFindings) {
+  if (!totalFindings) return "None";
+  const labels = [
+    ["System", byAssetType.system],
+    ["Source", byAssetType.source],
+    ["Backflow", byAssetType.backflow],
+    ["Controller", byAssetType.controller],
+    ["Zone", byAssetType.zone],
+  ];
+  return labels
+    .filter(([, count]) => Number(count || 0) > 0)
+    .map(([label, count]) => `${label}: ${count}`)
+    .join(" | ");
+}
+
+function normalizeInspectionChecklistSummary(inspection) {
+  const byTypeInput = inspection && typeof inspection.checklistFindingsByAssetType === "object"
+    ? inspection.checklistFindingsByAssetType
+    : null;
+
+  const byAssetType = {
+    system: Number(byTypeInput?.system || 0),
+    source: Number(byTypeInput?.source || 0),
+    backflow: Number(byTypeInput?.backflow || 0),
+    controller: Number(byTypeInput?.controller || 0),
+    zone: Number(byTypeInput?.zone || 0),
+  };
+
+  if (!byTypeInput) {
+    const legacyCalloutCount = Number(inspection.calloutCount || 0);
+    byAssetType.zone = Number.isFinite(legacyCalloutCount) ? Math.max(0, legacyCalloutCount) : 0;
+  }
+
+  const totalFromByType = Object.values(byAssetType).reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0);
+  const providedTotal = Number(inspection.checklistFindingCount);
+  const checklistFindingCount = Number.isFinite(providedTotal) ? Math.max(0, providedTotal) : totalFromByType;
+
+  return {
+    ...inspection,
+    checklistFindingsByAssetType: byAssetType,
+    checklistFindingCount,
+    checklistSummary: inspection.checklistSummary || buildChecklistSummary(byAssetType, checklistFindingCount),
+  };
 }
 
 async function loadState() {
@@ -724,6 +773,94 @@ function uniqueZonePerController(property, zone, skipId = null) {
   });
 }
 
+function autoCreateControllerZones(property, controllerAsset) {
+  if (!property || !controllerAsset || controllerAsset.type !== "Controller") {
+    return { created: [], retired: [], skipped: [] };
+  }
+
+  const desiredCountRaw = Number(controllerAsset.totalZones);
+  if (!Number.isFinite(desiredCountRaw) || desiredCountRaw <= 0) {
+    return { created: [], retired: [], skipped: [] };
+  }
+  const desiredCount = Math.floor(desiredCountRaw);
+
+  const controllerZones = activeAssets(property)
+    .filter((asset) => asset.type === "Zone" && asset.parentId === controllerAsset.id);
+
+  const existingNumbers = new Set(
+    controllerZones
+      .map((zone) => Number(zone.zoneNumber))
+      .filter((zoneNumber) => Number.isFinite(zoneNumber) && zoneNumber > 0)
+  );
+
+  const created = [];
+  for (let zoneNumber = 1; zoneNumber <= desiredCount; zoneNumber += 1) {
+    if (existingNumbers.has(zoneNumber)) continue;
+
+    const zone = {
+      id: genId("asset"),
+      type: "Zone",
+      name: `Zone ${zoneNumber}`,
+      status: "Active",
+      isPlaceholder: true,
+      parentId: controllerAsset.id,
+      zoneNumber,
+      controllerLabel: "",
+      makeModel: "",
+      totalZones: null,
+      backflowType: "",
+      headSubtype: "",
+      serialNumber: "",
+      mainlinePipeType: "",
+      mainlinePipeSize: "",
+      distributionMethod: "",
+      lateralPipeType: "",
+      lateralPipeSize: "",
+      solenoidResistanceOhms: null,
+      areaServed: "",
+      flowRateGpm: null,
+      primaryHeadType: "",
+      installDate: "",
+      lat: null,
+      lon: null,
+      description: "",
+    };
+
+    property.assets.push(zone);
+    created.push(zone);
+  }
+
+  const active = activeAssets(property);
+  const zoneIdsWithChildren = new Set(
+    active
+      .filter((asset) => Boolean(asset.parentId))
+      .map((asset) => asset.parentId)
+  );
+  const referencedZoneIds = new Set(
+    (Array.isArray(controllerAsset.programs) ? controllerAsset.programs : [])
+      .map((program) => program.zoneAssetId)
+      .filter(Boolean)
+  );
+
+  const retired = [];
+  const skipped = [];
+  const excessZones = controllerZones
+    .filter((zone) => Number(zone.zoneNumber) > desiredCount)
+    .sort((a, b) => Number(b.zoneNumber) - Number(a.zoneNumber));
+
+  excessZones.forEach((zone) => {
+    if (zoneIdsWithChildren.has(zone.id) || referencedZoneIds.has(zone.id)) {
+      skipped.push(zone);
+      return;
+    }
+
+    zone.status = "Retired";
+    retired.push(zone);
+  });
+
+  return { created, retired, skipped };
+}
+
 function renderControllerOptions(selectEl, includeBlank = true) {
   const property = getProperty();
   if (!property) return;
@@ -1164,18 +1301,18 @@ function applyEditGuards(asset) {
 
   if (asset.type === "Controller") {
     const controllerLabel = els.editControllerLabel.value.trim();
-    const totalZones = els.editTotalZones.value;
+    const totalZones = Number(els.editTotalZones.value);
 
     if (!controllerLabel) {
       return { ok: false, message: "Controller Label is required for Controllers." };
     }
-    if (!totalZones) {
-      return { ok: false, message: "Total Zones is required for Controllers." };
+    if (!Number.isFinite(totalZones) || totalZones < 1) {
+      return { ok: false, message: "Total Zones must be at least 1 for Controllers." };
     }
 
     asset.controllerLabel = controllerLabel;
     asset.makeModel = els.editMakeModel.value.trim();
-    asset.totalZones = Number(totalZones);
+    asset.totalZones = Math.floor(totalZones);
     asset.connectivityType = els.editConnectivityType.value || "";
     asset.isSmartController =
       els.editSmartController.value === "" ? null : els.editSmartController.value === "true";
@@ -2011,6 +2148,7 @@ function renderRelated(property) {
           return new Date(b.completedAt) - new Date(a.completedAt);
         })
         .map((insp) => {
+          const normalized = normalizeInspectionChecklistSummary(insp);
           const overallBadge = insp.overallStatus
             ? `<span class="slds-badge ${statusTheme[insp.overallStatus] || ""}" style="font-size:0.7rem">${insp.overallStatus}</span>`
             : "—";
@@ -2021,7 +2159,7 @@ function renderRelated(property) {
             <td data-label="Type">${insp.inspectionType}</td>
             <td data-label="Technician">${insp.technician}</td>
             <td data-label="Overall Status">${overallBadge}</td>
-            <td data-label="Callouts">${insp.calloutCount}</td>
+            <td data-label="Checklist Findings" title="${normalized.checklistSummary}">${normalized.checklistFindingCount}</td>
             <td data-label="Completion">${completionBadge}</td>
           </tr>`;
         })
@@ -2669,18 +2807,18 @@ function bindEvents() {
 
     if (type === "Controller") {
       const controllerLabel = els.createControllerLabel.value.trim();
-      const total = els.createTotalZones.value;
+      const total = Number(els.createTotalZones.value);
       if (!controllerLabel) {
         els.createMsg.textContent = "Controller Label is required.";
         return;
       }
-      if (!total) {
-        els.createMsg.textContent = "Total Zones is required.";
+      if (!Number.isFinite(total) || total < 1) {
+        els.createMsg.textContent = "Total Zones must be at least 1.";
         return;
       }
       base.controllerLabel = controllerLabel;
       base.makeModel = els.createMakeModel.value.trim();
-      base.totalZones = Number(total);
+      base.totalZones = Math.floor(total);
       const system = activeAssets(property).find((a) => a.type === "System");
       if (system) {
         base.parentId = system.id;
@@ -2748,8 +2886,30 @@ function bindEvents() {
     }
 
     property.assets.push(base);
-    addAudit(property, "Create Asset", base.name, `${base.type} created`);
-    els.createMsg.textContent = `${base.type} created.`;
+    const zoneSyncResult = base.type === "Controller"
+      ? autoCreateControllerZones(property, base)
+      : { created: [], retired: [], skipped: [] };
+
+    const zoneSyncNotes = [];
+    if (zoneSyncResult.created.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.created.length} zone(s) auto-created`);
+    }
+    if (zoneSyncResult.retired.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.retired.length} excess zone(s) auto-retired`);
+    }
+    if (zoneSyncResult.skipped.length) {
+      zoneSyncNotes.push(
+        `${zoneSyncResult.skipped.length} excess zone(s) not retired (linked assets/programs)`
+      );
+    }
+
+    const createDetails = zoneSyncNotes.length
+      ? `${base.type} created; ${zoneSyncNotes.join("; ")}`
+      : `${base.type} created`;
+    addAudit(property, "Create Asset", base.name, createDetails);
+    els.createMsg.textContent = zoneSyncNotes.length
+      ? `${base.type} created. ${zoneSyncNotes.join(". ")}.`
+      : `${base.type} created.`;
 
     closeAssetModal();
     els.createAssetForm.reset();
@@ -2906,12 +3066,34 @@ function bindEvents() {
       return;
     }
 
-    const next = JSON.stringify(asset);
-    if (prev !== next) {
-      addAudit(property, "Edit Asset", asset.name, `${asset.type} updated`);
+    const zoneSyncResult = asset.type === "Controller"
+      ? autoCreateControllerZones(property, asset)
+      : { created: [], retired: [], skipped: [] };
+
+    const zoneSyncNotes = [];
+    if (zoneSyncResult.created.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.created.length} zone(s) auto-created`);
+    }
+    if (zoneSyncResult.retired.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.retired.length} excess zone(s) auto-retired`);
+    }
+    if (zoneSyncResult.skipped.length) {
+      zoneSyncNotes.push(
+        `${zoneSyncResult.skipped.length} excess zone(s) not retired (linked assets/programs)`
+      );
     }
 
-    els.editMsg.textContent = "Asset saved.";
+    const next = JSON.stringify(asset);
+    if (prev !== next || zoneSyncNotes.length) {
+      const editDetails = zoneSyncNotes.length
+        ? `${asset.type} updated; ${zoneSyncNotes.join("; ")}`
+        : `${asset.type} updated`;
+      addAudit(property, "Edit Asset", asset.name, editDetails);
+    }
+
+    els.editMsg.textContent = zoneSyncNotes.length
+      ? `Asset saved. ${zoneSyncNotes.join(". ")}.`
+      : "Asset saved.";
     closeAssetModal();
     renderPage();
   });

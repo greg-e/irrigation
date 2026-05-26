@@ -29,12 +29,12 @@ This folder contains the standalone mobile inspection prototype for FSM irrigati
 - Related sections:
 	- Components (asset list and edits)
 	- Inspection Guide (required question checklist)
-	- Callouts
+	- Callouts (asset issue checklist with checkbox + count)
 	- Submit Report
 - Map/list hybrid behavior for assets, including:
 	- Asset create/edit/remove
 	- Status toggle
-	- Inline callout creation
+	- Inline callout creation from predefined issue checklist (checkbox + count)
 	- Optional geolocation capture for callouts
 - Submit gate behavior:
 	- Hard blockers:

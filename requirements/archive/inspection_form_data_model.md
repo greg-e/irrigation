@@ -1,6 +1,6 @@
 > **SUPERSEDED**
-> **Superseded by:** [requirements/irrigation_data_dictionary.md](../irrigation_data_dictionary.md)
-> **Rationale:** Data dictionary (v3, 2026-05-18) absorbed and expanded the inspection form schema into a unified canonical Salesforce object reference.
+> **Superseded by:** [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md)
+> **Rationale:** Canonical asset metadata dictionary content is consolidated into the FSM requirements baseline to keep one source of truth.
 > **Decision Log ID:** DL-001
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -339,7 +339,7 @@ Captures the program schedule(s) running on a Controller — sourced directly fr
 
 ## 5c. Per-Zone Inspection Detail
 
-The per-zone grid on James's report (32 rows × 18 columns) is captured via `Inspection_Response__c` rows with `Asset_Scoped__c = true` and `Asset__c` pointing to each Zone Asset. Each grid column maps to one question in the library — see [requirements/inspection_question_library.md](inspection_question_library.md) Section 6 for the full mapping.
+The per-zone grid on James's report (32 rows × 18 columns) is captured via `Inspection_Response__c` rows with `Asset_Scoped__c = true` and `Asset__c` pointing to each Zone Asset. Each grid column maps to one question in the consolidated requirements doc — see [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) Section 2 for the full mapping.
 
 Key per-zone data points captured:
 
@@ -352,7 +352,7 @@ Key per-zone data points captured:
 - Repairs made
 - Notes
 
-Each failed checkbox maps deterministically to a `WorkOrderLineItem` callout `Issue_Type__c` value — full mapping in the question library doc.
+Each failed checkbox maps deterministically to a `WorkOrderLineItem` callout `Issue_Type__c` value — full mapping in [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L125).
 
 ---
 
@@ -495,7 +495,7 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 ## 11. Remaining Open Questions
 
 - [ ] Photo annotation depth — caption only, or freehand markup? Freehand markup requires a richer LWC and storage approach.
-- [ ] Where does the question library live for editing — pure admin UI, or a custom LWC editor for the national irrigation lead?
+- [ ] Where does the question library live for editing — pure admin UI, or a custom LWC editor for the national irrigation lead? See [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120).
 - [ ] Multi-zone inspection: does each zone get its own SA, or one SA with N zone-scoped responses? Recommend: one SA with N responses to keep scheduling simple.
 - [ ] Tech-level revenue attribution (James's ask) — store `Inspected_By__c` user on SA is sufficient, or also denormalize onto each WOLI for easier roll-up?
 

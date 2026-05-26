@@ -1,0 +1,267 @@
+# Irrigation Inspection and Asset Management PRD v3.1
+
+Date: 2026-05-22
+Status: Consolidated draft for build execution
+Owner: FSM Product / Architecture
+Supersedes: requirements/fsm_irrigation_requirements.md, requirements/map_lwc_responsive_v1_first_pass.md, requirements/decision_log.md (authoritative decision lineage)
+
+## 1. Executive Summary
+
+This document merges prior PRD versions into a single implementation baseline for irrigation inspection, asset hierarchy management, spatial workflows, and controller program operations in Salesforce.
+
+Governance note: if this PRD conflicts with `requirements/decision_log.md`, the decision log is authoritative.
+
+The strategy is intentionally hybrid:
+
+1. Use OOTB Salesforce FSM as the operational foundation and system of record.
+2. Use focused custom LWCs for interaction-heavy experiences (inspection runtime, map, hierarchy, program workspace, checkout review).
+3. Roll out pilot-first and scale by branch waves with governance gates.
+
+## 2. Problem Statement
+
+Current operations rely on disconnected tools (Excel, iAuditor, slides/PDF maps, email threads), creating:
+
+1. Revenue leakage from delayed or incomplete follow-through on checklist findings.
+2. Weak property-level completion accountability.
+3. Manual map artifact bottlenecks.
+4. Inconsistent inspection standards across branches.
+5. Low field adoption when digital workflows are overly complex.
+
+## 3. Personas and Jobs to Be Done
+
+1. Irrigation Technician: complete relevant inspections quickly with offline-safe capture, evidence, and minimal complexity.
+2. Account Manager: triage checklist findings with clear severity, category, and evidence context.
+3. Branch Leadership: monitor completion, pipeline, and conversion velocity.
+4. Irrigation Standards Owner: govern a national question library with controlled regional deltas.
+5. Customer/Property Manager: access living inspection history and evidence without manager mediation.
+
+## 4. Scope
+
+### 4.1 In Scope (MVP / R1)
+
+1. Unified Asset record experience with Details, Map, Hierarchy, Related, Program tabs.
+2. OOTB Asset-centered hierarchy and readiness workflows.
+3. Question library and question-set resolver by Region + Inspection Type + Season.
+4. FSM mobile inspection runtime with conditional rendering, offline sync, and required-answer checkout gate.
+5. Asset-type inspection checklist capture with standardized finding categories and evidence support.
+6. AM queue and conversion flow on standard records.
+7. Spatial map workflows with `Map_Feature__c` GeoJSON persistence.
+8. MVP map provider candidate set for rendering/editing: Mapbox GL JS and Google Maps JavaScript API.
+9. KML import/export in MVP (basic fidelity only).
+10. Controller program management workspace.
+11. Core dashboards for completion, checklist findings, and downstream follow-through.
+
+### 4.2 Out of Scope (MVP)
+
+1. ArcGIS and enterprise GIS dual-write.
+2. Full KML style round-trip fidelity.
+3. Advanced offline conflict engine beyond platform baseline.
+4. Smart-controller vendor integrations.
+5. Customer write-back request intake.
+
+## 5. Product and Architecture Baseline
+
+1. Salesforce is the system of record for hierarchy, inspection checklist findings, and map metadata.
+2. OOTB `Asset` object is the canonical irrigation hierarchy container.
+3. `ServiceAppointment` is the inspection runtime container.
+4. Inspection responses are stored in child records, not on SA fields.
+5. `Map_Feature__c` stores geometry (GeoJSON) and map metadata.
+6. MVP map provider remains open between Mapbox GL JS and Google Maps JavaScript API until the mapping decision gate is closed.
+7. Question library is append-only for published versions.
+8. Build pattern is OOTB foundation with custom-first UX for high-interaction surfaces.
+9. Reuse pattern is base LWC + channel-specific wrappers (desktop, Salesforce Mobile, FSM Mobile).
+10. Rollout strategy is pilot-first with steering-group phase gates.
+
+## 6. OOTB vs Custom Delivery Boundary
+
+### 6.1 OOTB Foundation
+
+1. Core objects: `Asset`, `WorkOrder`, `WorkOrderLineItem`, `ServiceAppointment`.
+2. Scheduling/dispatch through FSM capabilities.
+3. Files/photos via Salesforce Files.
+4. AM queueing through list views, statuses, and record pages.
+5. Dynamic Forms, Lightning App Builder, related lists, quick actions.
+6. Field History Tracking (selected critical fields).
+7. Reporting via Salesforce reports and analytics layer.
+
+### 6.2 Required Custom Surfaces
+
+1. Inspection runtime LWC.
+2. Checkout review and required-answer gate LWC.
+3. Apex question-set resolver.
+4. Spatial map LWC platform (base + wrappers).
+5. Hierarchy LWC platform (base + wrappers).
+6. Program workspace LWC platform (base + wrappers).
+7. Apex orchestration for multi-record transactional and KML operations.
+
+## 7. Data Model Requirements
+
+### 7.1 Canonical Hierarchy
+
+Supported asset taxonomy:
+
+1. System
+2. Source
+3. Backflow
+4. Controller
+5. Zone
+
+Parenting rules:
+
+1. Each Property has exactly one System.
+2. Source must belong to a System.
+3. Backflow must belong to a Source.
+4. Controller must belong to a Backflow.
+5. Zone must belong to a Controller.
+6. Additional equipment details (for example valve/head/drip details) are stored as component metadata on the canonical hierarchy records.
+
+### 7.2 Inspection Checklist Findings Model
+
+1. `Inspection_Response__c` child model for version-safe responses.
+2. `Inspection_Question__c`, `Inspection_Question_Set__c`, and set-membership junction model.
+3. Checklist finding summaries are stored at inspection level with counts by asset type and linked evidence.
+
+### 7.3 Spatial and Program Models
+
+1. `Map_Feature__c`: geometry type, GeoJSON payload, source/confidence metadata, account/asset links.
+2. `Irrigation_Program__c`: controller-scoped schedule and zone linkage metadata.
+
+## 8. Lightning Record Experience Specification
+
+Page Name: Asset Record - Irrigation Unified  
+Target Object: Asset  
+Form Factors: Desktop and Phone
+
+Top region:
+
+1. Highlights panel.
+2. Optional status/path strip.
+3. Quick actions: New Work Order, Log Checklist Finding, Capture GPS Location, Upload Photo.
+
+Main layout:
+
+1. Dynamic Forms sections by asset type.
+2. Hierarchy wrapper and map wrapper as first-class components.
+3. Tab set: Details, Hierarchy, Map, Program, Related, History.
+
+Visibility rules:
+
+1. Program workspace visible only for Controller context.
+2. Zone controls visible only for zone-eligible context.
+3. Map edit controls gated by role and lifecycle stage.
+4. Small form-factor wrappers used for mobile channels.
+
+## 9. Functional Requirements
+
+### FR-1 Inspection Runtime
+
+1. Resolve and snapshot one published question set per inspection start.
+2. Render only relevant sections through branching rules.
+3. Persist offline and sync on reconnect.
+4. Enforce required-answer gate at checkout.
+
+### FR-2 Checklist Findings Capture and AM Handoff
+
+1. Generate checklist findings from inspection responses by asset type.
+2. Require technician confirmation and categorization of findings at checkout.
+3. Require AM assignment and disposition status when actionable findings exist.
+4. Persist links from findings to source evidence and asset context.
+
+### FR-3 Hierarchy and Asset Guardrails
+
+1. Enforce type-specific required fields.
+2. Enforce uniqueness of hierarchy identifiers within property scope.
+3. Enforce strict parent requirements for Source, Backflow, Controller, and Zone.
+4. Keep selected asset context synchronized across tabs and deep links.
+
+### FR-4 Spatial Workflows
+
+1. Create/edit/delete point, line, polygon features.
+2. Support desktop authoring and mobile location capture.
+3. Sync selected map feature context with hierarchy selection.
+4. Support KML import/export with validation and error handling.
+
+### FR-5 Program Workflows
+
+1. Allow create/edit/delete of controller programs.
+2. Require program name and validate schedule constraints.
+3. Support zone linkage and active/inactive controls.
+
+### FR-6 Reporting and Accountability
+
+1. Completion rate by branch, property, and week.
+2. Open actionable findings pipeline by category, owner, and age.
+3. Checkout-to-approval conversion velocity.
+4. Data quality metrics (required completion and photo coverage).
+
+## 10. Non-Functional Requirements
+
+1. Desktop and mobile usability for target pilot data volumes.
+2. Mobile workflows remain operable in low-connectivity conditions supported by platform baseline.
+3. Custom operations are bulk-safe where server-side orchestration is required.
+4. Security and validation are enforced server-side, not UI only.
+
+## 11. Release Plan
+
+### R1 (Pilot)
+
+1. Asset model and unified page.
+2. Question library foundation and initial regionalized set.
+3. Inspection runtime and checkout gate.
+4. Checklist findings handoff flow and AM queue.
+5. Candidate-provider map features and KML MVP (Mapbox or Google based on gate closure).
+6. Program workspace.
+7. Core dashboard pack.
+
+### R1.1 (Hardening and Expansion)
+
+1. Additional regional question deltas.
+2. Offline and channel hardening.
+3. Approval-threshold automation expansion.
+4. Experience Cloud customer history (license-gated).
+
+## 12. Jira Execution Epics
+
+1. Salesforce foundation and data model.
+2. Unified asset page and Dynamic Forms.
+3. Reusable hierarchy LWC platform.
+4. Reusable map LWC platform with KML.
+5. Reusable program LWC platform.
+6. Security and lifecycle guardrails.
+7. Migration, pilot, and governance.
+8. Cross-channel QA and release certification.
+
+## 13. Risks and Mitigations
+
+1. Field adoption risk from complexity: enforce simplified workflows and strict UX guardrails.
+2. Channel behavior drift: test matrix and shared base contract across wrappers.
+3. Audit depth limitations with field history only: evaluate post-MVP event-level extension.
+4. Pilot branch variance: phased migration with rollback and steering gates.
+
+## 14. Open Decisions
+
+Open decision and gate authority is maintained in `requirements/decision_log.md` under **Open Decision Gates**.
+
+This PRD references the active gate set and should not maintain a duplicated open-decision list.
+
+## 15. Success Metrics
+
+1. Inspection completion reliability at property level.
+2. Days from inspection checkout to AM decision.
+3. Percentage of checklist findings with complete evidence.
+4. Time to establish baseline hierarchy for pilot properties.
+5. Channel parity pass rate for hierarchy/map/program workflows.
+
+## 16. Source Inputs for This Consolidated Version
+
+1. requirements/fsm_irrigation_requirements.md
+2. requirements/decision_log.md
+3. requirements/map_lwc_responsive_v1_first_pass.md
+4. requirements/northeast_discovery_plan.md
+5. research/asset_record_page_design.md
+6. research/automation_flows_design.md
+7. research/spatial_mapping_options.md
+8. requirements/archive/inspection_form_data_model.md (archived predecessor)
+9. research/archive/fsm_asset_architecture.md (archived predecessor)
+10. research/archive/fsm_asset_research.md (archived predecessor)
+11. discovery transcripts and extracted discovery notes in discovery/.

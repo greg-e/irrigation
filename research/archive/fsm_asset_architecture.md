@@ -1,6 +1,6 @@
 > **SUPERSEDED**
-> **Superseded by:** [requirements/irrigation_data_dictionary.md](../../requirements/irrigation_data_dictionary.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
-> **Rationale:** Architecture decisions absorbed into the canonical data dictionary and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
+> **Superseded by:** [requirements/fsm_irrigation_requirements.md](../../requirements/fsm_irrigation_requirements.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
+> **Rationale:** Architecture decisions are consolidated into the canonical FSM requirements metadata baseline and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
 > **Decision Log ID:** DL-002
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)

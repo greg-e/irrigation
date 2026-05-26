@@ -11,7 +11,7 @@ erDiagram
     WORK_TYPE ||--o{ WORK_ORDER : "categorizes"
     WORK_TYPE ||--o{ INSPECTION_QUESTION_SET : "drives form variant"
 
-    ASSET ||--o{ ASSET : "parent (Account -> System -> Controller -> Zone -> component)"
+    ASSET ||--o{ ASSET : "parent (Account -> System -> Source -> Backflow -> Controller -> Zone)"
     ASSET ||--o{ IRRIGATION_PROGRAM : "controller has programs A-D"
     ASSET ||--o{ INSPECTION_RESPONSE : "asset-scoped responses"
     ASSET ||--o{ WORK_ORDER_LINE_ITEM : "callouts target asset"
@@ -91,7 +91,7 @@ erDiagram
     ASSET {
         string Name
         Id ParentId "hierarchy via AssetLevel"
-        picklist Asset_Type__c "System / Controller / Zone / Backflow / Head / Valve / Drip"
+        picklist Asset_Type__c "System / Source / Backflow / Controller / Zone"
         decimal Latitude
         decimal Longitude
         picklist ConsequenceOfFailure

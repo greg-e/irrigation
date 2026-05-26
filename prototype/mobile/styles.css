@@ -642,6 +642,35 @@ body {
   gap: 8px;
 }
 
+.callout-checklist-title {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.callout-checklist {
+  display: grid;
+  gap: 6px;
+}
+
+.callout-checklist-row {
+  display: grid;
+  grid-template-columns: auto 1fr 72px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.86rem;
+  color: var(--ink-soft);
+}
+
+.callout-checklist-row input[type="checkbox"] {
+  accent-color: var(--brand);
+}
+
+.callout-checklist-row .issue-count {
+  text-align: center;
+}
+
 .inline-form {
   margin-top: 10px;
   display: grid;

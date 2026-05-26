@@ -48,7 +48,7 @@ Use these tags during live note-taking:
 Use this list to avoid re-litigating decisions in follow-up calls.
 
 1. Custom-object library path is final (no Salesforce Assessments path). *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §10)*
-2. Published questions and sets are immutable; new versions are append-only. *([requirements/inspection_question_library.md](inspection_question_library.md) Locked Governance Decisions)*
+2. Published questions and sets are immutable; new versions are append-only. *([requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) Locked Governance Decisions)*
 3. Runtime set selection is deterministic by Region + Inspection Type/Season + Work Type, with hard fail on no match. *([requirements/diagrams/process_flow.mmd](diagrams/process_flow.mmd))*
 4. Question-set version is snapshotted at inspection start and remains locked in-flight. *([requirements/diagrams/inspection_sequence.mmd](diagrams/inspection_sequence.mmd))*
 5. Checkout is blocked until required questions are answered.
@@ -64,7 +64,7 @@ Use this list to avoid re-litigating decisions in follow-up calls.
 iauditor.com
 ### A. Form content / regional deltas
 1. Walk us through your current FL digital form on one real recent inspection. Anything in our FL mapping still wrong in §7a? *(validates field-level mapping)*
-2. Q6.11 "Overwatering" appears in FL but not West Coast. Should this be a national baseline question or an FL-only delta? *([requirements/inspection_question_library.md](inspection_question_library.md))*
+2. Q6.11 "Overwatering" appears in FL but not West Coast. Should this be a national baseline question or an FL-only delta? *([requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L125))*
 3. List your must-have conditional expanders ("if Yes, ask...") so we can finalize branching structures before publish.
 4. Drip-specific content: separate subsection or conditional questions in Section 6?
 
@@ -349,7 +349,7 @@ Paste updates into this table in real time.
 
 After the call, update the source docs within 24 hours:
 
-1. [requirements/inspection_question_library.md](inspection_question_library.md) (remaining open questions and governance ownership)
+1. [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) (remaining open questions and governance ownership)
 2. [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §11 (remaining open questions)
 3. [stories/build_backlog.md](../stories/build_backlog.md) (story acceptance criteria deltas)
 

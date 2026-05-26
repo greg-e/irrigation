@@ -69,9 +69,9 @@ const state = {
     { id: "q12", text: "Customer walkthrough completed", answered: false },
   ],
   callouts: [
-    { id: 1, asset: "Zone 3", issue: "Broken Head", severity: "High", confirmed: true },
-    { id: 2, asset: "Zone 11", issue: "Valve leak at manifold", severity: "Medium", confirmed: false },
-    { id: 3, asset: "Backflow South", issue: "Test window expired", severity: "High", confirmed: true },
+    { id: 1, asset: "Zone 3", issue: "Broken Head", quantity: 2, severity: "High", confirmed: true },
+    { id: 2, asset: "Zone 11", issue: "Valve Fault", quantity: 1, severity: "Medium", confirmed: false },
+    { id: 3, asset: "Backflow South", issue: "Lateral Leak", quantity: 1, severity: "High", confirmed: true },
   ],
   feedbackEntries: [],
   clockFilter: "ALL",
@@ -92,7 +92,7 @@ const requiredList = document.getElementById("required-list");
 const calloutList = document.getElementById("callout-list");
 const calloutForm = document.getElementById("callout-form");
 const assetInput = document.getElementById("asset-input");
-const issueInput = document.getElementById("issue-input");
+const issueChecklist = document.getElementById("issue-checklist");
 const severityInput = document.getElementById("severity-input");
 const amName = document.getElementById("am-name");
 const amStatus = document.getElementById("am-status");
@@ -761,7 +761,7 @@ function renderCallouts() {
     item.className = `callout-item ${callout.confirmed ? "confirmed" : ""}`;
 
     const title = document.createElement("p");
-    title.innerHTML = `<strong>${callout.asset}</strong> - ${callout.issue}`;
+    title.innerHTML = `<strong>${callout.asset}</strong> - ${callout.issue} (${callout.quantity || 1})`;
 
     const meta = document.createElement("p");
     meta.className = "callout-meta";
@@ -827,9 +827,9 @@ function resetFlow() {
   });
 
   state.callouts = [
-    { id: 1, asset: "Zone 3", issue: "Broken Head", severity: "High", confirmed: true },
-    { id: 2, asset: "Zone 11", issue: "Valve leak at manifold", severity: "Medium", confirmed: false },
-    { id: 3, asset: "Backflow South", issue: "Test window expired", severity: "High", confirmed: true },
+    { id: 1, asset: "Zone 3", issue: "Broken Head", quantity: 2, severity: "High", confirmed: true },
+    { id: 2, asset: "Zone 11", issue: "Valve Fault", quantity: 1, severity: "Medium", confirmed: false },
+    { id: 3, asset: "Backflow South", issue: "Lateral Leak", quantity: 1, severity: "High", confirmed: true },
   ];
   state.clockFilter = "ALL";
   state.mapFeatures = [];
@@ -1204,21 +1204,39 @@ calloutList.addEventListener("click", (event) => {
 calloutForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const issue = issueInput.value.trim();
-  if (!issue) {
+  if (!issueChecklist) {
     return;
   }
 
-  state.callouts.push({
-    id: Date.now(),
-    asset: assetInput.value,
-    issue,
-    severity: severityInput.value,
-    confirmed: false,
+  const selectedIssues = Array.from(issueChecklist.querySelectorAll(".issue-check"))
+    .filter((check) => check.checked)
+    .map((check) => {
+      const issue = check.dataset.issue || "Issue";
+      const countInput = issueChecklist.querySelector(`.issue-count[data-issue="${issue}"]`);
+      const rawCount = countInput ? Number(countInput.value) : 1;
+      return {
+        issue,
+        quantity: Number.isFinite(rawCount) && rawCount > 0 ? rawCount : 1,
+      };
+    });
+
+  if (!selectedIssues.length) {
+    setSubmitMessage("Select at least one issue checkbox.", "error");
+    return;
+  }
+
+  selectedIssues.forEach(({ issue, quantity }) => {
+    state.callouts.push({
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      asset: assetInput.value,
+      issue,
+      quantity,
+      severity: severityInput.value,
+      confirmed: false,
+    });
   });
 
-  issueInput.value = "";
-  setSubmitMessage("Draft callout added.", "warn");
+  setSubmitMessage(`Draft callouts added (${selectedIssues.length}).`, "warn");
   renderCallouts();
 });
 

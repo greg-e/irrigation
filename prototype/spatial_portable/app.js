@@ -308,9 +308,10 @@ async function promptComponentLink(defaultAssetId = "") {
 function getAssetTypeIcon(assetType) {
   const typeMap = {
     System: "asset_object",
+    Source: "location",
+    Backflow: "water",
     Controller: "clock",
     Zone: "choice",
-    Backflow: "water",
     Pump: "location",
     Valve: "trail",
     Head: "location",
@@ -342,7 +343,7 @@ function renderFeatureList() {
   if (!activeAssets.length) {
     const li = document.createElement("li");
     li.className = "feature-item";
-    li.innerHTML = "<p class=\"feature-label\">No assets in hierarchy</p><p class=\"feature-meta\">No active system assets found for this property.</p>";
+    li.innerHTML = "<p class=\"feature-label\">No assets in hierarchy</p><p class=\"feature-meta\">No active hierarchy assets found for this property.</p>";
     ui.featureList.appendChild(li);
     updateActionButtons();
     return;
@@ -369,13 +370,14 @@ function renderFeatureList() {
 
   const TYPE_ORDER = {
     System: 0,
-    Controller: 1,
-    Pump: 2,
-    Backflow: 3,
+    Source: 1,
+    Backflow: 2,
+    Controller: 3,
     Zone: 4,
-    Valve: 5,
-    Head: 6,
-    Drip: 7,
+    Pump: 5,
+    Valve: 6,
+    Head: 7,
+    Drip: 8,
   };
 
   const sortAssets = (assets) => {

@@ -187,10 +187,31 @@
               Asset
               <select id="asset-input"></select>
             </label>
-            <label>
-              Issue
-              <input id="issue-input" type="text" value="Broken Head" required />
-            </label>
+            <div>
+              <p class="callout-checklist-title">Issue Checklist</p>
+              <div id="issue-checklist" class="callout-checklist">
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Broken Head" checked />
+                  <span>Broken Head</span>
+                  <input type="number" class="issue-count" data-issue="Broken Head" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Clogged Nozzle" />
+                  <span>Clogged Nozzle</span>
+                  <input type="number" class="issue-count" data-issue="Clogged Nozzle" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Lateral Leak" />
+                  <span>Lateral Leak</span>
+                  <input type="number" class="issue-count" data-issue="Lateral Leak" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Valve Fault" />
+                  <span>Valve Fault</span>
+                  <input type="number" class="issue-count" data-issue="Valve Fault" min="1" value="1" />
+                </label>
+              </div>
+            </div>
             <label>
               Severity
               <select id="severity-input">

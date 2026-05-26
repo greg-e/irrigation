@@ -3,7 +3,7 @@
 ## Scope Baseline
 This backlog reflects the locked design decisions documented in:
 - requirements/inspection_form_data_model.md
-- requirements/inspection_question_library.md
+- requirements/fsm_irrigation_requirements.md
 - research/automation_flows_design.md
 - requirements/diagrams/process_flow.mmd
 - requirements/diagrams/data_model.mmd
@@ -184,7 +184,7 @@ Goal: Implement the canonical irrigation asset taxonomy and field governance use
 As a solution architect, I need a controlled irrigation asset taxonomy on standard Asset.
 
 Acceptance criteria:
-1. Controlled asset type values are implemented: System, Controller, Zone, Backflow, Head, Valve, Drip.
+1. Controlled asset type values are implemented: System, Source, Backflow, Controller, Zone.
 2. Record type strategy and validation rules enforce valid parent-child relationships.
 3. Asset type is required for all irrigation assets.
 4. Existing irrigation assets are mapped/migrated to canonical type values.
@@ -202,10 +202,11 @@ Acceptance criteria:
 As a tech, I need minimal create friction during bootstrap while preserving data quality.
 
 Acceptance criteria:
-1. Bootstrap create forms enforce minimum required fields per type (System, Controller, Zone, Backflow).
+1. Bootstrap create forms enforce minimum required fields per type (System, Source, Backflow, Controller, Zone).
 2. Zone requires zone number and controller parent.
 3. Controller requires label and total zones.
-4. Backflow requires backflow type.
+4. Backflow requires backflow type and source parent.
+5. Source requires system parent.
 
 ### Story E4A-S4: Whitelist editable fields by asset type
 As a data steward, I need inline edits restricted to approved fields by type.
@@ -220,7 +221,7 @@ Acceptance criteria:
 As AM operations, I need callouts tied to appropriate asset types.
 
 Acceptance criteria:
-1. Issue types map to valid target asset types (for example broken head -> Zone/Head).
+1. Issue types map to valid target asset types in the canonical hierarchy (for example broken head -> Zone).
 2. Invalid combinations are blocked during conversion to pending WOLI.
 3. Error messages explain how to correct asset selection.
 4. Mapping table is reportable and admin-maintainable.
