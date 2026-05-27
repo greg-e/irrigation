@@ -1,6 +1,6 @@
 > **SUPERSEDED**
 > **Superseded by:** [requirements/fsm_irrigation_requirements.md](../../requirements/fsm_irrigation_requirements.md)
-> **Rationale:** Platform research informed the canonical FSM requirements metadata baseline. The Salesforce Asset object verdict (strong fit) is recorded there. Raw research retained here for audit trail.
+> **Rationale:** Platform research informed the Standard FSM requirements metadata baseline. The Salesforce Asset object verdict (strong fit) is recorded there. Raw research retained here for audit trail.
 > **Decision Log ID:** DL-002
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -308,12 +308,12 @@ SF Maps can plot any Salesforce object with lat/long or address fields on an int
 
 SF Maps operates at **address/geocode precision**. It cannot:
 - Show a site plan or yard layout of a property
-- Plot components at sub-property spatial precision (where Zone 3's valve is in the NW corner)
+- Plot components at sub-property Map precision (where Zone 3's valve is in the NW corner)
 - Render irrigation system drawings or as-built overlays
 
-### Spatial Problem Split
+### Map Problem Split
 
-| Spatial Need | Tool |
+| Map Need | Tool |
 |---|---|
 | Which properties are in a territory / due for service | SF Maps — native |
 | Route optimization between properties | SF Maps — native |
@@ -323,10 +323,12 @@ SF Maps operates at **address/geocode precision**. It cannot:
 
 ### Recommendation
 
-Use SF Maps for **inter-property** dispatch, territory, and routing visibility. Stick with Files on Account for within-property as-built documentation. These are two different spatial problems — SF Maps solves the first; it cannot solve the second.
+Use SF Maps for **inter-property** dispatch, territory, and routing visibility. Stick with Files on Account for within-property as-built documentation. These are two different Map problems — SF Maps solves the first; it cannot solve the second.
 
 **SF Maps license required** — confirm whether it is included in the current Salesforce edition or requires an add-on.
 
 ### Source
 - https://help.salesforce.com/s/articleView?id=sales.salesforce_maps_intro.htm&type=5
 - https://developer.salesforce.com/docs/atlas.en-us.maps_developer_guide.meta/maps_developer_guide/maps_overview.htm
+
+

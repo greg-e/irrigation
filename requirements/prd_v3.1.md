@@ -7,7 +7,7 @@ Supersedes: requirements/fsm_irrigation_requirements.md, requirements/map_lwc_re
 
 ## 1. Executive Summary
 
-This document merges prior PRD versions into a single implementation baseline for irrigation inspection, asset hierarchy management, spatial workflows, and controller program operations in Salesforce.
+This document merges prior PRD versions into a single implementation baseline for irrigation inspection, asset hierarchy management, Map workflows, and controller program operations in Salesforce.
 
 Governance note: if this PRD conflicts with `requirements/decision_log.md`, the decision log is authoritative.
 
@@ -24,8 +24,24 @@ Current operations rely on disconnected tools (Excel, iAuditor, slides/PDF maps,
 1. Revenue leakage from delayed or incomplete follow-through on checklist findings.
 2. Weak property-level completion accountability.
 3. Manual map artifact bottlenecks.
-4. Inconsistent inspection standards across branches.
-5. Low field adoption when digital workflows are overly complex.
+4. Lack of standardized, easy-to-document inspection workflows across branches, driving both inconsistency and low field adoption.
+
+## 2.1 Tool-of-Choice Dimensions
+
+The inspection and asset workflow should be shaped by these dimensions:
+
+Standards are only as strong as the process that makes them easy to follow, visible when missed, and recoverable when corrected.
+
+1. No bottlenecks: default to soft warnings over hard stops unless compliance requires blocking.
+2. Minimal required path: require only the data needed for immediate actionability.
+3. Inline recovery: if required setup is missing, create it inline in seconds.
+4. Actionability over completeness: capture enough to act now and enrich later when safe.
+5. Non-blocking governance: use traceability and follow-up queues instead of approvals in live flow.
+6. Risk-weighted rigor: deeper mandatory detail only for safety-critical findings.
+7. Field-first reliability: full offline minimum-path capture is mandatory.
+8. Handoff-first defaults: AM first view should be prioritized action lists, not full record detail.
+9. Customer-safe output: default communication excludes internal-only content.
+10. Traceability without friction: edits and sync exceptions are visible and recoverable.
 
 ## 3. Personas and Jobs to Be Done
 
@@ -45,7 +61,7 @@ Current operations rely on disconnected tools (Excel, iAuditor, slides/PDF maps,
 4. FSM mobile inspection runtime with conditional rendering, offline sync, and required-answer checkout gate.
 5. Asset-type inspection checklist capture with standardized finding categories and evidence support.
 6. AM queue and conversion flow on standard records.
-7. Spatial map workflows with `Map_Feature__c` GeoJSON persistence.
+7. Map workflows with `Map_Feature__c` GeoJSON persistence.
 8. MVP map provider candidate set for rendering/editing: Mapbox GL JS and Google Maps JavaScript API.
 9. KML import/export in MVP (basic fidelity only).
 10. Controller program management workspace.
@@ -62,7 +78,7 @@ Current operations rely on disconnected tools (Excel, iAuditor, slides/PDF maps,
 ## 5. Product and Architecture Baseline
 
 1. Salesforce is the system of record for hierarchy, inspection checklist findings, and map metadata.
-2. OOTB `Asset` object is the canonical irrigation hierarchy container.
+2. OOTB `Asset` object is the Standard irrigation hierarchy container.
 3. `ServiceAppointment` is the inspection runtime container.
 4. Inspection responses are stored in child records, not on SA fields.
 5. `Map_Feature__c` stores geometry (GeoJSON) and map metadata.
@@ -89,14 +105,14 @@ Current operations rely on disconnected tools (Excel, iAuditor, slides/PDF maps,
 1. Inspection runtime LWC.
 2. Checkout review and required-answer gate LWC.
 3. Apex question-set resolver.
-4. Spatial map LWC platform (base + wrappers).
+4. Map LWC platform (base + wrappers).
 5. Hierarchy LWC platform (base + wrappers).
 6. Program workspace LWC platform (base + wrappers).
 7. Apex orchestration for multi-record transactional and KML operations.
 
 ## 7. Data Model Requirements
 
-### 7.1 Canonical Hierarchy
+### 7.1 Standard Hierarchy
 
 Supported asset taxonomy:
 
@@ -113,15 +129,15 @@ Parenting rules:
 3. Backflow must belong to a Source.
 4. Controller must belong to a Backflow.
 5. Zone must belong to a Controller.
-6. Additional equipment details (for example valve/head/drip details) are stored as component metadata on the canonical hierarchy records.
+6. Additional equipment details (for example valve/head/drip/pump details) are stored as component metadata on the Standard hierarchy records, not as separate assets.
 
-### 7.2 Inspection Checklist Findings Model
+### 7.2 Inspection Checklist Outputs Model
 
 1. `Inspection_Response__c` child model for version-safe responses.
 2. `Inspection_Question__c`, `Inspection_Question_Set__c`, and set-membership junction model.
-3. Checklist finding summaries are stored at inspection level with counts by asset type and linked evidence.
+3. Checklist output summaries are stored at inspection level with counts by asset type and linked evidence.
 
-### 7.3 Spatial and Program Models
+### 7.3 Map and Program Models
 
 1. `Map_Feature__c`: geometry type, GeoJSON payload, source/confidence metadata, account/asset links.
 2. `Irrigation_Program__c`: controller-scoped schedule and zone linkage metadata.
@@ -160,12 +176,12 @@ Visibility rules:
 3. Persist offline and sync on reconnect.
 4. Enforce required-answer gate at checkout.
 
-### FR-2 Checklist Findings Capture and AM Handoff
+### FR-2 Checklist Outputs Capture and AM Handoff
 
-1. Generate checklist findings from inspection responses by asset type.
-2. Require technician confirmation and categorization of findings at checkout.
-3. Require AM assignment and disposition status when actionable findings exist.
-4. Persist links from findings to source evidence and asset context.
+1. Generate checklist outputs from inspection responses by asset type.
+2. Require technician confirmation and categorization of outputs at checkout.
+3. Require AM assignment and disposition status when actionable outputs exist.
+4. Persist links from outputs to source evidence and asset context.
 
 ### FR-3 Hierarchy and Asset Guardrails
 
@@ -174,7 +190,7 @@ Visibility rules:
 3. Enforce strict parent requirements for Source, Backflow, Controller, and Zone.
 4. Keep selected asset context synchronized across tabs and deep links.
 
-### FR-4 Spatial Workflows
+### FR-4 Map Workflows
 
 1. Create/edit/delete point, line, polygon features.
 2. Support desktop authoring and mobile location capture.
@@ -190,7 +206,7 @@ Visibility rules:
 ### FR-6 Reporting and Accountability
 
 1. Completion rate by branch, property, and week.
-2. Open actionable findings pipeline by category, owner, and age.
+2. Open actionable output pipeline by category, owner, and age.
 3. Checkout-to-approval conversion velocity.
 4. Data quality metrics (required completion and photo coverage).
 
@@ -208,7 +224,7 @@ Visibility rules:
 1. Asset model and unified page.
 2. Question library foundation and initial regionalized set.
 3. Inspection runtime and checkout gate.
-4. Checklist findings handoff flow and AM queue.
+4. Checklist output handoff flow and AM queue.
 5. Candidate-provider map features and KML MVP (Mapbox or Google based on gate closure).
 6. Program workspace.
 7. Core dashboard pack.
@@ -248,7 +264,7 @@ This PRD references the active gate set and should not maintain a duplicated ope
 
 1. Inspection completion reliability at property level.
 2. Days from inspection checkout to AM decision.
-3. Percentage of checklist findings with complete evidence.
+3. Percentage of checklist outputs with complete evidence.
 4. Time to establish baseline hierarchy for pilot properties.
 5. Channel parity pass rate for hierarchy/map/program workflows.
 
@@ -265,3 +281,6 @@ This PRD references the active gate set and should not maintain a duplicated ope
 9. research/archive/fsm_asset_architecture.md (archived predecessor)
 10. research/archive/fsm_asset_research.md (archived predecessor)
 11. discovery transcripts and extracted discovery notes in discovery/.
+
+
+

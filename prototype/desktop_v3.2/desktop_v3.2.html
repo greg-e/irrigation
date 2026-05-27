@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desktop v3.2 - Handoff Review</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="stylesheet" href="assets/css/desktop_v3.2.css" />
+</head>
+<body>
+  <main class="workspace">
+    <header class="header-card">
+      <p class="eyebrow">FSM Desktop v3.2</p>
+      <h1>Irrigation Handoff Review</h1>
+      <p class="subtitle">Default landing is handoff-first, sorted by newest completed Service Appointment.</p>
+      <div class="actions-row">
+        <button id="show-handoff" class="slds-button slds-button_brand" type="button">Handoff Review</button>
+        <button id="show-record" class="slds-button slds-button_neutral" type="button">Record View</button>
+      </div>
+    </header>
+
+    <section id="handoff-view" class="view-grid"></section>
+
+    <section id="record-view" class="record-view hidden">
+      <div class="card">
+        <h2>Record View</h2>
+        <p class="muted">Configuration/setup/output support surface. One-click return to handoff queue.</p>
+        <div class="inline-actions">
+          <a class="slds-button slds-button_neutral" href="../desktop/desktop_v3.1.html?property=prop-001" target="_blank" rel="noreferrer">Open Current Record Prototype</a>
+          <button id="back-to-handoff" class="slds-button slds-button_brand" type="button">Back to Handoff Review</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Desktop v3.2 Focus</h3>
+        <ul>
+          <li>Review completed SA irrigation handoffs.</li>
+          <li>Inspect structured callouts with severity/disposition/photo state.</li>
+          <li>Confirm WOLI relation to Property and System Asset.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/desktop_v3.2.js"></script>
+</body>
+</html>

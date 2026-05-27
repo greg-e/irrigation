@@ -1,6 +1,6 @@
 > **SUPERSEDED**
 > **Superseded by:** [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md)
-> **Rationale:** Canonical asset metadata dictionary content is consolidated into the FSM requirements baseline to keep one source of truth.
+> **Rationale:** Standard asset metadata dictionary content is consolidated into the FSM requirements baseline to keep one source of truth.
 > **Decision Log ID:** DL-001
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -206,9 +206,9 @@ Groups questions into a form definition tied to a Work Type and/or season. Allow
 
 ---
 
-## 4b. Irrigation Asset Type Model (Canonical)
+## 4b. Irrigation Asset Type Model (Standard)
 
-This section defines the required irrigation asset taxonomy and minimum fields by type. It is the canonical model used by bootstrap mode, asset-scoped question rendering, and callout linkage.
+This section defines the required irrigation asset taxonomy and minimum fields by type. It is the Standard model used by bootstrap mode, asset-scoped question rendering, and callout linkage.
 
 ### 4b.1 Asset Taxonomy and Record Types
 
@@ -228,12 +228,12 @@ Use standard `Asset` with irrigation record types and `Asset_Type__c` as a contr
 
 | Field API Name | Type | Required | Purpose |
 |---|---|---|---|
-| `Asset_Type__c` | Picklist | Yes | Canonical type discriminator |
+| `Asset_Type__c` | Picklist | Yes | Standard type discriminator |
 | `Irrigation_System_Key__c` | Text(80) | No | Groups assets belonging to same irrigation system |
 | `Install_Date__c` | Date | No | Lifecycle reporting |
 | `Location_Description__c` | Text(255) | No | Human-readable location guidance |
-| `Latitude__c` | Number(10,7) | No | Spatial context |
-| `Longitude__c` | Number(10,7) | No | Spatial context |
+| `Latitude__c` | Number(10,7) | No | Map context |
+| `Longitude__c` | Number(10,7) | No | Map context |
 | `Is_Placeholder__c` | Checkbox | Yes (default false) | Marks temporary bootstrap records |
 | `Normalization_Status__c` | Picklist | Yes | Pending / Normalized / Retired |
 | `Last_Inspected_At__c` | DateTime | No | Updated on completed inspections |
@@ -505,6 +505,8 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 
 - Conservation audit / water savings calculator (deferred per `irrigationcheckups_analysis.md`)
 - E-signature on inspection summary (ExtraWork owns signatures)
-- Spatial pin overlay map (covered separately in `spatial_mapping_options.md`)
+- Map pin overlay map (covered separately in `spatial_mapping_options.md`)
 - ExtraWork integration field-level mapping (covered in `fsm_asset_architecture.md`)
 - BV Connect rendering of customer PDF (separate UX spec)
+
+

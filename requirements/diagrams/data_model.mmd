@@ -31,7 +31,7 @@ erDiagram
     INSPECTION_QUESTION ||--o{ INSPECTION_RESPONSE : "answered as"
     INSPECTION_QUESTION ||--o{ INSPECTION_QUESTION : "branching parent"
 
-    INSPECTION_RESPONSE ||--o{ WORK_ORDER_LINE_ITEM : "failed → suggested callout"
+    INSPECTION_RESPONSE ||--o{ WORK_ORDER_LINE_ITEM : "source-response trace"
     INSPECTION_RESPONSE ||--o{ CONTENT_DOC_LINK : "per-question photo"
     INSPECTION_RESPONSE ||--o{ INSPECTION_SUGGESTED_REPAIR : "source responses"
     INSPECTION_SUGGESTED_REPAIR ||--o{ WORK_ORDER_LINE_ITEM : "confirmed → pending callout"
@@ -57,6 +57,7 @@ erDiagram
     WORK_ORDER_LINE_ITEM {
         Id AssetId
         string Subject
+        number Quantity
         picklist Issue_Type__c "Broken Head / Valve Fault / Leak / etc."
         picklist Callout_Type__c "Repair / Enhancement"
         picklist Callout_Status__c "New / Quoted / Approved / Completed"

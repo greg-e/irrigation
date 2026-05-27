@@ -96,7 +96,7 @@ iauditor.com
 4. Mobile UX for per-zone capture: acceptable to use one-zone-at-a-time card workflow instead of wide grid?
 5. Rain/freeze as single Y/N: acceptable or must be split into separate fields?
 6. Do you need an explicit action audit for operator-controlled toggles (backflow/meter/controller on-off)?
-7. "Broken drip line" vs "Leaking Seal" label conflict: which canonical wording should library use?
+7. "Broken drip line" vs "Leaking Seal" label conflict: which Standard wording should library use?
 
 ### B. Governance ownership
 8. ~~Who is the named owner of publish authority for national question/set versions?~~ `[DECIDED — Carr call May 13, 2026]` James Carr volunteered as national library owner and steward, pending official role expansion from leadership. Regional leads may draft; Carr holds publish authority.
@@ -406,7 +406,7 @@ Captured live in one-question-at-a-time format.
 | 4 | Mobile UX for per-zone capture | Two service levels: PMI for existing systems and Assessment for new properties. Mobile UX priority is PMI first. | DECIDED | Card-style one-zone-at-a-time workflow is acceptable for PMI; Assessment flow treated as separate variant. |
 | 5 | Rain and freeze sensor field structure | Separate fields. | DECIDED | Split rain and freeze capture in data model/UI. |
 | 6 | Action audit for operator-controlled toggles | General notes are sufficient. | DECIDED | No mandatory explicit action-audit object required in v1. |
-| 7 | Drip wording canonical term | Regional wording. | DECIDED | No single national canonical term; support regional label variants. |
+| 7 | Drip wording Standard term | Regional wording. | DECIDED | No single national Standard term; support regional label variants. |
 | 8 | Publish authority owner | James Carr (Manager, Regional Irrigation). | DECIDED | Record governance owner for question/set publish decisions. |
 | 9 | Change cadence / hot-fix path | Ad-hoc hot-fix path approved. | DECIDED | Urgent changes can bypass regular cadence via defined hot-fix process. |
 | 10 | Training vs library authority | Training can lead and drive change. | DECIDED | Governance model must allow training-led change initiation before formal release. |
@@ -446,3 +446,4 @@ Captured from the follow-up transcript and prior live notes.
 1. Follow up with Andrew McCall on the FL pilot branch.
 2. Revisit the conditional expander list when final branching scope is being locked.
 3. Resolve the Overwatering regional-vs-national wording across FL and West Coast before publish.
+

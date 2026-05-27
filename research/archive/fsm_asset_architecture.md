@@ -1,6 +1,6 @@
 > **SUPERSEDED**
 > **Superseded by:** [requirements/fsm_irrigation_requirements.md](../../requirements/fsm_irrigation_requirements.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
-> **Rationale:** Architecture decisions are consolidated into the canonical FSM requirements metadata baseline and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
+> **Rationale:** Architecture decisions are consolidated into the Standard FSM requirements metadata baseline and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
 > **Decision Log ID:** DL-002
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -189,3 +189,4 @@ Source evidence:
 - https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_core.htm
 - https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_pricing.htm
 - https://developer.salesforce.com/docs/atlas.en-us.260.0.object_reference.meta/object_reference/sforce_api_objects_asset.htm
+

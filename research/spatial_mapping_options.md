@@ -1,4 +1,4 @@
-# Spatial Mapping Options — Within-Property Irrigation Component Visualization
+# Mapping Options — Within-Property Irrigation Component Visualization
 
 Exploration of options for mapping irrigation system components at the yard/property level inside Salesforce.
 
@@ -86,7 +86,7 @@ Embed a live map tile (Google Maps or Mapbox) inside a Salesforce LWC using an i
 
 #### 2b. ArcGIS Maps SDK for JavaScript
 
-- Enterprise-grade GIS platform with full spatial analysis capabilities
+- Enterprise-grade GIS platform with full Map analysis capabilities
 - Supports custom layers, drawing tools, feature services, and offline maps
 - Can store irrigation system geometry (zones as polygons, pipes as lines) as GIS features
 - Esri has a Salesforce connector for bidirectional data sync
@@ -112,7 +112,7 @@ Both active options require lat/long coordinates on each Asset record. The `Asse
 - Geospatially precise — coordinates are real-world lat/long
 - Zoom, pan, satellite/terrain toggle
 - Supports polygon zones and pipe/wire line routing in both active candidates
-- Future-proof for multi-property spatial analysis and water usage reporting
+- Future-proof for multi-property Map analysis and water usage reporting
 
 ### Cons
 
@@ -133,7 +133,7 @@ Both active options require lat/long coordinates on each Asset record. The `Asse
 |---|---|
 | MVP | **Run a short technical decision gate: Mapbox GL JS vs Google Maps JavaScript API in a custom LWC.** Validate points (asset pins), polygons (zone boundaries), lines (pipe/wire runs), offline behavior in FSM Mobile, and expected usage cost. |
 | MVP Build | Implement the winning option from the gate as the single supported mapping stack. |
-| Phase 2 | Evaluate portfolio-level spatial queries (cross-property analysis, water usage spatial reporting) if scale justifies it. |
+| Phase 2 | Evaluate portfolio-level Map queries (cross-property analysis, water usage Map reporting) if scale justifies it. |
 | Future / Scale | Revisit ArcGIS only if client acquires an ArcGIS Online org for a separate business reason — do not build toward it speculatively. |
 
 > **⚠️ PIVOT — May 2026**
@@ -147,3 +147,5 @@ Both active options require lat/long coordinates on each Asset record. The `Asse
 - [x] What is the primary user for the within-property map — office admin, dispatcher, or field tech? **→ Primary: Irrigation Manager. Secondary: Account Manager, Field Tech.**
 - [x] Does the LWC need to work offline in the FSM Mobile app? **→ Yes, offline support is required.**
 - [ ] Which stack wins the MVP gate (Mapbox or Google) after POC scoring across offline behavior, geometry editing UX, and estimated 12-month usage cost?
+
+

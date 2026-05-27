@@ -1,0 +1,31 @@
+---
+title: Irrigation Service Lifecycle
+---
+flowchart LR
+    %% Node styling to match the teal circles in the source graphic
+    classDef stage fill:#219ebc,stroke:#219ebc,stroke-width:2px,color:#ffffff;
+
+    C(("CONFIGURE<br/>Manage supporting data<br/>including offices, employees,<br/>customers, properties, etc.")):::stage
+    S(("ASSESSMENT<br/>Locate and inventory all<br/>irrigation assets on your<br/>properties.")):::stage
+    I(("INSPECT<br/>Identify all irrigation services<br/>(repair, installation, adjustments,<br/>etc.) for a given property.")):::stage
+    A(("APPROVE<br/>Enable property manager to<br/>approve or deny repairs and<br/>services by line item.")):::stage
+    W(("WORK<br/>Specify and track work for all<br/>approved irrigation services<br/>for a given property.")):::stage
+    V(("INVOICE<br/>Track all completed irrigation<br/>services as they are invoiced for<br/>a given property.")):::stage
+
+    %% Discovery flow (dotted)
+    C -.-> S
+    S -.-> I
+
+    %% Execution loop
+    I --> A
+    A --> W
+    W --> V
+    V --> I
+
+    %% Arrow styling to mirror the orange connectors
+    linkStyle 0 stroke:#f4a037,stroke-width:3px,stroke-dasharray:4 4;
+    linkStyle 1 stroke:#f4a037,stroke-width:3px,stroke-dasharray:4 4;
+    linkStyle 2 stroke:#f4a037,stroke-width:4px;
+    linkStyle 3 stroke:#f4a037,stroke-width:4px;
+    linkStyle 4 stroke:#f4a037,stroke-width:4px;
+    linkStyle 5 stroke:#f4a037,stroke-width:4px;

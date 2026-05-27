@@ -10,7 +10,7 @@ Day-to-day current view: `requirements/current_state.md`
 
 ## Table of Contents
 
-1. [Current Canonical Snapshot (Active)](#current-canonical-snapshot-active)
+1. [Current Standard Snapshot (Active)](#current-standard-snapshot-active)
 2. [Artifact Governance Rules (DL-GOV-001)](#artifact-governance-rules-dl-gov-001)
 3. [Architecture Decisions](#architecture-decisions)
 4. [Open Decision Gates](#open-decision-gates)
@@ -24,12 +24,12 @@ Latest Decisions:
 
 ---
 
-## Current Canonical Snapshot (Active)
+## Current Standard Snapshot (Active)
 
 **Snapshot owner:** BA (G. Ehrenberg)
-**Update trigger:** Update this snapshot on the same day any canonical authority decision is set to Locked or Reversed.
+**Update trigger:** Update this snapshot on the same day any Standard authority decision is set to Locked or Reversed.
 
-| Domain | Active Canonical File | Active Decision Source |
+| Domain | Active Standard File | Active Decision Source |
 |---|---|---|
 | Data model | `requirements/fsm_irrigation_requirements.md` | DL-001 (Locked) |
 | Process flow | `requirements/prd_v3.1.md` | DL-012 (Locked) |
@@ -41,7 +41,7 @@ Latest Decisions:
 
 ## Artifact Governance Rules (DL-GOV-001)
 
-Historical reference only: use **Current Canonical Snapshot (Active)** above for current authority.
+Historical reference only: use **Current Standard Snapshot (Active)** above for current authority.
 
 **Date:** 2026-05-18 | **Owner:** BA | **Status:** Reversed
 
@@ -49,20 +49,20 @@ Historical reference only: use **Current Canonical Snapshot (Active)** above for
 |---|---|
 | Governance model | Hybrid by domain: process in `requirements/`, UX in `research/`, execution in `stories/` |
 | Conflict resolution | This decision log is the tie-breaker |
-| Active canonical types | Data model + Process flow + Execution backlog (3 max) |
-| Canonical authority | One canonical file per type |
-| Non-canonical redirect | Non-canonical docs get a superseded header pointing to canonical |
-| Archive behavior | Non-canonical docs moved to `archive/` subfolder within 24 hours of canonical update |
+| Active Standard types | Data model + Process flow + Execution backlog (3 max) |
+| Standard authority | One Standard file per type |
+| Non-Standard redirect | Non-Standard docs get a superseded header pointing to Standard |
+| Archive behavior | Non-Standard docs moved to `archive/` subfolder within 24 hours of Standard update |
 | Archive header format | Superseded by + rationale + decision log ID + date + owner |
 | Reversed-entry cleanup | Reversed entries may be deleted after a summary DL entry is Locked and explicitly references the removed entry IDs. |
 | Update cadence | On every material requirement change |
 | Archival owner | BA (G. Ehrenberg) |
 
-**Canonical file assignments:**
+**Standard file assignments:**
 
-| Domain | Canonical File | Role |
+| Domain | Standard File | Role |
 |---|---|---|
-| Data model | `requirements/fsm_irrigation_requirements.md` | Canonical Salesforce object and field reference |
+| Data model | `requirements/fsm_irrigation_requirements.md` | Standard Salesforce object and field reference |
 | Process flow | `requirements/irrigation_prd_v2.md` | JTBD anchor, scope, and outcome definitions |
 | Execution backlog | `stories/build_backlog.md` | Sprint execution authority |
 
@@ -72,11 +72,11 @@ Historical reference only: use **Current Canonical Snapshot (Active)** above for
 
 ## Architecture Decisions
 
-### DL-001 — Inspection Data Model Canonical Promoted to Data Dictionary
+### DL-001 — Inspection Data Model Standard Promoted to Data Dictionary
 
 **Date:** 2026-05-18 | **Owner:** BA | **Status:** Locked
 
-`requirements/inspection_form_data_model.md` (v1, May 7) is superseded by `requirements/fsm_irrigation_requirements.md` (metadata baseline sections). The dictionary content was consolidated into the requirements file to keep one canonical Salesforce object reference.
+`requirements/inspection_form_data_model.md` (v1, May 7) is superseded by `requirements/fsm_irrigation_requirements.md` (metadata baseline sections). The dictionary content was consolidated into the requirements file to keep one Standard Salesforce object reference.
 
 **Action:** `requirements/inspection_form_data_model.md` archived to `requirements/archive/`.
 
@@ -86,7 +86,7 @@ Historical reference only: use **Current Canonical Snapshot (Active)** above for
 
 **Date:** 2026-05-18 | **Owner:** BA | **Status:** Reversed
 
-`research/fsm_asset_architecture.md` and `research/fsm_asset_research.md` are superseded by `requirements/fsm_irrigation_requirements.md` and `requirements/irrigation_prd_v2.md`. Architecture decisions have been absorbed into the canonical docs. Raw research is retained in archive for audit.
+`research/fsm_asset_architecture.md` and `research/fsm_asset_research.md` are superseded by `requirements/fsm_irrigation_requirements.md` and `requirements/irrigation_prd_v2.md`. Architecture decisions have been absorbed into the Standard docs. Raw research is retained in archive for audit.
 
 **Action:** Both files archived to `research/archive/`.
 
@@ -118,7 +118,7 @@ Maintenance Plans, Maintenance Assets, and Maintenance Work Rules are explicitly
 
 **Date:** May 2026 | Formalized: 2026-05-18 | **Owner:** BA | **Status:** Locked
 
-ArcGIS is not the MVP spatial mapping path. Client has no existing ArcGIS Online org. Esri requires dual-platform licensing and ArcGIS Field Maps for offline mobile — unjustified at this scale.
+ArcGIS is not the MVP Mapping path. Client has no existing ArcGIS Online org. Esri requires dual-platform licensing and ArcGIS Field Maps for offline mobile — unjustified at this scale.
 
 **Active MVP candidates:** Mapbox GL JS vs Google Maps JavaScript API, both embedded in a custom LWC. Decision gate open pending cost estimate and offline behavior comparison.
 
@@ -164,7 +164,7 @@ Mobile inspection uses a WOLI-first UX. WO Overview includes Service Appointment
 
 | ID | Topic | Gate Condition | Owner | Target Date | Last Reviewed |
 |---|---|---|---|---|---|
-| GATE-001 | Spatial mapping: Mapbox vs Google Maps | Cost estimate + offline behavior comparison complete | BA | 2026-06-07 | 2026-05-22 |
+| GATE-001 | Mapping: Mapbox vs Google Maps | Cost estimate + offline behavior comparison complete | BA | 2026-06-07 | 2026-05-22 |
 | GATE-004 | PDF strategy in R1 | Decision recorded: Apex/VF fallback vs licensed doc-gen approach | BA | 2026-06-07 | 2026-05-22 |
 | GATE-005 | Required-answer edge policy | Decision recorded: hard block vs soft warning with reason | BA | 2026-06-07 | 2026-05-22 |
 | GATE-002 | Northeast discovery gap | NE stakeholder interviews held | BA | 2026-06-14 | 2026-05-22 |
@@ -185,7 +185,7 @@ Pipe is not modeled as a separate Asset component type. Instead, pipe-related me
 - Mainline inspection is captured as a question in Section 7 of the inspection form (visible leak observation + notes)
 - Zone-level distribution method is captured per-zone in Section 6 (Q6.3: Spray/Rotor/Bubbler/Drip)
 
-**Rationale:** Field teams report that pipe data is descriptive/operational context, not a discrete component requiring serial numbers, repair history, or independent asset lifecycle. Storing as attributes keeps setup fast and hierarchy flat. Pipe geometry (mainline routing, lateral branches) is captured in spatial map as polylines on `Map_Feature__c`, not as a separate Asset.
+**Rationale:** Field teams report that pipe data is descriptive/operational context, not a discrete component requiring serial numbers, repair history, or independent asset lifecycle. Storing as attributes keeps setup fast and hierarchy flat. Pipe geometry (mainline routing, lateral branches) is captured in Map as polylines on `Map_Feature__c`, not as a separate Asset.
 
 **Supersedes:** Deprecated Pipe as Asset Type in [fsm_irrigation_requirements.md](fsm_irrigation_requirements.md)
 **Action:** Remove Pipe from Asset_Type picklist domain; add pipe attributes to System and Zone metadata sections in [fsm_irrigation_requirements.md](fsm_irrigation_requirements.md).
@@ -213,7 +213,7 @@ Refinement decisions captured for the mobile prototype in [prototype/mobile/mobi
 - Map/list mode: keep list mode as automatic fallback only when map fails.
 - Resolved callouts retained as history (not deleted).
 - Add compact visible stage tracker in WOLI header.
-- Standardize map language to vendor-neutral spatial terminology.
+- Standardize map language to vendor-neutral Map terminology.
 - Add unsaved-changes confirmation to New Asset sheet.
 - Callout history location: same Callouts list with resolved subsection.
 - Remove legacy inline GIS create implementation; keep full-screen New Asset implementation.
@@ -226,18 +226,18 @@ Refinement decisions captured for the mobile prototype in [prototype/mobile/mobi
 ---
 
 <a id="dl-012"></a>
-### DL-012 — Process Canonical Reassigned to PRD v3.1
+### DL-012 — Process Standard Reassigned to PRD v3.1
 
 **Date:** 2026-05-22 | **Owner:** BA (G. Ehrenberg) | **Status:** Locked
 
-Process-flow canonical authority is reassigned from `requirements/irrigation_prd_v2.md` to `requirements/prd_v3.1.md`.
+Process-flow Standard authority is reassigned from `requirements/irrigation_prd_v2.md` to `requirements/prd_v3.1.md`.
 
-Execution-backlog canonical authority is confirmed as `stories/build_backlog.md` for sprint execution governance.
+Execution-backlog Standard authority is confirmed as `stories/build_backlog.md` for sprint execution governance.
 
 **Rationale:** `requirements/prd_v3.1.md` is the active consolidated implementation baseline and now carries the current scope, architecture baseline, release plan, and open decisions.
 
-**Supersedes:** DL-GOV-001 (process and execution-backlog canonical assignments)
-**Action:** Treat `requirements/prd_v3.1.md` as canonical process reference and `stories/build_backlog.md` as canonical execution backlog reference for active delivery.
+**Supersedes:** DL-GOV-001 (process and execution-backlog Standard assignments)
+**Action:** Treat `requirements/prd_v3.1.md` as Standard process reference and `stories/build_backlog.md` as Standard execution backlog reference for active delivery.
 
 ---
 
@@ -246,9 +246,9 @@ Execution-backlog canonical authority is confirmed as `stories/build_backlog.md`
 
 **Date:** 2026-05-22 | **Owner:** BA (G. Ehrenberg) | **Status:** Locked
 
-Lineage for archived architecture research (`research/fsm_asset_architecture.md`, `research/fsm_asset_research.md`) is updated so active process reference points to `requirements/prd_v3.1.md`, with `requirements/fsm_irrigation_requirements.md` remaining canonical for data-model authority.
+Lineage for archived architecture research (`research/fsm_asset_architecture.md`, `research/fsm_asset_research.md`) is updated so active process reference points to `requirements/prd_v3.1.md`, with `requirements/fsm_irrigation_requirements.md` remaining Standard for data-model authority.
 
-**Rationale:** Prior lineage pointed to legacy process reference. Updating lineage keeps archive traceability aligned to current canonical process baseline.
+**Rationale:** Prior lineage pointed to legacy process reference. Updating lineage keeps archive traceability aligned to current Standard process baseline.
 
 **Supersedes:** DL-002
 **Action:** Use `requirements/fsm_irrigation_requirements.md` + `requirements/prd_v3.1.md` as the active superseding pair for archived architecture research.
@@ -263,7 +263,7 @@ Lineage for archived architecture research (`research/fsm_asset_architecture.md`
 This entry consolidates governance maintenance updates completed during the May 22, 2026 decision-log review session.
 
 **Included changes:**
-- Added `Current Canonical Snapshot (Active)` for fast active-state reference.
+- Added `Current Standard Snapshot (Active)` for fast active-state reference.
 - Added snapshot ownership and same-day update trigger rules.
 - Marked legacy governance lineage as historical/reversed and anchored active authority through replacement entries.
 - Aligned PRD governance language so `requirements/decision_log.md` is the tie-breaker in conflicts.
@@ -312,3 +312,6 @@ Ordering rule (forward-only): place newest DL entries first (reverse chronology)
 **Supersedes:** [prior gate update entry, if applicable]
 **Action:** [decision_log table updates and any linked doc updates]
 ```
+
+
+

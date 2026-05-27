@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSM Mobile v3.2 - Guided Irrigation Execution</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="stylesheet" href="assets/css/mobile_v3.2.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <p class="eyebrow">FSM Mobile v3.2</p>
+      <h1>Irrigation Guided Execution</h1>
+      <p id="context-line">Loading Service Appointment context...</p>
+    </header>
+
+    <section class="stepper" aria-label="Guided steps">
+      <div id="step-label" class="step-label">Step 1 of 7</div>
+      <ol id="step-list"></ol>
+    </section>
+
+    <section id="panel" class="panel slds-card"></section>
+
+    <footer class="panel-actions">
+      <button id="back-btn" class="slds-button slds-button_neutral" type="button">Back</button>
+      <button id="next-btn" class="slds-button slds-button_brand" type="button">Continue</button>
+    </footer>
+  </main>
+
+  <script src="assets/js/mobile_v3.2.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+:root {
+  --bg: #f1f4f8;
+  --surface: #ffffff;
+  --ink: #1c2736;
+  --muted: #556578;
+  --line: #d4dce5;
+  --accent: #0176d3;
+  --ok: #2e844a;
+  --warn: #8f4b00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(160deg, #eef4fb 0%, #f4f6f8 55%, #edf1f4 100%);
+  color: var(--ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.workspace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.header-card,
+.card {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 14px;
+}
+
+.header-card h1 {
+  margin: 4px 0;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 12px;
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.item {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  background: #fbfdff;
+}
+
+.item.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(1, 118, 211, 0.2);
+}
+
+.item .meta {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 0.72rem;
+  margin-right: 4px;
+}
+
+.badge.ok {
+  border: 1px solid var(--ok);
+  color: var(--ok);
+}
+
+.badge.warn {
+  border: 1px solid var(--warn);
+  color: var(--warn);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  padding: 7px 4px;
+  font-size: 0.82rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .view-grid {
+    grid-template-columns: 1fr;
+  }
+}

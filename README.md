@@ -6,7 +6,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 
 ## Core Objectives
 
-- **Asset Catalog**: Track canonical irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Source, Backflow, Controller, and Zone.
+- **Asset Catalog**: Track Standard irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Source, Backflow, Controller, and Zone.
 - **Asset-to-Service Appointment Linkage**: Associate irrigation work type service appointments with specific assets so repair history is captured at the component level.
 - **Estimate Workflow**: Generate estimates (quotes/work orders) directly from a service appointment context, enabling rapid customer review and digital approval so crews can proceed without delays.
 
@@ -61,7 +61,7 @@ The following irrigation components must be cataloged as discrete Assets under t
 - Zone number, description, area served, flow rate, head type, valve association
 
 #### Component Metadata (Non-Hierarchy)
-- Valve, head, drip, and related subcomponent details are captured as metadata on the canonical hierarchy assets rather than separate child assets.
+- Valve, head, drip, and related subcomponent details are captured as metadata on the Standard hierarchy assets rather than separate child assets.
 
 ---
 

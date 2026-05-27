@@ -1,0 +1,65 @@
+{
+  "handoffs": [
+    {
+      "id": "handoff-001",
+      "completedAt": "2026-05-27T15:20:00.000Z",
+      "serviceAppointmentId": "sa-05703179",
+      "serviceAppointmentNumber": "SA-05703179",
+      "woliId": "woli-00000001",
+      "woliNumber": "00000001",
+      "propertyId": "prop-001",
+      "propertyName": "Property Complex 1",
+      "systemAssetId": "asset-s-1",
+      "systemAssetName": "Irrigation System 1",
+      "technician": "Taylor Brooks",
+      "resolveLaterAcknowledged": true,
+      "advisoryCount": 2,
+      "structuredCallouts": [
+        {
+          "id": "co-1001",
+          "issueType": "Leak",
+          "assetId": "asset-z-1-A-2",
+          "assetName": "Zone 2 - A Sector",
+          "severity": "High",
+          "disposition": "Deferred",
+          "hasPhoto": true
+        },
+        {
+          "id": "co-1002",
+          "issueType": "Controller Issue",
+          "assetId": "asset-c-1-A",
+          "assetName": "Controller A1",
+          "severity": "Critical",
+          "disposition": "Monitor",
+          "hasPhoto": false
+        }
+      ]
+    },
+    {
+      "id": "handoff-002",
+      "completedAt": "2026-05-26T10:05:00.000Z",
+      "serviceAppointmentId": "sa-05702210",
+      "serviceAppointmentNumber": "SA-05702210",
+      "woliId": "woli-00000019",
+      "woliNumber": "00000019",
+      "propertyId": "prop-001",
+      "propertyName": "Property Complex 1",
+      "systemAssetId": "asset-s-1",
+      "systemAssetName": "Irrigation System 1",
+      "technician": "Alex Patel",
+      "resolveLaterAcknowledged": false,
+      "advisoryCount": 0,
+      "structuredCallouts": [
+        {
+          "id": "co-0977",
+          "issueType": "Broken Head",
+          "assetId": "asset-z-1-A-1",
+          "assetName": "Zone 1 - A Sector",
+          "severity": "Medium",
+          "disposition": "Quoted",
+          "hasPhoto": true
+        }
+      ]
+    }
+  ]
+}

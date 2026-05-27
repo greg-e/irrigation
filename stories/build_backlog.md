@@ -178,7 +178,7 @@ Dependencies: E3-S1
 ---
 
 ## Epic E4A: Irrigation Asset Type Model and Governance (P0)
-Goal: Implement the canonical irrigation asset taxonomy and field governance used by bootstrap, inspection rendering, and callout linkage.
+Goal: Implement the Standard irrigation asset taxonomy and field governance used by bootstrap, inspection rendering, and callout linkage.
 
 ### Story E4A-S1: Implement irrigation asset taxonomy
 As a solution architect, I need a controlled irrigation asset taxonomy on standard Asset.
@@ -187,7 +187,7 @@ Acceptance criteria:
 1. Controlled asset type values are implemented: System, Source, Backflow, Controller, Zone.
 2. Record type strategy and validation rules enforce valid parent-child relationships.
 3. Asset type is required for all irrigation assets.
-4. Existing irrigation assets are mapped/migrated to canonical type values.
+4. Existing irrigation assets are mapped/migrated to Standard type values.
 
 ### Story E4A-S2: Deliver common asset fields and normalization tracking
 As operations, I need consistent cross-type fields for inspection and reporting.
@@ -221,7 +221,7 @@ Acceptance criteria:
 As AM operations, I need callouts tied to appropriate asset types.
 
 Acceptance criteria:
-1. Issue types map to valid target asset types in the canonical hierarchy (for example broken head -> Zone).
+1. Issue types map to valid target asset types in the Standard hierarchy (for example broken head -> Zone).
 2. Invalid combinations are blocked during conversion to pending WOLI.
 3. Error messages explain how to correct asset selection.
 4. Mapping table is reportable and admin-maintainable.
@@ -335,7 +335,7 @@ Dependencies: E4-S3, E6-S2
 
 ---
 
-## Epic E9: Spatial Mapping LWC — Decision Gate and Implementation (P0)
+## Epic E9: Mapping LWC — Decision Gate and Implementation (P0)
 Goal: Deliver a custom Lightning Web Component for within-property irrigation mapping, selecting one MVP provider (Mapbox or Google Maps) via a short decision gate.
 
 > **Architecture constraint (May 2026):** ArcGIS is out for MVP due to no client ArcGIS Online org and added admin overhead. Full geometry is still required (points for components, polygons for zones, lines for pipe/wire runs). MVP provider decision is Mapbox GL JS vs Google Maps JavaScript API.
@@ -501,3 +501,6 @@ Use for each story during import:
 - Data objects touched:
 - Automation touched:
 - Test notes:
+
+
+

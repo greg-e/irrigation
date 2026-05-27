@@ -17,6 +17,9 @@ sequenceDiagram
     participant EW as ExtraWork
 
     Dispatcher->>FSM: Schedule Service Appointment
+    Tech->>FSM: Open Work Order overview
+    FSM-->>Tech: Service Appointment collapsed, irrigation WOLI expanded
+    Tech->>LWC: Open WOLI-first inspection workspace
     Tech->>LWC: Check in to appointment
     LWC->>FSM: Capture GPS and set In Progress
     LWC->>Map: Load Map_Feature__c for property context
@@ -54,15 +57,27 @@ sequenceDiagram
         end
     end
 
-    Tech->>LWC: Start checkout
-    LWC->>FSM: Validate required questions answered
-    alt Missing required answers
-        LWC-->>Tech: Block checkout and highlight gaps
-    else Complete
-        LWC->>FSM: Load suggested repairs
-        Tech->>LWC: Confirm/edit/dismiss suggestions
-        LWC->>FSM: Create pending WOLIs for confirmed items
-        Note over LWC,FSM: Severity + structured description + Callout_Type (Repair/Enhancement) required; AM required
+    Tech->>LWC: Open Submit Report
+    LWC->>FSM: Check advisory required-question completion
+    alt Unanswered required questions remain
+        LWC-->>Tech: Show soft-gate guidance and collect justification
+    else All required questions answered
+        LWC-->>Tech: Continue without justification
+    end
+
+    LWC->>FSM: Validate callout policy and AM assignment
+    alt Callout policy not met or AM missing
+        LWC-->>Tech: Block submit until callout/no-issues and AM are complete
+    else Submit hard blockers satisfied
+        LWC->>FSM: Load suggested repairs and no-issues state
+        alt No actionable findings confirmed
+            Tech->>LWC: Mark No irrigation issues found
+            LWC->>FSM: Persist no-issues submit state
+        else 1+ actionable findings confirmed
+            Tech->>LWC: Confirm/edit/dismiss suggestions
+            LWC->>FSM: Create pending WOLIs for confirmed items
+            Note over LWC,FSM: Quantity + severity + structured description + Callout_Type (Repair/Enhancement) required
+        end
         Tech->>LWC: Submit inspection
         LWC->>Flow: Trigger completion automations
 

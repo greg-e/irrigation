@@ -155,4 +155,5 @@ On irrigation checkout completion, run downstream automation consistently.
 
 ### Open Questions
 - [ ] Should checkout automation run synchronously or via async queue for reliability and mobile latency?
-- [ ] What is the canonical exception object for asset-sync failures (Case, custom object, or platform event)?
+- [ ] What is the Standard exception object for asset-sync failures (Case, custom object, or platform event)?
+

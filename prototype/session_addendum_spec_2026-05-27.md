@@ -1,173 +1,9 @@
-# IrrigationCheckups.com — Competitive Analysis and Requirements Assessment
+# Session Addendum Spec and Prototype Evaluation
 
-Source: https://www.irrigationcheckups.com
-Reviewed: May 5, 2026
+Date: May 27, 2026
+Scope: Translate integrated browser review learnings into an implementation-oriented spec and evaluate current desktop/mobile prototype coverage.
 
-## What It Is
-
-IrrigationCheckups.com is a purpose-built SaaS inspection and reporting platform for irrigation professionals. Its core workflow is: perform a system checkup in the field using a mobile device → auto-generate a customized PDF report → create a repair quote → capture customer e-signature → share with client.
-
-It is a standalone tool, not integrated into a CRM or FSM platform. It is not an invoicing or billing system.
-
-Pricing: $79/mo PRO (unlimited checkups, up to 250 zones/controller, e-signature, price books, team users, company branding).
-
----
-
-## Feature Inventory
-
-### Client and Site Management
-- Client accounts with contact information
-- Multi-site support — one billing contact, multiple site locations
-- Google Maps autocomplete for address entry
-- Client site map showing all sites on a map
-
-### System Inventory per Site
-- Pumps
-- Backflow devices (with geo-tag and photos)
-- Controllers (model, zone count, accessories — master valve, sensors; geo-tag and photos)
-- Sensors
-- Zones (location description, landscaping type, head type, emitter type)
-- Up to 5 photos per device
-
-### Program Settings
-- Days watering, start times, zone run times
-- Conservation checkup shows estimated water savings with a new program
-
-### Inspection / Checkup Workflow
-- Customizable report templates (repair-focused or conservation-focused)
-- Per-zone repair callouts with customizable issue types per template
-- Voice-to-text notes on callouts
-- Photo capture per zone/callout
-- Fast quote building — callouts auto-populate quote line items during the checkup
-- Parts list PDF generation for supply house ordering
-
-### Geo-Tagging / Site Map
-- GPS location capture for pumps, backflows, controllers, zone valves
-- Property-specific site map showing all geo-tagged components
-- Accuracy: consumer device GPS (5–20 ft range)
-
-### Quoting
-- Price books (multiple, assignable by client type or specific client)
-- Quote items tied to specific repair callouts
-- Quote auto-builds as callouts are recorded during the checkup
-- Quote PDF generation
-- Electronic signature capture — embedded in the final checkup report
-
-### Reporting
-- PDF report generation (customizable, company-branded)
-- Repair-focused and conservation-focused report types
-- Historical report storage (active subscription)
-- Dashboard with weekly/monthly/annual trend reporting
-
-### Team and Access
-- Multi-user team accounts (PRO plan)
-- Role-based access: Admin, Manager, Technician
-- Multi-location hierarchy: Corporate → Division → Region → Branch
-- Share in-process checkups between team users
-
----
-
-## Requirements Derived for Our Salesforce FSM Build
-
-### Already Captured in Our Design
-
-| IrrigationCheckups Feature | Our Equivalent |
-|---|---|
-| Client account with multiple sites | Account (Property) with service location data |
-| Backflow device record + photos | Asset (Record Type: Backflow) + Files |
-| Controller record + zone count + photos | Asset (Record Type: Controller) + Files |
-| Program settings (days, start time, run times) | `Irrigation_Program__c` child custom object |
-| Zone descriptions (location, head type) | Asset (Record Type: Zone) with custom fields |
-| Repair quote with price book | ExtraWork custom app (estimating) |
-| Photo capture per component | Files on Asset |
-| Historical inspection reports | Work Order / Service Appointment history per Asset |
-
----
-
-### Gaps and New Requirements Identified
-
-#### 1. Repair Callout Object
-IrrigationCheckups has a structured "Repair Callout" concept — a discrete issue flagged at a specific zone or component during a checkup, with notes, photos, and an auto-linked quote item.
-
-**Decision:** Repair Callouts are modeled as **Work Order Line Items with extended custom fields** — no separate custom object. Schema defined in [fsm_asset_architecture.md](fsm_asset_architecture.md):
-- `Issue_Type__c` — Picklist (Broken Head / Valve Fault / Controller Issue / Leak / Low Pressure / Overwatering / Clog / Other)
-- `Callout_Status__c` — Picklist (New / Quoted / Approved / Completed)
-- `Callout_Notes__c` — Long Text Area
-- `Callout_Photo__c` — Files attachment reference
-- `ExtraWork_Estimate_Line_Ref__c` — Reference to linked ExtraWork estimate line
-
-#### 2. Structured Inspection / Checkup Record
-IrrigationCheckups treats each site visit as a discrete "Checkup" record — not just a work order. A checkup captures the full system state snapshot at a point in time (program settings, zone conditions, repair callouts).
-
-Our current model uses Service Appointment + Work Order. Consider:
-- Whether the SA/WO is sufficient as the checkup container, or
-- Whether a dedicated `System_Checkup__c` object tied to the SA provides cleaner separation between scheduling and inspection data
-
-#### 3. Conservation / Water Efficiency Audit Type
-IrrigationCheckups distinguishes two inspection types: repair-focused and conservation-focused. The conservation type includes estimated water savings from program changes.
-
-We have not modeled this. Requirements:
-- Work Type differentiation: `Irrigation - Checkup (Repair Focus)` vs `Irrigation - Checkup (Conservation Focus)`
-- On conservation checkup: capture current program run times and proposed run times
-- Calculate and display estimated water savings (gallons/week, or % reduction)
-- This could be formula fields on `Irrigation_Program__c` comparing current vs recommended run times
-
-#### 4. Parts List Generation
-IrrigationCheckups generates a parts list PDF for supply house ordering from a completed checkup.
-
-We have not modeled a parts list workflow. Requirements:
-- Work Order Line Items (parts) should be exportable as a parts list
-- This could be a simple Report → PDF in Salesforce, or a custom action on the Work Order
-- Coordinate with ExtraWork app — if estimate line items include parts, the parts list may come from ExtraWork output
-
-#### 5. Geo-Tag During Field Audit (Mobile GPS Capture)
-IrrigationCheckups captures GPS coordinates for backflows, controllers, and zone valves in the field at time of audit. This feeds the property site map.
-
-Our design already has `Latitude`/`Longitude` on the Asset object. The missing piece is:
-- A mobile-friendly flow or LWC in the FSM Mobile app that captures device GPS and writes it to the Asset record at audit time
-- Without this, coordinates must be entered manually — high friction, likely skipped
-
-This directly unblocks the Mapping options explored in `spatial_mapping_options.md`.
-
-#### 6. Customer-Facing Report Delivery
-IrrigationCheckups auto-generates a branded PDF report and delivers it to the customer, with e-signature capture embedded in the report.
-
-Our ExtraWork app handles estimates and approvals. The gap is the **post-checkup inspection summary report** delivered to the customer showing:
-- System inventory snapshot
-- Issues found (repair callouts)
-- Recommended program changes
-- Quote summary (linked to ExtraWork estimate)
-
-Requirements:
-- Decide whether this report comes out of Salesforce (Visualforce/Report/Flow-generated PDF) or ExtraWork
-- E-signature for quote approval is owned by ExtraWork — confirm whether inspection summary also needs signature or just delivery
-
----
-
-## Summary Assessment
-
-IrrigationCheckups.com is strong validation that the workflow we are building is the right one. Its feature set maps closely to our design. Key gaps it exposes:
-
-1. **Repair Callout** as a structured in-field record during inspection — not currently modeled
-2. **Checkup as a discrete record type** — may need cleaner separation from WO/SA
-3. **Conservation audit work type** — water savings calculation not modeled
-4. **Parts list generation** — not modeled, likely solved by WO Line Item report
-5. **GPS capture at audit time** in FSM Mobile — unblocks Mapping
-6. **Customer-facing inspection report** — needs a delivery mechanism and ownership decision (SF vs ExtraWork)
-
----
-
-## Open Questions
-
-- [x] Should Repair Callouts be a custom object or modeled as Work Order Line Items with an issue type/status? **→ Work Order Line Item with extra fields (Issue Type picklist, Status, Callout Notes, photo attachment).**
-- [x] Is a discrete `System_Checkup__c` record needed, or is Service Appointment sufficient as the checkup container? **→ Service Appointment is sufficient. Attach checkup data directly to the SA.**
-- [x] Who owns the post-checkup customer report delivery — Salesforce or ExtraWork? **→ Salesforce owns the report (Flow + PDF output or Visualforce).**
-- [x] Should conservation audit / water savings estimation be in scope for this build? **→ Out of scope — future phase.**
-- [x] Is GPS coordinate capture during field audit feasible in the FSM Mobile app at launch? **→ Yes — build GPS capture at launch. Custom LWC screen flow writes device GPS to Asset Latitude/Longitude fields.**
-
----
-
-## Session Addendum — Learnings From Integrated Browser Review (May 27, 2026)
+## Session Addendum - Learnings From Integrated Browser Review (May 27, 2026)
 
 ### Learning 1: SA-defined context removes redundant checkup setup
 - Observation: IrrigationCheckups starts with explicit context selection (client/site/reason/report type).
@@ -218,25 +54,25 @@ IrrigationCheckups.com is strong validation that the workflow we are building is
 ##### Intent Diagram (Mermaid)
 ```mermaid
 flowchart TD
-	A[Start From Service Appointment] --> B[Step 1: SA Context Auto-Loaded]
-	B --> C{Any Required Context Missing?}
-	C -- Yes --> D[Prompt Only Missing Fields]
-	C -- No --> E[Step 2: Scope Review]
-	D --> E
+    A[Start From Service Appointment] --> B[Step 1: SA Context Auto-Loaded]
+    B --> C{Any Required Context Missing?}
+    C -- Yes --> D[Prompt Only Missing Fields]
+    C -- No --> E[Step 2: Scope Review]
+    D --> E
 
-	E --> F[Step 3: Asset Inspection]
-	F --> G[Step 4: Callout Capture]
-	G --> H[Step 5: Quote Review and Linkage]
-	H --> I[Step 6: Completion Gate]
+    E --> F[Step 3: Asset Inspection]
+    F --> G[Step 4: Callout Capture]
+    G --> H[Step 5: Quote Review and Linkage]
+    H --> I[Step 6: Completion Gate]
 
-	I --> J{Gate Checks Pass?}
-	J -- No --> K[Show Actionable Validation Errors]
-	K --> F
-	J -- Yes --> L[Step 7: Finalize and Generate Output]
+    I --> J{Gate Checks Pass?}
+    J -- No --> K[Show Actionable Validation Errors]
+    K --> F
+    J -- Yes --> L[Step 7: Finalize and Generate Output]
 
-	L --> M[Inspection Summary Produced]
-	L --> N[Estimate Linkage Preserved]
-	L --> O[SA and WO Traceability Stored]
+    L --> M[Inspection Summary Produced]
+    L --> N[Estimate Linkage Preserved]
+    L --> O[SA and WO Traceability Stored]
 ```
 
 ### Learning 3: Structured callouts are the speed/consistency lever
@@ -479,4 +315,93 @@ flowchart TD
 - Minimize front-door prompts by enforcing prompt-only-for-exception behavior.
 - Keep context visible but editable only by permitted roles.
 
+## Evaluation of Current Prototypes (Desktop and Mobile)
 
+### Evaluation Method
+- Compared active desktop and mobile prototype capabilities against Learnings 1-8 and AC clusters.
+- Focused on implemented behavior in primary surfaces, not archived variants.
+
+### Current Prototype Surfaces Evaluated
+- Desktop: desktop_v3.1.html + property_record.js
+- Mobile: mobile_v3.1.html
+
+### Coverage Snapshot
+
+| Learning | Mobile Prototype | Desktop Prototype | Net Assessment |
+|---|---|---|---|
+| L1 SA context prefill | Partial | Partial | Both have context models but not SA-first hydration/prompt-only exceptions flow. |
+| L2 guided execution flow | Partial | Low | Mobile has guided sections and submit flow; neither has explicit 7-step wizard with step index and guarded back/forward states. |
+| L3 structured callouts | Partial-Strong | Medium | Mobile checklist-first capture is strong for speed; required fields (severity/disposition/photo) and taxonomy governance are incomplete. |
+| L4 in-flow quote linkage | Low | Low-Medium | Desktop shows proposals table; mobile has no in-flow estimate creation/linking from callouts. |
+| L5 completion gates | Partial | Low | Mobile has hard/soft submit gates; required gate matrix and deep-link field-level error model not fully implemented. |
+| L6 operational mapping | Partial-Strong | Medium-Strong | Both support map/list context and asset interactions; offline queueing/conflict resolution and finalize-linked geodata requirements are not fully present. |
+| L7 customer-facing output | Low | Low | Neither prototype currently demonstrates true summary artifact generation/versioning/delivery lifecycle. |
+| L8 prompt minimization | Partial | Partial | Both avoid heavy front-door setup in places, but no formal SA-context hydration + role-based override audit controls. |
+
+### Mobile Prototype Evaluation
+
+#### What is Working Well
+- Work Order to WOLI transition and per-WOLI state isolation are implemented.
+- Checklist-first callout capture flow is implemented and favors structured capture speed.
+- Submit gating exists with hard blockers (callout policy and AM assignment) plus soft-gated required-question advisory.
+- Map/list hybrid interaction supports asset edit/create/remove and inline checklist interaction.
+
+#### Gaps Against Learnings and ACs
+- No explicit 7-step guided sequence with visible position indicator (for example Step 3 of 7).
+- Submit is not equivalent to finalized completion gate matrix (missing full hard-stop checks for severity/photo/system readings/null labels/quote waiver logic).
+- Structured callout requirements are incomplete versus target fields (Issue Type + Asset/Zone + Severity + Disposition + deferred reason + critical-photo requirement).
+- No in-flow estimate linkage model from callout to line item with preserved traceability fields.
+- No customer-facing inspection summary artifact generation/versioning/status lifecycle.
+- SA-context hydration and prompt-only exceptions model is not explicit at session start.
+
+### Desktop Prototype Evaluation
+
+#### What is Working Well
+- Rich record-page workspace exists with details, hierarchy, map, program, and related data tabs.
+- Related inspection/callout/proposal views create useful desktop context for planning and audit review.
+- Embedded map integration and map feature state provide useful operational mapping baseline.
+- Local storage state and migration logic support repeatable demo and data-shape iteration.
+
+#### Gaps Against Learnings and ACs
+- Desktop is a record management surface, not an end-to-end guided checkup execution flow.
+- No explicit completion gate workflow before finalize.
+- Callouts and proposals are displayed, but direct callout-to-estimate in-flow creation/linking is not implemented.
+- No finalized output generation step with immutable versioning and delivery state tracking.
+- SA-first context hydration/prompt minimization and override auditing are not implemented as a formal start flow.
+
+### Key Risks if Current Prototypes Are Used as Direct Build Baseline
+- Risk 1: Team may over-index on tabbed record UI and under-deliver the required guided execution sequence.
+- Risk 2: Submit behavior may ship with partial gate logic, causing post-finalization data quality defects.
+- Risk 3: Quote linkage may remain a separate workflow, increasing re-entry and lowering technician throughput.
+- Risk 4: Output generation may be treated as post-process instead of core completion behavior.
+
+### Recommended Next Iteration Priorities
+
+#### Priority 1: Introduce explicit 7-step guided shell
+- Add deterministic step container with step position and one primary action per step.
+- Persist step-level autosave and guarded transitions.
+
+#### Priority 2: Implement full completion gate engine
+- Add hard-stop validation matrix aligned to AC-2.12 through AC-2.16 and AC-5.4 through AC-5.9.
+- Add field-specific error deep links and actionable messages.
+
+#### Priority 3: Add callout-to-estimate linkage in-flow
+- Introduce Add to Estimate action from each quotable callout.
+- Persist link metadata (callout ID, asset/zone, issue type, severity, actor, timestamp).
+
+#### Priority 4: Add finalize output artifact lifecycle
+- Implement artifact generation on finalize with status model (Generated/Sent/Viewed/Failed).
+- Persist immutable version history and traceability to SA/WO.
+
+#### Priority 5: SA-context hydration and prompt minimization
+- Load SA context at start, prompt only missing required values, and audit overrides.
+
+### Confidence and Evidence
+- Confidence: High for current-state prototype behavior described above.
+- Evidence reviewed:
+  - prototype/mobile/README.md
+  - prototype/mobile/notes.md
+  - prototype/mobile/mobile_v3.1.html
+  - prototype/desktop/README.md
+  - prototype/desktop/desktop_v3.1.html
+  - prototype/desktop/property_record.js

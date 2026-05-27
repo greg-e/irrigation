@@ -28,7 +28,7 @@ Account / Property
 | System grouping | System is required and groups a property's irrigation assets. |
 | Naming | Zone display names should be normalized to `Zone <number>` to reduce user input. |
 | Retire-only behavior | Assets should be retired, not hard deleted, when removed from active use. |
-| Component modeling | Valve, head, drip, and other subcomponents are represented as metadata on canonical hierarchy assets, not as separate child assets. |
+| Component modeling | Pump, valve, head, drip, and other subcomponents are represented as metadata on Standard hierarchy assets, not as separate child assets. |
 
 ## 2. Component Metadata
 
@@ -39,7 +39,7 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | Field | Purpose | Applies To |
 |---|---|---|
 | `Name` | Human-readable asset name shown in UI and hierarchy. | All assets (Zone name is system-generated) |
-| `Asset Type` | Canonical asset discriminator. | All assets |
+| `Asset Type` | Standard asset discriminator. | All assets |
 | `Status` | Active / Retired lifecycle state. | All assets |
 | `Parent` | Links the asset to the correct place in the hierarchy. | All assets except System root |
 | `Install Date` | Optional lifecycle date captured in edit flow. | System, Source, Backflow, Controller, Zone |
@@ -118,7 +118,7 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 
 ### 2.7 Inspection-Linked Metadata
 
-These fields come from the canonical question library and should live alongside the asset metadata model so setup, inspection, and reporting all refer to the same record shape.
+These fields come from the Standard question library and should live alongside the asset metadata model so setup, inspection, and reporting all refer to the same record shape.
 
 | Asset Type | Metadata | Required | Notes |
 |---|---|---|---|
@@ -189,7 +189,7 @@ These are visit-scoped observations or actionable finding prompts. They should n
 
 ### 2.9 Component Metadata (Non-Hierarchy)
 
-Valve, head, drip, and other equipment details are modeled as metadata attached to canonical hierarchy assets. This keeps the hierarchy fixed at System -> Source -> Backflow -> Controller -> Zone while still supporting detailed operational capture.
+Pump, valve, head, drip, and other equipment details are modeled as metadata attached to Standard hierarchy assets. This keeps the hierarchy fixed at System -> Source -> Backflow -> Controller -> Zone while still supporting detailed operational capture.
 
 Examples:
 1. Zone-level metadata: valve type, head mix, emitter profile, lateral pipe attributes.
@@ -208,13 +208,13 @@ The desktop prototype currently enforces these required fields at create time:
 | `Controller` | `Name`, `Controller Label`, `Total Zones`, `Parent Backflow` |
 | `Zone` | `Zone Number`, `Parent Controller` (name auto-normalized) |
 
-## 3. Canonical Salesforce Metadata Baseline
+## 3. Standard Salesforce Metadata Baseline
 
-This section is the canonical Salesforce field dictionary for irrigation asset setup, spatial representation, inspection outcomes, and repair execution.
+This section is the Standard Salesforce field dictionary for irrigation asset setup, Map representation, inspection outcomes, and repair execution.
 
-### 3.1 Cross-Asset Canonical Field Dictionary
+### 3.1 Cross-Asset Standard Field Dictionary
 
-| Canonical Field | SF Object.Field | Type | Allowed Values / Rule | Schema Required | Process Required | Applies To |
+| Standard Field | SF Object.Field | Type | Allowed Values / Rule | Schema Required | Process Required | Applies To |
 |---|---|---|---|---|---|---|
 | `asset_uid` | `Asset.Id` | Id | System-generated Salesforce Id. | Yes | Yes | All assets |
 | `asset_type` | `Asset.Asset_Type__c` | Picklist | `System`, `Source`, `Backflow`, `Controller`, `Zone`. | No | Yes | All assets |
@@ -235,7 +235,7 @@ This section is the canonical Salesforce field dictionary for irrigation asset s
 | `issue_quantity` | `WorkOrderLineItem.Quantity` | Number | Integer `>= 1` when actionable finding is mapped. | No | Conditional | Actionable findings mapped to WOLI |
 | `callout_status` | `WorkOrderLineItem.Callout_Status__c` | Picklist | `New`, `Quoted`, `Approved`, `Completed` (legacy API name retained). | No | Conditional | Actionable findings mapped to WOLI |
 
-### 3.2 Asset-Specific Metadata and Spatial Rules
+### 3.2 Asset-Specific Metadata and Map Rules
 
 | Asset Type | Required Metadata (Process) | Optional Metadata (Key) | Required Geometry |
 |---|---|---|---|
@@ -272,7 +272,9 @@ Ownership baseline:
 
 ## 4. Notes
 
-1. This file starts with the canonical asset hierarchy and metadata because that is the base model every setup and validation decision depends on.
+1. This file starts with the Standard asset hierarchy and metadata because that is the base model every setup and validation decision depends on.
 2. This document should stay aligned with the prototype behavior in `prototype/desktop/` and the broader irrigation requirements set.
-3. This document is the canonical metadata reference for irrigation assets and supersedes the standalone dictionary format.
+3. This document is the Standard metadata reference for irrigation assets and supersedes the standalone dictionary format.
 4. If new asset types are introduced, they should be added here with their parent rule and minimum metadata before they are added to the setup UI.
+
+

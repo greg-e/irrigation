@@ -51,7 +51,7 @@
 ## Map and Asset Interaction State
 
 ### Map Workspace
-- Spatial iframe is used for map context and asset payload updates.
+- Map iframe is used for map context and asset payload updates.
 - Bottom sheet supports quick actions and expanded controls.
 
 ### List-Mode Fallback
@@ -85,3 +85,4 @@
 - Refactor repeated inline list-card styles into CSS classes to reduce UI drift.
 - Add lightweight smoke checks around submit gating and per-WOLI session switching.
 - If parity is needed, align list expanded card layout to the detail sheet component structure.
+

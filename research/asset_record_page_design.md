@@ -142,7 +142,7 @@ Content controlled by **Component Visibility Rules** (filter on Record Type):
 
 ---
 
-### Tab: Spatial Map (MVP Decision Gate)
+### Tab: Map (MVP Decision Gate)
 
 > Activate after MVP mapping stack selection (Mapbox GL JS or Google Maps JavaScript API).
 
@@ -184,4 +184,6 @@ Avoid surfacing the Map Pin tab on mobile until the LWC is built and tested offl
 - [x] Is the Repair Callout quick action ("Log Repair Callout") workable without a pre-existing SA context, or does it require an active SA to attach to? **→ Require an active SA — callout must attach to a visit. Tech must have an open SA on their device before logging callouts.**
 - [x] Should the Work History tab filter to show only the last 12 months by default, or all time? **→ All time — show full history by default.**
 - [x] Who sets the asset `Status` field — automation, the tech, or office admin? **→ Automation — Flow-driven. Status flips to "Needs Repair" when a callout is logged; flips back to "Installed" when the parent WO is closed.**
-- [ ] Which mapping stack wins MVP for the Spatial Map tab (Mapbox or Google) based on offline behavior and 12-month projected usage cost?
+- [ ] Which mapping stack wins MVP for the Map tab (Mapbox or Google) based on offline behavior and 12-month projected usage cost?
+
+

@@ -8,7 +8,7 @@ Separate desktop prototype artifact for property-linked irrigation asset baselin
 - Shared BM/AM/IM UI and permissions
 - Lightweight AM queue for post-inspection callout triage
 - Manual asset updates only (import intentionally out of scope)
-- Canonical hierarchy:
+- Standard hierarchy:
   - Account (Property)
   - Optional System root asset
   - Controller assets
@@ -50,3 +50,4 @@ Target scenario: bring one property to baseline-ready in under 5 minutes, includ
 
 - This is a prototype only, not production code.
 - Data model and interactions are intentionally simplified to validate flow and decision logic.
+

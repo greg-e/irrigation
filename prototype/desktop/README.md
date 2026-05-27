@@ -74,7 +74,7 @@ To reset demo data:
 Implemented and active:
 - Record details/editing with type-aware fields
 - Hierarchy tree navigation
-- Embedded spatial map integration using postMessage
+- Embedded Map integration using postMessage
 - Controller program embedding
 - Related records rendering
 
@@ -88,3 +88,5 @@ See `desktop_prototype_with_map_feature_inventory.md` for full detail.
 
 - Prototype-only implementation (not production hardened).
 - Data model and UI logic are intentionally simplified to validate workflow and UX decisions.
+
+
