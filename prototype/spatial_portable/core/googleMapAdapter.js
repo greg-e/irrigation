@@ -1,5 +1,10 @@
 import { FEATURE_TYPES, TOOL_MODES } from "./contracts.js";
 
+const DEFAULT_POLYLINE_STROKE = "#0b5cab";
+const DEFAULT_POLYGON_FILL = "#d9ff00";
+const DEFAULT_POLYGON_STROKE = "#334400";
+const DEFAULT_POLYGON_FILL_OPACITY = 0.52;
+
 function toLatLngLiteral(latLng) {
   return { lat: latLng.lat(), lng: latLng.lng() };
 }
@@ -32,6 +37,87 @@ function ensureGoogleMapsLoaded(apiKey) {
   });
 }
 
+function normalizeStatus(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function markerGlyphForAssetType(assetType) {
+  const typeKey = String(assetType || "").trim().toLowerCase();
+  const glyphByType = {
+    system: "S",
+    source: "So",
+    backflow: "B",
+    controller: "C",
+    zone: "Z",
+    pump: "P",
+    valve: "V",
+    head: "H",
+    drip: "D",
+  };
+  return glyphByType[typeKey] || "M";
+}
+
+function markerPaletteForAssetType(assetType) {
+  const typeKey = String(assetType || "").trim().toLowerCase();
+  const paletteByType = {
+    system: { fill: "#334155", stroke: "#ffffff", text: "#f8fafc" },
+    source: { fill: "#0284c7", stroke: "#ffffff", text: "#f8fafc" },
+    backflow: { fill: "#2563eb", stroke: "#ffffff", text: "#f8fafc" },
+    controller: { fill: "#f59e0b", stroke: "#ffffff", text: "#111827" },
+    zone: { fill: "#16a34a", stroke: "#ffffff", text: "#f8fafc" },
+    pump: { fill: "#0d9488", stroke: "#ffffff", text: "#f8fafc" },
+    valve: { fill: "#f97316", stroke: "#ffffff", text: "#111827" },
+    head: { fill: "#475569", stroke: "#ffffff", text: "#f8fafc" },
+    drip: { fill: "#0891b2", stroke: "#ffffff", text: "#f8fafc" },
+  };
+  return paletteByType[typeKey] || { fill: "#6b7280", stroke: "#ffffff", text: "#f8fafc" };
+}
+
+function applyStatusMarkerPalette(basePalette, assetStatus) {
+  const status = normalizeStatus(assetStatus);
+
+  if (["alert", "critical", "fault", "offline", "failed"].includes(status)) {
+    return { fill: "#dc2626", stroke: "#fee2e2", text: "#ffffff" };
+  }
+
+  if (["maintenance", "pending", "warning"].includes(status)) {
+    return { fill: "#d97706", stroke: "#fef3c7", text: "#111827" };
+  }
+
+  if (["retired", "inactive", "disabled"].includes(status)) {
+    return { fill: "#64748b", stroke: "#cbd5e1", text: "#f8fafc" };
+  }
+
+  return basePalette;
+}
+
+function buildMarkerOptions(feature) {
+  const typeLabel = markerGlyphForAssetType(feature.assetType);
+  const basePalette = markerPaletteForAssetType(feature.assetType);
+  const palette = applyStatusMarkerPalette(basePalette, feature.assetStatus);
+  const statusText = feature.assetStatus ? ` (${feature.assetStatus})` : "";
+
+  return {
+    position: feature.geometry,
+    draggable: false,
+    title: `${feature.name || "Component marker"}${statusText}`,
+    label: {
+      text: typeLabel,
+      color: palette.text,
+      fontWeight: "800",
+      fontSize: typeLabel.length > 1 ? "10px" : "11px",
+    },
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: palette.fill,
+      fillOpacity: 0.96,
+      strokeColor: palette.stroke,
+      strokeWeight: 2,
+      scale: 11,
+    },
+  };
+}
+
 export class GoogleMapAdapter {
   constructor(rootEl, options) {
     this.rootEl = rootEl;
@@ -42,21 +128,26 @@ export class GoogleMapAdapter {
     this.onFeatureCreated = null;
     this.onFeatureChanged = null;
     this.onFeatureSelected = null;
+    this.onMapBackgroundClick = null;
     this.selectedFeatureId = null;
+    this.suppressNextMapClick = false;
     this.resizeObserver = null;
     this.onWindowResize = null;
   }
 
   async init() {
     await ensureGoogleMapsLoaded(this.options.apiKey);
+    const hideMapUiControls = Boolean(this.options.hideMapUiControls);
 
     this.map = new google.maps.Map(this.rootEl, {
       center: this.options.center,
       zoom: this.options.zoom,
       mapTypeId: "satellite",
+      disableDefaultUI: hideMapUiControls,
       streetViewControl: false,
       fullscreenControl: false,
-      mapTypeControl: true,
+      mapTypeControl: !hideMapUiControls,
+      zoomControl: !hideMapUiControls,
     });
 
     this.drawingManager = new google.maps.drawing.DrawingManager({
@@ -66,21 +157,38 @@ export class GoogleMapAdapter {
       polylineOptions: {
         clickable: true,
         editable: false,
-        strokeColor: "#0b5cab",
+        strokeColor: DEFAULT_POLYLINE_STROKE,
         strokeOpacity: 0.9,
-        strokeWeight: 3,
+        strokeWeight: 4,
       },
       polygonOptions: {
         clickable: true,
         editable: false,
-        fillColor: "#0b5cab",
-        fillOpacity: 0.2,
-        strokeColor: "#0b5cab",
-        strokeWeight: 2,
+        fillColor: DEFAULT_POLYGON_FILL,
+        fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+        strokeColor: DEFAULT_POLYGON_STROKE,
+        strokeWeight: 3,
       },
     });
 
     this.drawingManager.setMap(this.map);
+
+    this.map.addListener("click", () => {
+      if (this.suppressNextMapClick) {
+        this.suppressNextMapClick = false;
+        return;
+      }
+
+      // Ignore base-map deselect clicks while actively drawing.
+      if (this.drawingManager?.getDrawingMode()) {
+        return;
+      }
+
+      this.selectFeature(null);
+      if (this.onMapBackgroundClick) {
+        this.onMapBackgroundClick();
+      }
+    });
 
     google.maps.event.addListener(this.drawingManager, "overlaycomplete", (event) => {
       this.drawingManager.setDrawingMode(null);
@@ -164,9 +272,14 @@ export class GoogleMapAdapter {
       return;
     }
     overlay.__featureId = feature.id;
-    overlay.__readOnly = Boolean(feature.isAuto);
+    overlay.__isAuto = Boolean(feature.isAuto);
+    const allowFeatureEditing = this.options?.allowFeatureEditing !== false;
+    const allowAutoFeatureEditing = Boolean(this.options?.allowAutoFeatureEditing);
+    overlay.__autoReadOnly = Boolean(feature.isAuto && !allowAutoFeatureEditing);
+    overlay.__readOnly = !allowFeatureEditing || overlay.__autoReadOnly;
 
     overlay.addListener("click", () => {
+      this.suppressNextMapClick = true;
       this.selectFeature(feature.id);
       if (this.onFeatureSelected) this.onFeatureSelected(feature.id);
     });
@@ -200,6 +313,34 @@ export class GoogleMapAdapter {
     overlay.setMap(this.map);
   }
 
+  setFeatureEditingEnabled(enabled, allowAutoFeatureEditing) {
+    const nextOptions = { ...(this.options || {}), allowFeatureEditing: Boolean(enabled) };
+    if (typeof allowAutoFeatureEditing === "boolean") {
+      nextOptions.allowAutoFeatureEditing = allowAutoFeatureEditing;
+    }
+    this.options = nextOptions;
+
+    if (this.drawingManager && !enabled) {
+      this.drawingManager.setDrawingMode(null);
+    }
+
+    this.overlaysById.forEach((overlay) => {
+      const autoReadOnly = Boolean(overlay.__isAuto && !this.options.allowAutoFeatureEditing);
+      overlay.__autoReadOnly = autoReadOnly;
+      overlay.__readOnly = !enabled || autoReadOnly;
+
+      if (overlay instanceof google.maps.Marker) {
+        overlay.setDraggable(false);
+      } else if (overlay.setEditable) {
+        overlay.setEditable(false);
+      }
+    });
+
+    if (this.selectedFeatureId) {
+      this.selectFeature(this.selectedFeatureId);
+    }
+  }
+
   selectFeature(featureId) {
     this.selectedFeatureId = featureId;
 
@@ -214,10 +355,17 @@ export class GoogleMapAdapter {
         }
       } else {
         overlay.setEditable(editable);
-        overlay.setOptions({
-          strokeColor: selected ? "#b42318" : "#0b5cab",
-          fillColor: selected ? "#b42318" : "#0b5cab",
-        });
+        if (overlay instanceof google.maps.Polygon) {
+          overlay.setOptions({
+            strokeColor: selected ? "#b42318" : DEFAULT_POLYGON_STROKE,
+            fillColor: selected ? "#b42318" : DEFAULT_POLYGON_FILL,
+            fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+          });
+        } else {
+          overlay.setOptions({
+            strokeColor: selected ? "#b42318" : DEFAULT_POLYLINE_STROKE,
+          });
+        }
       }
     });
   }
@@ -238,37 +386,14 @@ export class GoogleMapAdapter {
       if (feature.isLatLon) {
         return null;
       }
-      const isClockSimulation =
-        feature.isAuto && String(feature.assetType || "").toLowerCase() === "controller";
-      const markerOpts = {
-        position: feature.geometry,
-        draggable: false,
-        title: feature.name || "Simulated clock",
-      };
-      if (isClockSimulation) {
-        markerOpts.label = {
-          text: "C",
-          color: "#0f1419",
-          fontWeight: "700",
-          fontSize: "11px",
-        };
-        markerOpts.icon = {
-          path: google.maps.SymbolPath.CIRCLE,
-          fillColor: "#f9a826",
-          fillOpacity: 1,
-          strokeColor: "#ffffff",
-          strokeWeight: 2,
-          scale: 10,
-        };
-      }
-      return new google.maps.Marker(markerOpts);
+      return new google.maps.Marker(buildMarkerOptions(feature));
     }
 
     if (feature.type === FEATURE_TYPES.POLYLINE) {
       return new google.maps.Polyline({
         path: feature.geometry.path,
         editable: false,
-        strokeColor: "#0b5cab",
+        strokeColor: DEFAULT_POLYLINE_STROKE,
         strokeOpacity: 0.9,
         strokeWeight: 3,
       });
@@ -277,10 +402,10 @@ export class GoogleMapAdapter {
     return new google.maps.Polygon({
       path: feature.geometry.path,
       editable: false,
-      fillColor: "#0b5cab",
-      fillOpacity: 0.2,
-      strokeColor: "#0b5cab",
-      strokeWeight: 2,
+      fillColor: DEFAULT_POLYGON_FILL,
+      fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+      strokeColor: DEFAULT_POLYGON_STROKE,
+      strokeWeight: 4,
     });
   }
 

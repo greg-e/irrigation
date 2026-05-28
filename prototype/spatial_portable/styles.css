@@ -519,6 +519,26 @@ body.map-only-layout .map-root {
   flex-shrink: 0;
 }
 
+.map-geometry-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid #9fc5f5;
+  background: #e8f1fe;
+  color: #0b5cab;
+  margin-left: 0.2rem;
+  vertical-align: middle;
+}
+
+.map-geometry-badge svg {
+  width: 11px;
+  height: 11px;
+  fill: currentColor;
+}
+
 .slds-badge {
   background-color: var(--brand);
   color: white;

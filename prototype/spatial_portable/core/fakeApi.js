@@ -53,48 +53,7 @@ function polygonFromCenter(center, radiusLat, radiusLon, rotationRad = 0) {
 }
 
 const seedByProperty = {
-  "prop-002": [
-    {
-      id: "f-001",
-      propertyId: "prop-002",
-      assetId: "asset-z-1",
-      type: FEATURE_TYPES.MARKER,
-      name: "Valve Box A",
-      geometry: { lat: 39.7393, lng: -104.9905 },
-      modifiedAt: Date.now(),
-    },
-    {
-      id: "f-002",
-      propertyId: "prop-002",
-      assetId: "asset-z-1",
-      type: FEATURE_TYPES.POLYGON,
-      name: "Zone 1 Boundary",
-      geometry: {
-        path: [
-          { lat: 39.73936, lng: -104.99073 },
-          { lat: 39.73952, lng: -104.99044 },
-          { lat: 39.73924, lng: -104.99018 },
-          { lat: 39.73908, lng: -104.99047 },
-        ],
-      },
-      modifiedAt: Date.now(),
-    },
-    {
-      id: "f-003",
-      propertyId: "prop-002",
-      assetId: "asset-pipe-main",
-      type: FEATURE_TYPES.POLYLINE,
-      name: "Main Lateral",
-      geometry: {
-        path: [
-          { lat: 39.73945, lng: -104.99081 },
-          { lat: 39.7393, lng: -104.99058 },
-          { lat: 39.73916, lng: -104.99028 },
-        ],
-      },
-      modifiedAt: Date.now(),
-    },
-  ],
+  "prop-002": [],
 };
 
 export class SpatialFeatureApi {
@@ -110,6 +69,9 @@ export class SpatialFeatureApi {
 
   // Generate auto-features (markers) from assets with mapCoordinates
   _generateAutoFeatures(propertyId) {
+    // Demo baseline should start with no mapped geometry; users add map objects manually.
+    return [];
+
     const assets = this.assetsByProperty[propertyId] || [];
     if (!Array.isArray(assets) || assets.length === 0) return [];
 
