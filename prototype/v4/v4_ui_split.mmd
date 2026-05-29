@@ -1,0 +1,21 @@
+flowchart TB
+  Base[irrigation-map-workspace<br/>Shared base LWC]
+
+  Base --> Desktop[Desktop Wrapper]
+  Base --> Mobile[Salesforce Mobile Wrapper]
+  Base --> Fsm[FSM Mobile Wrapper]
+
+  Base --> Map[Map Canvas]
+  Base --> Sheet[Bottom Sheet Shell]
+  Base --> Status[Save Status Chip]
+
+  Sheet --> Peek[Peek State<br/>Quick actions]
+  Sheet --> Expanded[Expanded State]
+
+  Expanded --> Checklist[Checklist Output]
+  Expanded --> Submit[Submit Reports]
+  Expanded --> Components[Components / Related Assets]
+  Expanded --> Geometry[Geometry Toolbar]
+  Expanded --> Details[Asset Details]
+
+  Map --> Pins[Pins / Polygons / Lines]

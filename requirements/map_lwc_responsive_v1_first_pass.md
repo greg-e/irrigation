@@ -95,6 +95,25 @@ Track confirmed requirements and interaction decisions for a responsive Map LWC 
 
 - Tap-target sizing follows Salesforce mobile defaults.
 
+## Naming Scheme Diagram
+
+```mermaid
+graph TD
+  H[Irrigation Map Workspace<br/>Top-level host LWC]
+  H --> M[Map Canvas]
+  H --> B[Bottom Sheet Shell]
+  H --> S[Save Status Chip]
+  H --> W[Channel Wrappers<br/>Desktop / Salesforce Mobile / FSM Mobile]
+
+  B --> C[Checklist Output]
+  B --> R[Submit Reports]
+  B --> P[Components Panel]
+  B --> T[Geometry Toolbar]
+  B --> D[Asset Details / Peek State]
+
+  M --> L[Asset Pins / Geometry]
+```
+
 ## Open Items for Follow-Up (Non-Blocking for First Pass)
 
 - Point-placement precision assist default:

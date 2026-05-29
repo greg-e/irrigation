@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Irrigation Controller Programs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="stylesheet" href="../desktop/styles.css" />
+</head>
+<body class="slds-scope">
+  <div id="program-page-header" class="slds-page-header slds-page-header_record-home">
+    <div class="slds-page-header__row">
+      <div class="slds-page-header__col-title">
+        <div class="slds-media">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-custom_notification slds-page-header__icon-wrapper" title="Controller">
+              <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/standard-sprite/svg/symbols.svg#custom_notification"></use>
+              </svg>
+              <span class="slds-assistive-text">Controller</span>
+            </span>
+          </div>
+          <div class="slds-media__body">
+            <div class="slds-page-header__name">
+              <div class="slds-page-header__name-title">
+                <h1>
+                  <span class="slds-page-header__name-meta" title="Controller">Controller</span>
+                  <span class="slds-page-header__title slds-truncate">Irrigation Programs</span>
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-page-header__col-actions">
+        <div class="slds-page-header__controls">
+          <div class="slds-page-header__control">
+            <a href="../desktop/index.html" class="slds-button slds-button_neutral">Back to Asset</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="record-layout">
+    <section id="programs-main-card" class="slds-card slds-m-top_medium">
+      <div class="slds-card__header slds-grid">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+          <div class="slds-media__body">
+            <h2 class="slds-card__header-title">
+              <span>Irrigation Programs</span>
+            </h2>
+            <p id="controller-context-label" class="slds-text-body_small slds-text-color_weak">Manage controller schedules and zones</p>
+          </div>
+        </header>
+        <div class="slds-no-flex">
+          <button id="program-new-btn" class="slds-button slds-button_neutral" type="button">New Program</button>
+        </div>
+      </div>
+      <div class="slds-card__body">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout" role="grid">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th scope="col"><div class="slds-truncate" title="Program Name">Program Name</div></th>
+              <th scope="col"><div class="slds-truncate" title="Days">Days</div></th>
+              <th scope="col"><div class="slds-truncate" title="Start Times">Start Times</div></th>
+              <th scope="col"><div class="slds-truncate" title="Zones">Zones</div></th>
+              <th scope="col"><div class="slds-truncate" title="Actions">Actions</div></th>
+            </tr>
+          </thead>
+          <tbody id="programs-table-body">
+            <!-- Program rows go here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Modal for Add/Edit Program -->
+    <div id="program-modal" role="dialog" aria-modal="true" aria-labelledby="program-modal-title" class="slds-modal hidden">
+      <div class="slds-modal__container">
+        <button id="program-modal-close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" type="button" title="Close">
+          <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#close"></use>
+          </svg>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+        <div class="slds-modal__header">
+          <h2 id="program-modal-title" class="slds-modal__title slds-has-flexi-truncate">New/Edit Program</h2>
+        </div>
+        <div class="slds-modal__content slds-p-around_medium" id="program-modal-content">
+          <div id="form-error" class="slds-text-color_error slds-m-bottom_small" role="alert" aria-live="assertive"></div>
+          <form id="program-form" class="slds-form slds-grid slds-wrap slds-gutters_small">
+            <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+              <label class="slds-form-element__label" for="program-name">Program Name</label>
+              <input type="text" id="program-name" class="slds-input" required />
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+              <label class="slds-form-element__label">Days of Week</label>
+              <div class="slds-checkbox_button-group">
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-mon" value="Mon" />
+                  <label class="slds-checkbox_button__label" for="day-mon"><span class="slds-checkbox_faux">Mon</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-tue" value="Tue" />
+                  <label class="slds-checkbox_button__label" for="day-tue"><span class="slds-checkbox_faux">Tue</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-wed" value="Wed" />
+                  <label class="slds-checkbox_button__label" for="day-wed"><span class="slds-checkbox_faux">Wed</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-thu" value="Thu" />
+                  <label class="slds-checkbox_button__label" for="day-thu"><span class="slds-checkbox_faux">Thu</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-fri" value="Fri" />
+                  <label class="slds-checkbox_button__label" for="day-fri"><span class="slds-checkbox_faux">Fri</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-sat" value="Sat" />
+                  <label class="slds-checkbox_button__label" for="day-sat"><span class="slds-checkbox_faux">Sat</span></label>
+                </span>
+                <span class="slds-button slds-checkbox_button">
+                  <input type="checkbox" id="day-sun" value="Sun" />
+                  <label class="slds-checkbox_button__label" for="day-sun"><span class="slds-checkbox_faux">Sun</span></label>
+                </span>
+              </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+              <label class="slds-form-element__label">Start Times</label>
+              <div id="start-times-list"></div>
+              <button type="button" id="add-start-time-btn" class="slds-button slds-button_neutral slds-m-top_x-small">Add Start Time</button>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+              <label class="slds-form-element__label">Zones & Run Times</label>
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout">
+                <thead>
+                  <tr>
+                    <th>Zone</th>
+                    <th>Run Time (min)</th>
+                  </tr>
+                </thead>
+                <tbody id="zones-table-body">
+                  <!-- Zone rows go here -->
+                </tbody>
+              </table>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-bottom_small">
+              <label class="slds-form-element__label">Manual Override / Skip Day</label>
+              <div class="slds-form-element__control">
+                <input type="checkbox" id="manual-override" />
+                <label for="manual-override">Enable manual override or skip day</label>
+              </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-m-top_medium">
+              <button type="submit" class="slds-button slds-button_brand">Save</button>
+              <button type="button" class="slds-button slds-button_neutral" id="program-cancel-btn">Cancel</button>
+              <button type="button" class="slds-button slds-button_neutral" id="program-duplicate-btn">Duplicate</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    // Modal open/close logic
+    const newBtn = document.getElementById('program-new-btn');
+    const modal = document.getElementById('program-modal');
+    const closeBtn = document.getElementById('program-modal-close');
+    const cancelBtn = document.getElementById('program-cancel-btn');
+    const duplicateBtn = document.getElementById('program-duplicate-btn');
+    const programForm = document.getElementById('program-form');
+    const programNameInput = document.getElementById('program-name');
+    const programsTableBody = document.getElementById('programs-table-body');
+    const zonesTableBody = document.getElementById('zones-table-body');
+    const contextLabel = document.getElementById('controller-context-label');
+    const startTimesList = document.getElementById('start-times-list');
+    const addStartTimeBtn = document.getElementById('add-start-time-btn');
+    const formError = document.getElementById('form-error');
+    const dayCheckboxes = Array.from(document.querySelectorAll('input[id^="day-"]'));
+    const manualOverrideInput = document.getElementById('manual-override');
+
+    let programs = [];
+    let editingProgramId = null;
+
+    const query = new URLSearchParams(window.location.search);
+    const isEmbedded = query.get('embedded') === '1';
+    const controllerId = query.get('controllerId') || 'CTRL-001';
+    const controllerName = query.get('controllerName') || 'Controller A';
+
+    if (isEmbedded) {
+      const pageHeader = document.getElementById('program-page-header');
+      const mainCard = document.getElementById('programs-main-card');
+      if (pageHeader) {
+        pageHeader.remove();
+      }
+      if (mainCard) {
+        mainCard.classList.remove('slds-m-top_medium');
+      }
+      document.body.style.background = 'transparent';
+    }
+
+    function parseZonesFromQuery() {
+      const raw = query.get('zones');
+      if (!raw) {
+        return null;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          return null;
+        }
+        return parsed
+          .filter((zone) => zone && (zone.name || zone.id))
+          .map((zone, index) => ({
+            id: zone.id || `Z${index + 1}`,
+            name: zone.name || zone.id || `Zone ${index + 1}`
+          }));
+      } catch (error) {
+        return null;
+      }
+    }
+
+    // Mocked controller -> zones map for standalone prototype behavior.
+    const zonesByController = {
+      'CTRL-001': [
+        { id: 'Z1', name: 'Front Lawn' },
+        { id: 'Z2', name: 'Back Lawn' },
+        { id: 'Z3', name: 'North Drip' },
+        { id: 'Z4', name: 'South Drip' }
+      ],
+      'CTRL-002': [
+        { id: 'Z1', name: 'Entry Beds' },
+        { id: 'Z2', name: 'Median Strip' },
+        { id: 'Z3', name: 'Tree Ring Loop' }
+      ],
+      'CTRL-003': [
+        { id: 'Z1', name: 'Athletic Field East' },
+        { id: 'Z2', name: 'Athletic Field West' },
+        { id: 'Z3', name: 'Perimeter Shrubs' },
+        { id: 'Z4', name: 'Practice Pad' },
+        { id: 'Z5', name: 'Clubhouse Planters' }
+      ]
+    };
+
+    const zonesFromContext = parseZonesFromQuery();
+
+    function getZonesForController(id) {
+      if (Array.isArray(zonesFromContext)) {
+        return zonesFromContext;
+      }
+      return zonesByController[id] || zonesByController['CTRL-001'];
+    }
+
+    function newProgramId() {
+      return `PROG-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    }
+
+    function storageKeyForController(id) {
+      return `controllerPrograms:${id || 'unknown'}`;
+    }
+
+    function loadProgramsFromStorage(id) {
+      try {
+        const raw = localStorage.getItem(storageKeyForController(id));
+        if (!raw) {
+          return [];
+        }
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function persistPrograms() {
+      try {
+        localStorage.setItem(storageKeyForController(controllerId), JSON.stringify(programs));
+      } catch (error) {
+        // Ignore storage quota or browser privacy-mode failures in prototype mode.
+      }
+    }
+
+    function formatTime(value) {
+      if (!value) {
+        return '';
+      }
+      const [hourText, minuteText] = value.split(':');
+      const hour = Number(hourText);
+      const suffix = hour >= 12 ? 'PM' : 'AM';
+      const normalizedHour = hour % 12 || 12;
+      return `${String(normalizedHour).padStart(2, '0')}:${minuteText} ${suffix}`;
+    }
+
+    function renderProgramsTable() {
+      if (!programs.length) {
+        programsTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="slds-text-align_center slds-text-color_weak">No programs yet</td>
+          </tr>
+        `;
+        return;
+      }
+
+      programsTableBody.innerHTML = programs.map((program) => {
+        const zoneCount = program.zones.filter((z) => z.runTime > 0).length;
+        return `
+          <tr data-program-id="${program.id}">
+            <td><div class="slds-truncate" title="${program.name}">${program.name}</div></td>
+            <td><div class="slds-truncate" title="${program.days.join(', ')}">${program.days.join(', ')}</div></td>
+            <td><div class="slds-truncate" title="${program.startTimes.map(formatTime).join(', ')}">${program.startTimes.map(formatTime).join(', ')}</div></td>
+            <td><div class="slds-truncate" title="${zoneCount} zone(s) with runtime">${zoneCount} active zone(s)</div></td>
+            <td>
+              <button type="button" class="slds-button slds-button_neutral slds-m-right_xx-small" data-action="edit">Edit</button>
+              <button type="button" class="slds-button slds-button_neutral slds-m-right_xx-small" data-action="duplicate">Duplicate</button>
+              <button type="button" class="slds-button slds-button_destructive-text" data-action="delete">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setFormError(message) {
+      formError.textContent = message || '';
+    }
+
+    function addStartTimeRow(value = '') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'slds-grid slds-gutters_xx-small slds-m-bottom_xx-small start-time-row';
+      wrapper.innerHTML = `
+        <div class="slds-col slds-size_5-of-6">
+          <input type="time" class="slds-input start-time-input" value="${value}" />
+        </div>
+        <div class="slds-col slds-size_1-of-6">
+          <button type="button" class="slds-button slds-button_icon slds-button_icon-border remove-start-time" title="Remove Start Time">
+            <svg class="slds-button__icon" aria-hidden="true">
+              <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#delete"></use>
+            </svg>
+            <span class="slds-assistive-text">Remove start time</span>
+          </button>
+        </div>
+      `;
+      startTimesList.appendChild(wrapper);
+      refreshStartTimeRemoveState();
+    }
+
+    function refreshStartTimeRemoveState() {
+      const rows = Array.from(startTimesList.querySelectorAll('.start-time-row'));
+      rows.forEach((row) => {
+        const removeBtn = row.querySelector('.remove-start-time');
+        removeBtn.disabled = rows.length === 1;
+      });
+    }
+
+    function collectFormData() {
+      const name = programNameInput.value.trim();
+      const days = dayCheckboxes.filter((box) => box.checked).map((box) => box.value);
+      const startTimes = Array.from(startTimesList.querySelectorAll('.start-time-input')).map((input) => input.value).filter(Boolean);
+      const uniqueStartTimes = [...new Set(startTimes)];
+      const zones = Array.from(zonesTableBody.querySelectorAll('tr')).map((row) => {
+        const zoneText = row.querySelector('td .slds-truncate')?.textContent || '';
+        const runTime = Number(row.querySelector('input')?.value || 0);
+        return { zoneLabel: zoneText, runTime };
+      });
+      return {
+        name,
+        days,
+        startTimes,
+        uniqueStartTimes,
+        zones,
+        manualOverride: manualOverrideInput.checked
+      };
+    }
+
+    function validateForm(data) {
+      if (!data.name) {
+        return 'Program Name is required.';
+      }
+      if (!data.days.length) {
+        return 'Select at least one day of week.';
+      }
+      if (!data.startTimes.length) {
+        return 'Add at least one start time.';
+      }
+      if (data.uniqueStartTimes.length !== data.startTimes.length) {
+        return 'Start times must be unique.';
+      }
+      if (data.zones.some((zone) => zone.runTime < 0)) {
+        return 'Zone run time cannot be negative.';
+      }
+      if (!data.zones.some((zone) => zone.runTime > 0)) {
+        return 'At least one zone must have a run time greater than 0.';
+      }
+      return '';
+    }
+
+    function resetForm() {
+      programForm.reset();
+      editingProgramId = null;
+      setFormError('');
+      startTimesList.innerHTML = '';
+      addStartTimeRow('05:00');
+      renderZones();
+    }
+
+    function loadProgramIntoForm(program) {
+      resetForm();
+      editingProgramId = program.id;
+      programNameInput.value = program.name;
+      dayCheckboxes.forEach((box) => {
+        box.checked = program.days.includes(box.value);
+      });
+      startTimesList.innerHTML = '';
+      program.startTimes.forEach((time) => addStartTimeRow(time));
+      manualOverrideInput.checked = !!program.manualOverride;
+
+      Array.from(zonesTableBody.querySelectorAll('tr')).forEach((row) => {
+        const zoneText = row.querySelector('td .slds-truncate')?.textContent || '';
+        const input = row.querySelector('input');
+        const match = program.zones.find((z) => z.zoneLabel === zoneText);
+        if (input && match) {
+          input.value = match.runTime;
+        }
+      });
+    }
+
+    function renderZones() {
+      const zones = getZonesForController(controllerId);
+      zonesTableBody.innerHTML = zones.map((zone, index) => `
+        <tr>
+          <td>
+            <div class="slds-truncate" title="${zone.name}">${zone.id} - ${zone.name}</div>
+          </td>
+          <td>
+            <input
+              type="number"
+              class="slds-input"
+              min="0"
+              value="${index === 0 ? 10 : 0}"
+              aria-label="Run time for ${zone.name}"
+            />
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    if (contextLabel) {
+      contextLabel.textContent = `Manage schedules and zone runtimes for ${controllerName} (${controllerId})`;
+    }
+
+    function openModal() {
+      if (!editingProgramId) {
+        resetForm();
+      }
+      modal.classList.remove('hidden');
+      modal.classList.add('slds-fade-in-open');
+      document.body.classList.add('slds-modal-open');
+      programNameInput.focus();
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('slds-fade-in-open');
+      document.body.classList.remove('slds-modal-open');
+      editingProgramId = null;
+      setFormError('');
+    }
+
+    programForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = collectFormData();
+      const validationError = validateForm(data);
+      if (validationError) {
+        setFormError(validationError);
+        return;
+      }
+
+      if (editingProgramId) {
+        programs = programs.map((program) => {
+          if (program.id !== editingProgramId) {
+            return program;
+          }
+          return {
+            ...program,
+            name: data.name,
+            days: data.days,
+            startTimes: data.startTimes,
+            zones: data.zones,
+            manualOverride: data.manualOverride
+          };
+        });
+      } else {
+        programs.unshift({
+          id: newProgramId(),
+          name: data.name,
+          days: data.days,
+          startTimes: data.startTimes,
+          zones: data.zones,
+          manualOverride: data.manualOverride
+        });
+      }
+
+      renderProgramsTable();
+      persistPrograms();
+      closeModal();
+    });
+
+    addStartTimeBtn.addEventListener('click', () => {
+      addStartTimeRow('');
+    });
+
+    startTimesList.addEventListener('click', (event) => {
+      const removeBtn = event.target.closest('.remove-start-time');
+      if (!removeBtn) {
+        return;
+      }
+      const row = removeBtn.closest('.start-time-row');
+      if (row) {
+        row.remove();
+        refreshStartTimeRemoveState();
+      }
+    });
+
+    duplicateBtn.addEventListener('click', () => {
+      const data = collectFormData();
+      const validationError = validateForm(data);
+      if (validationError) {
+        setFormError(validationError);
+        return;
+      }
+      programs.unshift({
+        id: newProgramId(),
+        name: `${data.name} Copy`,
+        days: data.days,
+        startTimes: data.startTimes,
+        zones: data.zones,
+        manualOverride: data.manualOverride
+      });
+      renderProgramsTable();
+      persistPrograms();
+      closeModal();
+    });
+
+    programsTableBody.addEventListener('click', (event) => {
+      const actionBtn = event.target.closest('button[data-action]');
+      if (!actionBtn) {
+        return;
+      }
+      const row = actionBtn.closest('tr[data-program-id]');
+      if (!row) {
+        return;
+      }
+      const programId = row.getAttribute('data-program-id');
+      const action = actionBtn.getAttribute('data-action');
+      const selectedProgram = programs.find((program) => program.id === programId);
+      if (!selectedProgram) {
+        return;
+      }
+
+      if (action === 'edit') {
+        loadProgramIntoForm(selectedProgram);
+        openModal();
+        return;
+      }
+
+      if (action === 'duplicate') {
+        programs.unshift({
+          ...selectedProgram,
+          id: newProgramId(),
+          name: `${selectedProgram.name} Copy`,
+          zones: selectedProgram.zones.map((zone) => ({ ...zone }))
+        });
+        renderProgramsTable();
+        persistPrograms();
+        return;
+      }
+
+      if (action === 'delete') {
+        programs = programs.filter((program) => program.id !== programId);
+        renderProgramsTable();
+        persistPrograms();
+      }
+    });
+
+    newBtn && newBtn.addEventListener('click', openModal);
+    closeBtn && closeBtn.addEventListener('click', closeModal);
+    cancelBtn && cancelBtn.addEventListener('click', closeModal);
+
+    programs = loadProgramsFromStorage(controllerId);
+    resetForm();
+    renderProgramsTable();
+  </script>
+</body>
+</html>

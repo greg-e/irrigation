@@ -434,6 +434,39 @@ body.map-only-layout .map-root {
   padding: 1.5rem;
 }
 
+.link-dialog-context {
+  margin: 0.5rem 0 0;
+  color: var(--subtle);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  max-width: 36ch;
+}
+
+.link-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.link-mode-btn {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.link-mode-btn.is-active {
+  border-color: var(--brand);
+  background: #e8f1fe;
+  color: #0b5cab;
+}
+
+.link-mode-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(11, 92, 171, 0.2);
+}
+
 .slds-modal__content {
   background: white;
 }
@@ -683,5 +716,9 @@ body.map-only-layout .map-root {
 
   .map-root {
     min-height: 380px;
+  }
+
+  .link-mode-toggle {
+    grid-template-columns: 1fr;
   }
 }

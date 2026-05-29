@@ -57,6 +57,27 @@ function markerGlyphForAssetType(assetType) {
   return glyphByType[typeKey] || "M";
 }
 
+function markerGlyphForFeature(feature) {
+  const typeKey = String(feature?.assetType || "").trim().toLowerCase();
+  if (typeKey !== "zone") {
+    return markerGlyphForAssetType(typeKey);
+  }
+
+  const nameSource = String(feature?.name || "");
+  const idSource = String(feature?.assetId || "");
+  const zoneMatch = nameSource.match(/zone[^0-9]*([0-9]+)/i) || idSource.match(/zone[^0-9]*([0-9]+)/i);
+  if (!zoneMatch) {
+    return "Z";
+  }
+
+  const n = Number(zoneMatch[1]);
+  if (!Number.isFinite(n) || n <= 0) {
+    return "Z";
+  }
+
+  return `Z${n}`;
+}
+
 function markerPaletteForAssetType(assetType) {
   const typeKey = String(assetType || "").trim().toLowerCase();
   const paletteByType = {
@@ -92,7 +113,7 @@ function applyStatusMarkerPalette(basePalette, assetStatus) {
 }
 
 function buildMarkerOptions(feature) {
-  const typeLabel = markerGlyphForAssetType(feature.assetType);
+  const typeLabel = markerGlyphForFeature(feature);
   const basePalette = markerPaletteForAssetType(feature.assetType);
   const palette = applyStatusMarkerPalette(basePalette, feature.assetStatus);
   const statusText = feature.assetStatus ? ` (${feature.assetStatus})` : "";
@@ -382,10 +403,6 @@ export class GoogleMapAdapter {
 
   createOverlay(feature) {
     if (feature.type === FEATURE_TYPES.MARKER) {
-      // Skip rendering lat/lon auto-markers — locations already visible on map
-      if (feature.isLatLon) {
-        return null;
-      }
       return new google.maps.Marker(buildMarkerOptions(feature));
     }
 

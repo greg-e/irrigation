@@ -95,3 +95,47 @@ The following irrigation components must be cataloged as discrete Assets under t
 ## Status
 
 In progress — solution design phase.
+
+## Prototype Regression Suite
+
+The workspace includes an automated regression suite for the current V4 mobile prototype state.
+
+- Test framework: Playwright
+- Test file: `tests/regression/mobile-v4.regression.spec.js`
+- Config: `playwright.config.js`
+- Default target: local file URL for `prototype/v4/mobileV4.html`
+
+### Setup
+
+1. Install Node.js 18+.
+2. Install dependencies:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+### Run
+
+```bash
+npm run test:regression
+```
+
+Optional modes:
+
+```bash
+npm run test:regression:headed
+npm run test:regression:ui
+npm run test:regression:report
+```
+
+### Covered Baseline Flows
+
+- MAP control baseline and edit gating state.
+- Map fullscreen toggle, escape exit, and tab-switch exit.
+- Asset Tool Tip metadata suppression regression.
+- Assets dialog to Add Asset sheet stacking flow.
+- Output dialog to Checklist composer stacking flow.
+- Desktop V4 shell smoke checks (tabs and record header).
+- Desktop report shell smoke checks (queue/stat section).
+- Controller program modal open/close smoke checks.

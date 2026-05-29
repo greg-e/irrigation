@@ -128,7 +128,8 @@
   <dialog id="link-dialog" class="slds-modal slds-fade-in-open">
     <div class="slds-modal__container">
       <div class="slds-modal__header">
-        <h2 class="slds-modal__title slds-hyphenate">Link Point To Component</h2>
+        <h2 id="link-dialog-title" class="slds-modal__title slds-hyphenate">Add Asset Marker</h2>
+        <p id="link-dialog-context" class="link-dialog-context">Choose an existing component or create a new one and link this map placement.</p>
         <button id="link-cancel-header" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
           <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 520 520">
             <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#close"></use>
@@ -139,12 +140,14 @@
       <div class="slds-modal__content slds-var-p-around_medium">
         <div class="slds-form-element slds-var-m-bottom_medium">
           <label class="slds-form-element__label" for="link-action-mode">Start With</label>
-          <div class="slds-form-element__control">
-            <select id="link-action-mode" class="slds-select">
-              <option value="link" selected>Link Existing Component</option>
-              <option value="new">Create New Component</option>
-            </select>
+          <div class="link-mode-toggle" role="group" aria-label="Start with">
+            <button id="link-mode-link" class="slds-button slds-button_neutral link-mode-btn is-active" type="button" aria-pressed="true">Link Existing</button>
+            <button id="link-mode-new" class="slds-button slds-button_neutral link-mode-btn" type="button" aria-pressed="false">Create New</button>
           </div>
+          <select id="link-action-mode" class="slds-select slds-hide" aria-hidden="true" tabindex="-1">
+            <option value="link" selected>Link Existing Component</option>
+            <option value="new">Create New Component</option>
+          </select>
         </div>
 
         <div id="link-existing-section" class="slds-var-m-vertical_small">
@@ -180,9 +183,9 @@
         </div>
       </div>
       <div class="slds-modal__footer slds-grid slds-grid_align-end slds-gap_x-small">
-        <button id="link-skip" class="slds-button slds-button_neutral">Cancel</button>
+        <button id="link-skip" class="slds-button slds-button_neutral">Not Now</button>
         <button id="link-create-confirm" class="slds-button slds-button_brand slds-hide">Create + Link</button>
-        <button id="link-confirm" class="slds-button slds-button_brand">Link Selected</button>
+        <button id="link-confirm" class="slds-button slds-button_brand">Link Component</button>
       </div>
     </div>
   </dialog>

@@ -35,8 +35,11 @@ const ui = {
   reloadBtn: document.getElementById("reload-btn"),
   toolButtons: Array.from(document.querySelectorAll("[data-tool]")),
   linkDialog: document.getElementById("link-dialog"),
+  linkDialogContext: document.getElementById("link-dialog-context"),
   linkBackdrop: document.getElementById("link-backdrop"),
   linkActionMode: document.getElementById("link-action-mode"),
+  linkModeLinkBtn: document.getElementById("link-mode-link"),
+  linkModeNewBtn: document.getElementById("link-mode-new"),
   linkExistingSection: document.getElementById("link-existing-section"),
   linkNewSection: document.getElementById("link-new-section"),
   linkSelect: document.getElementById("link-component-select"),
@@ -596,8 +599,11 @@ function createAssetFromMapInput({ typeKey, rawName, parentId, geometryFeature }
 
 async function promptComponentLink(defaultAssetId = "", geometryFeature = null) {
   const dialog = ui.linkDialog;
+  const dialogContext = ui.linkDialogContext;
   const backdrop = ui.linkBackdrop;
   const actionMode = ui.linkActionMode;
+  const modeLinkBtn = ui.linkModeLinkBtn;
+  const modeNewBtn = ui.linkModeNewBtn;
   const existingSection = ui.linkExistingSection;
   const newSection = ui.linkNewSection;
   const select = ui.linkSelect;
@@ -611,6 +617,23 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
 
   if (!dialog || !backdrop || !actionMode || !existingSection || !newSection || !select || !confirmBtn || !createBtn || !createType || !createName || !createParent || !skipBtn || !cancelHeaderBtn) {
     return defaultAssetId || "";
+  }
+
+  const describeGeometry = (draft) => {
+    const geometryType = featureTypeLabel(draft?.type || "marker");
+    const coordinates = draft?.geometry?.coordinates;
+    if (Array.isArray(coordinates) && coordinates.length >= 2) {
+      const lon = Number(coordinates[0]);
+      const lat = Number(coordinates[1]);
+      if (Number.isFinite(lat) && Number.isFinite(lon)) {
+        return `${geometryType} at ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      }
+    }
+    return geometryType;
+  };
+
+  if (dialogContext) {
+    dialogContext.textContent = `Choose an existing component or create a new one and link this ${describeGeometry(geometryFeature)}.`;
   }
 
   const linkOptions = linkableComponentCandidates();
@@ -627,6 +650,18 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
     "";
   select.value = preferred;
   confirmBtn.disabled = linkOptions.length === 0;
+
+  const syncModeButtons = (mode) => {
+    const isLink = mode !== "new";
+    if (modeLinkBtn) {
+      modeLinkBtn.classList.toggle("is-active", isLink);
+      modeLinkBtn.setAttribute("aria-pressed", isLink ? "true" : "false");
+    }
+    if (modeNewBtn) {
+      modeNewBtn.classList.toggle("is-active", !isLink);
+      modeNewBtn.setAttribute("aria-pressed", !isLink ? "true" : "false");
+    }
+  };
 
   const syncNewComponentInputs = () => {
     const parentOptions = parentCandidatesForType(createType.value);
@@ -649,15 +684,25 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
 
   const syncActionMode = () => {
     const isLink = actionMode.value !== "new";
+    syncModeButtons(actionMode.value);
     existingSection.classList.toggle("slds-hide", !isLink);
     newSection.classList.toggle("slds-hide", isLink);
     confirmBtn.classList.toggle("slds-hide", !isLink);
     createBtn.classList.toggle("slds-hide", isLink);
-    if (!isLink) syncNewComponentInputs();
+    if (!isLink) {
+      syncNewComponentInputs();
+      createType.focus();
+      return;
+    }
+    if (!confirmBtn.disabled) select.focus();
   };
 
-  actionMode.value = "link";
-  syncActionMode();
+  const setActionMode = (mode) => {
+    actionMode.value = mode === "new" ? "new" : "link";
+    syncActionMode();
+  };
+
+  setActionMode("link");
 
   dialog.showModal();
   backdrop.classList.remove("slds-backdrop_hide");
@@ -669,6 +714,8 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
       backdrop.classList.add("slds-backdrop_hide");
       backdrop.classList.remove("slds-backdrop_open");
       actionMode.removeEventListener("change", onModeChange);
+      modeLinkBtn?.removeEventListener("click", onModeLinkClick);
+      modeNewBtn?.removeEventListener("click", onModeNewClick);
       createType.removeEventListener("change", onCreateInputsChange);
       createParent.removeEventListener("change", onCreateInputsChange);
       confirmBtn.removeEventListener("click", onConfirm);
@@ -679,6 +726,8 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
     };
 
     const onModeChange = () => syncActionMode();
+    const onModeLinkClick = () => setActionMode("link");
+    const onModeNewClick = () => setActionMode("new");
     const onCreateInputsChange = () => syncNewComponentInputs();
     const onConfirm = () => close(select.value || "");
     const onCreate = () => {
@@ -704,6 +753,8 @@ async function promptComponentLink(defaultAssetId = "", geometryFeature = null) 
     const onCancel = () => close(null);
 
     actionMode.addEventListener("change", onModeChange);
+  modeLinkBtn?.addEventListener("click", onModeLinkClick);
+  modeNewBtn?.addEventListener("click", onModeNewClick);
     createType.addEventListener("change", onCreateInputsChange);
     createParent.addEventListener("change", onCreateInputsChange);
     confirmBtn.addEventListener("click", onConfirm);
@@ -775,7 +826,7 @@ function focusMapOnFeature(feature, zoom = 19) {
 }
 
 function selectAssetContext(assetId, options = {}) {
-  const { shouldFocusMap = true } = options;
+  const { shouldFocusMap = true, selectionSource = "sync" } = options;
   const asset = assetById(assetId);
   if (!asset) return;
 
@@ -790,7 +841,7 @@ function selectAssetContext(assetId, options = {}) {
       focusMapOnFeature(linkedFeature, Number(config.selectionZoom || 19));
     }
     setStatus(`Selected ${asset.name} with mapped geometry ${linkedFeature.name}.`);
-    notifyParentMapObjectSelected(linkedFeature);
+    notifyParentMapObjectSelected(linkedFeature, selectionSource);
   } else {
     state.selectedFeatureId = null;
     if (shouldFocusMap) {
@@ -806,6 +857,7 @@ function selectAssetContext(assetId, options = {}) {
           assetId: asset.id,
           featureId: null,
           shouldOpenDetail: !mapOnlyEditEnabled,
+          selectionSource,
         },
         "*"
       );
@@ -933,12 +985,12 @@ function renderFeatureList() {
     if (assetSelector) {
       assetSelector.addEventListener("click", (event) => {
         event.stopPropagation();
-        selectAssetContext(asset.id, { shouldFocusMap: true });
+        selectAssetContext(asset.id, { shouldFocusMap: true, selectionSource: "hierarchy" });
       });
     }
 
     li.addEventListener("click", () => {
-      selectAssetContext(asset.id, { shouldFocusMap: true });
+      selectAssetContext(asset.id, { shouldFocusMap: true, selectionSource: "hierarchy" });
     });
 
     ui.featureList.appendChild(li);
@@ -985,7 +1037,7 @@ function notifyParentAssetLocation(assetId, feature) {
   );
 }
 
-function notifyParentMapObjectSelected(feature) {
+function notifyParentMapObjectSelected(feature, selectionSource = "map") {
   if (!feature?.assetId || window.parent === window) return;
   window.parent.postMessage(
     {
@@ -993,6 +1045,7 @@ function notifyParentMapObjectSelected(feature) {
       assetId: feature.assetId,
       featureId: feature.id,
       shouldOpenDetail: !mapOnlyEditEnabled,
+      selectionSource,
     },
     "*"
   );
@@ -1027,14 +1080,15 @@ function syncLatLonFeatures() {
     .forEach((f) => mapAdapter.removeFeature(f.id));
   state.features = state.features.filter((f) => !f.isLatLon);
 
-  // Keep map-only UI clean; lat/lon auto-markers are too dense for mobile workflows.
-  if (layoutMode === "map-only") {
-    return;
-  }
-
-  // Add a marker for every active asset that has lat+lon
+  // Add a marker for active assets with lat/lon only when they do not already
+  // have explicit drawn geometry linked in the map dataset.
   state.assets
-    .filter((a) => a.status !== "Retired" && a.lat != null && a.lon != null)
+    .filter((a) => {
+      if (a.status === "Retired") return false;
+      if (a.lat == null || a.lon == null) return false;
+      if (hasMappedLocation(a.id)) return false;
+      return true;
+    })
     .forEach((asset) => {
       const feature = {
         id: `latlon-${asset.id}`,
@@ -1183,7 +1237,8 @@ async function deleteGeometryForAsset(assetId) {
     return;
   }
 
-  if (!mapOnlyEditEnabled) {
+  const canDeleteGeometry = geometryEditingEnabled || mapOnlyEditEnabled;
+  if (!canDeleteGeometry) {
     const msg = "Enable edit mode first to delete map geometry.";
     setStatus(msg);
     notifyParentGeometryDeleted(assetId, 0, msg, false);
@@ -1322,7 +1377,7 @@ async function start() {
     updateActionButtons();
     renderFeatureList();
     if (feature) {
-      notifyParentMapObjectSelected(feature);
+      notifyParentMapObjectSelected(feature, "map");
       setStatus(`Selected ${feature.name}`);
     }
     scrollActiveItemIntoView();
@@ -1420,7 +1475,7 @@ async function start() {
 
   // If map is launched with a selected asset context, focus that component first.
   if (context.assetId && assetById(context.assetId)) {
-    selectAssetContext(context.assetId, { shouldFocusMap: true });
+    selectAssetContext(context.assetId, { shouldFocusMap: true, selectionSource: "sync" });
   } else {
     // Otherwise use system-level centering fallback.
     centerMapOnSystem();
@@ -1514,7 +1569,7 @@ window.addEventListener("message", (event) => {
   if (msg.type === "SPATIAL_SELECT_ASSET_CONTEXT") {
     const assetId = String(msg.assetId || "").trim();
     if (!assetId) return;
-    selectAssetContext(assetId, { shouldFocusMap: msg.shouldFocusMap !== false });
+    selectAssetContext(assetId, { shouldFocusMap: msg.shouldFocusMap !== false, selectionSource: "sync" });
     return;
   }
 
