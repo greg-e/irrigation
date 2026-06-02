@@ -159,11 +159,13 @@ export class GoogleMapAdapter {
   async init() {
     await ensureGoogleMapsLoaded(this.options.apiKey);
     const hideMapUiControls = Boolean(this.options.hideMapUiControls);
+    const gestureHandling = this.options.gestureHandling || "auto";
 
     this.map = new google.maps.Map(this.rootEl, {
       center: this.options.center,
       zoom: this.options.zoom,
       mapTypeId: "satellite",
+      gestureHandling,
       disableDefaultUI: hideMapUiControls,
       streetViewControl: false,
       fullscreenControl: false,

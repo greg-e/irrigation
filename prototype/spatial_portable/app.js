@@ -13,6 +13,7 @@ const layoutMode = urlParams.get("layout") || "default";
 let mapOnlyEditEnabled = layoutMode === "map-only" && urlParams.get("geomEdit") === "1";
 const hideMapUiControlsInMapOnly = layoutMode === "map-only";
 let geometryEditingEnabled = layoutMode !== "map-only" || mapOnlyEditEnabled;
+const gestureHandlingMode = layoutMode === "map-only" ? "greedy" : "auto";
 
 if (layoutMode === "map-only") {
   document.body.classList.add("map-only-layout");
@@ -72,6 +73,7 @@ const mapAdapter = new GoogleMapAdapter(document.getElementById("map-root"), {
   center: config.defaultCenter || { lat: 33.91551710426391, lng: -84.51719913959514 },
   zoom: Number(config.defaultZoom || 15),
   hideMapUiControls: hideMapUiControlsInMapOnly,
+  gestureHandling: gestureHandlingMode,
   allowAutoFeatureEditing: mapOnlyEditEnabled,
   allowFeatureEditing: geometryEditingEnabled,
 });
