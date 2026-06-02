@@ -135,16 +135,19 @@ Note: platform-managed fields such as record IDs, created/updated timestamps, an
 
 **Supported Standard types:**
 1. System.
-2. Source.
-3. Backflow.
-4. Controller.
-5. Zone.
+2. Point of Connection.
+3. Pump.
+4. Backflow.
+5. Master Valve.
+6. Flow Sensor.
+7. Controller.
+8. Zone.
 
-**Supported optional operational/component types** (implementation-configurable), captured in the parent asset context rather than as standalone assets:
-1. Pump.
-2. Valve.
-3. Head.
-4. Drip.
+**Supported optional operational/component metadata** (implementation-configurable), captured in the parent asset context rather than as standalone assets:
+1. Valve.
+2. Head.
+3. Drip.
+4. Station details.
 
 #### 6.1.3 Service Appointment
 
@@ -267,14 +270,17 @@ Use this record when a checklist response becomes something the branch must act 
 ### 6.2 Relationship Rules
 
 1. Each Property has exactly one active System.
-2. Source parent must be System.
-3. Backflow parent must be Source.
-4. Controller parent must be Backflow.
-5. Zone parent must be Controller.
-6. Non-root assets require valid parent of allowed type.
-7. Zone display name normalizes to "Zone N".
-8. Zone number must be unique within a Controller scope.
-9. Assets are retired, not hard deleted.
+2. Point of Connection parent must be System.
+3. Pump parent must be Point of Connection.
+4. Backflow parent must be Point of Connection.
+5. Master Valve parent must be Point of Connection.
+6. Flow Sensor parent must be Point of Connection.
+7. Controller parent must be Point of Connection.
+8. Zone parent must be Controller.
+9. Non-root assets require valid parent of allowed type.
+10. Zone display name normalizes to "Zone N".
+11. Zone number must be unique within a Controller scope.
+12. Assets are retired, not hard deleted.
 
 ## 7. What Needs to Be Captured by Asset Type
 
@@ -295,14 +301,29 @@ Use this record when a checklist response becomes something the branch must act 
 2. Mainline Pipe Size (optional).
 3. Serial Number (optional).
 
-**Source:**
+**Point of Connection:**
 1. Water Source Type.
 2. Source Capacity (optional).
+
+**Pump:**
+1. Operational Status (optional).
+2. Pressure (PSI) (optional).
+3. Pump Type (optional).
 
 **Backflow:**
 1. Backflow Type (required at create/edit guard).
 2. Serial Number (optional).
 3. Test/compliance fields (last test date/result, next test due, compliance status, testing authority).
+
+**Master Valve:**
+1. Operational Status (optional).
+2. Valve Type (optional).
+3. Solenoid Resistance (optional).
+
+**Flow Sensor:**
+1. Functional Status (optional).
+2. Sensor Model (optional).
+3. Flow Reading (GPM) (optional).
 
 **Controller:**
 1. Controller Label (required).
@@ -320,8 +341,54 @@ Use this record when a checklist response becomes something the branch must act 
 5. Distribution Method (optional).
 6. Lateral Pipe Type/Size (optional).
 7. Solenoid Resistance (optional).
+8. Valve Type (optional).
+9. Station Identifier (optional).
+10. Station Electrical Status (optional).
 
-### 7.3 Zone Sync Rules
+### 7.3 Checklist Coverage by Component
+
+**System:**
+1. Mainline leak visibility.
+2. Mainline pressure stability.
+3. Isolation valve condition.
+4. Quick-coupler valve condition (where applicable).
+
+**Point of Connection:**
+1. Water restrictions in place.
+2. Restriction details when applicable.
+
+**Pump:**
+1. Pump operational state (conditional when present).
+2. Pump pressure reading.
+3. Abnormal cycling/noise check.
+
+**Backflow:**
+1. Visible damage and leak checks.
+2. Test-required and test-passed branching.
+3. Certificate upload when testing is performed.
+
+**Master Valve:**
+1. Operational check (conditional when present).
+2. Leak/seepage check.
+3. Manual-override serviceability check.
+
+**Flow Sensor:**
+1. Installed/connected check (conditional when present).
+2. Reading plausibility check.
+3. Fault/alarm state check.
+
+**Controller:**
+1. Power/sensor/state checks.
+2. Program compliance and adjustment capture.
+3. Winterization branch where applicable.
+
+**Zone:**
+1. Runtime and condition prompts.
+2. Failure prompts for head/nozzle/valve/lateral/drip conditions.
+3. Repair capture and notes.
+4. Station wiring fault check.
+
+### 7.4 Zone Sync Rules
 
 **When Controller Total Zones changes:**
 

@@ -6,7 +6,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 
 ## Core Objectives
 
-- **Asset Catalog**: Track Standard irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Source, Backflow, Controller, and Zone.
+- **Asset Catalog**: Track Standard irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
 - **Asset-to-Service Appointment Linkage**: Associate irrigation work type service appointments with specific assets so repair history is captured at the component level.
 - **Estimate Workflow**: Generate estimates (quotes/work orders) directly from a service appointment context, enabling rapid customer review and digital approval so crews can proceed without delays.
 
@@ -45,11 +45,20 @@ The following irrigation components must be cataloged as discrete Assets under t
 #### Systems
 - System identity, install/lifecycle context, and top-level hierarchy anchor
 
-#### Sources
+#### Point of Connection
 - Water source type, capacity, notes, and location context
+
+#### Pumps
+- Pump operational context and pressure readings when present on the point of connection
 
 #### Backflows
 - Model, serial number, install date, last test date, test results, compliance status
+
+#### Master Valves
+- Master valve state, operational status, and service history when installed
+
+#### Flow Sensors
+- Flow sensor presence, telemetry/functional status, and diagnostics where available
 
 #### Controllers
 - Make/model, serial number, number of zones supported, install date, connectivity type (WiFi, wired, etc.)

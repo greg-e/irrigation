@@ -79,7 +79,7 @@ The business needs Account Managers working outside FSM Mobile to prepare irriga
 ### Included Acceptance Criteria
 
 1. Related irrigation assets are added and updated by AM users in Salesforce app without FSM Mobile dependency.
-2. Setup outcomes preserve required hierarchy rules across System, Source, Backflow, Controller, and Zone.
+2. Setup outcomes preserve required hierarchy rules across System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
 3. Map locations for related irrigation assets are added and updated by AM users in Salesforce app.
 4. Setup and location updates persist to the same asset and map records consumed by FSM Mobile inspection workload.
 5. Setup/location changes maintain traceability to the acting user and timestamp.
@@ -99,7 +99,7 @@ The business needs Account Managers working outside FSM Mobile to prepare irriga
 8. FSM Mobile carries the Service Appointment inspection workload, including checklist execution, callout recording, and SA completion.
 9. Desktop and Salesforce Mobile channels do not perform Service Appointment inspection completion.
 10. Asset selection from map context leads directly to checklist and asset-detail actions.
-11. Checklist content is organized by asset type for system, source, backflow, controller, and zone contexts.
+11. Checklist content is organized by asset type for system, point of connection, pump, backflow, master valve, flow sensor, controller, and zone contexts.
 12. Required response types are captured successfully, including boolean, count, number, and text.
 13. Findings include resolved-on-visit outcomes and display dependent prompts where applicable.
 14. Asset-level evidence includes both photo attachment and photo removal outcomes.
@@ -111,7 +111,7 @@ The business needs Account Managers working outside FSM Mobile to prepare irriga
 20. Working context is preserved across tab switches, panel changes, and responsive layout changes.
 21. Geometry interaction outcomes include selected-asset map context, edit mode entry, and asset creation where workflow permits.
 22. FSM Mobile execution meets field-usage expectations for speed, clarity, and low-friction navigation.
-23. Asset-scoped inspection questions align to Standard irrigation hierarchy assets: System, Source, Backflow, Controller, and Zone.
+23. Asset-scoped inspection questions align to Standard irrigation hierarchy assets: System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
 24. Checkout review supports clear suggestion disposition outcomes: confirmed, dismissed, or merged before callout recording.
 25. Suggestions are categorized and grouped as `Repair` and `Enhancement` callout types in checkout review.
 

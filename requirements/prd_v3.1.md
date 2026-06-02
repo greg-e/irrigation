@@ -117,19 +117,25 @@ Standards are only as strong as the process that makes them easy to follow, visi
 Supported asset taxonomy:
 
 1. System
-2. Source
-3. Backflow
-4. Controller
-5. Zone
+2. Point of Connection
+3. Pump
+4. Backflow
+5. Master Valve
+6. Flow Sensor
+7. Controller
+8. Zone
 
 Parenting rules:
 
 1. Each Property has exactly one System.
-2. Source must belong to a System.
-3. Backflow must belong to a Source.
-4. Controller must belong to a Backflow.
-5. Zone must belong to a Controller.
-6. Additional equipment details (for example valve/head/drip/pump details) are stored as component metadata on the Standard hierarchy records, not as separate assets.
+2. Point of Connection must belong to a System.
+3. Pump must belong to a Point of Connection.
+4. Backflow must belong to a Point of Connection.
+5. Master Valve must belong to a Point of Connection.
+6. Flow Sensor must belong to a Point of Connection.
+7. Controller must belong to a Point of Connection.
+8. Zone must belong to a Controller.
+9. Zone valve/station details are represented as zone-linked metadata.
 
 ### 7.2 Inspection Checklist Outputs Model
 
@@ -141,6 +147,30 @@ Parenting rules:
 
 1. `Map_Feature__c`: geometry type, GeoJSON payload, source/confidence metadata, account/asset links.
 2. `Irrigation_Program__c`: controller-scoped schedule and zone linkage metadata.
+
+### 7.4 Asset Metadata Coverage by Component
+
+1. System: mainline pipe type/size, serial number, install/lifecycle context.
+2. Point of Connection: water source type, source capacity, restriction context.
+3. Pump: operational status, pressure reading, pump type.
+4. Backflow: backflow type, serial number, test/compliance dates/results, testing authority.
+5. Master Valve: operational status, valve type, serviceability diagnostics.
+6. Flow Sensor: functional status, sensor model, observed flow reading.
+7. Controller: controller label, total zones, make/model, connectivity, smart-controller flag, app/platform.
+8. Zone: zone number, area served, flow rate, head/distribution context, lateral pipe fields, solenoid resistance.
+9. Zone-linked subcomponent metadata: valve type and station mapping/electrical status are stored on the zone context.
+
+### 7.5 Checklist Coverage by Component
+
+1. System checklist includes mainline pressure/leak and isolation/quick-coupler condition prompts.
+2. Point of Connection checklist includes water restrictions and related details.
+3. Pump checklist includes operational state, pressure capture, and abnormal cycle/noise check.
+4. Backflow checklist includes visual condition, leak checks, and conditional compliance test prompts.
+5. Master Valve checklist includes operational check, leak check, and manual-override serviceability.
+6. Flow Sensor checklist includes install/connectivity state, plausibility of reading, and fault/alarm state.
+7. Controller checklist includes power/sensor/program controls and adjustment/winterization prompts.
+8. Zone checklist includes runtime/condition/failure prompts, repair capture, and station-wiring checks.
+9. Checklist output summary must be maintained by asset type across all listed components.
 
 ## 8. Lightning Record Experience Specification
 
@@ -187,7 +217,7 @@ Visibility rules:
 
 1. Enforce type-specific required fields.
 2. Enforce uniqueness of hierarchy identifiers within property scope.
-3. Enforce strict parent requirements for Source, Backflow, Controller, and Zone.
+3. Enforce strict parent requirements for Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
 4. Keep selected asset context synchronized across tabs and deep links.
 
 ### FR-4 Map Workflows
