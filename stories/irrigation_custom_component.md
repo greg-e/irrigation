@@ -2,28 +2,29 @@
 
 ## Job Story
 
-The business needs one irrigation workspace for both system setup and in-visit execution, the need is for a custom Lightning Web Component that supports setup/location authoring across Desktop, Salesforce Mobile, and FSM Mobile with Service Appointment inspection workload in FSM Mobile, to output one consistent asset-centric experience where setup data and field execution stay connected.
+When users need to manage irrigation setup and execute mobile WOLI inspections in one workspace, I want a custom Lightning Web Component that combines desktop record management with a mobile WOLI runtime, so I can keep asset context, checklist output, and submission gating in one connected flow.
 
 ## Business Value
 
-- Creates a single custom workspace instead of split tooling for setup and field execution.
-- Enables Desktop, Salesforce Mobile, and FSM Mobile users to complete setup and map-location authoring directly in the same component.
-- Keeps setup, map, asset, checklist, and submission data synchronized in one runtime surface.
-- Preserves operational guardrails and traceability across channel-specific responsibilities.
+- Creates one custom workspace for desktop asset management and mobile WOLI execution instead of split tooling.
+- Keeps asset, map, checklist, callout, and submission data synchronized in one runtime surface.
+- Preserves operational guardrails and traceability across desktop and mobile channel responsibilities.
+- Supports faster setup-to-execution handoff for office users and field users.
 
 ## Scope
 
 This story covers the custom LWC irrigation workspace experience, including:
 
-- map-first asset interaction
-- setup workflows for adding related assets
-- location workflows for adding or editing map locations tied to related assets
-- selected asset context and hierarchy awareness
-- asset-type checklist rendering
-- finding capture and resolved-on-visit handling
-- photo and evidence support
-- summary and submit gating behavior
-- channel-specific behavior across desktop, Salesforce Mobile, and FSM Mobile wrappers
+- desktop record workspace tabs for Details, Irrigation, Program, Related, Chatter, and History
+- desktop asset create/edit/retire modal workflows with type-specific fields
+- desktop map embed and map context sync
+- desktop controller program CRUD
+- desktop property pivot controls for previous/next property and property selector navigation
+- mobile Work Order mode and WOLI mode
+- mobile map-first workflow with asset selection, full-screen map mode, and map edit controls
+- mobile checklist composer by asset type with issue detection and resolution state
+- mobile submission gating based on checklist output, no-touch policy, and AM assignment
+- local session persistence for irrigation WOLIs
 
 ## Asset Context Hierarchy
 
@@ -33,99 +34,94 @@ Account / Property
     └── Source
         └── Backflow
             └── Controller
-                ├── Programs
                 ├── Zone 1
                 └── Zone 2
 ```
 
+Component variants such as Valve, Head, and Drip Emitter Group are handled as map-linked component variants where applicable.
+
 ## Component Model
 
-- Base component pattern: custom LWC runtime with channel-specific wrappers for desktop, Salesforce Mobile, and FSM Mobile.
+- Base component pattern: custom LWC runtime with a desktop record workspace and a mobile WOLI execution workspace.
 - Entry rule: map entry is always in asset context; no out-of-context map launch.
+- Desktop responsibility boundary: hierarchy management, map authoring, controller program management, related records, and property pivot navigation.
+- Mobile responsibility boundary: inspection execution, checklist output capture, callout recording, and submit gating.
+- Salesforce remains the system of record for assets, checklist findings, callouts, and map metadata.
 - Mobile interaction model: map-first with bottom sheet as the primary control surface.
-- Salesforce data boundary: Salesforce remains the system of record for assets, checklist findings, and map metadata.
-- Channel responsibility boundary for Desktop and Salesforce Mobile: setup and location authoring tasks, including related-asset add/edit and map location updates.
-- Channel responsibility boundary for FSM Mobile: supports setup/location authoring and carries Service Appointment inspection workload, including checklist execution, callout recording, and SA completion.
-- System boundary: Service Appointment inspection completion and Asset checklist callout recording are executed in this Irrigation Custom Component flow.
+- System boundary: Service Appointment or WOLI completion and Asset checklist callout recording are executed in this Irrigation Custom Component flow.
 
 ## Platform Boundaries
 
 | Platform | Primary Purpose | In Scope | Out of Scope |
 | --- | --- | --- | --- |
-| Desktop | Setup and location authoring | Add/edit related irrigation assets, maintain hierarchy relationships, add/update map locations, review asset/map context | Service Appointment inspection completion |
-| Salesforce Mobile | Setup and location authoring in mobile shell | Add/edit related irrigation assets, maintain hierarchy relationships, add/update map locations, review asset/map context | Service Appointment inspection completion |
-| FSM Mobile | Service Appointment inspection execution plus setup/location support | Run SA inspection workload, complete checklist, record Asset checklist callouts, complete SA, and perform setup/location authoring when needed | None specific to setup/location in this story |
+| Desktop | Record workspace and map authoring | Add/edit related irrigation assets, maintain hierarchy relationships, add/update map locations, manage controller programs, review related records | WOLI completion and submit gating |
+| Mobile | WOLI execution workspace | Run inspection workload, complete checklist, record Asset checklist callouts, complete submit flow, and perform setup/location authoring when needed | Non-irrigation WOLIs beyond standard-flow placeholder behavior |
 
-## Included Story: Irrigation AM Salesforce App Setup and Location Support
+## Included Story: Mobile WOLI Output and AM Handoff
 
 ### Included Job Story
 
-The business needs Account Managers working outside FSM Mobile to prepare irrigation data before or between service visits, the need is for Salesforce app support to perform setup and map-location updates for related irrigation assets, to output current and accurate asset/location context for field teams executing Service Appointment inspection workload in FSM Mobile.
+When a mobile user completes irrigation inspection work, I want checklist output, findings, and AM assignment checks to gate submit, so I can complete a WOLI with auditable outcomes ready for handoff.
 
 ### Included Scope Outcomes
 
-- Related irrigation assets are added and updated in hierarchy context from Salesforce app.
-- Map locations for related assets are added and updated from Salesforce app.
-- Hierarchy and mapping integrity are preserved for downstream FSM Mobile inspection use.
-- Setup/location outcomes are immediately available to FSM Mobile inspection users.
+- Asset-scoped checklist output is captured by asset type in the mobile WOLI workspace.
+- Results persist with before/after values, timestamps, and visit imprint context.
+- Findings can be resolved on visit and promoted into callouts.
+- AM assignment and no-touch policy gate submit eligibility.
 
 ### Included Channel Outcomes
 
-- Primary AM channel is Salesforce app for setup/location authoring.
-- Desktop can perform equivalent setup/location workflows through the shared component.
-- FSM Mobile remains the Service Appointment inspection workload channel and can also perform setup/location work when needed.
-- Salesforce app setup/location path does not require Service Appointment inspection completion.
+- Mobile is the primary execution channel for WOLI inspection work.
+- Desktop remains available for setup, hierarchy management, and map authoring.
+- The same asset and map records are used across setup and execution.
+- Non-irrigation WOLIs remain visible but follow read-only/standard-flow placeholder behavior.
 
 ### Included Acceptance Criteria
 
-1. Related irrigation assets are added and updated by AM users in Salesforce app without FSM Mobile dependency.
-2. Setup outcomes preserve required hierarchy rules across System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
-3. Map locations for related irrigation assets are added and updated by AM users in Salesforce app.
-4. Setup and location updates persist to the same asset and map records consumed by FSM Mobile inspection workload.
-5. Setup/location changes maintain traceability to the acting user and timestamp.
-6. Invalid hierarchy or mapping combinations are prevented and return actionable remediation guidance.
-7. Channel differences do not change core asset model semantics, hierarchy rules, or location data meaning.
-8. Service Appointment inspection completion is not required in this Salesforce app setup/location path.
+1. Asset-scoped checklist output is captured in the mobile WOLI workspace with before/after values and timestamped visit imprint entries.
+2. Checklist definitions vary by asset type and support boolean, count, number, select, and text response types.
+3. Finding-capable rows support resolved-on-visit state and dependent prompts where configured.
+4. Asset-level evidence supports both photo attachment and photo removal outcomes.
+5. Summary surfaces show captured output with clear status and asset context.
+6. Submit remains unavailable until the checklist output requirement is met, using touched assets or an explicit no-touch reason code plus note.
+7. Submit remains unavailable until AM assignment is satisfied.
+8. Successful submit transitions the irrigation WOLI to COMPLETED and offers post-submit routing or reopen flow.
 
 ## Acceptance Criteria
 
 1. The solution is delivered as a custom LWC experience, not as a standard record page flow stitched together from unrelated components.
-2. The component is available in desktop, Salesforce Mobile, and FSM Mobile channels with platform-appropriate behavior.
+2. The component is available in desktop and mobile channels with platform-appropriate behavior.
 3. The experience starts in irrigation asset context and preserves selected-asset context across map, detail, checklist, and summary surfaces.
 4. On mobile form factors, the experience follows a map-first pattern with bottom-sheet controls.
-5. Related irrigation assets are added and maintained in hierarchy-compliant structure within Desktop, Salesforce Mobile, and FSM Mobile channels.
-6. Map locations for related assets are added and updated within Desktop, Salesforce Mobile, and FSM Mobile channels.
-7. Setup and location updates persist to the same asset and map records used during FSM inspection execution.
-8. FSM Mobile carries the Service Appointment inspection workload, including checklist execution, callout recording, and SA completion.
-9. Desktop and Salesforce Mobile channels do not perform Service Appointment inspection completion.
-10. Asset selection from map context leads directly to checklist and asset-detail actions.
-11. Checklist content is organized by asset type for system, point of connection, pump, backflow, master valve, flow sensor, controller, and zone contexts.
-12. Required response types are captured successfully, including boolean, count, number, and text.
-13. Findings include resolved-on-visit outcomes and display dependent prompts where applicable.
-14. Asset-level evidence includes both photo attachment and photo removal outcomes.
-15. Checklist outcomes persist at the asset visit level with enough detail for summary and downstream handoff.
-16. The summary surface reflects captured checklist status and prevents submission when completion rules are not met.
-17. Submission remains unavailable until required inspection questions, checklist output requirements, and AM assignment requirements are satisfied.
-18. Service Appointment inspection completion occurs within this component experience.
+5. Desktop supports hierarchy-compliant asset management, controller program management, and property pivot navigation.
+6. Desktop and mobile both support related irrigation asset add and edit flows within the shared component.
+7. Map locations for related assets are added and updated within desktop and mobile channels.
+8. Mobile checklist content is organized by asset type for system, source, backflow, controller, and zone contexts, with map-linked variants where applicable.
+9. Required response types are captured successfully, including boolean, count, number, select, and text.
+10. Findings include resolved-on-visit outcomes and display dependent prompts where applicable.
+11. Asset-level evidence includes both photo attachment and photo removal outcomes.
+12. Checklist outcomes persist at the asset visit level with enough detail for summary and downstream handoff.
+13. The summary surface reflects captured checklist status and prevents submission when completion rules are not met.
+14. Submission remains unavailable until required checklist output and AM assignment requirements are satisfied.
+15. Successful submit transitions the irrigation WOLI to COMPLETED and presents next-step routing options.
+16. Non-irrigation WOLIs remain visible in overview but are blocked from irrigation submit flow and routed to standard FSM handling.
+17. Working context is preserved across tab switches, panel changes, and responsive layout changes.
+18. Geometry interaction outcomes include selected-asset map context, edit mode entry, and asset creation where workflow permits.
 19. Confirmed findings are recorded as Asset checklist callouts within this component experience using shared callout rules.
-20. Working context is preserved across tab switches, panel changes, and responsive layout changes.
-21. Geometry interaction outcomes include selected-asset map context, edit mode entry, and asset creation where workflow permits.
-22. FSM Mobile execution meets field-usage expectations for speed, clarity, and low-friction navigation.
-23. Asset-scoped inspection questions align to Standard irrigation hierarchy assets: System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
-24. Checkout review supports clear suggestion disposition outcomes: confirmed, dismissed, or merged before callout recording.
-25. Suggestions are categorized and grouped as `Repair` and `Enhancement` callout types in checkout review.
+20. FSM Mobile execution meets field-usage expectations for speed, clarity, and low-friction navigation.
 
 ## Notes
 
 - This story is for the custom customer inspection component surface, not the underlying OOTB asset record model.
-- This story is the shared component boundary for setup/location authoring and SA execution, with channel responsibilities explicitly split.
-- The component should align to the map-first and checklist-output behavior already defined in the responsive map LWC and V4 mobile runtime requirements.
+- This story is the shared component boundary for setup/location authoring and WOLI execution, with desktop and mobile responsibilities explicitly split.
+- The component should align to the map-first and checklist-output behavior already defined in the responsive map LWC and V4.1 mobile runtime requirements.
 - This story assumes the OOTB Asset hierarchy remains the durable context model while the custom LWC provides the interaction layer.
 - Detailed provider choice for the embedded map remains gated between Mapbox GL JS and Google Maps JavaScript API.
 
 ## Source Context
 
+- requirements/current_state.md
 - requirements/fsm_irrigation_requirements.md
 - requirements/map_lwc_responsive_v1_first_pass.md
 - requirements/prdV4.md
-- requirements/prd_v3.1.md

@@ -202,56 +202,58 @@ These fields come from the Standard question library and should live alongside t
 
 These are visit-scoped observations or actionable finding prompts. They should not be treated as static asset metadata, even when they are recorded against an asset-scoped inspection response.
 
-| Asset Type | Checklist Item | Required | Notes |
-|---|---|---|---|
-| System | Visible mainline leak? | Yes | Mainline/distribution summary. |
-| System | Mainline pressure stable? | No | System-level condition check. |
-| System | Isolation valves operational? | No | System-level condition check. |
-| System | Quick coupler valves operational (where applicable)? | No | System-level condition check. |
-| Point of Connection | Water restrictions in place? | Yes | Compliance check captured during the visit. |
-| Point of Connection | Restriction details | Conditional | Required when restrictions are in place. |
-| Pump | Pump operational? | Conditional | Required when a Pump component exists under the Point of Connection. |
-| Pump | Pump pressure (PSI) | No | Diagnostic reading taken during the visit. |
-| Pump | Pump cycling/noise abnormal? | No | Flags short-cycling or abnormal operating behavior. |
-| Backflow | Visible damage? | Yes | Visual condition check. |
-| Backflow | Leaks at backflow assembly? | Yes | Visual condition check. |
-| Backflow | Test required this visit? | Yes | Drives test-specific branching. |
-| Backflow | Test passed? | Conditional | Required when testing is performed. |
-| Backflow | Test certificate uploaded? | Conditional | Required when testing is performed. |
-| Backflow | Insulation / freeze protection in place? | No | Seasonal checklist prompt. |
-| Master Valve | Master valve operational? | Conditional | Required when a Master Valve component exists. |
-| Master Valve | Master valve leaking? | No | Condition check for seepage or failure. |
-| Master Valve | Master valve manual override functional? | No | Confirms serviceability during diagnostics. |
-| Flow Sensor | Flow sensor installed and connected? | Conditional | Required when a Flow Sensor component exists. |
-| Flow Sensor | Flow sensor reading plausible? | No | Confirms observed reading matches expected zone/system behavior. |
-| Flow Sensor | Flow sensor fault/alarm present? | No | Captures diagnostic state for follow-up. |
-| Controller | Controller power state | Yes | On / Off. |
-| Controller | Backflow state | Yes | On / Off. |
-| Controller | Meter state | Yes | On / Off. |
-| Controller | Rain / freeze sensor working? | Yes | Controller accessory check. |
-| Controller | Programs match contract / season? | Yes | Programming audit. |
-| Controller | Adjustments made this visit? | Yes | Drives adjustment notes. |
-| Controller | Adjustment notes | Conditional | Required when adjustments were made. |
-| Controller | System winterized / drained? | Conditional | Winterization-only branch. |
-| Zone | Minutes / zone (runtime) | No | Operational/programming observation. |
-| Zone | No issues found | Yes | Mutually exclusive with failure items below. |
-| Zone | Broken head | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Broken / clogged nozzle | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Sunken / tilted head | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Head not retracting | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Head not rotating | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Overwatering onto hardscape | No | Region-specific delta. |
-| Zone | Lateral leak | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Valve not activating | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Seeping valve | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Bad solenoid | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Valve box lid missing | Yes | Failure item; creates an actionable checklist finding. |
-| Zone | Broken drip line | Conditional | Drip-only branch. |
-| Zone | Drip emitters / filter / regulator OK? | Conditional | Drip-only branch. |
-| Zone | Station wiring fault observed? | No | Captures station-level electrical issues linked to the zone. |
-| Zone | Repairs made on site this visit? | Yes | Captures whether the tech completed corrective work. |
-| Zone | Repair description | Conditional | Required when repairs were made. |
-| Zone | Zone notes | No | Free-form inspection notes. |
+Branch logic should be short and boolean-oriented for mobile capture. Conditional rows only list the trigger that reveals or requires them.
+
+| Asset Type | Checklist Item | Field Type | Branch Logic | Notes |
+|---|---|---|---|---|
+| System | Any visible mainline leak? | Boolean |  | Mainline/distribution summary. |
+| System | Mainline pressure unstable? | Boolean |  | System-level condition check. |
+| System | Isolation valves not working? | Boolean |  | System-level condition check. |
+| System | Quick coupler valves not working? | Boolean | Show when Quick couplers present = Yes | System-level condition check. |
+| Point of Connection | Water restrictions active? | Boolean |  | Compliance check captured during the visit. |
+| Point of Connection | Restriction details | Text | Show when Water restrictions active? = Yes | Required when restrictions are in place. |
+| Pump | Pump not operating as expected? | Boolean | Show when Pump component exists = Yes | Required when a Pump component exists under the Point of Connection. |
+| Pump | Pump pressure (PSI) | Number | Show when Pump component exists = Yes | Diagnostic reading taken during the visit. |
+| Pump | Any abnormal pump cycling/noise? | Boolean |  | Flags short-cycling or abnormal operating behavior. |
+| Backflow | Any visible damage? | Boolean |  | Visual condition check. |
+| Backflow | Any leak at backflow assembly? | Boolean |  | Visual condition check. |
+| Backflow | Backflow test due this visit? | Boolean |  | Drives test-specific branching. |
+| Backflow | Backflow test failed? | Boolean | Show when Backflow test due this visit? = Yes | Required when testing is performed. |
+| Backflow | Test certificate uploaded? | Boolean | Show when Backflow test due this visit? = Yes | Required when testing is performed. |
+| Backflow | Freeze protection missing? | Boolean | Show when seasonal inspection = Yes | Seasonal checklist prompt. |
+| Master Valve | Master valve not working? | Boolean | Show when Master Valve component exists = Yes | Required when a Master Valve component exists. |
+| Master Valve | Any master valve leak? | Boolean |  | Condition check for seepage or failure. |
+| Master Valve | Manual override not working? | Boolean |  | Confirms serviceability during diagnostics. |
+| Flow Sensor | Flow sensor not installed/connected? | Boolean | Show when Flow Sensor component exists = Yes | Required when a Flow Sensor component exists. |
+| Flow Sensor | Flow sensor reading implausible? | Boolean |  | Confirms observed reading matches expected zone/system behavior. |
+| Flow Sensor | Flow sensor fault/alarm present? | Boolean |  | Captures diagnostic state for follow-up. |
+| Controller | Controller does not have power? | Boolean |  | On / Off. |
+| Controller | Backflow state is off? | Boolean |  | On / Off. |
+| Controller | Meter state is off? | Boolean |  | On / Off. |
+| Controller | Rain / freeze sensor not working? | Boolean |  | Controller accessory check. |
+| Controller | Programs do not match contract / season? | Boolean |  | Programming audit. |
+| Controller | Adjustments made this visit? | Boolean |  | Drives adjustment notes. |
+| Controller | Adjustment notes | Text | Show when Adjustments made this visit? = Yes | Required when adjustments were made. |
+| Controller | System not winterized/drained? | Boolean | Show when winterization visit = Yes | Winterization-only branch. |
+| Zone | Minutes / zone (runtime) | Number |  | Operational/programming observation. |
+| Zone | No issues found in this zone? | Boolean | Hide when any failure item = Yes | Mutually exclusive with failure items below. |
+| Zone | Broken head | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Broken / clogged nozzle | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Sunken / tilted head | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Head not retracting | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Head not rotating | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Overwatering onto hardscape | Boolean | Show when regional overwatering check = Yes | Region-specific delta. |
+| Zone | Lateral leak | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Valve not activating | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Seeping valve | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Bad solenoid | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Valve box lid missing | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Broken drip line | Count | Show when Distribution Method = Drip | Drip-only branch with quantity support. |
+| Zone | Drip emitters / filter / regulator not OK? | Boolean | Show when Distribution Method = Drip | Drip-only branch. |
+| Zone | Station wiring fault observed? | Boolean | Show when No issues found in this zone? = No | Captures station-level electrical issues linked to the zone. |
+| Zone | Repairs made on site this visit? | Boolean |  | Captures whether the tech completed corrective work. |
+| Zone | Repair summary | Text | Show when Repairs made on site this visit? = Yes | Required when repairs were made. |
+| Zone | Zone notes | Text |  | Free-form inspection notes. |
 
 ### 2.13 Component Metadata (Non-Hierarchy)
 

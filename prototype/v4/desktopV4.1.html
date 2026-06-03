@@ -25997,7 +25997,7 @@ function setActiveTab(tabKey) {
       if (!frame.dataset.loaded) {
         frame.dataset.loaded = "true";
         frame.addEventListener("load", pushAssetsToMapFrame, { once: true });
-        frame.src = `mobileV4.html?embed=desktop-map&property=${encodeURIComponent(propertyId || "")}&asset=${encodeURIComponent(selectedAssetId || recordAssetIdParam || "")}`;
+        frame.src = `mobileV4.1.html?embed=desktop-map&property=${encodeURIComponent(propertyId || "")}&asset=${encodeURIComponent(selectedAssetId || recordAssetIdParam || "")}`;
       } else {
         pushAssetsToMapFrame();
       }
