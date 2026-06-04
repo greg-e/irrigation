@@ -1,83 +1,243 @@
 erDiagram
-    %% Reference-only native FSM diagram. Not part of the irrigation solution design.
-    ACCOUNT ||--o{ ASSOCIATED_LOCATION : "has"
-    LOCATION ||--o{ ASSOCIATED_LOCATION : "has"
-    ACCOUNT ||--o{ SERVICE_CONTRACT : "has"
-    ACCOUNT ||--o{ ASSET : "owns"
-    ACCOUNT ||--o{ MAINTENANCE_PLAN : "covered by"
-    LOCATION ||--o{ ASSET : "location of"
-    LOCATION ||--o{ MAINTENANCE_PLAN : "location of"
-    SERVICE_CONTRACT ||--o{ CONTRACT_LINE_ITEM : "has"
-    SERVICE_CONTRACT ||--o{ MAINTENANCE_PLAN : "governs"
-    ASSET ||--o{ CONTRACT_LINE_ITEM : "covered in"
-    ASSET ||--o{ MAINTENANCE_ASSET : "tracked as"
-    CONTRACT_LINE_ITEM ||--o{ MAINTENANCE_ASSET : "associated with"
-    MAINTENANCE_PLAN ||--o{ MAINTENANCE_ASSET : "covers"
-    MAINTENANCE_PLAN ||--o{ WORK_ORDER : "generates"
-    MAINTENANCE_ASSET ||--o{ MAINTENANCE_WORK_RULE : "has"
-    MAINTENANCE_ASSET ||--o{ WORK_ORDER : "triggers"
-    WORK_TYPE ||--o{ MAINTENANCE_PLAN : "applied to"
-    WORK_TYPE ||--o{ MAINTENANCE_ASSET : "applied to"
-    WORK_TYPE ||--o{ MAINTENANCE_WORK_RULE : "applied to"
-    WORK_TYPE ||--o{ WORK_ORDER : "applied to"
-    WORK_TYPE ||--o{ WORK_ORDER_LINE_ITEM : "applied to"
-    WORK_ORDER ||--o{ SERVICE_APPOINTMENT : "scheduled as"
-    WORK_ORDER ||--o{ WORK_ORDER_LINE_ITEM : "has"
+    %% V4.1 preventive-maintenance + irrigation execution model.
+    %% Aligned to requirements/prdV4.md, requirements/fsm_irrigation_requirements.md,
+    %% and prototype/v4 behavior (desktop + mobile runtime).
 
-    ACCOUNT {
-        string Name
+    %% Property and irrigation hierarchy
+    PROPERTY_ACCOUNT ||--o{ IRRIGATION_ASSET : owns
+    IRRIGATION_ASSET ||--o{ IRRIGATION_ASSET : parent_of
+    IRRIGATION_ASSET ||--o{ MAP_FEATURE : mapped_as
+    IRRIGATION_ASSET ||--o{ CONTROLLER_PROGRAM : hosts
+    CONTROLLER_PROGRAM }o--o{ IRRIGATION_ASSET : schedules_zones
+
+    %% Preventive maintenance baseline
+    PROPERTY_ACCOUNT ||--o{ SERVICE_CONTRACT : has
+    SERVICE_CONTRACT ||--o{ CONTRACT_LINE_ITEM : includes
+    PROPERTY_ACCOUNT ||--o{ MAINTENANCE_PLAN : covered_by
+    MAINTENANCE_PLAN ||--o{ MAINTENANCE_ASSET_LINK : covers
+    MAINTENANCE_ASSET_LINK }o--|| IRRIGATION_ASSET : references
+    MAINTENANCE_ASSET_LINK ||--o{ MAINTENANCE_WORK_RULE : has
+
+    %% Work execution
+    MAINTENANCE_PLAN ||--o{ WORK_ORDER : generates
+    WORK_ORDER ||--o{ WORK_ORDER_LINE_ITEM : includes
+    WORK_ORDER_LINE_ITEM ||--o{ SERVICE_APPOINTMENT : scheduled_as
+    WORK_ORDER_LINE_ITEM }o--|| PROPERTY_ACCOUNT : scoped_to
+    WORK_ORDER_LINE_ITEM }o--o| IRRIGATION_ASSET : primary_asset
+
+    %% Mobile irrigation WOLI runtime and gating
+    WORK_ORDER_LINE_ITEM ||--o| IRRIGATION_WOLI_SESSION : has_runtime
+    IRRIGATION_WOLI_SESSION ||--o{ TOUCHED_ASSET : tracks
+    TOUCHED_ASSET }o--|| IRRIGATION_ASSET : points_to
+    IRRIGATION_WOLI_SESSION ||--o{ VISIT_IMPRINT : captures
+    VISIT_IMPRINT }o--|| IRRIGATION_ASSET : for_asset
+    VISIT_IMPRINT ||--o{ CHECKLIST_RESPONSE : records
+    CHECKLIST_RESPONSE ||--o{ CHECKLIST_PHOTO : attaches
+    CHECKLIST_DEFINITION ||--o{ CHECKLIST_ITEM_DEFINITION : contains
+    CHECKLIST_ITEM_DEFINITION ||--o{ CHECKLIST_RESPONSE : answered_by
+    IRRIGATION_WOLI_SESSION ||--o| AM_ASSIGNMENT : requires
+    IRRIGATION_WOLI_SESSION ||--o| NO_TOUCH_DECLARATION : optional_gate
+    IRRIGATION_WOLI_SESSION ||--o{ CALLOUT_OUTPUT : produces
+    CALLOUT_OUTPUT }o--o| IRRIGATION_ASSET : related_asset
+    CALLOUT_OUTPUT }o--o| WORK_ORDER_LINE_ITEM : downstream_link
+
+    PROPERTY_ACCOUNT {
+        string account_id PK
+        string name
+        string branch
+        string account_owner
+        number readiness_score
+        datetime last_updated_at
     }
-    ASSOCIATED_LOCATION {
-        ref Account
-        ref Location
+
+    IRRIGATION_ASSET {
+        string asset_id PK
+        string account_id FK
+        string parent_asset_id FK
+        string asset_type "System|Source|Backflow|Pump|Controller|Zone|Valve|Head|DripEmitterGroup"
+        string name
+        string status "Active|Inactive|Retired"
+        date install_date
+        string serial_number
+        number zone_number
+        number condition_score
+        datetime last_inspected_at
+        bool is_placeholder
     }
-    LOCATION {
-        string Name
+
+    MAP_FEATURE {
+        string map_feature_id PK
+        string asset_id FK
+        string feature_type "Point|Polygon|LineString"
+        string geometry_geojson
+        number latitude
+        number longitude
+        string spatial_source "Unknown|AsBuilt|CAD|Digitized|GPS|FieldSketch"
+        string spatial_confidence "Unknown|High|Medium|Low"
+        datetime captured_at
     }
+
+    CONTROLLER_PROGRAM {
+        string program_id PK
+        string controller_asset_id FK
+        string program_name
+        string schedule_days_csv
+        string start_time
+        string zone_asset_id FK
+        number run_time_minutes
+        number seasonal_adjust_pct
+        bool is_active
+    }
+
     SERVICE_CONTRACT {
-        ref Account
+        string service_contract_id PK
+        string account_id FK
+        string status
     }
-    ASSET {
-        ref Account
-        ref Contact
-        ref Location
-        ref Product
-    }
+
     CONTRACT_LINE_ITEM {
-        ref ServiceContract
-        ref Asset
-        ref Product
+        string contract_line_item_id PK
+        string service_contract_id FK
+        string product_id
+        string linked_asset_id FK
     }
+
     MAINTENANCE_PLAN {
-        ref Account
-        ref ServiceContract
-        ref Location
-        ref WorkType
+        string maintenance_plan_id PK
+        string account_id FK
+        string work_type_id FK
+        string generation_horizon
+        string status
     }
-    MAINTENANCE_ASSET {
-        ref Asset
-        ref MaintenancePlan
-        ref ContractLineItem
-        ref WorkType
+
+    MAINTENANCE_ASSET_LINK {
+        string maintenance_asset_link_id PK
+        string maintenance_plan_id FK
+        string asset_id FK
+        string contract_line_item_id FK
+        string work_type_id FK
     }
+
     MAINTENANCE_WORK_RULE {
-        ref MaintenanceAsset
-        ref WorkType
+        string maintenance_work_rule_id PK
+        string maintenance_asset_link_id FK
+        string recurrence_rule
+        number duration_minutes
+        string work_type_id FK
     }
-    WORK_TYPE {
-        string Name
-        number Duration
-    }
+
     WORK_ORDER {
-        ref Account
-        ref Asset
-        ref WorkType
+        string work_order_id PK
+        string account_id FK
+        string originating_maintenance_plan_id FK
+        string status
+        datetime due_at
     }
+
     WORK_ORDER_LINE_ITEM {
-        ref WorkOrder
-        ref Asset
-        ref WorkType
+        string woli_id PK
+        string work_order_id FK
+        string work_type_id FK
+        string primary_asset_id FK
+        string flow_type "Irrigation|Standard"
+        string status "New|InProgress|Completed"
     }
+
     SERVICE_APPOINTMENT {
-        ref ParentRecord
+        string service_appointment_id PK
+        string parent_woli_id FK
+        datetime scheduled_start
+        datetime scheduled_end
+        string status
+    }
+
+    IRRIGATION_WOLI_SESSION {
+        string session_id PK
+        string woli_id FK
+        string session_key "irrigation-v4-demo-session:[woliId]"
+        bool am_assigned
+        string am_user_id
+        bool submit_eligible
+        string status "New|InProgress|Completed"
+        datetime submitted_at
+    }
+
+    TOUCHED_ASSET {
+        string touched_asset_id PK
+        string session_id FK
+        string asset_id FK
+        datetime touched_at
+    }
+
+    CHECKLIST_DEFINITION {
+        string checklist_definition_id PK
+        string asset_type_scope "System|Source|Backflow|Controller|Zone"
+        string version
+        bool is_active
+    }
+
+    CHECKLIST_ITEM_DEFINITION {
+        string checklist_item_definition_id PK
+        string checklist_definition_id FK
+        string item_code
+        string prompt
+        string response_type "Boolean|Count|Number|Select|Text"
+        bool finding_capable
+        string dependency_rule
+        bool required
+    }
+
+    VISIT_IMPRINT {
+        string visit_imprint_id PK
+        string session_id FK
+        string asset_id FK
+        datetime captured_at
+        string captured_by
+    }
+
+    CHECKLIST_RESPONSE {
+        string checklist_response_id PK
+        string visit_imprint_id FK
+        string checklist_item_definition_id FK
+        string before_value
+        string after_value
+        bool finding_detected
+        bool resolved_on_visit
+        number finding_count
+        string note
+    }
+
+    CHECKLIST_PHOTO {
+        string checklist_photo_id PK
+        string checklist_response_id FK
+        string content_document_id
+        string photo_type
+        datetime captured_at
+    }
+
+    AM_ASSIGNMENT {
+        string am_assignment_id PK
+        string session_id FK
+        string am_user_id
+        datetime assigned_at
+    }
+
+    NO_TOUCH_DECLARATION {
+        string no_touch_declaration_id PK
+        string session_id FK
+        string reason_code
+        string reason_note
+        datetime declared_at
+    }
+
+    CALLOUT_OUTPUT {
+        string callout_output_id PK
+        string session_id FK
+        string asset_id FK
+        string woli_id FK
+        string issue_type
+        number quantity
+        string priority
+        string status "New|Quoted|Approved|Completed"
+        bool repairs_needed
     }

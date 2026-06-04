@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>V4.1 Mobile Workspace Prototype (Self-Contained)</title>
+  <title>V4.2 Mobile Workspace Prototype (Self-Contained)</title>
   <style>
     /* Self-contained fallback for frequently used SLDS classes. */
     .slds-assistive-text {
@@ -2802,6 +2802,28 @@
       padding-top: 4px;
     }
 
+    #asset-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+
+    #asset-list > li,
+    #asset-list > li::marker {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      content: "";
+    }
+
+    .asset-list-item {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
     .asset-row-button {
       width: 100%;
       text-align: left;
@@ -3317,7 +3339,8 @@
       flex-direction: column;
       flex: 1;
       padding: 0;
-      min-height: 100%;
+      min-height: 0;
+      height: 100%;
       background: #f3f6f9;
     }
     body.desktop-map-embed .gis-map-shell {
@@ -4066,7 +4089,7 @@
                 </div>
               </div>
               <div class="asset-list-shell">
-                <ul id="asset-list" class="slds-has-dividers_top-space"></ul>
+                <ul id="asset-list"></ul>
               </div>
             </div>
           </div>
@@ -4085,7 +4108,7 @@
               </header>
             </div>
             <div id="related-callouts-body" class="slds-card__body slds-card__body_inner related-section-body">
-              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Checklist values are saved directly to components. Use <strong>Checklist</strong> in the asset detail sheet to set applicability and quantity.</p>
+              <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">Checklist values are saved directly to components. Use <strong>Checklist</strong> in the asset detail sheet to set No Issues gating, quantities, and repair notes.</p>
               <ul id="callout-list" class="slds-has-dividers_top-space slds-m-bottom_small"></ul>
             </div>
           </div>
@@ -4451,7 +4474,7 @@
 function createInitialIrrigationSession() {
   return {
     stage: "INSPECTING",
-    hasMap: true,
+    hasMap: !SELF_CONTAINED_PROTOTYPE,
     controllers: [
     {
       id: "controller-a",
@@ -4547,7 +4570,7 @@ const CHECKLIST_DEFINITIONS_BY_TYPE = {
     { id: "visible-mainline-leak", label: "Any visible mainline leak?", kind: "boolean", finding: true },
     { id: "mainline-pressure-unstable", label: "Mainline pressure unstable?", kind: "boolean", finding: true },
     { id: "isolation-valves-not-operational", label: "Isolation valves not working?", kind: "boolean", finding: true },
-    { id: "quick-coupler-not-operational", label: "Quick coupler valves not working?", kind: "boolean", finding: true },
+    { id: "quick-coupler-not-operational", label: "Quick coupler valves not working?", kind: "boolean", finding: true, dependsOnContext: "quickCouplersPresent", dependsOnContextValues: [true] },
   ],
   source: [
     { id: "water-restrictions", label: "Water restrictions active?", kind: "boolean" },
@@ -4564,7 +4587,7 @@ const CHECKLIST_DEFINITIONS_BY_TYPE = {
     { id: "test-required", label: "Backflow test due this visit?", kind: "boolean" },
     { id: "test-failed", label: "Backflow test failed?", kind: "boolean", finding: true, dependsOn: "test-required", dependsOnValues: [true] },
     { id: "certificate-uploaded", label: "Test certificate uploaded?", kind: "boolean", dependsOn: "test-required", dependsOnValues: [true] },
-    { id: "freeze-protection-missing", label: "Freeze protection missing?", kind: "boolean", finding: true },
+    { id: "freeze-protection-missing", label: "Freeze protection missing?", kind: "boolean", finding: true, dependsOnContext: "seasonalInspection", dependsOnContextValues: [true] },
     { id: "backflow-observations", label: "Backflow Observations", kind: "text", placeholder: "Capture additional compliance issues, hazards, or follow-up notes." },
   ],
   controller: [
@@ -4575,24 +4598,26 @@ const CHECKLIST_DEFINITIONS_BY_TYPE = {
     { id: "program-mismatch", label: "Programs do not match contract / season?", kind: "boolean", finding: true },
     { id: "adjustments-made", label: "Adjustments made this visit?", kind: "boolean" },
     { id: "adjustment-notes", label: "Adjustment Notes", kind: "text", dependsOn: "adjustments-made", dependsOnValues: [true], placeholder: "List schedule/runtime changes and reason for each adjustment." },
-    { id: "not-winterized-drained", label: "System not winterized/drained?", kind: "boolean", finding: true },
+    { id: "not-winterized-drained", label: "System not winterized/drained?", kind: "boolean", finding: true, dependsOnContext: "winterizationVisit", dependsOnContextValues: [true] },
   ],
   zone: [
-    { id: "no-issues-zone", label: "No issues found in this zone?", kind: "boolean" },
-    { id: "broken-head", label: "Broken head", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "broken-clogged-nozzle", label: "Broken / clogged nozzle", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "sunken-tilted-head", label: "Sunken / tilted head", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "head-not-retracting", label: "Head not retracting", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "head-not-rotating", label: "Head not rotating", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "overwatering-hardscape", label: "Overwatering onto hardscape", kind: "boolean", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "lateral-leak", label: "Lateral leak", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "valve-not-activating", label: "Valve not activating", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "seeping-valve", label: "Seeping valve", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "bad-solenoid", label: "Bad solenoid", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "valve-box-lid-missing", label: "Valve box lid missing", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "broken-drip-line", label: "Broken drip line", kind: "count", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
-    { id: "drip-emitters-filter-regulator-not-ok", label: "Drip emitters / filter / regulator not OK?", kind: "boolean", finding: true },
-    { id: "station-wiring-fault", label: "Station wiring fault observed?", kind: "boolean", finding: true, dependsOn: "no-issues-zone", dependsOnValues: [false] },
+    { id: "minutes-per-zone", label: "Minutes / zone (runtime)", kind: "number" },
+    { id: "broken-head", label: "Broken head", kind: "count", finding: true },
+    { id: "broken-clogged-nozzle", label: "Broken / clogged nozzle / Bad wiper seal", kind: "count", finding: true },
+    { id: "sunken-tilted-head", label: "Sunken / tilted head", kind: "count", finding: true },
+    { id: "head-not-retracting", label: "Head not retracting", kind: "count", finding: true },
+    { id: "head-not-rotating", label: "Head not rotating", kind: "count", finding: true },
+    { id: "overwatering-hardscape", label: "Overspray onto hardscape", kind: "boolean", finding: true, dependsOnContext: "regionalOverwateringCheck", dependsOnContextValues: [true] },
+    { id: "lateral-leak", label: "Lateral leak", kind: "count", finding: true },
+    { id: "valve-not-activating", label: "Valve not activating", kind: "count", finding: true },
+    { id: "seeping-valve", label: "Seeping valve", kind: "count", finding: true },
+    { id: "stuck-valve", label: "Stuck valve", kind: "count", finding: true, dependsOn: "seeping-valve" },
+    { id: "low-head-drainage", label: "Low Head Drainage", kind: "count", finding: true, dependsOn: "seeping-valve" },
+    { id: "bad-solenoid", label: "Bad solenoid", kind: "count", finding: true },
+    { id: "valve-box-lid-missing", label: "Valve box lid missing or damaged", kind: "count", finding: true },
+    { id: "broken-drip-line", label: "Broken drip line", kind: "count", finding: true, dependsOnAssetField: "distribution_method", dependsOnAssetValues: ["drip"] },
+    { id: "drip-emitters-filter-regulator-not-ok", label: "Drip emitters / filter / regulator not OK?", kind: "boolean", finding: true, dependsOnAssetField: "distribution_method", dependsOnAssetValues: ["drip"] },
+    { id: "station-wiring-fault", label: "Station wiring fault observed?", kind: "boolean", finding: true },
     { id: "repairs-made", label: "Repairs made on site this visit?", kind: "boolean" },
     { id: "repair-summary", label: "Repair summary", kind: "text", dependsOn: "repairs-made", dependsOnValues: [true], placeholder: "Summarize completed repair actions." },
     { id: "zone-notes", label: "Zone Notes", kind: "text" },
@@ -4625,8 +4650,8 @@ const resolverContext = {
   questionSetVersion: "NE-Quarterly-PMI-v3",
 };
 const urlParams = new URLSearchParams(window.location.search);
-const SELF_CONTAINED_PROTOTYPE = false;
 const DESKTOP_MAP_EMBED = urlParams.get("embed") === "desktop-map";
+const SELF_CONTAINED_PROTOTYPE = urlParams.get("selfContained") === "1";
 const DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID = urlParams.get("property") || "prop-002";
 const DESKTOP_MAP_BOOTSTRAP_ASSET_ID = urlParams.get("asset") || "";
 
@@ -4637,10 +4662,11 @@ if (DESKTOP_MAP_EMBED) {
 const woliSessions = new Map();
 let activeWoliId = "";
 let appMode = "wo";
-const USE_DESKTOP_MAP_BEHAVIOR = DESKTOP_MAP_EMBED;
+const USE_DESKTOP_MAP_BEHAVIOR = false;
 const USE_MAP_FOCUS_MODE = false;
 
 const IRRIGATION_DEMO_STORAGE_PREFIX = "irrigation-v4-demo-session";
+const DESKTOP_EMBED_STORAGE_PREFIX = "irrigation-v4-desktop-map-session";
 
 function createEmptyIrrigationSession() {
   return createInitialIrrigationSession();
@@ -4650,6 +4676,94 @@ function getIrrigationDemoStorageKey(woliId = "") {
   return `${IRRIGATION_DEMO_STORAGE_PREFIX}:${woliId || "default"}`;
 }
 
+function getDesktopEmbedStorageKey(propertyId = "") {
+  return `${DESKTOP_EMBED_STORAGE_PREFIX}:${propertyId || "default"}`;
+}
+
+function collectSessionGeometryByAssetId(session) {
+  const geometryByAssetId = {};
+  if (!session || typeof session !== "object") return geometryByAssetId;
+
+  const allAssets = [
+    ...(Array.isArray(session.controllers) ? session.controllers : []),
+    ...(Array.isArray(session.backflows) ? session.backflows : []),
+    ...(Array.isArray(session.zones) ? session.zones : []),
+  ];
+
+  allAssets.forEach((asset) => {
+    const id = String(asset?.id || "").trim();
+    if (!id) return;
+    geometryByAssetId[id] = {
+      hasMapGeometry: asset?.hasMapGeometry === true,
+      ...(typeof asset?.lat === "number" ? { lat: asset.lat } : {}),
+      ...(typeof asset?.lon === "number" ? { lon: asset.lon } : {}),
+      ...(typeof asset?.mapX === "number" ? { mapX: Number(asset.mapX) } : {}),
+      ...(typeof asset?.mapY === "number" ? { mapY: Number(asset.mapY) } : {}),
+    };
+  });
+
+  return geometryByAssetId;
+}
+
+function persistDesktopEmbedSession(propertyId = "", session = null) {
+  if (!propertyId || !session) return;
+  try {
+    const payload = {
+      geometryByAssetId: collectSessionGeometryByAssetId(session),
+      persistedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(getDesktopEmbedStorageKey(propertyId), JSON.stringify(payload));
+  } catch (error) {
+    // Ignore prototype storage failures.
+  }
+}
+
+function loadPersistedDesktopGeometry(propertyId = "") {
+  if (!propertyId) return {};
+  try {
+    const raw = localStorage.getItem(getDesktopEmbedStorageKey(propertyId));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    if (!parsed.geometryByAssetId || typeof parsed.geometryByAssetId !== "object") return {};
+    return parsed.geometryByAssetId;
+  } catch (error) {
+    return {};
+  }
+}
+
+function applyPersistedDesktopGeometry(session, propertyId = "") {
+  if (!session || typeof session !== "object") return;
+  const geometryByAssetId = loadPersistedDesktopGeometry(propertyId);
+  if (!geometryByAssetId || typeof geometryByAssetId !== "object") return;
+
+  const applyToAsset = (asset) => {
+    const id = String(asset?.id || "").trim();
+    if (!id) return;
+    const persisted = geometryByAssetId[id];
+    if (!persisted || typeof persisted !== "object") return;
+
+    if (typeof persisted.hasMapGeometry === "boolean") {
+      asset.hasMapGeometry = persisted.hasMapGeometry;
+      if (persisted.hasMapGeometry === false) {
+        delete asset.lat;
+        delete asset.lon;
+        delete asset.mapX;
+        delete asset.mapY;
+      }
+    }
+
+    if (typeof persisted.lat === "number") asset.lat = persisted.lat;
+    if (typeof persisted.lon === "number") asset.lon = persisted.lon;
+    if (typeof persisted.mapX === "number") asset.mapX = Number(persisted.mapX);
+    if (typeof persisted.mapY === "number") asset.mapY = Number(persisted.mapY);
+  };
+
+  (Array.isArray(session.controllers) ? session.controllers : []).forEach(applyToAsset);
+  (Array.isArray(session.backflows) ? session.backflows : []).forEach(applyToAsset);
+  (Array.isArray(session.zones) ? session.zones : []).forEach(applyToAsset);
+}
+
 function getValidatedIrrigationSession(raw) {
   const base = createEmptyIrrigationSession();
   if (!raw || typeof raw !== "object") return base;
@@ -4657,7 +4771,7 @@ function getValidatedIrrigationSession(raw) {
   return {
     ...base,
     ...raw,
-    hasMap: raw.hasMap !== false,
+    hasMap: SELF_CONTAINED_PROTOTYPE ? false : true,
     controllers: Array.isArray(raw.controllers) && raw.controllers.length ? raw.controllers : base.controllers,
     backflows: Array.isArray(raw.backflows) && raw.backflows.length ? raw.backflows : base.backflows,
     zones: Array.isArray(raw.zones) && raw.zones.length ? raw.zones : base.zones,
@@ -4690,8 +4804,40 @@ function persistIrrigationSession(woliId = "", session = null) {
 
 function persistActiveIrrigationSession() {
   const woli = getActiveWoli();
-  if (!woli || !isIrrigationWoli(woli)) return;
-  persistIrrigationSession(woli.id, state);
+  if (woli && isIrrigationWoli(woli)) {
+    persistIrrigationSession(woli.id, state);
+    return;
+  }
+
+  if (DESKTOP_MAP_EMBED) {
+    persistDesktopEmbedSession(mapTab.context.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID, state);
+  }
+}
+
+function postDesktopAssetLocationUpdate(asset) {
+  if (!DESKTOP_MAP_EMBED || !asset?.ref?.id || !window.parent || window.parent === window) return;
+  const payload = {
+    type: "SPATIAL_ASSET_LOCATION",
+    assetId: asset.ref.id,
+  };
+  if (typeof asset.ref.lat === "number") payload.lat = asset.ref.lat;
+  if (typeof asset.ref.lon === "number") payload.lon = asset.ref.lon;
+  if (typeof asset.ref.mapX === "number") payload.mapX = asset.ref.mapX;
+  if (typeof asset.ref.mapY === "number") payload.mapY = asset.ref.mapY;
+  window.parent.postMessage(payload, "*");
+}
+
+function postDesktopAssetGeometryDeleted(assetId, deletedCount = 0) {
+  if (!DESKTOP_MAP_EMBED || !assetId || !window.parent || window.parent === window) return;
+  window.parent.postMessage(
+    {
+      type: "SPATIAL_GEOMETRY_DELETED",
+      assetId,
+      deletedCount,
+      success: true,
+    },
+    "*"
+  );
 }
 
 let state = createEmptyIrrigationSession();
@@ -4902,6 +5048,7 @@ const mapTab = {
     propertyId: "prop-002",
     workOrderId: "wo-004281",
     mode: "field",
+    desktopBootstrapReady: !DESKTOP_MAP_EMBED,
   },
 };
 
@@ -4968,8 +5115,21 @@ function getZoneNumberFromName(name) {
   return match ? match[1] : "";
 }
 
-function getMetadataFieldDefinitions(type) {
-  return [...METADATA_FIELDS_COMMON, ...(METADATA_FIELDS_BY_TYPE[type] || [])];
+function getMetadataFieldDefinitions(assetOrType) {
+  const type = typeof assetOrType === "string" ? assetOrType : assetOrType?.type;
+  const baseFields = [...METADATA_FIELDS_COMMON, ...(METADATA_FIELDS_BY_TYPE[type] || [])];
+  if (type !== "controller") return baseFields;
+
+  const backflowOptions = ["", ...state.backflows.map((backflow) => backflow.name).filter(Boolean)];
+  return baseFields.map((field) => {
+    if (field.key !== "parent") return field;
+    return {
+      ...field,
+      type: "select",
+      readOnly: false,
+      options: backflowOptions,
+    };
+  });
 }
 
 function getResolvedMetadata(asset) {
@@ -5019,7 +5179,7 @@ function getResolvedMetadata(asset) {
 
 function renderDetailMetadataFields(asset) {
   if (!detailMetadataFields || !detailMetadataSection || !asset) return;
-  const defs = getMetadataFieldDefinitions(asset.type);
+  const defs = getMetadataFieldDefinitions(asset);
   if (!defs.length) {
     detailMetadataSection.classList.add("hidden");
     detailMetadataFields.innerHTML = "";
@@ -5094,7 +5254,7 @@ function readDetailMetadataDraft() {
 
 function getCurrentMetadataSnapshot(asset) {
   const resolved = getResolvedMetadata(asset);
-  const defs = getMetadataFieldDefinitions(asset.type).filter((field) => field.type !== "static");
+  const defs = getMetadataFieldDefinitions(asset).filter((field) => field.type !== "static");
   const snapshot = {};
   defs.forEach((field) => {
     snapshot[field.key] = String(resolved[field.key] == null ? "" : resolved[field.key]).trim();
@@ -5661,6 +5821,7 @@ function buildDesktopEmbedMetadata(asset, type, parentName = "") {
 
 function buildDesktopEmbedSession(payload) {
   const base = createEmptyIrrigationSession();
+  base.hasMap = true;
   const rawAssets = Array.isArray(payload?.assets) ? payload.assets : [];
   const activeAssets = rawAssets.filter((asset) => String(asset?.status || "").toLowerCase() !== "retired");
 
@@ -5688,7 +5849,7 @@ function buildDesktopEmbedSession(payload) {
       lon: typeof asset?.lon === "number" ? asset.lon : undefined,
       mapX: typeof asset?.mapX === "number" ? Number(asset.mapX) : undefined,
       mapY: typeof asset?.mapY === "number" ? Number(asset.mapY) : undefined,
-      hasMapGeometry: Boolean((typeof asset?.lat === "number" && typeof asset?.lon === "number") || (typeof asset?.mapX === "number" && typeof asset?.mapY === "number")),
+      hasMapGeometry: true,
     };
   });
 
@@ -5706,7 +5867,7 @@ function buildDesktopEmbedSession(payload) {
       lon: typeof asset?.lon === "number" ? asset.lon : undefined,
       mapX: typeof asset?.mapX === "number" ? Number(asset.mapX) : undefined,
       mapY: typeof asset?.mapY === "number" ? Number(asset.mapY) : undefined,
-      hasMapGeometry: Boolean((typeof asset?.lat === "number" && typeof asset?.lon === "number") || (typeof asset?.mapX === "number" && typeof asset?.mapY === "number")),
+      hasMapGeometry: true,
     };
   });
 
@@ -5724,12 +5885,14 @@ function buildDesktopEmbedSession(payload) {
       id: asset.id,
       label,
       status: String(asset?.status || "ok").toLowerCase() === "alert" ? "alert" : "ok",
+      controllerId: asset?.parentId || "",
+      parentId: asset?.parentId || "",
       controller: controllerName,
       backflow: backflowName,
       description: asset?.description || asset?.areaServed || "",
       mapX: point.x,
       mapY: point.y,
-      hasMapGeometry: Boolean((typeof asset?.lat === "number" && typeof asset?.lon === "number") || (typeof asset?.mapX === "number" && typeof asset?.mapY === "number")),
+      hasMapGeometry: true,
       metadata: buildDesktopEmbedMetadata(asset, "zone", controllerName),
       ...(typeof asset?.lat === "number" ? { lat: asset.lat } : {}),
       ...(typeof asset?.lon === "number" ? { lon: asset.lon } : {}),
@@ -5763,9 +5926,11 @@ function buildDesktopEmbedSession(payload) {
 
 function applyDesktopEmbedBootstrap(payload) {
   const { session, selectedKey } = buildDesktopEmbedSession(payload);
+  applyPersistedDesktopGeometry(session, payload?.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID);
   state = session;
   mapTab.context.propertyId = payload?.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID;
   mapTab.context.workOrderId = `desktop-${mapTab.context.propertyId}`;
+  mapTab.context.desktopBootstrapReady = true;
   appMode = "woli";
   mapTab.selectedKey = selectedKey || "";
   assetTab.selectedKey = mapTab.selectedKey;
@@ -6084,24 +6249,12 @@ function getSpatialMapUrl() {
   }
 
   const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
-  let mapMode = "field";
-  if (mapGeometryState.enabled) {
-    if (mapGeometryState.tool === "marker") {
-      mapMode = mapGeometryState.tool;
-    } else {
-      mapMode = "select";
-    }
-  }
-
   const params = new URLSearchParams({
     propertyId: mapTab.context.propertyId,
     workOrderId: mapTab.context.workOrderId,
-    mode: mapMode,
+    mode: "field",
     layout: "map-only",
   });
-  if (mapGeometryState.enabled) {
-    params.set("geomEdit", "1");
-  }
   if (selected) {
     params.set("assetId", selected.ref?.id || selected.key);
   }
@@ -6113,6 +6266,15 @@ function toSpatialAssetPayload() {
     const position = getMarkerPosition(asset);
     const lat = typeof asset.ref?.lat === "number" ? asset.ref.lat : null;
     const lon = typeof asset.ref?.lon === "number" ? asset.ref.lon : null;
+    const isZone = asset.type === "zone";
+    const zoneControllerName = isZone ? String(asset.ref?.controller || "").trim() : "";
+    const zoneController = isZone
+      ? state.controllers.find((controller) => controller.id === asset.ref?.controllerId || controller.name === zoneControllerName)
+      : null;
+    const zoneParentId = isZone
+      ? (zoneController?.id || asset.ref?.controllerId || asset.ref?.parentId || "")
+      : "";
+
     return {
       id: asset.ref?.id || asset.key,
       name: getAssetDisplayName(asset),
@@ -6121,6 +6283,8 @@ function toSpatialAssetPayload() {
       description: asset.ref?.description || "",
       mapX: Number(position.x),
       mapY: Number(position.y),
+      ...(zoneParentId ? { parentId: zoneParentId, controllerId: zoneParentId } : {}),
+      ...(zoneControllerName ? { controller: zoneControllerName } : {}),
       ...(lat != null ? { lat } : {}),
       ...(lon != null ? { lon } : {}),
     };
@@ -6199,8 +6363,18 @@ function refreshSpatialMapFrame(options = {}) {
   const shouldResetGeometry = options.resetGeometry === true;
   if (!spatialMapFrame) return;
 
+  if (DESKTOP_MAP_EMBED && !mapTab.context.desktopBootstrapReady) {
+    spatialMapFrame.removeAttribute("src");
+    if (gisStatusStrip) {
+      gisStatusStrip.textContent = "Preparing spatial map...";
+    }
+    return;
+  }
+
   if (SELF_CONTAINED_PROTOTYPE) {
     spatialMapFrame.style.display = "none";
+    spatialMapFrame.removeAttribute("src");
+    delete spatialMapFrame.dataset.lastSrc;
     if (gisStatusStrip) {
       const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
       const selectedLabel = selected ? getAssetDisplayName(selected) : "";
@@ -6211,6 +6385,7 @@ function refreshSpatialMapFrame(options = {}) {
     return;
   }
 
+  spatialMapFrame.style.display = "block";
   const nextSrc = getSpatialMapUrl();
   if (spatialMapFrame.dataset.lastSrc !== nextSrc) {
     spatialMapFrame.dataset.lastSrc = nextSrc;
@@ -6464,6 +6639,8 @@ function saveMapCardEdits() {
   }
 
   assetTab.selectedKey = selected.key;
+  postDesktopAssetLocationUpdate(selected);
+  persistActiveIrrigationSession();
   setSubmitMessage(`Saved ${nextName}.`, "ok");
   renderAll();
 }
@@ -6579,7 +6756,7 @@ function getMapListItemButtonStyle(isExpanded) {
 }
 
 function renderMapGrid() {
-  refreshSpatialMapFrame({ resetGeometry: true });
+  refreshSpatialMapFrame();
   updateMapSheetSelection();
   mapGrid.innerHTML = "";
   mapGrid.style.cursor = "default";
@@ -6749,6 +6926,8 @@ function bindMapListActionHandlers(mapGrid) {
       asset.ref.description = notesInput.value;
       if (controllerSelect) asset.ref.controller = controllerSelect.value;
       if (backflowSelect) asset.ref.backflow = backflowSelect.value;
+      postDesktopAssetLocationUpdate(asset);
+      persistActiveIrrigationSession();
       renderAssetRegistryList();
       renderCallouts();
       renderMapGrid();
@@ -7226,7 +7405,28 @@ function getChecklistEntryDisplay(definition, entry) {
   return `Qty ${Number(entry.quantity || 0)}`;
 }
 
-function isChecklistDependencySatisfied(definition, store, definitionMap) {
+function getChecklistContextValue(key) {
+  const normalized = String(key || "").trim();
+  if (!normalized) return undefined;
+  if (normalized === "quickCouplersPresent") return true;
+  if (normalized === "seasonalInspection") return true;
+  if (normalized === "regionalOverwateringCheck") return true;
+  if (normalized === "winterizationVisit") {
+    return /winter/i.test(String(resolverContext?.inspectionType || "")) || /winter/i.test(String(resolverContext?.season || ""));
+  }
+  return undefined;
+}
+
+function getChecklistAssetFieldValue(asset, key) {
+  if (!asset?.ref || !key) return "";
+  const normalized = String(key).trim().toLowerCase();
+  if (normalized === "distribution_method") {
+    return String(asset.ref.metadata?.distribution_method || asset.ref.distributionMethod || "");
+  }
+  return "";
+}
+
+function isChecklistDependencySatisfied(definition, store, definitionMap, asset) {
   if (!definition?.dependsOn) return true;
   const dependencyDefinition = definitionMap.get(definition.dependsOn);
   if (!dependencyDefinition) return true;
@@ -7253,6 +7453,32 @@ function isChecklistDependencySatisfied(definition, store, definitionMap) {
   return dependencyEntry.value === true;
 }
 
+function isChecklistContextDependencySatisfied(definition) {
+  if (!definition?.dependsOnContext) return true;
+  const contextValue = getChecklistContextValue(definition.dependsOnContext);
+  if (Array.isArray(definition.dependsOnContextValues) && definition.dependsOnContextValues.length) {
+    return definition.dependsOnContextValues.includes(contextValue);
+  }
+  return Boolean(contextValue);
+}
+
+function isChecklistAssetDependencySatisfied(definition, asset) {
+  if (!definition?.dependsOnAssetField) return true;
+  const value = String(getChecklistAssetFieldValue(asset, definition.dependsOnAssetField) || "").trim().toLowerCase();
+  if (Array.isArray(definition.dependsOnAssetValues) && definition.dependsOnAssetValues.length) {
+    return definition.dependsOnAssetValues.map((entry) => String(entry).trim().toLowerCase()).includes(value);
+  }
+  return Boolean(value);
+}
+
+function isChecklistDefinitionVisible(definition, store, definitionMap, asset) {
+  return (
+    isChecklistDependencySatisfied(definition, store, definitionMap, asset) &&
+    isChecklistContextDependencySatisfied(definition) &&
+    isChecklistAssetDependencySatisfied(definition, asset)
+  );
+}
+
 function renderDetailChecklistComposer() {
   if (!detailCalloutChecklist) return;
   const asset = getActiveDetailAsset();
@@ -7273,6 +7499,7 @@ function renderDetailChecklistComposer() {
   detailCalloutChecklist.innerHTML = "";
 
   definitions.forEach((definition) => {
+    if (!isChecklistDefinitionVisible(definition, store, definitionMap, asset)) return;
     const entry = normalizeChecklistEntry(store[definition.id], definition);
     const countQty = entry ? Number(entry.quantity || 0) : 0;
     const countChecked = countQty > 0;
@@ -7342,7 +7569,7 @@ function renderDetailChecklistComposer() {
       `;
     } else if (definition.kind === "text") {
       const textValue = entry ? String(entry.text || "") : "";
-      const enabled = isChecklistDependencySatisfied(definition, store, definitionMap);
+      const enabled = isChecklistDefinitionVisible(definition, store, definitionMap, asset);
       const helperText = definition.dependsOn
         ? `Capture details after \"${definitionMap.get(definition.dependsOn)?.label || "related check"}\" is answered.`
         : "Capture issue details and field observations.";
@@ -7543,6 +7770,10 @@ function applyDetailSave() {
     asset.ref.metadata[key] = value;
   });
 
+  if (asset.type === "controller" && Object.prototype.hasOwnProperty.call(draft.metadata || {}, "parent")) {
+    asset.ref.backflow = String(draft.metadata.parent || "").trim();
+  }
+
   if (asset.type === "controller" && asset.ref.metadata.make_model) {
     asset.ref.model = asset.ref.metadata.make_model;
   }
@@ -7555,6 +7786,8 @@ function applyDetailSave() {
   if (!isNaN(nextX)) asset.ref.mapX = Number(nextX.toFixed(2));
   if (!isNaN(nextY)) asset.ref.mapY = Number(nextY.toFixed(2));
 
+  postDesktopAssetLocationUpdate(asset);
+  persistActiveIrrigationSession();
   setSubmitMessage(`Saved ${draft.name}.`, "ok");
   assetTab.selectedKey = asset.key;
   mapTab.selectedKey = asset.key;
@@ -7835,6 +8068,9 @@ function saveCreateSheet() {
   setSubmitMessage(`${name} added as ${getAssetTypeLabel(type)}.`, "ok");
   closeCreateSheet(true);
   setActiveTab(sheetState.createLaunchTab);
+  const createdAsset = getAllAssets().find((asset) => asset.key === assetTab.selectedKey);
+  postDesktopAssetLocationUpdate(createdAsset);
+  persistActiveIrrigationSession();
   renderAll();
 }
 
@@ -7847,8 +8083,8 @@ function renderAssetRegistryList() {
 
   if (!filtered.length) {
     const item = document.createElement("li");
-    item.className = "slds-item";
-    item.style.padding = "8px 0";
+    item.className = "asset-list-item slds-item";
+    item.style.padding = "0";
     item.textContent = "No assets match this filter.";
     assetList.appendChild(item);
     return;
@@ -7856,8 +8092,8 @@ function renderAssetRegistryList() {
 
   filtered.forEach((asset) => {
     const item = document.createElement("li");
-    item.className = "slds-item";
-    item.style.padding = "8px 0";
+    item.className = "asset-list-item";
+    item.style.padding = "0";
 
     const button = document.createElement("button");
     button.type = "button";
@@ -8517,9 +8753,7 @@ function focusAssetOnMap(assetKey) {
   updateMapSheetSelection();
 
   suppressNextMapSelectionQuickView = true;
-  if (!syncSpatialMapState({ shouldFocusMap: true })) {
-    refreshSpatialMapFrame();
-  }
+  refreshSpatialMapFrame();
 
   setSubmitMessage(`Showing ${getAssetDisplayName(selected)} on Irrigation map.`, "ok");
 }
@@ -8593,6 +8827,15 @@ if (mapEditToggle) {
 
 if (mapAddMarker) {
   mapAddMarker.addEventListener("click", () => {
+    // Start Add New from a neutral state so map taps create/link new geometry.
+    if (mapTab.selectedKey) {
+      mapTab.selectedKey = "";
+      assetTab.selectedKey = "";
+      renderMapAssetPicker();
+      updateMapSheetSelection();
+      renderMapSelectionCard();
+    }
+
     if (!mapGeometryState.enabled) {
       mapGeometryState.enabled = true;
       if (assetDetailSheet && !assetDetailSheet.classList.contains("hidden")) {
@@ -8600,9 +8843,8 @@ if (mapAddMarker) {
       }
       gisSelectionCard?.classList.add("hidden");
     }
-    const selected = getAllAssets().find((asset) => asset.key === mapTab.selectedKey);
     setMapGeometryTool("marker");
-    setSubmitMessage(selected ? `Tap the map to place an area marker for ${selected.name}.` : "Tap the map to place an area marker. You can link to an existing component or create a new one.", "ok");
+    setSubmitMessage("Tap an open area on the map to place a marker. You can then link to an existing component or create a new one.", "ok");
   });
 }
 
@@ -8635,32 +8877,50 @@ if (mapDeleteGeometry) {
     }
 
     clearPendingMapGeometryDeleteAction();
-    if (!spatialMapFrame?.contentWindow) {
-      setSubmitMessage("Map frame is not ready yet.", "error");
+    if (!SELF_CONTAINED_PROTOTYPE) {
+      if (!spatialMapFrame?.contentWindow) {
+        setSubmitMessage("Map frame is not ready yet.", "error");
+        return;
+      }
+
+      if (!selected || !assetId) {
+        spatialMapFrame.contentWindow.postMessage(
+          {
+            type: "SPATIAL_DELETE_SELECTED_GEOMETRY",
+            propertyId: mapTab.context.propertyId,
+          },
+          "*"
+        );
+        setSubmitMessage("Deleting currently selected map geometry...", "warn");
+        return;
+      }
+
+      spatialMapFrame.contentWindow.postMessage(
+        {
+          type: "SPATIAL_DELETE_ASSET_GEOMETRY",
+          propertyId: mapTab.context.propertyId,
+          assetId,
+        },
+        "*"
+      );
+      setSubmitMessage(`Deleting map geometry for ${selected.name}...`, "warn");
       return;
     }
 
     if (!selected || !assetId) {
-      spatialMapFrame.contentWindow.postMessage(
-        {
-          type: "SPATIAL_DELETE_SELECTED_GEOMETRY",
-          propertyId: mapTab.context.propertyId,
-        },
-        "*"
-      );
-      setSubmitMessage("Deleting currently selected map geometry...", "warn");
+      setSubmitMessage("Select a component before deleting map geometry.", "warn");
       return;
     }
 
-    spatialMapFrame.contentWindow.postMessage(
-      {
-        type: "SPATIAL_DELETE_ASSET_GEOMETRY",
-        propertyId: mapTab.context.propertyId,
-        assetId,
-      },
-      "*"
-    );
-    setSubmitMessage(`Deleting map geometry for ${selected.name}...`, "warn");
+    selected.ref.hasMapGeometry = false;
+    delete selected.ref.lat;
+    delete selected.ref.lon;
+    delete selected.ref.mapX;
+    delete selected.ref.mapY;
+    postDesktopAssetGeometryDeleted(selected.ref.id, 1);
+    persistActiveIrrigationSession();
+    renderMapSelectionCard();
+    setSubmitMessage(`Deleted map geometry for ${selected.name}.`, "ok");
   });
 }
 
@@ -8747,15 +9007,7 @@ function registerSpatialCreatedComponent(rawAsset) {
   return `zone:${zone.id}`;
 }
 
-window.addEventListener("message", (event) => {
-  const msg = event.data;
-  if (!msg) return;
-
-  if (msg.type === "DESKTOP_IRRIGATION_BOOTSTRAP") {
-    applyDesktopEmbedBootstrap(msg);
-    return;
-  }
-
+function handleStandaloneSpatialMessage(msg) {
   if (msg.type === "SPATIAL_COMPONENT_CREATED") {
     const createdKey = registerSpatialCreatedComponent(msg.asset || null);
     if (!createdKey) {
@@ -8776,10 +9028,8 @@ window.addEventListener("message", (event) => {
       clearPendingMapActionConfirms();
       mapTab.selectionCardDismissed = false;
       mapTab.selectedKey = "";
-      assetTab.selectedKey = "";
       updateMapSheetSelection();
       renderMapAssetPicker();
-      renderMapSelectionCard();
       return;
     }
     const asset = resolveSpatialAssetSelection(targetId);
@@ -8827,12 +9077,13 @@ window.addEventListener("message", (event) => {
       return;
     }
     const deletedCount = Number(msg.deletedCount || 0);
-    if (asset && deletedCount > 0) {
+    if (asset) {
       asset.ref.hasMapGeometry = false;
       delete asset.ref.lat;
       delete asset.ref.lon;
       delete asset.ref.mapX;
       delete asset.ref.mapY;
+      postDesktopAssetGeometryDeleted(asset.ref.id, deletedCount);
     }
     if (deletedCount > 0) {
       setSubmitMessage(`Deleted ${deletedCount} map item(s) for ${assetName}.`, "ok");
@@ -8870,10 +9121,25 @@ window.addEventListener("message", (event) => {
   asset.ref.hasMapGeometry = true;
   if (typeof msg.lat === "number") asset.ref.lat = msg.lat;
   if (typeof msg.lon === "number") asset.ref.lon = msg.lon;
+  if (typeof msg.mapX === "number") asset.ref.mapX = Number(msg.mapX.toFixed(2));
+  if (typeof msg.mapY === "number") asset.ref.mapY = Number(msg.mapY.toFixed(2));
   if (DESKTOP_MAP_EMBED && window.parent && window.parent !== window) {
     window.parent.postMessage(msg, "*");
   }
   persistActiveIrrigationSession();
+}
+
+window.addEventListener("message", (event) => {
+  const msg = event.data;
+  if (!msg) return;
+
+  if (msg.type === "DESKTOP_IRRIGATION_BOOTSTRAP") {
+    applyDesktopEmbedBootstrap(msg);
+    return;
+  }
+
+  if (SELF_CONTAINED_PROTOTYPE) return;
+  handleStandaloneSpatialMessage(msg);
 });
 
 decisionModal?.addEventListener("click", (event) => {
@@ -8918,9 +9184,7 @@ detailShowMap?.addEventListener("click", () => {
   setActiveTab("map");
   updateMapSheetSelection();
 
-  if (!syncSpatialMapState({ shouldFocusMap: true })) {
-    refreshSpatialMapFrame();
-  }
+  refreshSpatialMapFrame();
 });
 
 detailCreateCallout.addEventListener("click", () => {
@@ -9346,10 +9610,6 @@ mapTab.selectedKey = "";
 if (DESKTOP_MAP_EMBED) {
   appMode = "woli";
   mapTab.context.propertyId = DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID;
-  if (DESKTOP_MAP_BOOTSTRAP_ASSET_ID) {
-    mapTab.selectedKey = DESKTOP_MAP_BOOTSTRAP_ASSET_ID;
-    assetTab.selectedKey = DESKTOP_MAP_BOOTSTRAP_ASSET_ID;
-  }
   setActiveTab("map");
   if (window.parent && window.parent !== window) {
     window.parent.postMessage({ type: "DESKTOP_IRRIGATION_READY" }, "*");

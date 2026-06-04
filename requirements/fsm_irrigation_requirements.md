@@ -27,8 +27,8 @@ Property Account
 | Backflow ownership | A Backflow must belong to exactly one Point of Connection. |
 | Master Valve ownership | A Master Valve must belong to exactly one Point of Connection. |
 | Flow Sensor ownership | A Flow Sensor must belong to exactly one Point of Connection. |
-| Controller ownership | A Controller must belong to exactly one Point of Connection. |
-| Zone ownership | A Zone must belong to exactly one Controller. |
+| Controller ownership | A Controller may belong to one or more points of connection. Conversely there may also be multiple controllers with one point of connect. |
+| Zone ownership | A Zone (The Valve [component] and Station [watering area]) must belong to exactly one Controller. |
 | System grouping | System is required and groups a property's irrigation assets. |
 | Naming | Zone display names should be normalized to `Zone <number>` to reduce user input. |
 | Retire-only behavior | Assets should be retired, not hard deleted, when removed from active use. |
@@ -44,9 +44,10 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 |---|---|---|
 | `Name` | Human-readable asset name shown in UI and hierarchy. | All assets (Zone name is system-generated) |
 | `Asset Type` | Standard asset discriminator. | All assets |
-| `Status` | Active / Retired lifecycle state. | All assets |
+| `Status` | Active / Not-Active (Retired) lifecycle state. | All assets |
 | `Parent` | Links the asset to the correct place in the hierarchy. | All assets except System root |
 | `Install Date` | Optional lifecycle date captured in edit flow. | System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, Zone |
+| `Serial Number` |  | Displayed in detail panel |
 | `Description` | Optional free-text context. | System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, Zone |
 
 ### 2.2 System Metadata
@@ -58,7 +59,6 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Parent` | No | Stored as root (`parentId = null`) and grouped under the selected Property context. |
 | `Description` | No | Optional system context shown in detail panel. |
 | `Install Date` | No | Useful for lifecycle context. |
-| `Serial Number` | No | Displayed in detail panel; currently edit flow clears this value (known prototype gap). |
 | `Mainline Pipe Type` | No | Descriptive pipe material (PVC, Poly, Copper, etc.). Optional; captured at setup. |
 | `Mainline Pipe Size` | No | Descriptive pipe diameter (e.g., 1", 1.5"). Optional; captured at setup. |
 
@@ -71,11 +71,19 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Parent` | Yes | Parent is the Point of Connection. |
 | `Controller Label` | Yes | Human-friendly identifier used by the tech. |
 | `Total Zones` | Yes | Capacity / zone count for the controller. |
+| `Total Zones Used` | Yes | Zone count used |
 | `Make / Model` | No | Manufacturer and model information. |
+| `Rain Sensor` | No | Present Yes/No, Working or Offline |
+| `Manufacture Date` | No | Date of manufacture on controller |
+| `Wiring Type` | No | Conventional, 2-Wire, Wireless |
+| `Power Source` | No | AC (Electrical), DC (Solar or Battery) |
 | `Connectivity Type` | No | For example WiFi, Wired, or No Connectivity. |
 | `Smart Controller` | No | Indicates whether the controller is smart / weather-based. |
+| `Smart Controller Status` | No | Operating in smart mode? |
 | `Controller App / Platform` | No | Companion app name or platform name. |
 | `Install Date` | No | Optional lifecycle date. |
+| `Controller Notes` | No | One-off additional details |
+
 
 ### 2.4 Point of Connection Metadata
 
@@ -84,8 +92,8 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Name` | Yes | Point-of-Connection display name. |
 | `Asset Type` | Yes | Must be `Point of Connection`. |
 | `Parent` | Yes | Parent is `System`. |
-| `Water Source Type` | No | Meta field examples: Potable, Reclaimed, Well, Other. |
-| `Source Capacity` | No | Optional capacity or pressure metadata for planning. |
+| `Water Source Type` | No | Meta field examples: Potable, Reclaimed, Well, Pond/Lake, Other. |
+| `Source Capacity or Pressure` | No | Optional capacity or pressure metadata for planning. |
 | `Install Date` | No | Optional lifecycle date. |
 
 ### 2.5 Zone Metadata
@@ -98,10 +106,17 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Zone Number` | Yes | Primary zone identifier; must be unique per Property. |
 | `Area Served` | No | Human-readable area description. |
 | `Flow Rate (GPM)` | No | Operational or design flow rate. |
-| `Primary Head Type` | No | Useful when the zone is mapped to a head subtype. |
-| `Distribution Method` | No | Spray / Rotor / Bubbler / Drip. Captured during inspection per Q6.3. |
-| `Lateral Pipe Type` | No | Descriptive lateral/drip line material. Optional; examples: soaker hose, drip tape, mainline lateral. |
+| `Flow Rate (PSI)` | No | Operational or design flow pressure. |
+| `Primary Head Type / Brand` | No | Useful when the zone is mapped to a head subtype. |
+| `Distribution Method` | No | Spray / Rotor / Bubbler / Point Source Drip or Inline Drip. |
+| `Lateral Pipe Type` | No | Descriptive lateral/drip line material. Optional; examples: PVC, soaker hose, drip tape, mainline lateral. |
 | `Lateral Pipe Size` | No | Descriptive diameter/designation. Optional. |
+| `Valve Type` | No | Zone valve hardware classification. |
+| `Valve Size` | No | Physical size/designation. |
+| `Valve Location Notes` | No | Field notes for locating the valve box and valve. |
+| `Station Identifier` | No | Controller station/channel mapped to this zone. |
+| `Station Wire Path Notes` | No | Wiring trace notes for troubleshooting. |
+| `Station Electrical Status` | No | Good / Open / Short / Intermittent. |
 | `Solenoid Resistance (Ω)` | No | Last measured solenoid resistance in ohms. Nominal range 20–60 Ω; out-of-range flags valve diagnostic need. Written by inspection checkout via Q6.13c. |
 | `Install Date` | No | Optional lifecycle date. |
 
@@ -113,9 +128,12 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Asset Type` | Yes | Must be `Backflow`. |
 | `Parent` | Yes | Parent is the Point of Connection. |
 | `Backflow Type` | Yes | Examples: RPZ, DCV, PVB, Other. |
+| `Backflow Size` | No |  |
+
 | `Serial Number` | No | Useful for compliance tracking. |
 | `Last Test Date` | No | Compliance history. |
 | `Last Test Result` | No | Options in prototype: Pass, Fail, Not Tested. |
+| `Last Rebuild Date` | No | Repaired or rebuild history. |
 | `Next Test Due` | No | Optional date for upcoming compliance activity. |
 | `Compliance Status` | No | Current compliance state. |
 | `Testing Authority` | No | Authority or vendor responsible for testing. |
@@ -130,6 +148,8 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Operational Status` | No | Running / Off / Faulted snapshot from inspection or service event. |
 | `Pressure (PSI)` | No | Last observed pressure reading at inspection time. |
 | `Pump Type` | No | Example values: Booster, Well, Transfer, Other. |
+| `Serial Number` | No | Useful for compliance tracking. |
+| `Make / Model` | No | Manufacturer and model information. |
 | `Install Date` | No | Optional lifecycle date. |
 
 ### 2.8 Master Valve Metadata
@@ -141,6 +161,8 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Parent` | Yes | Parent is the Point of Connection. |
 | `Operational Status` | No | Open / Closed / Faulted snapshot from inspection or service event. |
 | `Valve Type` | No | Example values: Normally Closed, Normally Open, Latching, Other. |
+| `Serial Number` | No | Useful for compliance tracking. |
+| `Make / Model` | No | Manufacturer and model information. |
 | `Solenoid Resistance (Ω)` | No | Measured value used for troubleshooting when applicable. |
 | `Install Date` | No | Optional lifecycle date. |
 
@@ -152,22 +174,13 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Asset Type` | Yes | Must be `Flow Sensor`. |
 | `Parent` | Yes | Parent is the Point of Connection. |
 | `Functional Status` | No | Connected / Not Connected / Faulted. |
-| `Sensor Model` | No | Manufacturer/model value used for troubleshooting. |
+| `Serial Number` | No | Useful for compliance tracking. |
+| `Make / Model` | No | Manufacturer and model information. |
 | `Flow Reading (GPM)` | No | Last observed live reading when available. |
+| `Last Calibration Date` | No | Last time the meter was calibrated. |
 | `Install Date` | No | Optional lifecycle date. |
 
-### 2.10 Zone Subcomponent Metadata (Valve + Station)
-
-| Metadata | Required | Notes |
-|---|---|---|
-| `Valve Type` | No | Zone valve hardware classification. |
-| `Valve Size` | No | Physical size/designation. |
-| `Valve Location Notes` | No | Field notes for locating the valve box and valve. |
-| `Station Identifier` | No | Controller station/channel mapped to this zone. |
-| `Station Wire Path Notes` | No | Wiring trace notes for troubleshooting. |
-| `Station Electrical Status` | No | Good / Open / Short / Intermittent. |
-
-### 2.11 Inspection-Linked Metadata
+### 2.10 Inspection-Linked Metadata
 
 These fields come from the Standard question library and should live alongside the asset metadata model so setup, inspection, and reporting all refer to the same record shape.
 
@@ -179,7 +192,7 @@ These fields come from the Standard question library and should live alongside t
 | Point of Connection | `Source Capacity` | No | Optional capacity or pressure metadata for planning. |
 | Pump | `Operational Status` | No | Captured when pump equipment is present and inspected. |
 | Pump | `Pressure (PSI)` | No | Captured from field reading during inspection/service. |
-| Backflow | `Backflow Type` | Yes | RPZ / DCV / PVB / Other. Captured by inspection Q4.1 and stored on the Backflow asset. |
+| Backflow | `Backflow Type` | No | RPZ / DCV / PVB / Other |
 | Master Valve | `Operational Status` | No | Captured when master valve is installed at the site. |
 | Master Valve | `Solenoid Resistance (Ω)` | No | Diagnostic measurement captured when troubleshooting is performed. |
 | Flow Sensor | `Functional Status` | No | Connected / Not Connected / Faulted state captured during inspection. |
@@ -188,17 +201,17 @@ These fields come from the Standard question library and should live alongside t
 | Controller | `Total Zones` | Yes | Capacity / zone count for the controller. Captured by inspection Q5.3. |
 | Controller | `Make / Model` | No | Manufacturer and model information. Captured by inspection Q5.1 when discovered or corrected. |
 | Controller | `Smart Controller` | No | Indicates whether the controller is smart / weather-based. Captured by inspection Q5.8. |
-| Controller | `Flow Sensor Connected and Functional` | No | Controller equipment-package metadata. Captured by inspection Q5.9 when applicable. |
+| Controller | `Rain Sensor` | No | Controller equipment-package metadata. |
 | Zone | `Zone Number` | Yes | Primary zone identifier; must be unique per Property. Captured by inspection Q6.1. |
 | Zone | `Area Served` | No | Human-readable area description. Captured by inspection Q6.2. |
-| Zone | `Distribution Method` | No | Spray / Rotor / Bubbler / Drip. Captured by inspection Q6.3. |
+| Zone | `Distribution Method` | No | Spray / Rotor / Bubbler / Drip (Point Source or Inline). Captured by inspection Q6.3. |
 | Zone | `Landscape Type` | No | Turf / Bed / Color or similar setup label used by the field team. Captured by inspection Q6.4. |
 | Zone | `# of Heads` | No | Zone component metadata. Captured by inspection Q6.5. |
 | Zone | `Solenoid Resistance (Ω)` | No | Last measured solenoid resistance in ohms. Captured by inspection Q6.13c. |
 | Zone | `Station Identifier` | No | Controller station/channel mapping for this zone. |
 | Zone | `Station Electrical Status` | No | Wiring health result captured during troubleshooting. |
 
-### 2.12 Inspection Checklist Items
+### 2.11 Inspection Checklist Items
 
 These are visit-scoped observations or actionable finding prompts. They should not be treated as static asset metadata, even when they are recorded against an asset-scoped inspection response.
 
@@ -236,26 +249,27 @@ Branch logic should be short and boolean-oriented for mobile capture. Conditiona
 | Controller | Adjustment notes | Text | Show when Adjustments made this visit? = Yes | Required when adjustments were made. |
 | Controller | System not winterized/drained? | Boolean | Show when winterization visit = Yes | Winterization-only branch. |
 | Zone | Minutes / zone (runtime) | Number |  | Operational/programming observation. |
-| Zone | No issues found in this zone? | Boolean | Hide when any failure item = Yes | Mutually exclusive with failure items below. |
-| Zone | Broken head | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Broken / clogged nozzle | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Sunken / tilted head | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Head not retracting | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Head not rotating | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Overwatering onto hardscape | Boolean | Show when regional overwatering check = Yes | Region-specific delta. |
-| Zone | Lateral leak | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Valve not activating | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Seeping valve | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Bad solenoid | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
-| Zone | Valve box lid missing | Count | Show when No issues found in this zone? = No | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Broken head | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Broken / clogged nozzle / Bad wiper seal | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Sunken / tilted head | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Head not retracting | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Head not rotating | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Overspray onto hardscape | Boolean | Show when regional overwatering check = Yes | Region-specific delta. |
+| Zone | Lateral leak | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Valve not activating | Count |  | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Seeping valve | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Stuck valve | Count | Show when Seeping valve count > 0 | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Low Head Drainage | Count | Show when Seeping valve count > 0 | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Bad solenoid | Count | | Failure item; creates an actionable checklist finding with quantity support. |
+| Zone | Valve box lid missing or damaged | Count | | Failure item; creates an actionable checklist finding with quantity support. |
 | Zone | Broken drip line | Count | Show when Distribution Method = Drip | Drip-only branch with quantity support. |
 | Zone | Drip emitters / filter / regulator not OK? | Boolean | Show when Distribution Method = Drip | Drip-only branch. |
-| Zone | Station wiring fault observed? | Boolean | Show when No issues found in this zone? = No | Captures station-level electrical issues linked to the zone. |
-| Zone | Repairs made on site this visit? | Boolean |  | Captures whether the tech completed corrective work. |
+| Zone | Station wiring fault observed? | Boolean | | Captures station-level electrical issues linked to the zone. |
+| Zone | Repairs made on site this visit? | Boolean | | Captures whether the tech completed corrective work. |
 | Zone | Repair summary | Text | Show when Repairs made on site this visit? = Yes | Required when repairs were made. |
 | Zone | Zone notes | Text |  | Free-form inspection notes. |
 
-### 2.13 Component Metadata (Non-Hierarchy)
+### 2.12 Component Metadata (Non-Hierarchy)
 
 Valve, head, drip, station, and other zone-level equipment details are modeled as metadata attached to Standard hierarchy assets. This keeps the hierarchy fixed at System -> Point of Connection -> Controller -> Zone (with Pump, Backflow, Master Valve, and Flow Sensor as Point-of-Connection children) while still supporting detailed operational capture.
 
@@ -263,6 +277,19 @@ Examples:
 1. Zone-level metadata: valve type, head mix, emitter profile, lateral pipe attributes.
 2. Controller-level metadata: sensor package, flow monitoring setup.
 3. Backflow-level metadata: compliance and testing attributes.
+
+### 2.13 GIS File Upload and Import Requirements
+
+Existing GIS source files must be uploadable to seed or populate a property's irrigation system structure and component geometry.
+
+| Requirement | Notes |
+|---|---|
+| Supported inputs | KML is required; other common GIS formats may be supported if they can be validated and mapped consistently. |
+| Import outcome | Uploaded files must be usable to create or update System, Point of Connection, Controller, Zone, and related component records where the source data contains enough information. |
+| Geometry handling | Imported geometries must map into the standard geometry model and support point, line, and polygon features as applicable. |
+| Validation | The upload flow must validate file structure, geometry integrity, and record mapping before committing changes. |
+| Review step | Ambiguous, missing, or unmatched features must be surfaced for manual review rather than silently discarded. |
+| Provenance | Imported records should retain source-file provenance so users can identify the original GIS upload source. |
 
 ### 2.14 Create-Time Required Field Rules (Prototype)
 
@@ -302,9 +329,9 @@ This section is the Standard Salesforce field dictionary for irrigation asset se
 | `last_inspected_at` | `Asset.Last_Inspected_At__c` | DateTime | Set on inspection completion. | No | Yes | All assets |
 | `condition_score` | `Asset.Condition_Score__c` | Number(1,0) | Integer `1`-`5`. | No | Yes | Condition-scored assets |
 | `repairs_needed` | `ServiceAppointment.Repairs_Needed__c` | Checkbox | `true` / `false`; set in inspection workflow. | No | Yes | Visit scope |
-| `issue_type` | `WorkOrderLineItem.Issue_Type__c` | Picklist | Controlled issue taxonomy. | No | Conditional | Actionable findings mapped to WOLI |
-| `issue_quantity` | `WorkOrderLineItem.Quantity` | Number | Integer `>= 1` when actionable finding is mapped. | No | Conditional | Actionable findings mapped to WOLI |
-| `callout_status` | `WorkOrderLineItem.Callout_Status__c` | Picklist | `New`, `Quoted`, `Approved`, `Completed` (legacy API name retained). | No | Conditional | Actionable findings mapped to WOLI |
+| `issue_type` | `WorkOrderLineItem.Issue_Type__c` | Picklist | Controlled issue taxonomy. | No | Conditional | Pending callout records when work-item linkage exists |
+| `issue_quantity` | `WorkOrderLineItem.Quantity` | Number | Integer `>= 1` when pending callout output captures quantity. | No | Conditional | Pending callout records when work-item linkage exists |
+| `callout_status` | `WorkOrderLineItem.Callout_Status__c` | Picklist | `New`, `Quoted`, `Approved`, `Completed` (legacy API name retained). | No | Conditional | Pending callout records when work-item linkage exists |
 
 ### 3.2 Asset-Specific Metadata and Map Rules
 

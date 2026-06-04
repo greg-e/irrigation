@@ -155,6 +155,7 @@ Signoff classification: Mixed (Prototype Baseline + Production Target)
 4. Map must support full-screen mode on mobile.
 5. Map must support opening checklist and asset detail directly from selected map context.
 6. Map must support asset create from map events and link new geometry to created assets.
+7. Map must support uploading existing KML or other common GIS files to seed property geometry and populate system component records where the source data is sufficient.
 
 ### FR-5 Mobile Checklist Output Capture
 

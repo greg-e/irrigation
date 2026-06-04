@@ -69,9 +69,6 @@ export class SpatialFeatureApi {
 
   // Generate auto-features (markers) from assets with mapCoordinates
   _generateAutoFeatures(propertyId) {
-    // Demo baseline should start with no mapped geometry; users add map objects manually.
-    return [];
-
     const assets = this.assetsByProperty[propertyId] || [];
     if (!Array.isArray(assets) || assets.length === 0) return [];
 
@@ -165,21 +162,14 @@ export class SpatialFeatureApi {
         };
       }
 
-      const polySeed = hashString(`poly-${zone.id || zone.name || index}`);
-      const rotation = ((polySeed % 360) * Math.PI) / 180;
-      const radiusLat = 0.00008 + (polySeed % 5) * 0.000015;
-      const radiusLon = radiusLat * 1.35;
-
       autoFeatures.push({
         id: `auto-zone-${zone.id}`,
         propertyId,
         assetId: zone.id,
         assetType: zone.type,
-        type: FEATURE_TYPES.POLYGON,
-        name: `${zone.name || `Zone ${index + 1}`} Coverage`,
-        geometry: {
-          path: polygonFromCenter(center, radiusLat, radiusLon, rotation),
-        },
+        type: FEATURE_TYPES.MARKER,
+        name: zone.name || `Zone ${index + 1}`,
+        geometry: { lat: center.lat, lng: center.lon },
         isAuto: true,
         modifiedAt: Date.now(),
       });

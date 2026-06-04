@@ -95,7 +95,7 @@ Custom fields added for Repair Callout tracking (decisions from irrigationchecku
 | `Callout_Photo__c` | Text (URL) | Reference to Files attachment; or use native Files on WOLI |
 | `ExtraWork_Estimate_Line_Ref__c` | Text | Reference ID to linked ExtraWork estimate line item |
 
-> **Usage:** During a checkup Service Appointment, the field tech creates WOLI records per issue found. Each WOLI starts at `Callout_Status__c = New`. When the ExtraWork estimate is built, the relevant WOLI records are updated with the estimate line reference and status advances to `Quoted`. Customer approval triggers advancement to `Approved`, completion of work advances to `Completed`.
+> **Usage:** During a checkup Service Appointment, the field tech captures findings and callout outputs on the inspection record. WOLI linkage, when needed for execution tracking, is handled by downstream work management and not auto-created per issue.
 
 ---
 

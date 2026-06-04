@@ -10,6 +10,7 @@ const config = window.SPATIAL_PROTO_CONFIG || {};
 const context = parseContextFromUrl();
 const urlParams = new URLSearchParams(window.location.search);
 const layoutMode = urlParams.get("layout") || "default";
+const suppressAutoMarkers = urlParams.get("noAutoMarkers") === "1";
 let mapOnlyEditEnabled = layoutMode === "map-only" && urlParams.get("geomEdit") === "1";
 const hideMapUiControlsInMapOnly = layoutMode === "map-only";
 let geometryEditingEnabled = layoutMode !== "map-only" || mapOnlyEditEnabled;
@@ -57,6 +58,7 @@ const state = {
   tool: TOOL_MODES.SELECT,
   selectedFeatureId: null,
   selectedAssetId: null,
+  lastFeatureSelectionAt: 0,
   hasAppliedSystemZoom: false,
   features: [],
   assets: [], // Will store the property's asset hierarchy
@@ -276,20 +278,62 @@ function deriveCenterFromAssets() {
   return { lat, lng };
 }
 
+function fitMapToComponentMarkers() {
+  if (!mapAdapter.map || !window.google?.maps?.LatLngBounds) return false;
+
+  const markerPoints = state.features
+    .filter((feature) => !feature?.isLatLon && String(feature?.type || "").toLowerCase() === "marker")
+    .map((feature) => {
+      const lat = toFiniteNumber(feature?.geometry?.lat);
+      const lng = toFiniteNumber(feature?.geometry?.lng);
+      if (lat == null || lng == null) return null;
+      return { lat, lng };
+    })
+    .filter(Boolean);
+
+  if (!markerPoints.length) return false;
+
+  if (markerPoints.length === 1) {
+    mapAdapter.map.setCenter(markerPoints[0]);
+    if (!state.hasAppliedSystemZoom) {
+      const singleMarkerZoom = Number(config.systemCenterZoom || 18);
+      if (Number.isFinite(singleMarkerZoom) && singleMarkerZoom > 0) {
+        mapAdapter.map.setZoom(singleMarkerZoom);
+      }
+      state.hasAppliedSystemZoom = true;
+    }
+    return true;
+  }
+
+  const bounds = new window.google.maps.LatLngBounds();
+  markerPoints.forEach((point) => bounds.extend(point));
+  mapAdapter.map.fitBounds(bounds, 36);
+
+  const maxZoomAfterFit = Number(config.systemCenterZoom || 18);
+  if (Number.isFinite(maxZoomAfterFit) && mapAdapter.map.getZoom() > maxZoomAfterFit) {
+    mapAdapter.map.setZoom(maxZoomAfterFit);
+  }
+
+  state.hasAppliedSystemZoom = true;
+  return true;
+}
+
 function centerMapOnSystem() {
   if (!mapAdapter.map) return false;
+  if (fitMapToComponentMarkers()) return true;
+
   const systemAsset = getPropertySystem();
   const systemLat = toFiniteNumber(systemAsset?.lat);
   const systemLon = toFiniteNumber(systemAsset?.lon);
 
-  const fallbackCenter =
-    deriveCenterFromFeatureGeometry() ||
-    deriveCenterFromAssets();
+  const featureCenter = deriveCenterFromFeatureGeometry();
+  const assetCenter = deriveCenterFromAssets();
 
   const center =
-    systemLat != null && systemLon != null
+    featureCenter ||
+    (systemLat != null && systemLon != null
       ? { lat: systemLat, lng: systemLon }
-      : fallbackCenter;
+      : assetCenter);
 
   if (!center) return false;
   mapAdapter.map.setCenter(center);
@@ -362,6 +406,125 @@ function normalizeFeatureNames(features) {
       assetStatus: nextAssetStatus,
     };
   });
+}
+
+const HIERARCHY_COLOR_PALETTE = [
+  "#2563eb",
+  "#16a34a",
+  "#d97706",
+  "#7c3aed",
+  "#dc2626",
+  "#0891b2",
+  "#db2777",
+  "#65a30d",
+  "#0f766e",
+  "#4f46e5",
+  "#ea580c",
+  "#b91c1c",
+];
+
+function colorHashIndex(value, modulo) {
+  const text = String(value || "");
+  if (!text || !modulo) return 0;
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+  }
+  return hash % modulo;
+}
+
+function hexToRgba(hexColor, alpha = 1) {
+  const cleaned = String(hexColor || "").trim().replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return `rgba(11, 92, 171, ${alpha})`;
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function contrastTextForHex(hexColor) {
+  const cleaned = String(hexColor || "").trim().replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return "#f8fafc";
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luminance > 0.6 ? "#111827" : "#f8fafc";
+}
+
+function findControllerAncestor(asset) {
+  let cursor = asset;
+  const visited = new Set();
+  while (cursor && cursor.id && !visited.has(cursor.id)) {
+    if (String(cursor.type || "").toLowerCase() === "controller") return cursor;
+    visited.add(cursor.id);
+    cursor = cursor.parentId ? assetById(cursor.parentId) : null;
+  }
+  return null;
+}
+
+function findControllerForZone(zoneAsset) {
+  if (!zoneAsset) return null;
+
+  const directControllerId = String(zoneAsset.controllerId || "").trim();
+  if (directControllerId) {
+    const byControllerId = assetById(directControllerId);
+    if (byControllerId && String(byControllerId.type || "").toLowerCase() === "controller") {
+      return byControllerId;
+    }
+  }
+
+  const byParent = findControllerAncestor(zoneAsset);
+  if (byParent) return byParent;
+
+  const controllerRef = String(zoneAsset.controller || "").trim();
+  if (!controllerRef) return null;
+
+  const normalizedRef = controllerRef.toLowerCase();
+  return (
+    state.assets.find(
+      (asset) =>
+        String(asset.type || "").toLowerCase() === "controller" &&
+        (String(asset.id || "").toLowerCase() === normalizedRef ||
+          String(asset.name || "").trim().toLowerCase() === normalizedRef)
+    ) || null
+  );
+}
+
+function resolveFeatureFamilyAnchor(asset) {
+  if (!asset) return null;
+  const typeKey = String(asset.type || "").toLowerCase();
+  if (typeKey === "controller") return asset;
+  if (typeKey === "zone") return findControllerForZone(asset) || asset;
+  const controllerAncestor = findControllerAncestor(asset);
+  if (controllerAncestor) return controllerAncestor;
+  return asset;
+}
+
+function hierarchyColorForAsset(asset, fallbackKey = "default") {
+  const anchor = resolveFeatureFamilyAnchor(asset);
+  const key = anchor?.id || anchor?.name || fallbackKey;
+  const idx = colorHashIndex(key, HIERARCHY_COLOR_PALETTE.length);
+  return HIERARCHY_COLOR_PALETTE[idx] || "#2563eb";
+}
+
+function decorateFeatureVisual(feature) {
+  if (!feature?.assetId) return feature;
+  const asset = assetById(feature.assetId);
+  if (!asset) return feature;
+
+  const familyColor = hierarchyColorForAsset(asset, feature.assetType || feature.assetId);
+  return {
+    ...feature,
+    styleStrokeColor: familyColor,
+    styleFillColor: familyColor,
+    stylePolygonFillColor: hexToRgba(familyColor, 0.24),
+    styleTextColor: contrastTextForHex(familyColor),
+  };
+}
+
+function applyFeatureVisualStyling(features) {
+  return (features || []).map((feature) => decorateFeatureVisual(feature));
 }
 
 function dedupeFeaturesById(features) {
@@ -1074,6 +1237,14 @@ function notifyParentMappedAssets() {
 }
 
 function syncLatLonFeatures() {
+  if (suppressAutoMarkers) {
+    state.features
+      .filter((f) => f.isLatLon)
+      .forEach((f) => mapAdapter.removeFeature(f.id));
+    state.features = state.features.filter((f) => !f.isLatLon);
+    return;
+  }
+
   if (!mapAdapter.map) return;
 
   // Remove stale lat/lon auto-markers
@@ -1092,7 +1263,7 @@ function syncLatLonFeatures() {
       return true;
     })
     .forEach((asset) => {
-      const feature = {
+      const feature = decorateFeatureVisual({
         id: `latlon-${asset.id}`,
         propertyId: context.propertyId,
         assetId: asset.id,
@@ -1103,18 +1274,18 @@ function syncLatLonFeatures() {
         isAuto: true,
         isLatLon: true,
         modifiedAt: Date.now(),
-      };
+      });
       state.features.push(feature);
       mapAdapter.addFeature(feature);
     });
 }
 
 function getStorageKey() {
-  return `spatial-demo-${context.propertyId}`;
+  return `spatial-demo-v5-cleared-${context.propertyId}`;
 }
 
 function getHiddenAutoStorageKey() {
-  return `spatial-demo-hidden-auto-${context.propertyId}`;
+  return `spatial-demo-v5-cleared-hidden-auto-${context.propertyId}`;
 }
 
 function saveToLocalStorage() {
@@ -1191,9 +1362,11 @@ async function loadFeatures() {
 
   const apiFeatures = await api.listFeatures(context);
   state.hiddenAutoFeatureIds = loadHiddenAutoFromLocalStorage();
-  const autoFeatures = apiFeatures.filter(
-    (feature) => feature.isAuto && !state.hiddenAutoFeatureIds.has(feature.id)
-  );
+  const autoFeatures = suppressAutoMarkers
+    ? []
+    : apiFeatures.filter(
+        (feature) => feature.isAuto && !state.hiddenAutoFeatureIds.has(feature.id)
+      );
   const seededUserFeatures = apiFeatures.filter((feature) => !feature.isAuto);
   const storedFeatures = loadFromLocalStorage();
 
@@ -1201,7 +1374,9 @@ async function loadFeatures() {
     storedFeatures && storedFeatures.length > 0 ? storedFeatures : seededUserFeatures;
 
   const mergedFeatures = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
-  state.features = normalizeFeatureNames(filterFeaturesForLayout(mergedFeatures));
+  state.features = applyFeatureVisualStyling(
+    normalizeFeatureNames(filterFeaturesForLayout(mergedFeatures))
+  );
   state.selectedFeatureId = null;
   state.selectedAssetId = null;
   mapAdapter.renderFeatures(state.features);
@@ -1370,6 +1545,7 @@ async function start() {
   await loadAndRegisterAssets();
 
   mapAdapter.onFeatureSelected = (featureId) => {
+    state.lastFeatureSelectionAt = Date.now();
     state.selectedFeatureId = featureId;
     const feature = featureById(featureId);
     state.selectedAssetId = feature?.assetId || null;
@@ -1386,6 +1562,9 @@ async function start() {
   };
 
   mapAdapter.onMapBackgroundClick = () => {
+    if (!state.selectedFeatureId && !state.selectedAssetId) {
+      return;
+    }
     state.selectedFeatureId = null;
     state.selectedAssetId = null;
     updateActionButtons();
@@ -1404,6 +1583,65 @@ async function start() {
       );
     }
   };
+
+  const mapRootEl = document.getElementById("map-root");
+  if (mapRootEl) {
+    mapRootEl.addEventListener("click", () => {
+      if (state.tool === TOOL_MODES.MARKER) {
+        const beforeCount = state.features.length;
+        // Fallback for embedded map click paths where Google click events can be dropped.
+        window.setTimeout(() => {
+          if (state.tool !== TOOL_MODES.MARKER) return;
+          if (state.features.length !== beforeCount) return;
+
+          const center = mapAdapter.map?.getCenter?.();
+          if (!center || !window.google?.maps?.Marker || !mapAdapter.onFeatureCreated) {
+            return;
+          }
+
+          const markerOverlay = new window.google.maps.Marker({
+            position: center,
+            draggable: false,
+          });
+          const markerFeature = mapAdapter.overlayToFeature(
+            markerOverlay,
+            window.google.maps.drawing.OverlayType.MARKER
+          );
+          mapAdapter.onFeatureCreated(markerFeature, markerOverlay);
+        }, 120);
+        return;
+      }
+
+      if (state.tool !== TOOL_MODES.SELECT) {
+        return;
+      }
+      if (!state.selectedFeatureId && !state.selectedAssetId) {
+        return;
+      }
+      if (Date.now() - state.lastFeatureSelectionAt < 220) {
+        return;
+      }
+
+      state.selectedFeatureId = null;
+      state.selectedAssetId = null;
+      mapAdapter.selectFeature(null);
+      updateActionButtons();
+      renderFeatureList();
+      setStatus("No component selected.");
+
+      if (window.parent !== window) {
+        window.parent.postMessage(
+          {
+            type: "SPATIAL_MAP_OBJECT_SELECTED",
+            assetId: "",
+            featureId: null,
+            shouldOpenDetail: false,
+          },
+          "*"
+        );
+      }
+    });
+  }
 
   mapAdapter.onFeatureChanged = async (featureId, geometry) => {
     const feature = featureById(featureId);
@@ -1425,7 +1663,7 @@ async function start() {
       geometry,
       isAuto: false,
     });
-    upsertLocal(updated);
+    upsertLocal(decorateFeatureVisual(updated));
     saveToLocalStorage();
     notifyParentAssetLocation(updated.assetId, updated);
     renderFeatureList();
@@ -1460,8 +1698,9 @@ async function start() {
       assetStatus: assetById(linkedAssetId)?.status || draftFeature.assetStatus,
     });
 
-    mapAdapter.addFeature(created, overlay);
-    upsertLocal(created);
+    const styledCreated = decorateFeatureVisual(created);
+    mapAdapter.addFeature(styledCreated, overlay);
+    upsertLocal(styledCreated);
     saveToLocalStorage();
     state.selectedFeatureId = created.id;
     mapAdapter.selectFeature(created.id);
@@ -1518,7 +1757,7 @@ start().catch((error) => {
 });
 
 // Listen for live asset data pushed from parent page (when embedded as iframe in desktop)
-window.addEventListener("message", (event) => {
+window.addEventListener("message", async (event) => {
   const msg = event.data;
   if (!msg) return;
 
@@ -1595,7 +1834,32 @@ window.addEventListener("message", (event) => {
   state.assets.forEach((asset) => {
     state.assetMap[asset.id] = asset;
   });
-  api.registerAssets(msg.propertyId || context.propertyId, state.assets);
+  const nextPropertyId = msg.propertyId || context.propertyId;
+  api.registerAssets(nextPropertyId, state.assets);
+
+  // Rebuild feature state from the registered assets so auto geometry reflects
+  // the latest component payload pushed by the embedding workspace.
+  // Reapply hidden-auto and stored user-feature state to preserve delete intent.
+  const refreshed = await api.listFeatures({
+    ...context,
+    propertyId: nextPropertyId,
+  });
+  state.hiddenAutoFeatureIds = loadHiddenAutoFromLocalStorage();
+  const autoFeatures = suppressAutoMarkers
+    ? []
+    : refreshed.filter(
+        (feature) => feature.isAuto && !state.hiddenAutoFeatureIds.has(feature.id)
+      );
+  const seededUserFeatures = refreshed.filter((feature) => !feature.isAuto);
+  const storedUserFeatures = loadFromLocalStorage();
+  const userFeatures =
+    storedUserFeatures && storedUserFeatures.length > 0
+      ? storedUserFeatures
+      : seededUserFeatures;
+
+  state.features = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
+  state.features = applyFeatureVisualStyling(normalizeFeatureNames(state.features));
+  mapAdapter.renderFeatures(state.features);
   syncLatLonFeatures();
 
   // Center map on system if it has lat/lon

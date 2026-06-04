@@ -22,7 +22,7 @@ Draft data model for the standardized digital irrigation inspection form capture
 ## Design Principles
 
 1. **Service Appointment is the inspection container.** Per prior decision (`irrigationcheckups_analysis.md` open questions, resolved). Inspection header data lives on SA via custom fields. No separate `System_Checkup__c` object.
-2. **Repair Callouts are Work Order Line Items.** Per `fsm_asset_architecture.md`. Each issue found during inspection = one WOLI with extended custom fields. Re-used here, not redefined.
+2. **Repair callout outputs are captured at inspection level.** Per `fsm_asset_architecture.md`. Findings and callouts do not auto-create one WOLI per issue. Re-used here, not redefined.
 3. **Question responses are a child object.** The standardized question library will evolve (West/East regions, seasonal variants). Hardcoding 30+ booleans onto SA is brittle. A child `Inspection_Response__c` keyed to a question definition supports versioning.
 4. **Photos use native Salesforce Files.** `ContentDocumentLink` on SA, WOLI, or Asset. No custom photo object.
 5. **Internal vs customer-facing notes are separate fields.** Confirmed in June 2 review (Rohit / Michael exchange).
@@ -464,7 +464,7 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 2. **On `ServiceAppointment` checkout (Status → Completed) for irrigation Work Type** → generate internal PDF, generate customer PDF, set `Internal_PDF_Generated_At__c` / `Customer_PDF_Generated_At__c`, queue BV Connect publish if customer is subscribed.
 3. **On `WorkOrderLineItem` insert with `Issue_Type__c` populated and `AssetId` set** → set `Asset.Status = Needs Repair` (existing Flow 2a in `automation_flows_design.md`).
 
-4. **On checkout review confirm** → convert confirmed suggested repairs into AM-owned pending callout WOLIs (not pushed to ExtraWork yet). Require structured description and standardized severity on each confirmed callout.
+4. **On checkout review confirm** → save confirmed suggested repairs as AM-owned pending callout records (not pushed to ExtraWork yet). Require structured description and standardized severity on each confirmed callout.
 
 5. **On checkout complete** → apply staged asset changes from pending-change records. If any apply fails, complete inspection data, mark asset-sync as failed, and raise a clear exception for follow-up.
 

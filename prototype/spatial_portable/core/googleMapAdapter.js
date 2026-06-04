@@ -116,6 +116,11 @@ function buildMarkerOptions(feature) {
   const typeLabel = markerGlyphForFeature(feature);
   const basePalette = markerPaletteForAssetType(feature.assetType);
   const palette = applyStatusMarkerPalette(basePalette, feature.assetStatus);
+  const resolvedPalette = {
+    fill: feature?.styleFillColor || palette.fill,
+    stroke: feature?.styleStrokeColor || palette.stroke,
+    text: feature?.styleTextColor || palette.text,
+  };
   const statusText = feature.assetStatus ? ` (${feature.assetStatus})` : "";
 
   return {
@@ -124,15 +129,15 @@ function buildMarkerOptions(feature) {
     title: `${feature.name || "Component marker"}${statusText}`,
     label: {
       text: typeLabel,
-      color: palette.text,
+      color: resolvedPalette.text,
       fontWeight: "800",
       fontSize: typeLabel.length > 1 ? "10px" : "11px",
     },
     icon: {
       path: google.maps.SymbolPath.CIRCLE,
-      fillColor: palette.fill,
+      fillColor: resolvedPalette.fill,
       fillOpacity: 0.96,
-      strokeColor: palette.stroke,
+      strokeColor: resolvedPalette.stroke,
       strokeWeight: 2,
       scale: 11,
     },
@@ -152,8 +157,12 @@ export class GoogleMapAdapter {
     this.onMapBackgroundClick = null;
     this.selectedFeatureId = null;
     this.suppressNextMapClick = false;
+    this.lastFeatureClickAt = 0;
     this.resizeObserver = null;
     this.onWindowResize = null;
+    this.onMapDomClick = null;
+    this.activeMode = TOOL_MODES.SELECT;
+    this.lastPointerLatLng = null;
   }
 
   async init() {
@@ -195,8 +204,21 @@ export class GoogleMapAdapter {
     });
 
     this.drawingManager.setMap(this.map);
+    this.setMode(this.activeMode);
 
-    this.map.addListener("click", () => {
+    this.map.addListener("mousemove", (event) => {
+      if (event?.latLng) {
+        this.lastPointerLatLng = event.latLng;
+      }
+    });
+
+    this.map.addListener("click", (event) => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const clickPoint = event?.latLng || this.lastPointerLatLng || this.map?.getCenter?.() || null;
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
       if (this.suppressNextMapClick) {
         this.suppressNextMapClick = false;
         return;
@@ -207,11 +229,42 @@ export class GoogleMapAdapter {
         return;
       }
 
+      if (!this.selectedFeatureId) {
+        return;
+      }
+
       this.selectFeature(null);
       if (this.onMapBackgroundClick) {
         this.onMapBackgroundClick();
       }
     });
+
+    // Google map click events can be swallowed by internal layers.
+    // Fall back to map DOM clicks so clicking off a component still deselects.
+    this.onMapDomClick = () => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const clickPoint = this.lastPointerLatLng || this.map?.getCenter?.() || null;
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
+      const now = Date.now();
+      if (now - this.lastFeatureClickAt < 220) {
+        return;
+      }
+      if (this.drawingManager?.getDrawingMode()) {
+        return;
+      }
+      if (!this.selectedFeatureId) {
+        return;
+      }
+      this.selectFeature(null);
+      if (this.onMapBackgroundClick) {
+        this.onMapBackgroundClick();
+      }
+    };
+    this.map.getDiv()?.addEventListener("click", this.onMapDomClick);
+    this.rootEl?.addEventListener("click", this.onMapDomClick);
 
     google.maps.event.addListener(this.drawingManager, "overlaycomplete", (event) => {
       this.drawingManager.setDrawingMode(null);
@@ -252,6 +305,7 @@ export class GoogleMapAdapter {
   }
 
   setMode(mode) {
+    this.activeMode = mode;
     if (!this.drawingManager) return;
 
     if (mode === TOOL_MODES.SELECT) {
@@ -260,7 +314,9 @@ export class GoogleMapAdapter {
     }
 
     if (mode === TOOL_MODES.MARKER) {
-      this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.MARKER);
+      // Use explicit map/overlay click handling for marker placement to avoid
+      // embedded iframe interactions swallowing DrawingManager marker events.
+      this.drawingManager.setDrawingMode(null);
       return;
     }
 
@@ -300,9 +356,32 @@ export class GoogleMapAdapter {
     const allowAutoFeatureEditing = Boolean(this.options?.allowAutoFeatureEditing);
     overlay.__autoReadOnly = Boolean(feature.isAuto && !allowAutoFeatureEditing);
     overlay.__readOnly = !allowFeatureEditing || overlay.__autoReadOnly;
+    if (feature.type === FEATURE_TYPES.POLYGON) {
+      overlay.__baseStyle = {
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYGON_STROKE,
+        fillColor: feature?.stylePolygonFillColor || feature?.styleFillColor || DEFAULT_POLYGON_FILL,
+      };
+    } else if (feature.type === FEATURE_TYPES.POLYLINE) {
+      overlay.__baseStyle = {
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYLINE_STROKE,
+      };
+    } else {
+      overlay.__baseStyle = null;
+    }
 
-    overlay.addListener("click", () => {
+    overlay.addListener("click", (event) => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const clickPoint = event?.latLng || (overlay instanceof google.maps.Marker ? overlay.getPosition() : null);
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
+      this.lastFeatureClickAt = Date.now();
       this.suppressNextMapClick = true;
+      // Clear stale suppression if the paired map click doesn't fire.
+      window.setTimeout(() => {
+        this.suppressNextMapClick = false;
+      }, 120);
       this.selectFeature(feature.id);
       if (this.onFeatureSelected) this.onFeatureSelected(feature.id);
     });
@@ -379,14 +458,21 @@ export class GoogleMapAdapter {
       } else {
         overlay.setEditable(editable);
         if (overlay instanceof google.maps.Polygon) {
+          const baseStyle = overlay.__baseStyle || {
+            strokeColor: DEFAULT_POLYGON_STROKE,
+            fillColor: DEFAULT_POLYGON_FILL,
+          };
           overlay.setOptions({
-            strokeColor: selected ? "#b42318" : DEFAULT_POLYGON_STROKE,
-            fillColor: selected ? "#b42318" : DEFAULT_POLYGON_FILL,
+            strokeColor: selected ? "#b42318" : baseStyle.strokeColor,
+            fillColor: selected ? "#b42318" : baseStyle.fillColor,
             fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
           });
         } else {
+          const baseStyle = overlay.__baseStyle || {
+            strokeColor: DEFAULT_POLYLINE_STROKE,
+          };
           overlay.setOptions({
-            strokeColor: selected ? "#b42318" : DEFAULT_POLYLINE_STROKE,
+            strokeColor: selected ? "#b42318" : baseStyle.strokeColor,
           });
         }
       }
@@ -412,7 +498,7 @@ export class GoogleMapAdapter {
       return new google.maps.Polyline({
         path: feature.geometry.path,
         editable: false,
-        strokeColor: DEFAULT_POLYLINE_STROKE,
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYLINE_STROKE,
         strokeOpacity: 0.9,
         strokeWeight: 3,
       });
@@ -421,9 +507,9 @@ export class GoogleMapAdapter {
     return new google.maps.Polygon({
       path: feature.geometry.path,
       editable: false,
-      fillColor: DEFAULT_POLYGON_FILL,
+      fillColor: feature?.stylePolygonFillColor || feature?.styleFillColor || DEFAULT_POLYGON_FILL,
       fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
-      strokeColor: DEFAULT_POLYGON_STROKE,
+      strokeColor: feature?.styleStrokeColor || DEFAULT_POLYGON_STROKE,
       strokeWeight: 4,
     });
   }
@@ -455,5 +541,21 @@ export class GoogleMapAdapter {
     }
 
     return { path: pathToArray(overlay.getPath()) };
+  }
+
+  createMarkerFeatureAt(latLngLike) {
+    if (!latLngLike || !this.onFeatureCreated) {
+      return;
+    }
+
+    const markerOverlay = new google.maps.Marker({
+      position: latLngLike,
+      draggable: false,
+    });
+    const markerFeature = this.overlayToFeature(
+      markerOverlay,
+      google.maps.drawing.OverlayType.MARKER
+    );
+    this.onFeatureCreated(markerFeature, markerOverlay);
   }
 }

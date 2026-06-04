@@ -37,7 +37,7 @@ This diagram shows the end-to-end irrigation inspection operating flow from work
 - Required questions are advisory at submit time; unanswered items trigger a justification/helper flow rather than a hard stop.
 - Hard submit blockers are callout policy compliance (`1+` callout or `No Issues Found`) and AM assignment.
 - Suggested repairs and enhancements are generated continuously, then explicitly confirmed during Submit Report review.
-- Pending callout WOLIs are created only when actionable findings are confirmed.
+- Pending callout records are saved only when actionable findings are confirmed.
 - Asset apply failures do not discard inspection completion; exception is recorded.
 
 ## Out of Scope
