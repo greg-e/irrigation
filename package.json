@@ -1,0 +1,15 @@
+{
+  "name": "irrigation-prototype-regression",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Regression suite for the irrigation V4 mobile prototype.",
+  "scripts": {
+    "test:regression": "playwright test",
+    "test:regression:headed": "playwright test --headed",
+    "test:regression:ui": "playwright test --ui",
+    "test:regression:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  }
+}

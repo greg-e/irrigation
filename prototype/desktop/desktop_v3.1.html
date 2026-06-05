@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Irrigation Asset Record - Setup</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="slds-scope">
+  <div class="slds-page-header slds-page-header_record-home">
+    <div class="slds-page-header__row">
+      <div class="slds-page-header__col-title">
+        <div class="slds-media">
+          <div class="slds-media__figure">
+            <span class="slds-icon_container slds-icon-standard-asset_object slds-page-header__icon-wrapper" title="Asset">
+              <svg class="slds-icon slds-page-header__icon" aria-hidden="true">
+                <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/standard-sprite/svg/symbols.svg#asset_object"></use>
+              </svg>
+              <span class="slds-assistive-text">Asset</span>
+            </span>
+          </div>
+          <div class="slds-media__body">
+            <div class="slds-page-header__name">
+              <div class="slds-page-header__name-title">
+                <h1>
+                  <span class="slds-page-header__name-meta" title="Asset">Asset</span>
+                  <span id="record-title" class="slds-page-header__title slds-truncate">Irrigation Asset Setup</span>
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slds-page-header__col-actions">
+        <div class="slds-page-header__controls">
+          <div class="slds-page-header__control">
+            <button class="slds-button slds-button_neutral" type="button">
+              <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#add"></use>
+              </svg>
+              Follow
+            </button>
+          </div>
+          <div class="slds-page-header__control">
+            <button id="header-edit-btn" class="slds-button slds-button_neutral" type="button">Edit</button>
+          </div>
+          <div class="slds-page-header__control">
+            <div class="slds-button-group">
+              <a href="index.html" class="slds-button slds-button_neutral">Back to Report</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slds-page-header__row slds-page-header__row_gutters">
+      <div class="slds-page-header__col-details">
+        <ul class="slds-page-header__detail-row">
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Property Account">Property Account</div>
+            <div class="slds-truncate" id="hl-property">-</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Account Owner">Account Owner</div>
+            <div class="slds-truncate" id="hl-owner">-</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Readiness">Readiness</div>
+            <div class="slds-truncate" id="hl-readiness">-</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Branch">Branch</div>
+            <div class="slds-truncate" id="hl-branch">-</div>
+          </li>
+          <li class="slds-page-header__detail-block">
+            <div class="slds-text-title slds-truncate" title="Last Updated">Last Updated</div>
+            <div class="slds-truncate" id="hl-updated">-</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <main class="record-layout">
+
+    <section class="slds-card panel workspace-panel">
+      <section class="record-page">
+        <div class="slds-tabs_default tabs" aria-label="Record sections">
+          <ul class="slds-tabs_default__nav" role="tablist">
+            <li class="slds-tabs_default__item slds-is-active" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab active" data-tab-target="details">Details</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="map">Map</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="hierarchy">Hierarchy</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="program">Program</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="inspections">Related</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="chatter">Chatter</button>
+            </li>
+            <li class="slds-tabs_default__item" role="presentation">
+              <button type="button" class="slds-tabs_default__link tab" data-tab-target="history">History</button>
+            </li>
+          </ul>
+        </div>
+
+        <section class="tab-panel active" data-tab-panel="details">
+
+          <!-- ── Section: Asset Information ── -->
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade">
+              <button class="slds-button slds-section__title-action" type="button">
+                <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#chevronright"></use>
+                </svg>
+                <span class="slds-truncate" title="Asset Information">Asset Information</span>
+              </button>
+            </h3>
+            <div class="slds-section__content">
+              <div class="slds-form slds-m-around_small" role="list">
+                <div class="slds-grid slds-gutters_xx-small slds-wrap">
+                  <div class="slds-col slds-size_1-of-2">
+                    <div id="detail-row-l1" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-l1" class="slds-form-element__label">Name</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-name" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Name" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="detail-row-l2" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-l2" class="slds-form-element__label">Asset Type</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-type" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                    <div id="detail-row-l3" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-l3" class="slds-form-element__label">Controller Label</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-ctrl-label" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Controller Label" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="detail-row-l4" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-l4" class="slds-form-element__label">Make / Model</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-make-model" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Make / Model" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="detail-row-l5" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-l5" class="slds-form-element__label">Description</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-description" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Description" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <div id="detail-row-r2" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-r2" class="slds-form-element__label">Total Zones (Controller_Total_Zones__c)</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-total-zones" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Total Zones" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="detail-row-r3" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-r3" class="slds-form-element__label">Serial Number</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-serial" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Serial Number" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="detail-row-r4" class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                      <label id="detail-label-r4" class="slds-form-element__label">Install Date</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-install-date" class="slds-form-element__static slds-grow">—</span>
+                        <button class="slds-button slds-button_icon slds-float_right detail-edit-btn" title="Edit Install Date" type="button">
+                          <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">
+                            <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#edit"></use>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Location row -->
+                <div id="detail-location-row" class="slds-m-top_x-small hidden">
+                  <div class="slds-form-element slds-form-element_stacked detail-field detail-edit-trigger" role="listitem" data-open-asset-editor="true" tabindex="0" title="Edit Asset">
+                    <label class="slds-form-element__label">Location (Lat / Lon)</label>
+                    <div class="slds-form-element__control slds-border_bottom">
+                      <span id="detail-location" class="slds-form-element__static slds-grow">—</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Hierarchy fields: OOTB standard Asset fields (read-only) -->
+                <div class="slds-grid slds-gutters_xx-small slds-wrap slds-m-top_x-small" id="detail-hierarchy-fields">
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Parent Asset</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-parent-asset" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Root Asset</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-root-asset" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-3">
+                    <div class="slds-form-element slds-form-element_stacked detail-field" role="listitem">
+                      <label class="slds-form-element__label">Asset Level</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-asset-level" class="slds-form-element__static slds-grow">—</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="detail-timeline-section" class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade">
+              <button class="slds-button slds-section__title-action" type="button">
+                <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#chevronright"></use>
+                </svg>
+                <span class="slds-truncate" title="Asset Timeline">Asset Timeline</span>
+              </button>
+            </h3>
+            <div class="slds-section__content">
+              <div class="slds-m-around_small">
+                <ul id="detail-timeline" class="detail-timeline"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Section: System Information ── -->
+          <div class="slds-section slds-is-open">
+            <h3 class="slds-section__title slds-theme_shade">
+              <button class="slds-button slds-section__title-action" type="button">
+                <svg class="slds-section__title-action-icon slds-button__icon slds-button__icon_left" aria-hidden="true">
+                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#chevronright"></use>
+                </svg>
+                <span class="slds-truncate" title="System Information">System Information</span>
+              </button>
+            </h3>
+            <div class="slds-section__content">
+              <div class="slds-form slds-m-around_small" role="list">
+                <div class="slds-grid slds-gutters_xx-small slds-wrap">
+                  <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field" role="listitem">
+                      <label class="slds-form-element__label">Created By</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-created-by" class="slds-form-element__static slds-grow slds-text-link">—</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <div class="slds-form-element slds-form-element_stacked slds-hint-parent detail-field" role="listitem">
+                      <label class="slds-form-element__label">Last Modified By</label>
+                      <div class="slds-form-element__control slds-border_bottom">
+                        <span id="detail-modified-by" class="slds-form-element__static slds-grow slds-text-link">—</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <section class="asset-overlays">
+
+          <!-- Hidden list used by JS for context rail (kept for compatibility) -->
+          <ul id="rail-related-list" class="hidden"></ul>
+
+          <!-- Asset New / Edit Modal -->
+          <div id="asset-modal" role="dialog" aria-modal="true" aria-labelledby="asset-modal-title" class="slds-modal hidden">
+            <div class="slds-modal__container">
+              <button id="asset-modal-close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" type="button" title="Close">
+                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#close"></use>
+                </svg>
+                <span class="slds-assistive-text">Close</span>
+              </button>
+              <div class="slds-modal__header">
+                <h2 id="asset-modal-title" class="slds-modal__title slds-has-flexi-truncate">New Asset</h2>
+              </div>
+              <div class="slds-modal__content slds-p-around_medium" id="asset-modal-content">
+
+                <!-- CREATE section -->
+                <div id="modal-create-section">
+                  <form id="create-asset-form" class="slds-form slds-grid slds-wrap slds-gutters_small">
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-type">Asset Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-type" class="slds-select">
+                          <option value="System">System</option>
+                          <option value="Controller">Controller</option>
+                          <option value="Pump">Pump</option>
+                          <option value="Zone">Zone</option>
+                          <option value="Backflow">Backflow</option>
+                          <option value="Valve">Valve</option>
+                          <option value="Head">Head</option>
+                          <option value="Drip">Drip Emitter Group</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-name">Name <abbr class="slds-required" title="required">*</abbr></label>
+                      <div class="slds-form-element__control">
+                        <input id="create-name" type="text" class="slds-input" required />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-controller-label">Controller Label</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-controller-label" type="text" class="slds-input" placeholder="Controller only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-make-model">Make / Model</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-make-model" type="text" class="slds-input" placeholder="Optional" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-mainline-pipe-type">Mainline Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-mainline-pipe-type" type="text" class="slds-input" placeholder="System only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-mainline-pipe-size">Mainline Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-mainline-pipe-size" type="text" class="slds-input" placeholder="System only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-total-zones">Total Zones</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-total-zones" type="number" min="0" class="slds-input" placeholder="Optional" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-zone-number">Zone Number</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-zone-number" type="number" min="1" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-zone-controller">Parent Controller</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-zone-controller" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-distribution-method">Distribution Method</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-distribution-method" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Drip">Drip</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-lateral-pipe-type">Lateral Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-lateral-pipe-type" type="text" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-lateral-pipe-size">Lateral Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-lateral-pipe-size" type="text" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-solenoid-resistance-ohms">Solenoid Resistance (ohms)</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-solenoid-resistance-ohms" type="number" step="0.1" min="0" class="slds-input" placeholder="Zone only" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-backflow-type">Backflow Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-backflow-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="RPZ">RPZ</option>
+                          <option value="DCV">DCV</option>
+                          <option value="PVB">PVB</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-parent-zone">Parent Zone</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-parent-zone" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-head-subtype">Head Subtype</label>
+                      <div class="slds-form-element__control">
+                        <select id="create-head-subtype" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="create-serial">Serial Number</label>
+                      <div class="slds-form-element__control">
+                        <input id="create-serial" type="text" class="slds-input" placeholder="Optional" />
+                      </div>
+                    </div>
+                  </form>
+                  <p id="create-msg" class="slds-m-top_small status-line"></p>
+                </div>
+
+                <!-- EDIT section -->
+                <div id="modal-edit-section" class="hidden">
+                  <form id="edit-asset-form" class="slds-form slds-grid slds-wrap slds-gutters_small">
+                    <input id="edit-id" type="hidden" />
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-name">Name <abbr class="slds-required" title="required">*</abbr></label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-name" type="text" class="slds-input" required />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-type">Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-type" type="text" class="slds-input" readonly />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-status">Status</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-status" type="text" class="slds-input" readonly />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-parent-system">Parent System</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-parent-system" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-controller-label">Controller Label</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-controller-label" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-make-model">Make</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-make-model" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-mainline-pipe-type">Mainline Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-mainline-pipe-type" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-mainline-pipe-size">Mainline Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-mainline-pipe-size" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-total-zones">Total Zones</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-total-zones" type="number" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-connectivity-type">Connectivity Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-connectivity-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="WiFi">WiFi</option>
+                          <option value="Wired">Wired</option>
+                          <option value="No Connectivity">No Connectivity</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-smart-controller">Smart Controller</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-smart-controller" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="true">Yes</option>
+                          <option value="false">No</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-controller-app">App / Platform</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-controller-app" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-zone-number">Zone Number</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-zone-number" type="number" min="1" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-zone-controller">Reassign Controller</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-zone-controller" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-area-served">Area Served</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-area-served" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-flow-rate-gpm">Flow Rate (GPM)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-flow-rate-gpm" type="number" step="0.1" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-primary-head-type">Primary Head Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-primary-head-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Drip">Drip</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-distribution-method">Distribution Method</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-distribution-method" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Drip">Drip</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-lateral-pipe-type">Lateral Pipe Type</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lateral-pipe-type" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-lateral-pipe-size">Lateral Pipe Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lateral-pipe-size" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-solenoid-resistance-ohms">Solenoid Resistance (ohms)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-solenoid-resistance-ohms" type="number" step="0.1" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-backflow-type">Backflow Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-backflow-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="RPZ">RPZ</option>
+                          <option value="DCV">DCV</option>
+                          <option value="PVB">PVB</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-last-test-date">Last Test Date</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-last-test-date" type="date" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-last-test-result">Last Test Result</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-last-test-result" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Pass">Pass</option>
+                          <option value="Fail">Fail</option>
+                          <option value="Not Tested">Not Tested</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-next-test-due">Next Test Due</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-next-test-due" type="date" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-compliance-status">Compliance Status</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-compliance-status" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Compliant">Compliant</option>
+                          <option value="Non-Compliant">Non-Compliant</option>
+                          <option value="Expired">Expired</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-testing-authority">Testing Authority</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-testing-authority" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-valve-type">Valve Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-valve-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Solenoid">Solenoid</option>
+                          <option value="Ball">Ball</option>
+                          <option value="Gate">Gate</option>
+                          <option value="Master">Master</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-valve-location-notes">Valve Location Notes</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-valve-location-notes" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-valve-condition">Valve Condition</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-valve-condition" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Good">Good</option>
+                          <option value="Needs Attention">Needs Attention</option>
+                          <option value="Failed">Failed</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-parent-zone">Parent Zone</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-parent-zone" class="slds-select"></select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-head-subtype">Head Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-head-subtype" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Rotor">Rotor</option>
+                          <option value="Spray">Spray</option>
+                          <option value="Bubbler">Bubbler</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-nozzle-size">Nozzle Size</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-nozzle-size" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-throw-radius-ft">Throw Radius (ft)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-throw-radius-ft" type="number" step="0.1" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-arc-degrees">Arc (degrees)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-arc-degrees" type="number" min="0" max="360" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-emitter-type">Emitter Type</label>
+                      <div class="slds-form-element__control">
+                        <select id="edit-emitter-type" class="slds-select">
+                          <option value="">Select</option>
+                          <option value="Point Emitter">Point Emitter</option>
+                          <option value="Drip">Drip</option>
+                          <option value="Micro Spray">Micro Spray</option>
+                          <option value="Flag Emitter">Flag Emitter</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-flow-rate-gph">Flow Rate (GPH)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-flow-rate-gph" type="number" step="0.1" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-emitter-count">Emitter Count</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-emitter-count" type="number" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-coverage-area-sqft">Coverage Area (sq ft)</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-coverage-area-sqft" type="number" step="0.1" min="0" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-serial">Serial Number</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-serial" type="text" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-install-date">Install Date</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-install-date" type="date" class="slds-input" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element" id="edit-lat-row">
+                      <label class="slds-form-element__label" for="edit-lat">Latitude</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lat" type="number" step="any" class="slds-input" placeholder="e.g. 33.4484" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element" id="edit-lon-row">
+                      <label class="slds-form-element__label" for="edit-lon">Longitude</label>
+                      <div class="slds-form-element__control">
+                        <input id="edit-lon" type="number" step="any" class="slds-input" placeholder="e.g. -112.0740" />
+                      </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-form-element">
+                      <label class="slds-form-element__label" for="edit-description">Description</label>
+                      <div class="slds-form-element__control">
+                        <textarea id="edit-description" class="slds-textarea" rows="2"></textarea>
+                      </div>
+                    </div>
+                  </form>
+                  <section id="related-context" class="slds-box slds-theme_shade slds-m-top_small hidden">
+                    <p class="slds-text-title_caps slds-m-bottom_xx-small">Related Asset Context</p>
+                    <p id="related-summary" class="slds-text-body_small slds-m-bottom_xx-small"></p>
+                    <ul id="related-list" class="slds-list_dotted slds-text-body_small"></ul>
+                  </section>
+                  <p id="edit-msg" class="slds-m-top_small status-line"></p>
+                </div>
+
+              </div>
+              <div class="slds-modal__footer">
+                <button id="asset-modal-cancel" class="slds-button slds-button_neutral" type="button">Cancel</button>
+                <button id="retire-asset" class="slds-button slds-button_destructive" type="button" style="display:none">Retire</button>
+                <button id="asset-modal-save" class="slds-button slds-button_brand" type="button">Save</button>
+              </div>
+            </div>
+          </div>
+          <div id="asset-modal-backdrop" class="slds-backdrop hidden"></div>
+
+          <!-- Program New / Edit Modal -->
+          <div id="program-modal" role="dialog" aria-modal="true" aria-labelledby="program-modal-title" class="slds-modal hidden">
+            <div class="slds-modal__container">
+              <button id="program-modal-close" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" type="button" title="Close">
+                <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                  <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#close"></use>
+                </svg>
+                <span class="slds-assistive-text">Close</span>
+              </button>
+              <div class="slds-modal__header">
+                <h2 id="program-modal-title" class="slds-modal__title slds-has-flexi-truncate">New Program</h2>
+              </div>
+              <div class="slds-modal__content slds-p-around_medium">
+                <form id="program-form" class="slds-form slds-grid slds-wrap slds-gutters_small">
+                  <input id="program-edit-id" type="hidden" />
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-name">Program Name (Program_Name__c) <abbr class="slds-required" title="required">*</abbr></label>
+                    <div class="slds-form-element__control">
+                      <input id="program-name" type="text" class="slds-input" placeholder="e.g. Program A" required />
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-zone">Zone (Zone_Asset__c)</label>
+                    <div class="slds-form-element__control">
+                      <select id="program-zone" class="slds-select"></select>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-form-element">
+                    <label class="slds-form-element__label">Schedule Days (Schedule_Days__c)</label>
+                    <div class="slds-form-element__control slds-grid slds-gutters_xx-small slds-m-top_xx-small">
+                      <label class="slds-checkbox_button slds-col" for="day-mon"><input type="checkbox" id="day-mon" name="days" value="Mon" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Mon</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-tue"><input type="checkbox" id="day-tue" name="days" value="Tue" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Tue</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-wed"><input type="checkbox" id="day-wed" name="days" value="Wed" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Wed</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-thu"><input type="checkbox" id="day-thu" name="days" value="Thu" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Thu</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-fri"><input type="checkbox" id="day-fri" name="days" value="Fri" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Fri</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-sat"><input type="checkbox" id="day-sat" name="days" value="Sat" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Sat</span></span></label>
+                      <label class="slds-checkbox_button slds-col" for="day-sun"><input type="checkbox" id="day-sun" name="days" value="Sun" /><span class="slds-checkbox_button__label"><span class="slds-form-element__label">Sun</span></span></label>
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-start-time">Start Time (Start_Time__c)</label>
+                    <div class="slds-form-element__control">
+                      <input id="program-start-time" type="time" class="slds-input" />
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-run-time">Run Time Minutes (Run_Time_Minutes__c)</label>
+                    <div class="slds-form-element__control">
+                      <input id="program-run-time" type="number" min="1" class="slds-input" placeholder="e.g. 15" />
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-seasonal-adjust">Seasonal Adjust % (Seasonal_Adjust_Pct__c)</label>
+                    <div class="slds-form-element__control">
+                      <input id="program-seasonal-adjust" type="number" min="-100" max="200" class="slds-input" placeholder="0" />
+                    </div>
+                  </div>
+                  <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-form-element">
+                    <label class="slds-form-element__label" for="program-active">Active (Is_Active__c)</label>
+                    <div class="slds-form-element__control">
+                      <select id="program-active" class="slds-select">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+                <p id="program-msg" class="slds-m-top_small status-line"></p>
+              </div>
+              <div class="slds-modal__footer">
+                <button id="program-modal-cancel" class="slds-button slds-button_neutral" type="button">Cancel</button>
+                <button id="program-modal-delete" class="slds-button slds-button_destructive hidden" type="button">Delete</button>
+                <button id="program-modal-save" class="slds-button slds-button_brand" type="button">Save</button>
+              </div>
+            </div>
+          </div>
+          <div id="program-modal-backdrop" class="slds-backdrop hidden"></div>
+
+        </section>
+
+        <section class="tab-panel" data-tab-panel="hierarchy">
+          <article class="slds-card slds-card_boundary">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">Asset Hierarchy</h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">Related-style hierarchy view in-tab for faster navigation.</p>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center slds-m-bottom_small">
+                <button id="hierarchy-new-btn" class="slds-button slds-button_neutral" type="button">New</button>
+                <div class="slds-form-element slds-m-bottom_none hierarchy-search-wrap">
+                  <label class="slds-assistive-text" for="hierarchy-search">Search hierarchy</label>
+                  <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                    <svg class="slds-input__icon slds-input__icon_left slds-icon-text-default" aria-hidden="true">
+                      <use xlink:href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons/utility-sprite/svg/symbols.svg#search"></use>
+                    </svg>
+                    <input id="hierarchy-search" class="slds-input" type="text" placeholder="Search assets" />
+                  </div>
+                </div>
+              </div>
+              <p id="hierarchy-summary" class="muted"></p>
+              <div id="hierarchy-tree" class="asset-tree hierarchy-tree"></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="inspections">
+          <article class="slds-card slds-card_boundary">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">
+                    Service Appointments <span id="inspections-count" class="slds-text-body_regular slds-text-color_weak"></span>
+                  </h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">One row per service appointment. Includes checklist findings summary by asset type. Sorted newest first.</p>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body">
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout" role="grid">
+                <thead>
+                  <tr class="slds-line-height_reset">
+                    <th scope="col" style="width:9rem"><div class="slds-truncate" title="SA Number">SA Number</div></th>
+                    <th scope="col" style="width:11rem"><div class="slds-truncate" title="Completed">Completed</div></th>
+                    <th scope="col" style="width:11rem"><div class="slds-truncate" title="Inspection Type">Inspection Type</div></th>
+                    <th scope="col"><div class="slds-truncate" title="Technician">Technician</div></th>
+                    <th scope="col"><div class="slds-truncate" title="Overall System Status">Overall Status</div></th>
+                    <th scope="col" style="width:9rem"><div class="slds-truncate" title="Checklist Findings">Checklist Findings</div></th>
+                    <th scope="col" style="width:9rem"><div class="slds-truncate" title="Completion Status">Completion</div></th>
+                  </tr>
+                </thead>
+                <tbody id="inspections-table-body"></tbody>
+              </table>
+            </div>
+            <footer class="slds-card__footer">
+              <a class="slds-card__footer-action" href="#">View All in Salesforce <span class="slds-assistive-text">Service Appointments</span></a>
+            </footer>
+          </article>
+
+          <article class="slds-card slds-card_boundary slds-m-top_medium">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">
+                    Callouts <span id="callouts-count" class="slds-text-body_regular slds-text-color_weak"></span>
+                  </h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">Open and historical callouts linked to this property.</p>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body">
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout" role="grid">
+                <thead>
+                  <tr class="slds-line-height_reset">
+                    <th scope="col" style="width:9rem"><div class="slds-truncate" title="Callout #">Callout #</div></th>
+                    <th scope="col" style="width:11rem"><div class="slds-truncate" title="Created">Created</div></th>
+                    <th scope="col"><div class="slds-truncate" title="Summary">Summary</div></th>
+                    <th scope="col" style="width:10rem"><div class="slds-truncate" title="Priority">Priority</div></th>
+                    <th scope="col" style="width:10rem"><div class="slds-truncate" title="Status">Status</div></th>
+                  </tr>
+                </thead>
+                <tbody id="callouts-table-body"></tbody>
+              </table>
+            </div>
+            <footer class="slds-card__footer">
+              <a class="slds-card__footer-action" href="#">View All in Salesforce <span class="slds-assistive-text">Callouts</span></a>
+            </footer>
+          </article>
+
+          <article class="slds-card slds-card_boundary slds-m-top_medium">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">
+                    Proposals <span id="proposals-count" class="slds-text-body_regular slds-text-color_weak"></span>
+                  </h3>
+                  <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_none">Related proposals for repairs, upgrades, and replacements.</p>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body">
+              <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-table_fixed-layout" role="grid">
+                <thead>
+                  <tr class="slds-line-height_reset">
+                    <th scope="col" style="width:10rem"><div class="slds-truncate" title="Proposal #">Proposal #</div></th>
+                    <th scope="col" style="width:11rem"><div class="slds-truncate" title="Created">Created</div></th>
+                    <th scope="col"><div class="slds-truncate" title="Description">Description</div></th>
+                    <th scope="col" style="width:10rem"><div class="slds-truncate" title="Amount">Amount</div></th>
+                    <th scope="col" style="width:10rem"><div class="slds-truncate" title="Status">Status</div></th>
+                  </tr>
+                </thead>
+                <tbody id="proposals-table-body"></tbody>
+              </table>
+            </div>
+            <footer class="slds-card__footer">
+              <a class="slds-card__footer-action" href="#">View All in Salesforce <span class="slds-assistive-text">Proposals</span></a>
+            </footer>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="program">
+          <!-- Programs related list — shown only when context asset is a Controller -->
+          <article id="programs-card" class="slds-m-top_small hidden">
+            <iframe
+              src="../program/controller_program.html"
+              title="Controller Programs"
+              class="programs-embed"
+              style="width:100%; min-height:900px; border:0; display:block;"
+            ></iframe>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="chatter">
+          <section class="record-section">
+            <h3>Chatter</h3>
+            <p class="slds-text-body_small">Placeholder for Salesforce Chatter feed.</p>
+            <div class="slds-box slds-theme_default slds-m-top_small">
+              <p class="slds-text-body_small">Chatter content is intentionally not implemented in this prototype.</p>
+            </div>
+          </section>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="history">
+          <section class="slds-card record-section related-record-card">
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__body">
+                  <h3 class="slds-card__header-title">History</h3>
+                </div>
+              </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+              <p class="slds-text-body_small">Placeholder for Salesforce field history and activity timeline.</p>
+              <div class="slds-box slds-theme_default slds-m-top_small">
+                <p class="slds-text-body_small">History content is intentionally not implemented in this prototype.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Hidden compatibility placeholders for existing JS bindings -->
+          <ul id="rail-recent-activity" class="hidden"></ul>
+          <table class="hidden"><tbody id="audit-body"></tbody></table>
+        </section>
+
+        <section class="tab-panel" data-tab-panel="map">
+          <div style="height:800px;">
+            <iframe
+              id="spatial-map-frame"
+              style="width:100%;height:100%;border:none;display:block;"
+              title="Spatial Map Prototype"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="property_record.js"></script>
+</body>
+</html>

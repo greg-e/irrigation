@@ -8,10 +8,22 @@ import { GoogleMapAdapter } from "./core/googleMapAdapter.js";
 
 const config = window.SPATIAL_PROTO_CONFIG || {};
 const context = parseContextFromUrl();
-const layoutMode = new URLSearchParams(window.location.search).get("layout") || "default";
+const urlParams = new URLSearchParams(window.location.search);
+const layoutMode = urlParams.get("layout") || "default";
+const suppressAutoMarkers = urlParams.get("noAutoMarkers") === "1";
+let mapOnlyEditEnabled = layoutMode === "map-only" && urlParams.get("geomEdit") === "1";
+const hideMapUiControlsInMapOnly = layoutMode === "map-only";
+let geometryEditingEnabled = layoutMode !== "map-only" || mapOnlyEditEnabled;
+const gestureHandlingMode = layoutMode === "map-only" ? "greedy" : "auto";
 
 if (layoutMode === "map-only") {
   document.body.classList.add("map-only-layout");
+}
+
+function filterFeaturesForLayout(features) {
+  // In map-only layout, keep all component geometry visible.
+  // Editability is handled separately via allowAutoFeatureEditing/map mode.
+  return features;
 }
 
 const ui = {
@@ -25,23 +37,39 @@ const ui = {
   reloadBtn: document.getElementById("reload-btn"),
   toolButtons: Array.from(document.querySelectorAll("[data-tool]")),
   linkDialog: document.getElementById("link-dialog"),
+  linkDialogContext: document.getElementById("link-dialog-context"),
   linkBackdrop: document.getElementById("link-backdrop"),
+  linkActionMode: document.getElementById("link-action-mode"),
+  linkModeLinkBtn: document.getElementById("link-mode-link"),
+  linkModeNewBtn: document.getElementById("link-mode-new"),
+  linkExistingSection: document.getElementById("link-existing-section"),
+  linkNewSection: document.getElementById("link-new-section"),
   linkSelect: document.getElementById("link-component-select"),
   linkConfirm: document.getElementById("link-confirm"),
   linkSkip: document.getElementById("link-skip"),
   linkCancelHeader: document.getElementById("link-cancel-header"),
+  linkCreateConfirm: document.getElementById("link-create-confirm"),
+  linkCreateType: document.getElementById("link-create-type"),
+  linkCreateName: document.getElementById("link-create-name"),
+  linkCreateParent: document.getElementById("link-create-parent"),
 };
 
 const state = {
   tool: TOOL_MODES.SELECT,
   selectedFeatureId: null,
   selectedAssetId: null,
+  forcePromptForNextMarker: false,
+  pendingMarkerCreation: false,
+  addNewTapCaptureLayer: null,
+  addNewTapCaptureArmed: false,
+  lastFeatureSelectionAt: 0,
   hasAppliedSystemZoom: false,
   features: [],
   assets: [], // Will store the property's asset hierarchy
   assetMap: {}, // Map for quick asset lookup by ID
   expandedAssetIds: new Set(),
   collapsedAssetIds: new Set(),
+  hiddenAutoFeatureIds: new Set(),
 };
 
 const api = new SpatialFeatureApi();
@@ -50,10 +78,125 @@ const mapAdapter = new GoogleMapAdapter(document.getElementById("map-root"), {
   apiKey: config.googleMapsApiKey,
   center: config.defaultCenter || { lat: 33.91551710426391, lng: -84.51719913959514 },
   zoom: Number(config.defaultZoom || 15),
+  hideMapUiControls: hideMapUiControlsInMapOnly,
+  gestureHandling: gestureHandlingMode,
+  allowAutoFeatureEditing: mapOnlyEditEnabled,
+  allowFeatureEditing: geometryEditingEnabled,
 });
 
 function setStatus(message) {
   ui.status.textContent = message;
+}
+
+function renderMapFeaturesWhenReady(retriesLeft = 12) {
+  if (!mapAdapter?.map || !window.google?.maps) {
+    if (retriesLeft > 0) {
+      window.setTimeout(() => renderMapFeaturesWhenReady(retriesLeft - 1), 150);
+    }
+    return false;
+  }
+
+  mapAdapter.renderFeatures(state.features);
+  return true;
+}
+
+function createMarkerWhenReady(latLngLike, retriesLeft = 10) {
+  if (!latLngLike) {
+    setStatus("Map is not ready yet. Try Add New again.");
+    return false;
+  }
+
+  if (!mapAdapter?.map || !window.google?.maps) {
+    if (retriesLeft > 0) {
+      window.setTimeout(() => createMarkerWhenReady(latLngLike, retriesLeft - 1), 120);
+    } else {
+      setStatus("Map is still loading. Tap Add New again.");
+    }
+    return false;
+  }
+
+  mapAdapter.createMarkerFeatureAt(latLngLike);
+  return true;
+}
+
+function ensureAddNewTapCaptureLayer() {
+  const mapRoot = mapAdapter?.rootEl || document.getElementById("map-root");
+  if (!mapRoot) return null;
+
+  if (state.addNewTapCaptureLayer) {
+    const existingLayer = state.addNewTapCaptureLayer;
+    if (!existingLayer.isConnected) {
+      state.addNewTapCaptureLayer = null;
+    } else {
+      if (existingLayer.parentElement !== mapRoot) {
+        mapRoot.appendChild(existingLayer);
+      }
+      return existingLayer;
+    }
+  }
+
+  const domLayer = mapRoot.querySelector(".add-new-tap-capture");
+  if (domLayer) {
+    state.addNewTapCaptureLayer = domLayer;
+    return domLayer;
+  }
+
+  const layer = document.createElement("button");
+  layer.type = "button";
+  layer.className = "add-new-tap-capture hidden";
+  layer.setAttribute("aria-label", "Tap map to place marker");
+  layer.tabIndex = -1;
+
+  const onCaptureTap = (event) => {
+    if (!state.addNewTapCaptureArmed) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    setAddNewTapCaptureArmed(false);
+
+    const clickPoint =
+      mapAdapter.domEventToLatLng(event) ||
+      mapAdapter.lastPointerLatLng ||
+      mapAdapter.map?.getCenter?.() ||
+      null;
+
+    if (!clickPoint) {
+      setStatus("Map is not ready yet. Try Add New again.");
+      return;
+    }
+
+    const created = createMarkerWhenReady(clickPoint);
+    if (!created) {
+      setAddNewTapCaptureArmed(true);
+    }
+  };
+
+  layer.addEventListener("click", onCaptureTap);
+  layer.addEventListener("pointerup", onCaptureTap);
+  layer.addEventListener("touchend", onCaptureTap, { passive: false });
+
+  mapRoot.appendChild(layer);
+  state.addNewTapCaptureLayer = layer;
+  return layer;
+}
+
+function setAddNewTapCaptureArmed(armed) {
+  state.addNewTapCaptureArmed = Boolean(armed);
+  const layer = ensureAddNewTapCaptureLayer();
+  if (!layer) return;
+  layer.classList.toggle("hidden", !state.addNewTapCaptureArmed);
+}
+
+function setGeometryEditingEnabled(enabled) {
+  geometryEditingEnabled = Boolean(enabled);
+  if (layoutMode === "map-only") {
+    // In map-only embed mode, runtime edit toggle should control map-only edit behavior
+    // even when the iframe URL is not reloaded.
+    mapOnlyEditEnabled = geometryEditingEnabled;
+  }
+  if (mapAdapter?.setFeatureEditingEnabled) {
+    mapAdapter.setFeatureEditingEnabled(geometryEditingEnabled, mapOnlyEditEnabled);
+  }
 }
 
 function featureById(id) {
@@ -73,9 +216,9 @@ async function loadAndRegisterAssets() {
       return;
     }
 
-    // Try desktop_map seed data first (when embedded in that prototype), then desktop/
+    // Try desktop seed data from the renamed desktop prototype folder.
     let response = null;
-    for (const path of ["../desktop_map/seed_data.json", "../desktop/seed_data.json"]) {
+    for (const path of ["../desktop/seed_data.json"]) {
       try {
         const r = await fetch(path);
         if (r.ok) { response = r; break; }
@@ -163,14 +306,140 @@ function getPropertySystem() {
   );
 }
 
+function toFiniteNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function deriveCenterFromFeatureGeometry() {
+  const geometryFeatures = (state.features || []).filter((feature) => !feature?.isLatLon);
+  const points = [];
+
+  geometryFeatures.forEach((feature) => {
+    if (feature?.type === "marker") {
+      const lat = toFiniteNumber(feature?.geometry?.lat);
+      const lng = toFiniteNumber(feature?.geometry?.lng);
+      if (lat != null && lng != null) {
+        points.push({ lat, lng });
+      }
+      return;
+    }
+
+    const path = Array.isArray(feature?.geometry?.path) ? feature.geometry.path : [];
+    path.forEach((point) => {
+      const lat = toFiniteNumber(point?.lat);
+      const lng = toFiniteNumber(point?.lng);
+      if (lat != null && lng != null) {
+        points.push({ lat, lng });
+      }
+    });
+  });
+
+  if (!points.length) return null;
+  const lat = points.reduce((sum, point) => sum + point.lat, 0) / points.length;
+  const lng = points.reduce((sum, point) => sum + point.lng, 0) / points.length;
+  return { lat, lng };
+}
+
+function deriveCenterFromAssets() {
+  const activeAssets = state.assets.filter(
+    (asset) => String(asset?.status || "").toLowerCase() !== "retired"
+  );
+
+  const directPoints = activeAssets
+    .map((asset) => {
+      const lat = toFiniteNumber(asset?.lat);
+      const lon = toFiniteNumber(asset?.lon);
+      if (lat == null || lon == null) return null;
+      return { lat, lng: lon };
+    })
+    .filter(Boolean);
+
+  if (directPoints.length) {
+    const lat = directPoints.reduce((sum, point) => sum + point.lat, 0) / directPoints.length;
+    const lng = directPoints.reduce((sum, point) => sum + point.lng, 0) / directPoints.length;
+    return { lat, lng };
+  }
+
+  const baseLat = toFiniteNumber(config?.defaultCenter?.lat) ?? 33.91551710426391;
+  const baseLng = toFiniteNumber(config?.defaultCenter?.lng) ?? -84.51719913959514;
+  const pseudoPoints = activeAssets
+    .map((asset) => {
+      const x = toFiniteNumber(asset?.mapX);
+      const y = toFiniteNumber(asset?.mapY);
+      if (x == null || y == null) return null;
+      return {
+        lat: baseLat + (50 - y) * 0.00042,
+        lng: baseLng + (x - 50) * 0.00042,
+      };
+    })
+    .filter(Boolean);
+
+  if (!pseudoPoints.length) return null;
+  const lat = pseudoPoints.reduce((sum, point) => sum + point.lat, 0) / pseudoPoints.length;
+  const lng = pseudoPoints.reduce((sum, point) => sum + point.lng, 0) / pseudoPoints.length;
+  return { lat, lng };
+}
+
+function fitMapToComponentMarkers() {
+  if (!mapAdapter.map || !window.google?.maps?.LatLngBounds) return false;
+
+  const markerPoints = state.features
+    .filter((feature) => !feature?.isLatLon && String(feature?.type || "").toLowerCase() === "marker")
+    .map((feature) => {
+      const lat = toFiniteNumber(feature?.geometry?.lat);
+      const lng = toFiniteNumber(feature?.geometry?.lng);
+      if (lat == null || lng == null) return null;
+      return { lat, lng };
+    })
+    .filter(Boolean);
+
+  if (!markerPoints.length) return false;
+
+  if (markerPoints.length === 1) {
+    mapAdapter.map.setCenter(markerPoints[0]);
+    if (!state.hasAppliedSystemZoom) {
+      const singleMarkerZoom = Number(config.systemCenterZoom || 18);
+      if (Number.isFinite(singleMarkerZoom) && singleMarkerZoom > 0) {
+        mapAdapter.map.setZoom(singleMarkerZoom);
+      }
+      state.hasAppliedSystemZoom = true;
+    }
+    return true;
+  }
+
+  const bounds = new window.google.maps.LatLngBounds();
+  markerPoints.forEach((point) => bounds.extend(point));
+  mapAdapter.map.fitBounds(bounds, 36);
+
+  const maxZoomAfterFit = Number(config.systemCenterZoom || 18);
+  if (Number.isFinite(maxZoomAfterFit) && mapAdapter.map.getZoom() > maxZoomAfterFit) {
+    mapAdapter.map.setZoom(maxZoomAfterFit);
+  }
+
+  state.hasAppliedSystemZoom = true;
+  return true;
+}
+
 function centerMapOnSystem() {
   if (!mapAdapter.map) return false;
+  if (fitMapToComponentMarkers()) return true;
+
   const systemAsset = getPropertySystem();
-  if (!systemAsset || systemAsset.lat == null || systemAsset.lon == null) return false;
-  const lat = Number(systemAsset.lat);
-  const lon = Number(systemAsset.lon);
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
-  mapAdapter.map.setCenter({ lat, lng: lon });
+  const systemLat = toFiniteNumber(systemAsset?.lat);
+  const systemLon = toFiniteNumber(systemAsset?.lon);
+
+  const featureCenter = deriveCenterFromFeatureGeometry();
+  const assetCenter = deriveCenterFromAssets();
+
+  const center =
+    featureCenter ||
+    (systemLat != null && systemLon != null
+      ? { lat: systemLat, lng: systemLon }
+      : assetCenter);
+
+  if (!center) return false;
+  mapAdapter.map.setCenter(center);
 
   // Apply a tighter default zoom only once so user zoom changes are preserved.
   if (!state.hasAppliedSystemZoom) {
@@ -215,20 +484,263 @@ function escapeHtml(value) {
 
 function assetRecordUrl(assetId) {
   if (!context.propertyId || !assetId) return "#";
-  return `../desktop_map/desktop_prototype_with_map.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
+  return `../desktop/desktop_v3.1.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
+}
+
+function normalizeAssetToken(value) {
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function normalizeFeatureAssetType(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw) return "";
+  if (raw === "sprinklerzone") return "zone";
+  if (raw === "clock") return "controller";
+  return raw;
+}
+
+function resolveAssetIdForFeature(feature) {
+  if (!feature) return "";
+
+  const existingAssetId = String(feature.assetId || "").trim();
+  if (existingAssetId && assetById(existingAssetId)) {
+    return existingAssetId;
+  }
+
+  const normalizedType = normalizeFeatureAssetType(feature.assetType);
+  const normalizedName = normalizeAssetToken(feature.name);
+  if (!normalizedName) return "";
+
+  const candidates = state.assets.filter((asset) => {
+    if (!asset) return false;
+    const assetType = normalizeFeatureAssetType(asset.type);
+    if (normalizedType && assetType && assetType !== normalizedType) return false;
+    return true;
+  });
+
+  const exact = candidates.find((asset) => {
+    const nameToken = normalizeAssetToken(asset.name || asset.label);
+    return nameToken && nameToken === normalizedName;
+  });
+  if (exact) return exact.id;
+
+  const fuzzy = candidates.find((asset) => {
+    const nameToken = normalizeAssetToken(asset.name || asset.label);
+    if (!nameToken) return false;
+    return (
+      nameToken.endsWith(normalizedName) ||
+      normalizedName.endsWith(nameToken) ||
+      nameToken.includes(normalizedName) ||
+      normalizedName.includes(nameToken)
+    );
+  });
+
+  return fuzzy?.id || "";
+}
+
+function ensureFeatureAssetLinks(features) {
+  return (features || []).map((feature) => {
+    if (!feature) return feature;
+    if (feature.assetId && assetById(feature.assetId)) return feature;
+
+    const resolvedAssetId = resolveAssetIdForFeature(feature);
+    if (!resolvedAssetId) return feature;
+
+    const linkedAsset = assetById(resolvedAssetId);
+    return {
+      ...feature,
+      assetId: resolvedAssetId,
+      assetType: linkedAsset?.type || feature.assetType,
+      assetStatus: linkedAsset?.status || feature.assetStatus,
+      name: linkedAsset?.name || linkedAsset?.label || feature.name,
+    };
+  });
+}
+
+function pruneOrphanUserFeatures(features) {
+  let removedOrphans = 0;
+  const cleaned = (features || []).filter((feature) => {
+    if (!feature || feature.isAuto) return true;
+    const assetId = String(feature.assetId || "").trim();
+    if (assetId && assetById(assetId)) return true;
+    removedOrphans += 1;
+    return false;
+  });
+
+  return {
+    cleanedFeatures: dedupeFeaturesById(cleaned),
+    removedOrphans,
+  };
+}
+
+function pruneDraftCustomerFeatures(features) {
+  let removedDrafts = 0;
+  const cleaned = (features || []).filter((feature) => {
+    if (!feature || feature.isAuto) return true;
+    const typeKey = String(feature.assetType || "").trim().toLowerCase();
+    if (typeKey !== "customer") return true;
+    removedDrafts += 1;
+    return false;
+  });
+
+  return {
+    cleanedFeatures: dedupeFeaturesById(cleaned),
+    removedDrafts,
+  };
 }
 
 function normalizeFeatureNames(features) {
   return features.map((feature) => {
+    const linkedAsset = feature.assetId ? assetById(feature.assetId) : null;
     const linkedName = linkedFeatureName(feature.assetId, feature.name);
-    if (!linkedName || linkedName === feature.name) {
+    const nextAssetType = linkedAsset?.type || feature.assetType;
+    const nextAssetStatus = linkedAsset?.status || feature.assetStatus;
+
+    const hasNameChange = Boolean(linkedName && linkedName !== feature.name);
+    const hasTypeChange = nextAssetType !== feature.assetType;
+    const hasStatusChange = nextAssetStatus !== feature.assetStatus;
+
+    if (!hasNameChange && !hasTypeChange && !hasStatusChange) {
       return feature;
     }
+
     return {
       ...feature,
-      name: linkedName,
+      name: linkedName || feature.name,
+      assetType: nextAssetType,
+      assetStatus: nextAssetStatus,
     };
   });
+}
+
+const HIERARCHY_COLOR_PALETTE = [
+  "#2563eb",
+  "#16a34a",
+  "#d97706",
+  "#7c3aed",
+  "#dc2626",
+  "#0891b2",
+  "#db2777",
+  "#65a30d",
+  "#0f766e",
+  "#4f46e5",
+  "#ea580c",
+  "#b91c1c",
+];
+
+function colorHashIndex(value, modulo) {
+  const text = String(value || "");
+  if (!text || !modulo) return 0;
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+  }
+  return hash % modulo;
+}
+
+function hexToRgba(hexColor, alpha = 1) {
+  const cleaned = String(hexColor || "").trim().replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return `rgba(11, 92, 171, ${alpha})`;
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function contrastTextForHex(hexColor) {
+  const cleaned = String(hexColor || "").trim().replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(cleaned)) return "#f8fafc";
+  const r = parseInt(cleaned.slice(0, 2), 16);
+  const g = parseInt(cleaned.slice(2, 4), 16);
+  const b = parseInt(cleaned.slice(4, 6), 16);
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luminance > 0.6 ? "#111827" : "#f8fafc";
+}
+
+function findControllerAncestor(asset) {
+  let cursor = asset;
+  const visited = new Set();
+  while (cursor && cursor.id && !visited.has(cursor.id)) {
+    if (String(cursor.type || "").toLowerCase() === "controller") return cursor;
+    visited.add(cursor.id);
+    cursor = cursor.parentId ? assetById(cursor.parentId) : null;
+  }
+  return null;
+}
+
+function findControllerForZone(zoneAsset) {
+  if (!zoneAsset) return null;
+
+  const directControllerId = String(zoneAsset.controllerId || "").trim();
+  if (directControllerId) {
+    const byControllerId = assetById(directControllerId);
+    if (byControllerId && String(byControllerId.type || "").toLowerCase() === "controller") {
+      return byControllerId;
+    }
+  }
+
+  const byParent = findControllerAncestor(zoneAsset);
+  if (byParent) return byParent;
+
+  const controllerRef = String(zoneAsset.controller || "").trim();
+  if (!controllerRef) return null;
+
+  const normalizedRef = controllerRef.toLowerCase();
+  return (
+    state.assets.find(
+      (asset) =>
+        String(asset.type || "").toLowerCase() === "controller" &&
+        (String(asset.id || "").toLowerCase() === normalizedRef ||
+          String(asset.name || "").trim().toLowerCase() === normalizedRef)
+    ) || null
+  );
+}
+
+function resolveFeatureFamilyAnchor(asset) {
+  if (!asset) return null;
+  const typeKey = String(asset.type || "").toLowerCase();
+  if (typeKey === "controller") return asset;
+  if (typeKey === "zone") return findControllerForZone(asset) || asset;
+  const controllerAncestor = findControllerAncestor(asset);
+  if (controllerAncestor) return controllerAncestor;
+  return asset;
+}
+
+function hierarchyColorForAsset(asset, fallbackKey = "default") {
+  const anchor = resolveFeatureFamilyAnchor(asset);
+  const key = anchor?.id || anchor?.name || fallbackKey;
+  const idx = colorHashIndex(key, HIERARCHY_COLOR_PALETTE.length);
+  return HIERARCHY_COLOR_PALETTE[idx] || "#2563eb";
+}
+
+function decorateFeatureVisual(feature) {
+  if (!feature?.assetId) return feature;
+  const asset = assetById(feature.assetId);
+  if (!asset) return feature;
+
+  const familyColor = hierarchyColorForAsset(asset, feature.assetType || feature.assetId);
+  return {
+    ...feature,
+    styleStrokeColor: familyColor,
+    styleFillColor: familyColor,
+    stylePolygonFillColor: hexToRgba(familyColor, 0.24),
+    styleTextColor: contrastTextForHex(familyColor),
+  };
+}
+
+function applyFeatureVisualStyling(features) {
+  return (features || []).map((feature) => decorateFeatureVisual(feature));
+}
+
+function dedupeFeaturesById(features) {
+  // Keep the latest instance of each id (user overrides auto when arrays are [auto, user]).
+  const byId = new Map();
+  features.forEach((feature) => {
+    if (feature?.id) {
+      byId.set(feature.id, feature);
+    }
+  });
+  return Array.from(byId.values());
 }
 
 function updateActionButtons() {
@@ -253,32 +765,314 @@ function componentCandidates() {
     });
 }
 
-async function promptComponentLink(defaultAssetId = "") {
+function hasMappedLocation(assetId) {
+  return state.features.some((feature) => feature.assetId === assetId && !feature.isLatLon);
+}
+
+function linkableComponentCandidates() {
+  return componentCandidates().filter((asset) => !hasMappedLocation(asset.id));
+}
+
+function parentCandidatesForType(typeKey) {
+  const type = String(typeKey || "").toLowerCase();
+  const active = componentCandidates();
+
+  if (type === "zone") {
+    return active.filter((asset) => String(asset.type || "").toLowerCase() === "controller");
+  }
+
+  if (type === "controller" || type === "backflow") {
+    return active.filter((asset) => {
+      const parentType = String(asset.type || "").toLowerCase();
+      return parentType === "system" || parentType === "source";
+    });
+  }
+
+  return active.filter((asset) => String(asset.type || "").toLowerCase() === "system");
+}
+
+function nameExistsForType(name, typeKey) {
+  const normalizedName = String(name || "").trim().toLowerCase();
+  const normalizedType = String(typeKey || "").trim().toLowerCase();
+  if (!normalizedName || !normalizedType) return false;
+
+  return state.assets.some((asset) => {
+    const assetType = String(asset.type || "").trim().toLowerCase();
+    if (assetType !== normalizedType) return false;
+    const assetName = String(asset.name || asset.label || "").trim().toLowerCase();
+    return assetName === normalizedName;
+  });
+}
+
+function nextAvailableName(base, typeKey) {
+  const root = String(base || "").trim() || "New Component";
+  if (!nameExistsForType(root, typeKey)) return root;
+
+  let idx = 2;
+  let candidate = `${root} ${idx}`;
+  while (nameExistsForType(candidate, typeKey)) {
+    idx += 1;
+    candidate = `${root} ${idx}`;
+  }
+  return candidate;
+}
+
+function getNextZoneNumber() {
+  let maxZoneNumber = 0;
+
+  state.assets.forEach((asset) => {
+    if (String(asset.type || "").toLowerCase() !== "zone") return;
+    const source = `${asset.name || ""} ${asset.label || ""} ${asset.id || ""}`;
+    const match = source.match(/zone[^0-9]*([0-9]+)/i);
+    if (!match) return;
+    const n = Number(match[1]);
+    if (Number.isFinite(n)) {
+      maxZoneNumber = Math.max(maxZoneNumber, n);
+    }
+  });
+
+  return Math.max(1, maxZoneNumber + 1);
+}
+
+function getSuggestedControllerName() {
+  const existing = new Set(
+    state.assets
+      .filter((asset) => String(asset.type || "").toLowerCase() === "controller")
+      .map((asset) => String(asset.name || "").trim().toLowerCase())
+  );
+
+  const letterMatches = Array.from(existing)
+    .map((name) => name.match(/^controller\s+([a-z])$/i))
+    .filter(Boolean)
+    .map((match) => match[1].toUpperCase());
+
+  if (letterMatches.length) {
+    const maxLetter = letterMatches.sort().slice(-1)[0].charCodeAt(0);
+    const nextCode = Math.min(90, maxLetter + 1);
+    const suggested = `Controller ${String.fromCharCode(nextCode)}`;
+    if (!nameExistsForType(suggested, "controller")) return suggested;
+  }
+
+  return nextAvailableName("Controller", "controller");
+}
+
+function getSuggestedBackflowName() {
+  return nextAvailableName("Backflow", "backflow");
+}
+
+function buildAutoComponentName(typeKey, parentId) {
+  const normalizedType = String(typeKey || "component").toLowerCase();
+  if (normalizedType === "zone") {
+    return `Zone ${getNextZoneNumber()}`;
+  }
+  if (normalizedType === "controller") {
+    return getSuggestedControllerName();
+  }
+  if (normalizedType === "backflow") {
+    return getSuggestedBackflowName();
+  }
+
+  const typeLabel = toTitleCase(normalizedType);
+  return nextAvailableName(typeLabel, normalizedType);
+}
+
+function nextAssetId(typeKey) {
+  const normalized = String(typeKey || "component").toLowerCase().replace(/[^a-z0-9]+/g, "-") || "component";
+  let index = 1;
+  let candidate = `asset-${normalized}-${index}`;
+  while (state.assetMap[candidate]) {
+    index += 1;
+    candidate = `asset-${normalized}-${index}`;
+  }
+  return candidate;
+}
+
+function toTitleCase(value) {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return "Component";
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function inferDefaultParentId(typeKey) {
+  const type = String(typeKey || "").toLowerCase();
+  if (type === "zone") {
+    return state.assets.find((asset) => String(asset.type || "").toLowerCase() === "controller")?.id || "";
+  }
+  return state.assets.find((asset) => String(asset.type || "").toLowerCase() === "system")?.id || "";
+}
+
+function addAssetToLocalHierarchy(nextAsset) {
+  if (!nextAsset?.id || state.assetMap[nextAsset.id]) return false;
+  state.assets.push(nextAsset);
+  state.assetMap[nextAsset.id] = nextAsset;
+  api.registerAssets(context.propertyId, state.assets);
+  renderFeatureList();
+  return true;
+}
+
+function notifyParentComponentCreated(asset) {
+  if (!asset || window.parent === window) return;
+  window.parent.postMessage(
+    {
+      type: "SPATIAL_COMPONENT_CREATED",
+      propertyId: context.propertyId,
+      asset,
+    },
+    "*"
+  );
+}
+
+function createAssetFromMapInput({ typeKey, rawName, parentId, geometryFeature }) {
+  const normalizedType = String(typeKey || "zone").toLowerCase();
+  const typeLabel = toTitleCase(normalizedType);
+  const coord = extractCentroid(geometryFeature);
+  const suggestedName = buildAutoComponentName(normalizedType, parentId || "");
+  const name = String(rawName || "").trim() || suggestedName;
+
+  if (["zone", "controller"].includes(normalizedType) && nameExistsForType(name, normalizedType)) {
+    setStatus(`${typeLabel} name already exists. Suggested: ${suggestedName}.`);
+    return null;
+  }
+
+  const assetId = nextAssetId(normalizedType);
+  const finalParentId = parentId || inferDefaultParentId(normalizedType) || null;
+  const created = {
+    id: assetId,
+    name,
+    type: normalizedType,
+    status: normalizedType === "backflow" ? "Pass" : normalizedType === "zone" ? "ok" : "active",
+    description: "Created from map.",
+    parentId: finalParentId,
+  };
+
+  if (coord) {
+    created.lat = Number(coord.lat);
+    created.lon = Number(coord.lon);
+  }
+
+  if (normalizedType === "zone") {
+    const firstController = state.assets.find((asset) => String(asset.type || "").toLowerCase() === "controller")?.name || "";
+    const firstBackflow = state.assets.find((asset) => String(asset.type || "").toLowerCase() === "backflow")?.name || "";
+    created.controller = firstController;
+    created.backflow = firstBackflow;
+    created.label = name;
+  }
+
+  if (normalizedType === "controller") {
+    created.model = "Field Added";
+    created.zones = [];
+    created.programs = [];
+  }
+
+  return addAssetToLocalHierarchy(created) ? created : null;
+}
+
+async function promptComponentLink(defaultAssetId = "", geometryFeature = null) {
   const dialog = ui.linkDialog;
+  const dialogContext = ui.linkDialogContext;
   const backdrop = ui.linkBackdrop;
+  const actionMode = ui.linkActionMode;
+  const modeLinkBtn = ui.linkModeLinkBtn;
+  const modeNewBtn = ui.linkModeNewBtn;
+  const existingSection = ui.linkExistingSection;
+  const newSection = ui.linkNewSection;
   const select = ui.linkSelect;
   const confirmBtn = ui.linkConfirm;
+  const createBtn = ui.linkCreateConfirm;
+  const createType = ui.linkCreateType;
+  const createName = ui.linkCreateName;
+  const createParent = ui.linkCreateParent;
   const skipBtn = ui.linkSkip;
   const cancelHeaderBtn = ui.linkCancelHeader;
 
-  if (!dialog || !backdrop || !select || !confirmBtn || !skipBtn || !cancelHeaderBtn) {
+  if (!dialog || !backdrop || !actionMode || !existingSection || !newSection || !select || !confirmBtn || !createBtn || !createType || !createName || !createParent || !skipBtn || !cancelHeaderBtn) {
     return defaultAssetId || "";
   }
 
-  const options = componentCandidates();
-  select.innerHTML = options.length
-    ? options
+  const describeGeometry = (draft) => {
+    const geometryType = featureTypeLabel(draft?.type || "marker");
+    const coordinates = draft?.geometry?.coordinates;
+    if (Array.isArray(coordinates) && coordinates.length >= 2) {
+      const lon = Number(coordinates[0]);
+      const lat = Number(coordinates[1]);
+      if (Number.isFinite(lat) && Number.isFinite(lon)) {
+        return `${geometryType} at ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      }
+    }
+    return geometryType;
+  };
+
+  if (dialogContext) {
+    dialogContext.textContent = `Choose an existing component or create a new one and link this ${describeGeometry(geometryFeature)}.`;
+  }
+
+  const linkOptions = linkableComponentCandidates();
+  select.innerHTML = linkOptions.length
+    ? linkOptions
         .map((asset) => `<option value="${asset.id}">${asset.type}: ${asset.name}</option>`)
         .join("")
-    : "<option value=\"\">No components available</option>";
+    : "<option value=\"\">No components without location</option>";
 
   const preferred =
-    (defaultAssetId && options.find((item) => item.id === defaultAssetId)?.id) ||
+    (defaultAssetId && linkOptions.find((item) => item.id === defaultAssetId)?.id) ||
     state.selectedAssetId ||
-    options[0]?.id ||
+    linkOptions[0]?.id ||
     "";
   select.value = preferred;
-  confirmBtn.disabled = options.length === 0;
+  confirmBtn.disabled = linkOptions.length === 0;
+
+  const syncModeButtons = (mode) => {
+    const isLink = mode !== "new";
+    if (modeLinkBtn) {
+      modeLinkBtn.classList.toggle("is-active", isLink);
+      modeLinkBtn.setAttribute("aria-pressed", isLink ? "true" : "false");
+    }
+    if (modeNewBtn) {
+      modeNewBtn.classList.toggle("is-active", !isLink);
+      modeNewBtn.setAttribute("aria-pressed", !isLink ? "true" : "false");
+    }
+  };
+
+  const syncNewComponentInputs = () => {
+    const parentOptions = parentCandidatesForType(createType.value);
+    createParent.innerHTML = parentOptions.length
+      ? parentOptions.map((asset) => `<option value="${asset.id}">${asset.type}: ${asset.name}</option>`).join("")
+      : "<option value=\"\">No available parent</option>";
+
+    const inferredParent = inferDefaultParentId(createType.value);
+    const candidateParentId = createParent.value || inferredParent || parentOptions[0]?.id || "";
+    if (candidateParentId && parentOptions.find((asset) => asset.id === candidateParentId)) {
+      createParent.value = candidateParentId;
+    } else if (parentOptions[0]) {
+      createParent.value = parentOptions[0].id;
+    } else {
+      createParent.value = "";
+    }
+
+    createName.value = buildAutoComponentName(createType.value, createParent.value);
+  };
+
+  const syncActionMode = () => {
+    const isLink = actionMode.value !== "new";
+    syncModeButtons(actionMode.value);
+    existingSection.classList.toggle("slds-hide", !isLink);
+    newSection.classList.toggle("slds-hide", isLink);
+    confirmBtn.classList.toggle("slds-hide", !isLink);
+    createBtn.classList.toggle("slds-hide", isLink);
+    if (!isLink) {
+      syncNewComponentInputs();
+      createType.focus();
+      return;
+    }
+    if (!confirmBtn.disabled) select.focus();
+  };
+
+  const setActionMode = (mode) => {
+    actionMode.value = mode === "new" ? "new" : "link";
+    syncActionMode();
+  };
+
+  setActionMode("link");
 
   dialog.showModal();
   backdrop.classList.remove("slds-backdrop_hide");
@@ -289,17 +1083,52 @@ async function promptComponentLink(defaultAssetId = "") {
       dialog.close();
       backdrop.classList.add("slds-backdrop_hide");
       backdrop.classList.remove("slds-backdrop_open");
+      actionMode.removeEventListener("change", onModeChange);
+      modeLinkBtn?.removeEventListener("click", onModeLinkClick);
+      modeNewBtn?.removeEventListener("click", onModeNewClick);
+      createType.removeEventListener("change", onCreateInputsChange);
+      createParent.removeEventListener("change", onCreateInputsChange);
       confirmBtn.removeEventListener("click", onConfirm);
+      createBtn.removeEventListener("click", onCreate);
       skipBtn.removeEventListener("click", onSkip);
       cancelHeaderBtn.removeEventListener("click", onCancel);
       resolve(result);
     };
 
+    const onModeChange = () => syncActionMode();
+    const onModeLinkClick = () => setActionMode("link");
+    const onModeNewClick = () => setActionMode("new");
+    const onCreateInputsChange = () => syncNewComponentInputs();
     const onConfirm = () => close(select.value || "");
+    const onCreate = () => {
+      const typeKey = createType.value || "zone";
+      const name = createName.value.trim() || buildAutoComponentName(typeKey, createParent.value || "");
+
+      const createdAsset = createAssetFromMapInput({
+        typeKey,
+        rawName: name,
+        parentId: createParent.value || "",
+        geometryFeature,
+      });
+
+      if (!createdAsset) {
+        setStatus("Unable to create component in hierarchy.");
+        return;
+      }
+
+      notifyParentComponentCreated(createdAsset);
+      close(createdAsset.id);
+    };
     const onSkip = () => close("");
     const onCancel = () => close(null);
 
+    actionMode.addEventListener("change", onModeChange);
+  modeLinkBtn?.addEventListener("click", onModeLinkClick);
+  modeNewBtn?.addEventListener("click", onModeNewClick);
+    createType.addEventListener("change", onCreateInputsChange);
+    createParent.addEventListener("change", onCreateInputsChange);
     confirmBtn.addEventListener("click", onConfirm);
+    createBtn.addEventListener("click", onCreate);
     skipBtn.addEventListener("click", onSkip);
     cancelHeaderBtn.addEventListener("click", onCancel);
   });
@@ -307,17 +1136,31 @@ async function promptComponentLink(defaultAssetId = "") {
 
 function getAssetTypeIcon(assetType) {
   const typeMap = {
-    System: "asset_object",
-    Controller: "clock",
-    Zone: "choice",
-    Backflow: "water",
-    Pump: "location",
-    Valve: "trail",
-    Head: "location",
-    Drip: "trail",
+    system: "asset_object",
+    source: "location",
+    backflow: "water",
+    controller: "clock",
+    zone: "choice",
+    pump: "location",
+    valve: "trail",
+    head: "location",
+    drip: "trail",
   };
-  const icon = typeMap[assetType] || "record";
+  const icon = typeMap[String(assetType || "").toLowerCase()] || "record";
   return `<svg class="feature-type-icon-svg" viewBox="0 0 520 520" aria-hidden="true"><use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#${icon}"></use></svg>`;
+}
+
+function getMapGeometryBadge(linkedFeatures) {
+  const geometryFeatures = (linkedFeatures || []).filter((feature) => !feature.isLatLon);
+  if (!geometryFeatures.length) return "";
+
+  const hasPolyGeometry = geometryFeatures.some(
+    (feature) => feature.type === "polygon" || feature.type === "polyline"
+  );
+  const iconName = hasPolyGeometry ? "calculated_insights" : "checkin";
+  const badgeLabel = hasPolyGeometry ? "poly" : "marker";
+
+  return `<span class="map-geometry-badge" title="Has mapped ${badgeLabel} geometry" aria-label="Has mapped ${badgeLabel} geometry"><svg viewBox="0 0 520 520" aria-hidden="true"><use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#${iconName}"></use></svg></span>`;
 }
 
 function ensureAssetPathExpanded(assetId) {
@@ -332,7 +1175,77 @@ function ensureAssetPathExpanded(assetId) {
   }
 }
 
+function findPrimaryFeatureForAsset(assetId) {
+  if (!assetId) return null;
+  const linked = state.features.filter((feature) => feature.assetId === assetId);
+  if (!linked.length) return null;
+  const nonLatLon = linked.find((feature) => !feature.isLatLon);
+  return nonLatLon || linked[0] || null;
+}
+
+function focusMapOnFeature(feature, zoom = 19) {
+  if (!feature || !mapAdapter.map) return false;
+  const center = extractCentroid(feature);
+  if (!center) return false;
+
+  mapAdapter.map.setCenter({ lat: center.lat, lng: center.lon });
+  if (Number.isFinite(zoom) && zoom > 0) {
+    mapAdapter.map.setZoom(zoom);
+  }
+  return true;
+}
+
+function selectAssetContext(assetId, options = {}) {
+  const { shouldFocusMap = true, selectionSource = "sync" } = options;
+  const asset = assetById(assetId);
+  if (!asset) return;
+
+  state.selectedAssetId = asset.id;
+  ensureAssetPathExpanded(asset.id);
+
+  const linkedFeature = findPrimaryFeatureForAsset(asset.id);
+  if (linkedFeature) {
+    state.selectedFeatureId = linkedFeature.id;
+    mapAdapter.selectFeature(linkedFeature.id);
+    if (shouldFocusMap) {
+      focusMapOnFeature(linkedFeature, Number(config.selectionZoom || 19));
+    }
+    setStatus(`Selected ${asset.name} with mapped geometry ${linkedFeature.name}.`);
+    notifyParentMapObjectSelected(linkedFeature, selectionSource);
+  } else {
+    state.selectedFeatureId = null;
+    if (shouldFocusMap) {
+      // If the selected asset has no geometry yet, fall back to system centering
+      // so refreshes don't stay on the default map location.
+      centerMapOnSystem();
+    }
+    setStatus(`Selected ${asset.name}. No mapped geometry yet.`);
+    if (window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: "SPATIAL_MAP_OBJECT_SELECTED",
+          assetId: asset.id,
+          featureId: null,
+          shouldOpenDetail: !mapOnlyEditEnabled,
+          selectionSource,
+        },
+        "*"
+      );
+    }
+  }
+
+  updateActionButtons();
+  renderFeatureList();
+}
+
 function renderFeatureList() {
+  notifyParentMappedAssets();
+
+  if (!ui.featureList) {
+    updateActionButtons();
+    return;
+  }
+
   ui.featureList.innerHTML = "";
   updateFeatureCount();
 
@@ -342,7 +1255,7 @@ function renderFeatureList() {
   if (!activeAssets.length) {
     const li = document.createElement("li");
     li.className = "feature-item";
-    li.innerHTML = "<p class=\"feature-label\">No assets in hierarchy</p><p class=\"feature-meta\">No active system assets found for this property.</p>";
+    li.innerHTML = "<p class=\"feature-label\">No assets in hierarchy</p><p class=\"feature-meta\">No active hierarchy assets found for this property.</p>";
     ui.featureList.appendChild(li);
     updateActionButtons();
     return;
@@ -369,13 +1282,14 @@ function renderFeatureList() {
 
   const TYPE_ORDER = {
     System: 0,
-    Controller: 1,
-    Pump: 2,
-    Backflow: 3,
+    Source: 1,
+    Backflow: 2,
+    Controller: 3,
     Zone: 4,
-    Valve: 5,
-    Head: 6,
-    Drip: 7,
+    Pump: 5,
+    Valve: 6,
+    Head: 7,
+    Drip: 8,
   };
 
   const sortAssets = (assets) => {
@@ -411,13 +1325,14 @@ function renderFeatureList() {
 
     const hasLatLon = asset.lat != null && asset.lon != null;
     const hasDrawnGeometry = linkedFeatures.some((f) => !f.isLatLon);
+    const geometryBadge = getMapGeometryBadge(linkedFeatures);
     const gpsBadge =
       hasLatLon && !hasDrawnGeometry
         ? `<span class="latlon-badge" title="Placed by GPS coordinates only">GPS</span>`
         : "";
 
     li.innerHTML = `
-      <p class="feature-label"><span class="hierarchy-label">${toggleControl}<button type="button" class="asset-selector" data-select-asset="${asset.id}" title="Select for map context"><span class="feature-type-icon ${asset.type}">${icon}</span></button><span class="asset-name">${escapeHtml(asset.name)}</span><a class="record-link" href="${assetUrl}" target="_parent" title="Open component record" aria-label="Open ${escapeHtml(asset.name)} record"><svg viewBox="0 0 520 520" aria-hidden="true"><use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#open"></use></svg></a>${gpsBadge}</span></p>
+      <p class="feature-label"><span class="hierarchy-label">${toggleControl}<button type="button" class="asset-selector" data-select-asset="${asset.id}" title="Select for map context"><span class="feature-type-icon ${asset.type}">${icon}</span></button><span class="asset-name">${escapeHtml(asset.name)}</span><a class="record-link" href="${assetUrl}" target="_parent" title="Open component record" aria-label="Open ${escapeHtml(asset.name)} record"><svg viewBox="0 0 520 520" aria-hidden="true"><use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#open"></use></svg></a>${geometryBadge}${gpsBadge}</span></p>
     `;
 
     const toggleEl = li.querySelector("[data-tree-toggle]");
@@ -440,40 +1355,12 @@ function renderFeatureList() {
     if (assetSelector) {
       assetSelector.addEventListener("click", (event) => {
         event.stopPropagation();
-        state.selectedAssetId = asset.id;
-        ensureAssetPathExpanded(asset.id);
-
-        const linkedFeature = linkedFeatures[0] || null;
-        if (linkedFeature) {
-          state.selectedFeatureId = linkedFeature.id;
-          mapAdapter.selectFeature(linkedFeature.id);
-          setStatus(`Selected ${asset.name} with mapped geometry ${linkedFeature.name}.`);
-        } else {
-          state.selectedFeatureId = null;
-          setStatus(`Selected ${asset.name}. No mapped geometry yet.`);
-        }
-
-        updateActionButtons();
-        renderFeatureList();
+        selectAssetContext(asset.id, { shouldFocusMap: true, selectionSource: "hierarchy" });
       });
     }
 
     li.addEventListener("click", () => {
-      state.selectedAssetId = asset.id;
-      ensureAssetPathExpanded(asset.id);
-
-      const linkedFeature = linkedFeatures[0] || null;
-      if (linkedFeature) {
-        state.selectedFeatureId = linkedFeature.id;
-        mapAdapter.selectFeature(linkedFeature.id);
-        setStatus(`Selected ${asset.name} with mapped geometry ${linkedFeature.name}.`);
-      } else {
-        state.selectedFeatureId = null;
-        setStatus(`Selected ${asset.name}. No mapped geometry yet.`);
-      }
-
-      updateActionButtons();
-      renderFeatureList();
+      selectAssetContext(asset.id, { shouldFocusMap: true, selectionSource: "hierarchy" });
     });
 
     ui.featureList.appendChild(li);
@@ -520,7 +1407,49 @@ function notifyParentAssetLocation(assetId, feature) {
   );
 }
 
+function notifyParentMapObjectSelected(feature, selectionSource = "map") {
+  if (!feature?.assetId || window.parent === window) return;
+  window.parent.postMessage(
+    {
+      type: "SPATIAL_MAP_OBJECT_SELECTED",
+      assetId: feature.assetId,
+      featureId: feature.id,
+      shouldOpenDetail: !mapOnlyEditEnabled,
+      selectionSource,
+    },
+    "*"
+  );
+}
+
+function notifyParentMappedAssets() {
+  if (window.parent === window) return;
+
+  const mappedAssetIds = Array.from(
+    new Set(
+      state.features
+        .filter((feature) => feature?.assetId && !feature.isLatLon)
+        .map((feature) => feature.assetId)
+    )
+  );
+
+  window.parent.postMessage(
+    {
+      type: "SPATIAL_MAPPED_ASSETS",
+      assetIds: mappedAssetIds,
+    },
+    "*"
+  );
+}
+
 function syncLatLonFeatures() {
+  if (suppressAutoMarkers) {
+    state.features
+      .filter((f) => f.isLatLon)
+      .forEach((f) => mapAdapter.removeFeature(f.id));
+    state.features = state.features.filter((f) => !f.isLatLon);
+    return;
+  }
+
   if (!mapAdapter.map) return;
 
   // Remove stale lat/lon auto-markers
@@ -529,11 +1458,17 @@ function syncLatLonFeatures() {
     .forEach((f) => mapAdapter.removeFeature(f.id));
   state.features = state.features.filter((f) => !f.isLatLon);
 
-  // Add a marker for every active asset that has lat+lon
+  // Add a marker for active assets with lat/lon only when they do not already
+  // have explicit drawn geometry linked in the map dataset.
   state.assets
-    .filter((a) => a.status !== "Retired" && a.lat != null && a.lon != null)
+    .filter((a) => {
+      if (a.status === "Retired") return false;
+      if (a.lat == null || a.lon == null) return false;
+      if (hasMappedLocation(a.id)) return false;
+      return true;
+    })
     .forEach((asset) => {
-      const feature = {
+      const feature = decorateFeatureVisual({
         id: `latlon-${asset.id}`,
         propertyId: context.propertyId,
         assetId: asset.id,
@@ -544,14 +1479,22 @@ function syncLatLonFeatures() {
         isAuto: true,
         isLatLon: true,
         modifiedAt: Date.now(),
-      };
+      });
       state.features.push(feature);
       mapAdapter.addFeature(feature);
     });
 }
 
 function getStorageKey() {
-  return `spatial-demo-${context.propertyId}`;
+  return `spatial-demo-v5-cleared-${context.propertyId}`;
+}
+
+function getHiddenAutoStorageKey() {
+  return `spatial-demo-v5-cleared-hidden-auto-${context.propertyId}`;
+}
+
+function getLinkMigrationStorageKey() {
+  return `spatial-demo-v5-link-migrated-${context.propertyId}`;
 }
 
 function saveToLocalStorage() {
@@ -568,11 +1511,120 @@ function loadFromLocalStorage() {
     const stored = localStorage.getItem(getStorageKey());
     if (!stored) return null;
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed.filter((feature) => !feature?.isAuto) : null;
+    if (!Array.isArray(parsed)) return null;
+    const userOnly = parsed.filter((feature) => !feature?.isAuto);
+    return dedupeFeaturesById(userOnly);
   } catch (error) {
     console.warn("localStorage load failed:", error);
     return null;
   }
+}
+
+function hasLinkMigrationRun() {
+  try {
+    return localStorage.getItem(getLinkMigrationStorageKey()) === "1";
+  } catch (error) {
+    console.warn("localStorage link-migration read failed:", error);
+    return false;
+  }
+}
+
+function markLinkMigrationComplete() {
+  try {
+    localStorage.setItem(getLinkMigrationStorageKey(), "1");
+  } catch (error) {
+    console.warn("localStorage link-migration write failed:", error);
+  }
+}
+
+function persistLinkedUserFeaturesIfNeeded(originalUserFeatures, linkedFeatures) {
+  if (hasLinkMigrationRun()) return;
+
+  const originalById = new Map(
+    (originalUserFeatures || [])
+      .filter((feature) => feature && feature.id && !feature.isAuto)
+      .map((feature) => [feature.id, feature])
+  );
+
+  if (!originalById.size) {
+    markLinkMigrationComplete();
+    return;
+  }
+
+  const linkedUserFeatures = dedupeFeaturesById(
+    (linkedFeatures || []).filter((feature) => feature && !feature.isAuto)
+  );
+
+  const repairedAny = linkedUserFeatures.some((feature) => {
+    const original = originalById.get(feature.id);
+    if (!original) return false;
+
+    const originalAssetId = String(original.assetId || "").trim();
+    const nextAssetId = String(feature.assetId || "").trim();
+    return !originalAssetId && Boolean(nextAssetId);
+  });
+
+  if (!repairedAny) {
+    markLinkMigrationComplete();
+    return;
+  }
+
+  try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(linkedUserFeatures));
+    markLinkMigrationComplete();
+    setStatus("Updated saved map links for legacy markers.");
+  } catch (error) {
+    console.warn("localStorage link-migration save failed:", error);
+  }
+}
+
+function persistUserFeaturesSnapshot(features) {
+  try {
+    const userFeatures = dedupeFeaturesById(
+      (features || []).filter((feature) => feature && !feature.isAuto)
+    );
+    localStorage.setItem(getStorageKey(), JSON.stringify(userFeatures));
+  } catch (error) {
+    console.warn("localStorage user-feature snapshot save failed:", error);
+  }
+}
+
+function saveHiddenAutoToLocalStorage() {
+  try {
+    localStorage.setItem(
+      getHiddenAutoStorageKey(),
+      JSON.stringify(Array.from(state.hiddenAutoFeatureIds))
+    );
+  } catch (error) {
+    console.warn("localStorage hidden-auto save failed:", error);
+  }
+}
+
+function loadHiddenAutoFromLocalStorage() {
+  try {
+    const stored = localStorage.getItem(getHiddenAutoStorageKey());
+    if (!stored) return new Set();
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter((id) => typeof id === "string" && id.length > 0));
+  } catch (error) {
+    console.warn("localStorage hidden-auto load failed:", error);
+    return new Set();
+  }
+}
+
+function notifyParentGeometryDeleted(assetId, deletedCount, message, success = true) {
+  if (window.parent === window) return;
+  window.parent.postMessage(
+    {
+      type: "SPATIAL_GEOMETRY_DELETED",
+      assetId: assetId || "",
+      deletedCount,
+      success,
+      message,
+    },
+    "*"
+  );
 }
 
 function clearLocalStorage() {
@@ -587,20 +1639,39 @@ async function loadFeatures() {
   setStatus("Loading features...");
 
   const apiFeatures = await api.listFeatures(context);
-  const autoFeatures = apiFeatures.filter((feature) => feature.isAuto);
+  state.hiddenAutoFeatureIds = loadHiddenAutoFromLocalStorage();
+  const autoFeatures = suppressAutoMarkers
+    ? []
+    : apiFeatures.filter(
+        (feature) => feature.isAuto && !state.hiddenAutoFeatureIds.has(feature.id)
+      );
   const seededUserFeatures = apiFeatures.filter((feature) => !feature.isAuto);
   const storedFeatures = loadFromLocalStorage();
 
   const userFeatures =
     storedFeatures && storedFeatures.length > 0 ? storedFeatures : seededUserFeatures;
 
-  state.features = normalizeFeatureNames([...autoFeatures, ...userFeatures]);
+  const mergedFeatures = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
+  const linkedFeatures = ensureFeatureAssetLinks(mergedFeatures);
+  const { cleanedFeatures, removedOrphans } = pruneOrphanUserFeatures(linkedFeatures);
+  const { cleanedFeatures: withoutDrafts, removedDrafts } = pruneDraftCustomerFeatures(cleanedFeatures);
+  persistLinkedUserFeaturesIfNeeded(userFeatures, linkedFeatures);
+  if (removedOrphans > 0 || removedDrafts > 0) {
+    persistUserFeaturesSnapshot(withoutDrafts);
+  }
+  state.features = applyFeatureVisualStyling(
+    normalizeFeatureNames(filterFeaturesForLayout(withoutDrafts))
+  );
   state.selectedFeatureId = null;
   state.selectedAssetId = null;
-  mapAdapter.renderFeatures(state.features);
+  renderMapFeaturesWhenReady();
   renderFeatureList();
+  const cleanupNotes = [
+    removedOrphans > 0 ? `removed ${removedOrphans} orphan marker(s)` : "",
+    removedDrafts > 0 ? `removed ${removedDrafts} draft marker(s)` : "",
+  ].filter(Boolean);
   setStatus(
-    `Loaded ${userFeatures.length} user feature(s) and ${autoFeatures.length} simulated placement(s).`
+    `Loaded ${userFeatures.length} user feature(s) and ${autoFeatures.length} simulated placement(s)${cleanupNotes.length ? ` · ${cleanupNotes.join(" · ")}` : ""}.`
   );
 }
 
@@ -620,8 +1691,72 @@ async function deleteSelectedFeature() {
   await api.deleteFeature(context, feature.id);
   mapAdapter.removeFeature(feature.id);
   removeLocal(feature.id);
+  saveToLocalStorage();
   renderFeatureList();
   setStatus(`Deleted ${feature.name}.`);
+}
+
+async function deleteGeometryForAsset(assetId) {
+  if (!assetId) {
+    setStatus("No component selected for delete.");
+    notifyParentGeometryDeleted(assetId, 0, "No component selected.", false);
+    return;
+  }
+
+  const canDeleteGeometry = geometryEditingEnabled || mapOnlyEditEnabled;
+  if (!canDeleteGeometry) {
+    const msg = "Enable edit mode first to delete map geometry.";
+    setStatus(msg);
+    notifyParentGeometryDeleted(assetId, 0, msg, false);
+    return;
+  }
+
+  const linked = state.features.filter((feature) => feature.assetId === assetId);
+  if (!linked.length) {
+    const msg = "No map geometry found for this component.";
+    setStatus(msg);
+    notifyParentGeometryDeleted(assetId, 0, msg, true);
+    return;
+  }
+
+  let deletedCount = 0;
+  for (const feature of linked) {
+    if (feature.isAuto) {
+      state.hiddenAutoFeatureIds.add(feature.id);
+      mapAdapter.removeFeature(feature.id);
+      removeLocal(feature.id);
+      deletedCount += 1;
+      continue;
+    }
+
+    await api.deleteFeature(context, feature.id);
+    mapAdapter.removeFeature(feature.id);
+    removeLocal(feature.id);
+    deletedCount += 1;
+  }
+
+  saveToLocalStorage();
+  saveHiddenAutoToLocalStorage();
+  renderFeatureList();
+
+  const linkedName = assetById(assetId)?.name || "component";
+  const msg = `Deleted ${deletedCount} map item(s) for ${linkedName}.`;
+  setStatus(msg);
+  notifyParentGeometryDeleted(assetId, deletedCount, msg, true);
+}
+
+async function deleteGeometryForCurrentSelection() {
+  const selectedFeature = state.selectedFeatureId ? featureById(state.selectedFeatureId) : null;
+  const selectedAssetId = selectedFeature?.assetId || state.selectedAssetId || "";
+
+  if (!selectedAssetId) {
+    const msg = "Select map geometry first, then delete.";
+    setStatus(msg);
+    notifyParentGeometryDeleted(selectedAssetId, 0, msg, false);
+    return;
+  }
+
+  await deleteGeometryForAsset(selectedAssetId);
 }
 
 async function renameSelectedFeature() {
@@ -636,9 +1771,25 @@ async function saveAll() {
   saveToLocalStorage();
 
   const refreshed = await api.listFeatures(context);
-  state.features = refreshed;
+  state.features = dedupeFeaturesById(refreshed);
   renderFeatureList();
   setStatus(`Saved ${userFeatures.length} user feature(s). Simulated placements refreshed.`);
+}
+
+async function resetAllUserGeometry() {
+  const removable = state.features.filter((feature) => !feature.isAuto);
+  removable.forEach((feature) => mapAdapter.removeFeature(feature.id));
+
+  state.features = state.features.filter((feature) => feature.isAuto);
+  state.selectedFeatureId = null;
+  state.selectedAssetId = null;
+
+  await api.replaceAll(context, []);
+  clearLocalStorage();
+
+  renderFeatureList();
+  updateActionButtons();
+  setStatus("All map geometry cleared.");
 }
 
 function wireEvents() {
@@ -683,6 +1834,7 @@ async function start() {
   await loadAndRegisterAssets();
 
   mapAdapter.onFeatureSelected = (featureId) => {
+    state.lastFeatureSelectionAt = Date.now();
     state.selectedFeatureId = featureId;
     const feature = featureById(featureId);
     state.selectedAssetId = feature?.assetId || null;
@@ -692,15 +1844,82 @@ async function start() {
     updateActionButtons();
     renderFeatureList();
     if (feature) {
+      notifyParentMapObjectSelected(feature, "map");
       setStatus(`Selected ${feature.name}`);
     }
     scrollActiveItemIntoView();
   };
 
+  mapAdapter.onMapBackgroundClick = () => {
+    if (!state.selectedFeatureId && !state.selectedAssetId) {
+      return;
+    }
+    state.selectedFeatureId = null;
+    state.selectedAssetId = null;
+    updateActionButtons();
+    renderFeatureList();
+    setStatus("No component selected.");
+
+    if (window.parent !== window) {
+      window.parent.postMessage(
+        {
+          type: "SPATIAL_MAP_OBJECT_SELECTED",
+          assetId: "",
+          featureId: null,
+          shouldOpenDetail: false,
+        },
+        "*"
+      );
+    }
+  };
+
+  const mapRootEl = document.getElementById("map-root");
+  if (mapRootEl) {
+    mapRootEl.addEventListener("click", () => {
+      if (state.tool === TOOL_MODES.MARKER) {
+        // Marker creation must come from the map click coordinate itself.
+        return;
+      }
+
+      if (state.tool !== TOOL_MODES.SELECT) {
+        return;
+      }
+      if (!state.selectedFeatureId && !state.selectedAssetId) {
+        return;
+      }
+      if (Date.now() - state.lastFeatureSelectionAt < 220) {
+        return;
+      }
+
+      state.selectedFeatureId = null;
+      state.selectedAssetId = null;
+      mapAdapter.selectFeature(null);
+      updateActionButtons();
+      renderFeatureList();
+      setStatus("No component selected.");
+
+      if (window.parent !== window) {
+        window.parent.postMessage(
+          {
+            type: "SPATIAL_MAP_OBJECT_SELECTED",
+            assetId: "",
+            featureId: null,
+            shouldOpenDetail: false,
+          },
+          "*"
+        );
+      }
+    });
+  }
+
   mapAdapter.onFeatureChanged = async (featureId, geometry) => {
     const feature = featureById(featureId);
     if (!feature) return;
-    if (feature.isAuto) {
+    if (!geometryEditingEnabled) {
+      setStatus("Enable edit mode first to modify map geometry.");
+      return;
+    }
+    if (feature.isAuto && !mapOnlyEditEnabled) {
       setStatus("Simulated placements are read-only.");
       return;
     }
@@ -708,58 +1927,122 @@ async function start() {
     const updated = await api.upsertFeature(context, {
       ...feature,
       name: linkedFeatureName(feature.assetId, feature.name),
+      assetType: assetById(feature.assetId)?.type || feature.assetType,
+      assetStatus: assetById(feature.assetId)?.status || feature.assetStatus,
       geometry,
+      isAuto: false,
     });
-    upsertLocal(updated);
+    upsertLocal(decorateFeatureVisual(updated));
+    saveToLocalStorage();
     notifyParentAssetLocation(updated.assetId, updated);
     renderFeatureList();
     setStatus(`Updated ${updated.name}.`);
   };
 
   mapAdapter.onFeatureCreated = async (draftFeature, overlay) => {
-    let linkedAssetId = context.assetId || state.selectedAssetId || "";
+    setAddNewTapCaptureArmed(false);
 
-    const selectedComponentId = await promptComponentLink(linkedAssetId);
-    if (!selectedComponentId) {
-      overlay.setMap(null);
-      setStatus("Shape creation canceled. A linked component is required.");
+    if (!geometryEditingEnabled && layoutMode === "map-only" && state.tool === TOOL_MODES.MARKER) {
+      // In embedded map-only flows, Add New can arrive before explicit edit-mode sync.
+      // Self-heal by enabling editing when marker creation is requested.
+      setGeometryEditingEnabled(true);
+    }
+
+    if (!geometryEditingEnabled) {
+      if (overlay?.setMap) overlay.setMap(null);
+      setStatus("Enable edit mode first to create map geometry.");
       return;
     }
-    linkedAssetId = selectedComponentId;
+
+    if (state.pendingMarkerCreation) {
+      if (overlay?.setMap) overlay.setMap(null);
+      return;
+    }
+
+    state.pendingMarkerCreation = true;
+
+    try {
+
+    // Only auto-link when a component is actively selected in the current map context.
+    // In neutral Add New mode, always prompt so the user can create/link explicitly.
+    let linkedAssetId = state.selectedAssetId || "";
+    if (state.forcePromptForNextMarker) {
+      linkedAssetId = "";
+    }
+
+    if (!linkedAssetId) {
+      const selectedComponentId = await promptComponentLink(linkedAssetId, draftFeature);
+      if (!selectedComponentId) {
+        overlay.setMap(null);
+        setStatus("Shape creation canceled. A linked component is required.");
+        return;
+      }
+      linkedAssetId = selectedComponentId;
+    }
+
+    state.forcePromptForNextMarker = false;
 
     const created = await api.upsertFeature(context, {
       ...draftFeature,
       name: linkedFeatureName(linkedAssetId, featureTypeLabel(draftFeature.type)),
       assetId: linkedAssetId,
+      assetType: assetById(linkedAssetId)?.type || draftFeature.assetType,
+      assetStatus: assetById(linkedAssetId)?.status || draftFeature.assetStatus,
     });
 
-    mapAdapter.addFeature(created, overlay);
-    upsertLocal(created);
+    const styledCreated = decorateFeatureVisual(created);
+    mapAdapter.addFeature(styledCreated, overlay);
+    upsertLocal(styledCreated);
+    saveToLocalStorage();
     state.selectedFeatureId = created.id;
     mapAdapter.selectFeature(created.id);
     notifyParentAssetLocation(created.assetId, created);
     renderFeatureList();
     setTool(TOOL_MODES.SELECT);
     setStatus(`Created ${created.name}.`);
+    } finally {
+      state.pendingMarkerCreation = false;
+    }
   };
 
   await mapAdapter.init();
+  ensureAddNewTapCaptureLayer();
   await loadFeatures();
   syncLatLonFeatures();
 
-  // Center map on system if it has lat/lon
-  centerMapOnSystem();
+  // If map is launched with a selected asset context, focus that component first.
+  if (context.assetId && assetById(context.assetId)) {
+    selectAssetContext(context.assetId, { shouldFocusMap: true, selectionSource: "sync" });
+  } else {
+    // Otherwise use system-level centering fallback.
+    centerMapOnSystem();
+  }
 
   // Set tool based on context mode (for asset-first workflows)
-  if (context.mode === TOOL_MODES.POLYGON && context.assetId) {
+  if (context.mode === TOOL_MODES.POLYGON) {
     setTool(TOOL_MODES.POLYGON);
-    setStatus(`Ready to draw polygon for asset ${context.assetId}. Click on the map to start.`);
-  } else if (context.mode === TOOL_MODES.POLYLINE && context.assetId) {
+    setStatus(
+      context.assetId
+        ? `Ready to draw polygon for asset ${context.assetId}. Click on the map to start.`
+        : "Ready to draw polygon. Click on the map to start and then link or create a component."
+    );
+  } else if (context.mode === TOOL_MODES.POLYLINE) {
     setTool(TOOL_MODES.POLYLINE);
-    setStatus(`Ready to draw line for asset ${context.assetId}. Click on the map to start.`);
-  } else if (context.mode === TOOL_MODES.MARKER && context.assetId) {
+    setStatus(
+      context.assetId
+        ? `Ready to draw line for asset ${context.assetId}. Click on the map to start.`
+        : "Ready to draw line. Click on the map to start and then link or create a component."
+    );
+  } else if (context.mode === TOOL_MODES.MARKER) {
     setTool(TOOL_MODES.MARKER);
-    setStatus(`Ready to place marker for asset ${context.assetId}. Click on the map.`);
+    setStatus(
+      context.assetId
+        ? `Ready to place marker for asset ${context.assetId}. Click on the map.`
+        : "Ready to place marker. Click on the map and then link or create a component."
+    );
+  } else if (mapOnlyEditEnabled) {
+    setTool(TOOL_MODES.SELECT);
+    setStatus("Edit mode active. Select geometry or pick Add Marker from mobile controls.");
   } else {
     setTool(TOOL_MODES.SELECT);
   }
@@ -769,18 +2052,151 @@ start().catch((error) => {
   setStatus(`Initialization error: ${error.message}`);
 });
 
-// Listen for live asset data pushed from parent page (when embedded as iframe in desktop_map)
-window.addEventListener("message", (event) => {
+// Listen for live asset data pushed from parent page (when embedded as iframe in desktop)
+window.addEventListener("message", async (event) => {
   const msg = event.data;
-  if (!msg || msg.type !== "SPATIAL_PROTO_ASSETS") return;
+  if (!msg) return;
+
+  if (msg.type === "SPATIAL_RESET_GEOMETRY") {
+    resetAllUserGeometry().catch((error) => {
+      setStatus(error?.message || "Unable to clear map geometry.");
+    });
+    return;
+  }
+
+  if (msg.type === "SPATIAL_DELETE_ASSET_GEOMETRY") {
+    deleteGeometryForAsset(msg.assetId).catch((error) => {
+      const errorMessage = error?.message || "Delete geometry failed.";
+      setStatus(errorMessage);
+      notifyParentGeometryDeleted(msg.assetId, 0, errorMessage, false);
+    });
+    return;
+  }
+
+  if (msg.type === "SPATIAL_DELETE_SELECTED_GEOMETRY") {
+    deleteGeometryForCurrentSelection().catch((error) => {
+      const errorMessage = error?.message || "Delete geometry failed.";
+      setStatus(errorMessage);
+      notifyParentGeometryDeleted("", 0, errorMessage, false);
+    });
+    return;
+  }
+
+  if (msg.type === "SPATIAL_SET_EDIT_MODE") {
+    setGeometryEditingEnabled(Boolean(msg.enabled));
+    if (!geometryEditingEnabled) {
+      setTool(TOOL_MODES.SELECT);
+      setStatus("Edit mode is off. Map geometry is read-only.");
+    }
+    return;
+  }
+
+  if (msg.type === "SPATIAL_SET_TOOL") {
+    const requestedTool = String(msg.tool || TOOL_MODES.SELECT).toLowerCase();
+    const nextTool =
+      requestedTool === TOOL_MODES.MARKER ||
+      requestedTool === TOOL_MODES.POLYGON ||
+      requestedTool === TOOL_MODES.POLYLINE
+        ? requestedTool
+        : TOOL_MODES.SELECT;
+
+    if (layoutMode === "map-only" && nextTool === TOOL_MODES.MARKER) {
+      if (!geometryEditingEnabled) {
+        setGeometryEditingEnabled(true);
+      }
+      state.forcePromptForNextMarker = true;
+      setAddNewTapCaptureArmed(true);
+      setStatus("Add New armed. Tap on the map to place a marker.");
+    } else {
+      setAddNewTapCaptureArmed(false);
+    }
+
+    setTool(nextTool);
+    return;
+  }
+
+  if (msg.type === "SPATIAL_PROMPT_ADD_NEW") {
+    if (layoutMode === "map-only" && !geometryEditingEnabled) {
+      setGeometryEditingEnabled(true);
+    }
+    setTool(TOOL_MODES.MARKER);
+    state.forcePromptForNextMarker = true;
+    setAddNewTapCaptureArmed(true);
+    setStatus("Add New armed. Tap on the map to place a marker.");
+    return;
+  }
+
+  if (msg.type === "SPATIAL_SELECT_ASSET_CONTEXT") {
+    const assetId = String(msg.assetId || "").trim();
+    if (!assetId) {
+      state.selectedAssetId = null;
+      state.selectedFeatureId = null;
+      state.forcePromptForNextMarker = true;
+      mapAdapter.selectFeature(null);
+      updateActionButtons();
+      renderFeatureList();
+      setStatus("No component selected.");
+      return;
+    }
+    state.forcePromptForNextMarker = false;
+    selectAssetContext(assetId, { shouldFocusMap: msg.shouldFocusMap !== false, selectionSource: "sync" });
+    return;
+  }
+
+  if (msg.type !== "SPATIAL_PROTO_ASSETS") return;
   if (!Array.isArray(msg.assets)) return;
 
-  state.assets = msg.assets;
+  const incomingAssets = msg.assets;
+  const preservedContextAssets = state.assets.filter((asset) => {
+    const typeKey = String(asset?.type || "").toLowerCase();
+    return typeKey === "system" || typeKey === "source";
+  });
+
+  const incomingIds = new Set(incomingAssets.map((asset) => asset.id));
+  const mergedAssets = [
+    ...preservedContextAssets.filter((asset) => !incomingIds.has(asset.id)),
+    ...incomingAssets,
+  ];
+
+  state.assets = mergedAssets;
   state.assetMap = {};
-  msg.assets.forEach((asset) => {
+  state.assets.forEach((asset) => {
     state.assetMap[asset.id] = asset;
   });
-  api.registerAssets(msg.propertyId || context.propertyId, msg.assets);
+  const nextPropertyId = msg.propertyId || context.propertyId;
+  api.registerAssets(nextPropertyId, state.assets);
+
+  // Rebuild feature state from the registered assets so auto geometry reflects
+  // the latest component payload pushed by the embedding workspace.
+  // Reapply hidden-auto and stored user-feature state to preserve delete intent.
+  const refreshed = await api.listFeatures({
+    ...context,
+    propertyId: nextPropertyId,
+  });
+  state.hiddenAutoFeatureIds = loadHiddenAutoFromLocalStorage();
+  const autoFeatures = suppressAutoMarkers
+    ? []
+    : refreshed.filter(
+        (feature) => feature.isAuto && !state.hiddenAutoFeatureIds.has(feature.id)
+      );
+  const seededUserFeatures = refreshed.filter((feature) => !feature.isAuto);
+  const storedUserFeatures = loadFromLocalStorage();
+  const userFeatures =
+    storedUserFeatures && storedUserFeatures.length > 0
+      ? storedUserFeatures
+      : seededUserFeatures;
+
+  state.features = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
+  state.features = ensureFeatureAssetLinks(state.features);
+  const cleanupResult = pruneOrphanUserFeatures(state.features);
+  const draftCleanupResult = pruneDraftCustomerFeatures(cleanupResult.cleanedFeatures);
+  state.features = draftCleanupResult.cleanedFeatures;
+  persistLinkedUserFeaturesIfNeeded(userFeatures, state.features);
+  if (cleanupResult.removedOrphans > 0 || draftCleanupResult.removedDrafts > 0) {
+    persistUserFeaturesSnapshot(state.features);
+  }
+  state.features = applyFeatureVisualStyling(normalizeFeatureNames(state.features));
+  renderMapFeaturesWhenReady();
   syncLatLonFeatures();
 
   // Center map on system if it has lat/lon

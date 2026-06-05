@@ -1,6 +1,6 @@
 > **SUPERSEDED**
-> **Superseded by:** [requirements/irrigation_data_dictionary.md](../../requirements/irrigation_data_dictionary.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
-> **Rationale:** Architecture decisions absorbed into the canonical data dictionary and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
+> **Superseded by:** [requirements/fsm_irrigation_requirements.md](../../requirements/fsm_irrigation_requirements.md) + [requirements/irrigation_prd_v2.md](../../requirements/irrigation_prd_v2.md)
+> **Rationale:** Architecture decisions are consolidated into the Standard FSM requirements metadata baseline and PRD. Asset hierarchy, object chain, and scope decisions are now authoritative in those docs.
 > **Decision Log ID:** DL-002
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -95,7 +95,7 @@ Custom fields added for Repair Callout tracking (decisions from irrigationchecku
 | `Callout_Photo__c` | Text (URL) | Reference to Files attachment; or use native Files on WOLI |
 | `ExtraWork_Estimate_Line_Ref__c` | Text | Reference ID to linked ExtraWork estimate line item |
 
-> **Usage:** During a checkup Service Appointment, the field tech creates WOLI records per issue found. Each WOLI starts at `Callout_Status__c = New`. When the ExtraWork estimate is built, the relevant WOLI records are updated with the estimate line reference and status advances to `Quoted`. Customer approval triggers advancement to `Approved`, completion of work advances to `Completed`.
+> **Usage:** During a checkup Service Appointment, the field tech captures findings and callout outputs on the inspection record. WOLI linkage, when needed for execution tracking, is handled by downstream work management and not auto-created per issue.
 
 ---
 
@@ -162,7 +162,7 @@ Validation checklist in sandbox (recommended):
 
 Execution runbook:
 
-- [Mobile prototype notes and walkthrough](../prototype/mobile/ui/notes.md)
+- [Mobile prototype notes and walkthrough](../prototype/mobile/notes.md)
 
 Source evidence:
 
@@ -189,3 +189,4 @@ Source evidence:
 - https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_core.htm
 - https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/fsl_dev_soap_pricing.htm
 - https://developer.salesforce.com/docs/atlas.en-us.260.0.object_reference.meta/object_reference/sforce_api_objects_asset.htm
+

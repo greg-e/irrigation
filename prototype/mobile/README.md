@@ -1,41 +1,66 @@
 # Mobile Prototype
 
-This prototype is intentionally lightweight and disposable. The canonical stakeholder surface is:
+This folder contains the standalone mobile inspection prototype for FSM irrigation discovery work.
 
-- ui/fsm_mobile_inspection_standalone.html
+## Primary Surface
 
-## Surfaces
+- Primary file: mobile_v3.1.html
+- This is the current source of truth for mobile demo behavior.
 
-1. Logic sanity check (terminal)
-- File: inspection_state_machine.py
-- Run (Windows PowerShell): python .\prototype\mobile\inspection_state_machine.py
+## Quick Start
 
-2. Canonical mobile UI demo
-- File: ui/fsm_mobile_inspection_standalone.html
-- Open in browser to run the WOLI-first flow
+1. Open mobile_v3.1.html in a browser.
+2. Start from Work Order overview.
+3. Open the irrigation WOLI into the WOLI workspace.
 
-3. Legacy comparison UI (kept for reference)
-- Files: ui/index.html, ui/styles.css, ui/app.js
+## What The Working Standalone Demonstrates
 
-## What the canonical UI now demonstrates
+- Work Order to WOLI transition (WO mode to WOLI mode).
+- WOLI progress scoring:
+	- 60% callout policy
+	- 20% AM assignment
+	- 20% required-question completion
+- Resolver context visibility (Region, Inspection Type, Season, question set version).
+- Tab model in WOLI workspace:
+	- Details
+	- Map
+	- Related
+	- Feed
+- Related sections:
+	- Components (asset list and edits)
+	- Inspection Guide (required question checklist)
+	- Callouts (asset issue checklist with checkbox + count)
+	- Submit Report
+- Map/list hybrid behavior for assets, including:
+	- Asset create/edit/remove
+	- Status toggle
+	- Inline callout creation from predefined issue checklist (checkbox + count)
+	- Optional geolocation capture for callouts
+- Submit gate behavior:
+	- Hard blockers:
+		- Callout policy met (at least one callout, or No irrigation issues found)
+		- Account Manager assigned
+	- Soft gate:
+		- Remaining required questions are advisory; submission can proceed with justification flow messaging
 
-- WOLI-first workspace from Work Order overview
-- Deterministic set resolver visibility (Region + Inspection Type + Season)
-- Hard submit blockers:
-	- Callout policy met (callout exists or "No irrigation issues found")
-	- AM assigned
-- Advisory-only required question completion (non-blocking)
-- Required callout type on create: Repair or Enhancement
+## Mobile Folder Contents
 
-## Guided Demo (Mobile Segment)
+- mobile_v3.1.html: Active standalone prototype (primary).
+- index.html: Older shell/alternate entry point kept for reference.
+- app.js: Legacy script used by index.html.
+- styles.css: Legacy stylesheet used by index.html.
+- notes.md: Handoff notes and implementation history.
 
-1. Open Work Order overview and select the irrigation WOLI.
-2. In Related tab, log at least one callout and set type.
-3. Assign AM and submit irrigation report.
-4. Return to Work Order overview and verify WOLI status transition.
+## Suggested Demo Path
+
+1. From Overview, open the irrigation WOLI.
+2. In Map or Components, review/edit assets.
+3. In Callouts, add at least one callout (or mark No irrigation issues found if eligible).
+4. In Submit Report, assign AM.
+5. Submit irrigation report and verify status/result messaging.
 
 ## Notes
 
-- This is not production code.
-- Data is mocked.
-- Sync behavior is intentionally implicit for this prototype pass.
+- Prototype only; not production code.
+- Data is mocked in the standalone file.
+- External SLDS CSS is loaded from CDN in the standalone file.

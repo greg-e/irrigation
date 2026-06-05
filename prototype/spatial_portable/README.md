@@ -1,6 +1,6 @@
-# Spatial Mapping Portable Prototype
+# Mapping Portable Prototype
 
-HTML-first portable prototype for irrigation asset spatial mapping.
+HTML-first portable prototype for irrigation asset Mapping.
 
 ## Scope in this pass
 
@@ -36,3 +36,5 @@ Example URL with context:
 - `config.local.js` is ignored by git.
 - This is a prototype, not production code.
 - The adapter/API seams are intentionally structured to ease migration to LWC + Apex.
+
+

@@ -48,7 +48,7 @@ Use these tags during live note-taking:
 Use this list to avoid re-litigating decisions in follow-up calls.
 
 1. Custom-object library path is final (no Salesforce Assessments path). *([requirements/inspection_form_data_model.md](inspection_form_data_model.md) §10)*
-2. Published questions and sets are immutable; new versions are append-only. *([requirements/inspection_question_library.md](inspection_question_library.md) Locked Governance Decisions)*
+2. Published questions and sets are immutable; new versions are append-only. *([requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) Locked Governance Decisions)*
 3. Runtime set selection is deterministic by Region + Inspection Type/Season + Work Type, with hard fail on no match. *([requirements/diagrams/process_flow.mmd](diagrams/process_flow.mmd))*
 4. Question-set version is snapshotted at inspection start and remains locked in-flight. *([requirements/diagrams/inspection_sequence.mmd](diagrams/inspection_sequence.mmd))*
 5. Checkout is blocked until required questions are answered.
@@ -64,7 +64,7 @@ Use this list to avoid re-litigating decisions in follow-up calls.
 iauditor.com
 ### A. Form content / regional deltas
 1. Walk us through your current FL digital form on one real recent inspection. Anything in our FL mapping still wrong in §7a? *(validates field-level mapping)*
-2. Q6.11 "Overwatering" appears in FL but not West Coast. Should this be a national baseline question or an FL-only delta? *([requirements/inspection_question_library.md](inspection_question_library.md))*
+2. Q6.11 "Overwatering" appears in FL but not West Coast. Should this be a national baseline question or an FL-only delta? *([requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L125))*
 3. List your must-have conditional expanders ("if Yes, ask...") so we can finalize branching structures before publish.
 4. Drip-specific content: separate subsection or conditional questions in Section 6?
 
@@ -96,7 +96,7 @@ iauditor.com
 4. Mobile UX for per-zone capture: acceptable to use one-zone-at-a-time card workflow instead of wide grid?
 5. Rain/freeze as single Y/N: acceptable or must be split into separate fields?
 6. Do you need an explicit action audit for operator-controlled toggles (backflow/meter/controller on-off)?
-7. "Broken drip line" vs "Leaking Seal" label conflict: which canonical wording should library use?
+7. "Broken drip line" vs "Leaking Seal" label conflict: which Standard wording should library use?
 
 ### B. Governance ownership
 8. ~~Who is the named owner of publish authority for national question/set versions?~~ `[DECIDED — Carr call May 13, 2026]` James Carr volunteered as national library owner and steward, pending official role expansion from leadership. Regional leads may draft; Carr holds publish authority.
@@ -349,7 +349,7 @@ Paste updates into this table in real time.
 
 After the call, update the source docs within 24 hours:
 
-1. [requirements/inspection_question_library.md](inspection_question_library.md) (remaining open questions and governance ownership)
+1. [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) (remaining open questions and governance ownership)
 2. [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §11 (remaining open questions)
 3. [stories/build_backlog.md](../stories/build_backlog.md) (story acceptance criteria deltas)
 
@@ -406,7 +406,7 @@ Captured live in one-question-at-a-time format.
 | 4 | Mobile UX for per-zone capture | Two service levels: PMI for existing systems and Assessment for new properties. Mobile UX priority is PMI first. | DECIDED | Card-style one-zone-at-a-time workflow is acceptable for PMI; Assessment flow treated as separate variant. |
 | 5 | Rain and freeze sensor field structure | Separate fields. | DECIDED | Split rain and freeze capture in data model/UI. |
 | 6 | Action audit for operator-controlled toggles | General notes are sufficient. | DECIDED | No mandatory explicit action-audit object required in v1. |
-| 7 | Drip wording canonical term | Regional wording. | DECIDED | No single national canonical term; support regional label variants. |
+| 7 | Drip wording Standard term | Regional wording. | DECIDED | No single national Standard term; support regional label variants. |
 | 8 | Publish authority owner | James Carr (Manager, Regional Irrigation). | DECIDED | Record governance owner for question/set publish decisions. |
 | 9 | Change cadence / hot-fix path | Ad-hoc hot-fix path approved. | DECIDED | Urgent changes can bypass regular cadence via defined hot-fix process. |
 | 10 | Training vs library authority | Training can lead and drive change. | DECIDED | Governance model must allow training-led change initiation before formal release. |
@@ -446,3 +446,4 @@ Captured from the follow-up transcript and prior live notes.
 1. Follow up with Andrew McCall on the FL pilot branch.
 2. Revisit the conditional expander list when final branching scope is being locked.
 3. Resolve the Overwatering regional-vs-national wording across FL and West Coast before publish.
+

@@ -201,6 +201,55 @@ function migratePropertyToHierarchy(property) {
       }
     });
   }
+
+  if (Array.isArray(property.inspections)) {
+    property.inspections = property.inspections.map(normalizeInspectionChecklistSummary);
+  }
+}
+
+function buildChecklistSummary(byAssetType, totalFindings) {
+  if (!totalFindings) return "None";
+  const labels = [
+    ["System", byAssetType.system],
+    ["Source", byAssetType.source],
+    ["Backflow", byAssetType.backflow],
+    ["Controller", byAssetType.controller],
+    ["Zone", byAssetType.zone],
+  ];
+  return labels
+    .filter(([, count]) => Number(count || 0) > 0)
+    .map(([label, count]) => `${label}: ${count}`)
+    .join(" | ");
+}
+
+function normalizeInspectionChecklistSummary(inspection) {
+  const byTypeInput = inspection && typeof inspection.checklistFindingsByAssetType === "object"
+    ? inspection.checklistFindingsByAssetType
+    : null;
+
+  const byAssetType = {
+    system: Number(byTypeInput?.system || 0),
+    source: Number(byTypeInput?.source || 0),
+    backflow: Number(byTypeInput?.backflow || 0),
+    controller: Number(byTypeInput?.controller || 0),
+    zone: Number(byTypeInput?.zone || 0),
+  };
+
+  if (!byTypeInput) {
+    const legacyCalloutCount = Number(inspection.calloutCount || 0);
+    byAssetType.zone = Number.isFinite(legacyCalloutCount) ? Math.max(0, legacyCalloutCount) : 0;
+  }
+
+  const totalFromByType = Object.values(byAssetType).reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0);
+  const providedTotal = Number(inspection.checklistFindingCount);
+  const checklistFindingCount = Number.isFinite(providedTotal) ? Math.max(0, providedTotal) : totalFromByType;
+
+  return {
+    ...inspection,
+    checklistFindingsByAssetType: byAssetType,
+    checklistFindingCount,
+    checklistSummary: inspection.checklistSummary || buildChecklistSummary(byAssetType, checklistFindingCount),
+  };
 }
 
 async function loadState() {
@@ -245,6 +294,8 @@ const els = {
   detailEditBtns: document.querySelectorAll(".detail-edit-btn"),
   detailFieldEditTriggers: document.querySelectorAll("[data-open-asset-editor]"),
   hierarchyNewBtn: document.getElementById("hierarchy-new-btn"),
+  programTabButton: document.querySelector("[data-tab-target='program']"),
+  programTabPanel: document.querySelector("[data-tab-panel='program']"),
   relatedTabButton: document.querySelector("[data-tab-target='inspections']"),
   relatedTabPanel: document.querySelector("[data-tab-panel='inspections']"),
   assetModal: document.getElementById("asset-modal"),
@@ -321,6 +372,8 @@ const els = {
   editParentLabel: document.querySelector("label[for='edit-parent-zone']"),
   editSerial: document.getElementById("edit-serial"),
   editInstallDate: document.getElementById("edit-install-date"),
+  editLat: document.getElementById("edit-lat"),
+  editLon: document.getElementById("edit-lon"),
   editDescription: document.getElementById("edit-description"),
   relatedContext: document.getElementById("related-context"),
   relatedSummary: document.getElementById("related-summary"),
@@ -396,6 +449,9 @@ const els = {
   railRecentActivity: document.getElementById("rail-recent-activity"),
   tabButtons: document.querySelectorAll("[data-tab-target]"),
   tabPanels: document.querySelectorAll("[data-tab-panel]"),
+  spatialMapFrame: document.getElementById("spatial-map-frame"),
+  detailLocationRow: document.getElementById("detail-location-row"),
+  detailLocation: document.getElementById("detail-location"),
 };
 
 function setActiveTab(tabKey) {
@@ -411,38 +467,79 @@ function setActiveTab(tabKey) {
   els.tabPanels.forEach((panel) => {
     panel.classList.toggle("active", panel.dataset.tabPanel === tabKey);
   });
+
+  if (tabKey === "map") {
+    const frame = els.spatialMapFrame;
+    if (frame) {
+      if (!frame.dataset.loaded) {
+        frame.dataset.loaded = "true";
+        frame.addEventListener("load", pushAssetsToMapFrame, { once: true });
+        frame.src = `../spatial_portable/index.html?propertyId=${encodeURIComponent(propertyId || "")}`;
+      } else {
+        pushAssetsToMapFrame();
+      }
+    }
+  }
+}
+
+function pushAssetsToMapFrame() {
+  const frame = els.spatialMapFrame;
+  if (!frame || !frame.contentWindow) return;
+  const property = getProperty();
+  if (!property) return;
+  frame.contentWindow.postMessage(
+    { type: "SPATIAL_PROTO_ASSETS", propertyId: property.id, assets: property.assets },
+    "*"
+  );
 }
 
 function updateRelatedTabVisibility(asset) {
-  const isParentAsset = Boolean(asset) && !asset.parentId;
+  const isSystemAsset = Boolean(asset) && asset.type === "System";
+  const isControllerAsset = Boolean(asset) && asset.type === "Controller";
+  const canShowMap = Boolean(asset);
 
   const mapTabButton = document.querySelector("[data-tab-target='map']");
   const mapTabItem = mapTabButton ? mapTabButton.closest(".slds-tabs_default__item") : null;
   const mapTabPanel = document.querySelector("[data-tab-panel='map']");
 
   if (mapTabButton) {
-    mapTabButton.style.display = isParentAsset ? "" : "none";
+    mapTabButton.style.display = canShowMap ? "" : "none";
   }
   if (mapTabItem) {
-    mapTabItem.style.display = isParentAsset ? "" : "none";
+    mapTabItem.style.display = canShowMap ? "" : "none";
   }
   if (mapTabPanel) {
-    mapTabPanel.style.display = isParentAsset ? "" : "none";
+    mapTabPanel.style.display = canShowMap ? "" : "none";
+  }
+
+  if (els.programTabButton) {
+    els.programTabButton.style.display = isControllerAsset ? "" : "none";
+    const programTabItem = els.programTabButton.closest(".slds-tabs_default__item");
+    if (programTabItem) {
+      programTabItem.style.display = isControllerAsset ? "" : "none";
+    }
+  }
+
+  if (els.programTabPanel) {
+    els.programTabPanel.style.display = isControllerAsset ? "" : "none";
   }
 
   if (els.relatedTabButton) {
-    els.relatedTabButton.style.display = isParentAsset ? "" : "none";
+    els.relatedTabButton.style.display = isSystemAsset ? "" : "none";
     const relatedTabItem = els.relatedTabButton.closest(".slds-tabs_default__item");
     if (relatedTabItem) {
-      relatedTabItem.style.display = isParentAsset ? "" : "none";
+      relatedTabItem.style.display = isSystemAsset ? "" : "none";
     }
   }
 
   if (els.relatedTabPanel) {
-    els.relatedTabPanel.style.display = isParentAsset ? "" : "none";
+    els.relatedTabPanel.style.display = isSystemAsset ? "" : "none";
   }
 
-  if (!isParentAsset && (activeTab === "inspections" || activeTab === "map")) {
+  const isMapHidden = activeTab === "map" && !canShowMap;
+  const isRelatedHidden = activeTab === "inspections" && !isSystemAsset;
+  const isProgramHidden = activeTab === "program" && !isControllerAsset;
+  if (isMapHidden || isRelatedHidden || isProgramHidden) {
     setActiveTab("details");
   }
 }
@@ -647,7 +744,7 @@ function navigateToRelatedAsset(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  window.location.assign(`property_record.html?${next.toString()}`);
+  window.location.assign(`desktop_v3.1.html?${next.toString()}`);
 }
 
 function getProperty() {
@@ -674,6 +771,94 @@ function uniqueZonePerController(property, zone, skipId = null) {
     if (a.id === skipId) return false;
     return a.type === "Zone" && a.parentId === zone.parentId && Number(a.zoneNumber) === Number(zone.zoneNumber);
   });
+}
+
+function autoCreateControllerZones(property, controllerAsset) {
+  if (!property || !controllerAsset || controllerAsset.type !== "Controller") {
+    return { created: [], retired: [], skipped: [] };
+  }
+
+  const desiredCountRaw = Number(controllerAsset.totalZones);
+  if (!Number.isFinite(desiredCountRaw) || desiredCountRaw <= 0) {
+    return { created: [], retired: [], skipped: [] };
+  }
+  const desiredCount = Math.floor(desiredCountRaw);
+
+  const controllerZones = activeAssets(property)
+    .filter((asset) => asset.type === "Zone" && asset.parentId === controllerAsset.id);
+
+  const existingNumbers = new Set(
+    controllerZones
+      .map((zone) => Number(zone.zoneNumber))
+      .filter((zoneNumber) => Number.isFinite(zoneNumber) && zoneNumber > 0)
+  );
+
+  const created = [];
+  for (let zoneNumber = 1; zoneNumber <= desiredCount; zoneNumber += 1) {
+    if (existingNumbers.has(zoneNumber)) continue;
+
+    const zone = {
+      id: genId("asset"),
+      type: "Zone",
+      name: `Zone ${zoneNumber}`,
+      status: "Active",
+      isPlaceholder: true,
+      parentId: controllerAsset.id,
+      zoneNumber,
+      controllerLabel: "",
+      makeModel: "",
+      totalZones: null,
+      backflowType: "",
+      headSubtype: "",
+      serialNumber: "",
+      mainlinePipeType: "",
+      mainlinePipeSize: "",
+      distributionMethod: "",
+      lateralPipeType: "",
+      lateralPipeSize: "",
+      solenoidResistanceOhms: null,
+      areaServed: "",
+      flowRateGpm: null,
+      primaryHeadType: "",
+      installDate: "",
+      lat: null,
+      lon: null,
+      description: "",
+    };
+
+    property.assets.push(zone);
+    created.push(zone);
+  }
+
+  const active = activeAssets(property);
+  const zoneIdsWithChildren = new Set(
+    active
+      .filter((asset) => Boolean(asset.parentId))
+      .map((asset) => asset.parentId)
+  );
+  const referencedZoneIds = new Set(
+    (Array.isArray(controllerAsset.programs) ? controllerAsset.programs : [])
+      .map((program) => program.zoneAssetId)
+      .filter(Boolean)
+  );
+
+  const retired = [];
+  const skipped = [];
+  const excessZones = controllerZones
+    .filter((zone) => Number(zone.zoneNumber) > desiredCount)
+    .sort((a, b) => Number(b.zoneNumber) - Number(a.zoneNumber));
+
+  excessZones.forEach((zone) => {
+    if (zoneIdsWithChildren.has(zone.id) || referencedZoneIds.has(zone.id)) {
+      skipped.push(zone);
+      return;
+    }
+
+    zone.status = "Retired";
+    retired.push(zone);
+  });
+
+  return { created, retired, skipped };
 }
 
 function renderControllerOptions(selectEl, includeBlank = true) {
@@ -1067,6 +1252,8 @@ function setSelectedAsset(assetId, options = {}) {
   els.editCoverageAreaSqft.value = asset.coverageAreaSqft ?? "";
   els.editSerial.value = asset.serialNumber || "";
   els.editInstallDate.value = asset.installDate || "";
+  els.editLat.value = asset.lat ?? "";
+  els.editLon.value = asset.lon ?? "";
   els.editDescription.value = asset.description || "";
   syncZoneNameField(els.editName, els.editZoneNumber, asset.type === "Zone");
   renderControllerOptions(els.editZoneController);
@@ -1090,6 +1277,9 @@ function setSelectedAsset(assetId, options = {}) {
 }
 
 function applyEditGuards(asset) {
+  asset.lat = els.editLat.value === "" ? null : parseFloat(els.editLat.value);
+  asset.lon = els.editLon.value === "" ? null : parseFloat(els.editLon.value);
+
   const property = getProperty();
 
   if (asset.type === "System") {
@@ -1111,18 +1301,18 @@ function applyEditGuards(asset) {
 
   if (asset.type === "Controller") {
     const controllerLabel = els.editControllerLabel.value.trim();
-    const totalZones = els.editTotalZones.value;
+    const totalZones = Number(els.editTotalZones.value);
 
     if (!controllerLabel) {
       return { ok: false, message: "Controller Label is required for Controllers." };
     }
-    if (!totalZones) {
-      return { ok: false, message: "Total Zones is required for Controllers." };
+    if (!Number.isFinite(totalZones) || totalZones < 1) {
+      return { ok: false, message: "Total Zones must be at least 1 for Controllers." };
     }
 
     asset.controllerLabel = controllerLabel;
     asset.makeModel = els.editMakeModel.value.trim();
-    asset.totalZones = Number(totalZones);
+    asset.totalZones = Math.floor(totalZones);
     asset.connectivityType = els.editConnectivityType.value || "";
     asset.isSmartController =
       els.editSmartController.value === "" ? null : els.editSmartController.value === "true";
@@ -1492,7 +1682,7 @@ function assetRecordHref(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  return `property_record.html?${next.toString()}`;
+  return `desktop_v3.1.html?${next.toString()}`;
 }
 
 function getAssetDisplayTitle(asset) {
@@ -1841,6 +2031,22 @@ function renderDetailsTab(property, controllerAsset) {
 
     leftSlots.forEach((slot, idx) => applySlot(slot, leftFields[idx] || null));
     rightSlots.forEach((slot, idx) => applySlot(slot, rightFields[idx] || null));
+
+    if (els.detailLocationRow && els.detailLocation) {
+      if (asset.lat != null || asset.lon != null) {
+        const latStr = asset.lat != null ? Number(asset.lat).toFixed(6) : blank;
+        const lonStr = asset.lon != null ? Number(asset.lon).toFixed(6) : blank;
+        const mapsUrl = (asset.lat != null && asset.lon != null)
+          ? `https://maps.google.com/?q=${encodeURIComponent(asset.lat)},${encodeURIComponent(asset.lon)}`
+          : null;
+        els.detailLocation.innerHTML = mapsUrl
+          ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer">${latStr} / ${lonStr}</a>`
+          : `${latStr} / ${lonStr}`;
+        els.detailLocationRow.classList.remove("hidden");
+      } else {
+        els.detailLocationRow.classList.add("hidden");
+      }
+    }
   }
 
   const firstAudit = property.audit.length ? property.audit[property.audit.length - 1] : null;
@@ -1870,9 +2076,9 @@ function renderDetailsTab(property, controllerAsset) {
 
 function renderPrograms(property, controllerAsset) {
   const programsCard = document.getElementById("programs-card");
-  const programsTableBody = document.getElementById("programs-table-body");
+  const programsEmbed = document.querySelector("#programs-card iframe.programs-embed");
   const programsCount = document.getElementById("programs-count");
-  if (!programsCard || !programsTableBody) return;
+  if (!programsCard) return;
 
   if (!controllerAsset || controllerAsset.type !== "Controller") {
     programsCard.classList.add("hidden");
@@ -1883,43 +2089,23 @@ function renderPrograms(property, controllerAsset) {
   const programs = controllerAsset.programs || [];
   if (programsCount) programsCount.textContent = `(${programs.length})`;
 
-  if (!programs.length) {
-    programsTableBody.innerHTML = `<tr><td colspan="8" class="slds-text-align_center slds-p-around_medium slds-text-color_weak">No programs. Click New Program to create the first schedule.</td></tr>`;
-    return;
+  if (programsEmbed) {
+    const controllerId = encodeURIComponent(controllerAsset.id || "");
+    const controllerName = encodeURIComponent(controllerAsset.name || "Controller");
+    const relatedZones = activeAssets(property)
+      .filter((asset) => asset.type === "Zone" && asset.parentId === controllerAsset.id)
+      .sort((a, b) => Number(a.zoneNumber || 0) - Number(b.zoneNumber || 0))
+      .map((zone) => ({
+        id: zone.id,
+        name: zone.name || `Zone ${zone.zoneNumber ?? ""}`.trim(),
+        zoneNumber: zone.zoneNumber ?? null,
+      }));
+    const zonesParam = encodeURIComponent(JSON.stringify(relatedZones));
+    const embedSrc = `../program/controller_program.html?embedded=1&controllerId=${controllerId}&controllerName=${controllerName}&zones=${zonesParam}`;
+    if (programsEmbed.getAttribute("src") !== embedSrc) {
+      programsEmbed.setAttribute("src", embedSrc);
+    }
   }
-
-  const zones = activeAssets(property).filter((a) => a.type === "Zone");
-  const ICON_BASE = "https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.0/icons";
-  programsTableBody.innerHTML = programs
-    .map((prog) => {
-      const zone = zones.find((z) => z.id === prog.zoneAssetId);
-      const zoneName = zone ? zone.name : (prog.zoneAssetId ? prog.zoneAssetId : "—");
-      const days = prog.scheduleDays && prog.scheduleDays.length ? prog.scheduleDays.join("/") : "—";
-      const activeBadge = prog.isActive
-        ? `<span class="slds-badge slds-theme_success" style="font-size:0.7rem">Active</span>`
-        : `<span class="slds-badge" style="font-size:0.7rem">Inactive</span>`;
-      const adjust = prog.seasonalAdjustPct != null ? prog.seasonalAdjustPct + "%" : "—";
-      return `<tr class="slds-hint-parent">
-        <td data-label="Program Name">
-          <button class="slds-button slds-button_reset slds-text-link" type="button" data-edit-program="${prog.id}">${prog.programName}</button>
-        </td>
-        <td data-label="Days">${days}</td>
-        <td data-label="Start">${prog.startTime || "—"}</td>
-        <td data-label="Zone">${zoneName}</td>
-        <td data-label="Run (min)">${prog.runTimeMinutes != null ? prog.runTimeMinutes : "—"}</td>
-        <td data-label="Seasonal %">${adjust}</td>
-        <td data-label="Active">${activeBadge}</td>
-        <td style="width:3rem">
-          <button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" data-delete-program="${prog.id}" type="button" title="Delete Program">
-            <svg class="slds-button__icon" aria-hidden="true">
-              <use xlink:href="${ICON_BASE}/utility-sprite/svg/symbols.svg#delete"></use>
-            </svg>
-            <span class="slds-assistive-text">Delete Program</span>
-          </button>
-        </td>
-      </tr>`;
-    })
-    .join("");
 }
 
 function renderRelated(property) {
@@ -1962,6 +2148,7 @@ function renderRelated(property) {
           return new Date(b.completedAt) - new Date(a.completedAt);
         })
         .map((insp) => {
+          const normalized = normalizeInspectionChecklistSummary(insp);
           const overallBadge = insp.overallStatus
             ? `<span class="slds-badge ${statusTheme[insp.overallStatus] || ""}" style="font-size:0.7rem">${insp.overallStatus}</span>`
             : "—";
@@ -1972,7 +2159,7 @@ function renderRelated(property) {
             <td data-label="Type">${insp.inspectionType}</td>
             <td data-label="Technician">${insp.technician}</td>
             <td data-label="Overall Status">${overallBadge}</td>
-            <td data-label="Callouts">${insp.calloutCount}</td>
+            <td data-label="Checklist Findings" title="${normalized.checklistSummary}">${normalized.checklistFindingCount}</td>
             <td data-label="Completion">${completionBadge}</td>
           </tr>`;
         })
@@ -2028,19 +2215,22 @@ function renderRelated(property) {
 function renderMapTab(property, contextAsset) {
   if (!els.mapStage || !els.mapFeatureList) return;
 
-  if (!contextAsset || contextAsset.parentId) {
+  if (!contextAsset) {
     if (els.mapOverlay) {
-      els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>Map is available only on parent assets.</p>";
+      els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>Open an asset to view its map.</p>";
     }
     els.mapFeatureList.innerHTML = "";
     if (els.mapFeatureCount) els.mapFeatureCount.textContent = "(0)";
     if (els.mapSelection) els.mapSelection.textContent = "No feature selected";
     if (els.mapSyncSummary) els.mapSyncSummary.textContent = "Pending 0 | Synced 0 | Failed 0";
-    if (els.mapContext) els.mapContext.textContent = "Open a parent asset to manage irrigation map features.";
+    if (els.mapContext) els.mapContext.textContent = "Open an asset to view irrigation map features.";
     return;
   }
 
-  const mapState = ensureMapState(property, contextAsset);
+  const mapContextAsset = contextAsset.parentId
+    ? property.assets.find((asset) => asset.id === contextAsset.parentId) || contextAsset
+    : contextAsset;
+  const mapState = ensureMapState(property, mapContextAsset);
   const features = mapState.features;
   const selectedId = mapState.selectedFeatureId;
   const selected = features.find((feature) => feature.id === selectedId) || null;
@@ -2053,7 +2243,9 @@ function renderMapTab(property, contextAsset) {
     els.mapFeatureCount.textContent = `(${features.length}/${MAP_FEATURE_LIMIT})`;
   }
   if (els.mapContext) {
-    els.mapContext.textContent = `${contextAsset.name} map centered from Parent Asset location. Google Maps visual mock.`;
+    els.mapContext.textContent = contextAsset.parentId
+      ? `${contextAsset.name} location view. Map editing stays on the parent asset.`
+      : `${contextAsset.name} map centered from Parent Asset location. Google Maps visual mock.`;
   }
   if (els.mapSyncSummary) {
     els.mapSyncSummary.textContent = `Pending ${pending} | Synced ${synced} | Failed ${failed}`;
@@ -2102,25 +2294,6 @@ function renderMapTab(property, contextAsset) {
 
   if (els.mapOverlay) {
     els.mapOverlay.innerHTML = "";
-  }
-  features.forEach((feature) => {
-    feature.assetType = inferAssetTypeFromName(feature.name, feature.assetType);
-    const featureEl = document.createElement("button");
-    const pos = mapFeaturePosition(feature);
-    const symbol = mapSymbolSpec(feature.assetType);
-    featureEl.type = "button";
-    featureEl.className = `map-feature map-symbol-only feature-${feature.type.toLowerCase()} map-asset-${symbol.key}${selectedId === feature.id ? " map-feature-selected" : ""}`;
-    featureEl.dataset.mapFeatureId = feature.id;
-    featureEl.innerHTML = `<span class="map-feature-symbol">${symbol.code}</span>`;
-    featureEl.setAttribute("aria-label", `${feature.name} (${symbol.label})`);
-    featureEl.style.left = `${pos.left}%`;
-    featureEl.style.top = `${pos.top}%`;
-    featureEl.title = `${symbol.label} | ${feature.type} | ${feature.syncState || "Synced"}`;
-    els.mapOverlay?.appendChild(featureEl);
-  });
-
-  if (!features.length && els.mapOverlay) {
-    els.mapOverlay.innerHTML = "<p class='slds-text-body_small slds-text-color_weak slds-p-around_small'>No map features yet. Use Add Point/Line/Polygon to begin.</p>";
   }
 
   els.mapFeatureList.innerHTML = features
@@ -2230,6 +2403,7 @@ function renderPage() {
   renderDetailsTab(property, detailAsset);
   renderTimeline(property, detailAsset);
   renderHierarchy(property, detailAsset);
+  renderPrograms(property, detailAsset);
   renderMapTab(property, detailAsset);
   renderRelated(property);
   if (!selectedAssetId && detailAsset) {
@@ -2633,18 +2807,18 @@ function bindEvents() {
 
     if (type === "Controller") {
       const controllerLabel = els.createControllerLabel.value.trim();
-      const total = els.createTotalZones.value;
+      const total = Number(els.createTotalZones.value);
       if (!controllerLabel) {
         els.createMsg.textContent = "Controller Label is required.";
         return;
       }
-      if (!total) {
-        els.createMsg.textContent = "Total Zones is required.";
+      if (!Number.isFinite(total) || total < 1) {
+        els.createMsg.textContent = "Total Zones must be at least 1.";
         return;
       }
       base.controllerLabel = controllerLabel;
       base.makeModel = els.createMakeModel.value.trim();
-      base.totalZones = Number(total);
+      base.totalZones = Math.floor(total);
       const system = activeAssets(property).find((a) => a.type === "System");
       if (system) {
         base.parentId = system.id;
@@ -2712,8 +2886,30 @@ function bindEvents() {
     }
 
     property.assets.push(base);
-    addAudit(property, "Create Asset", base.name, `${base.type} created`);
-    els.createMsg.textContent = `${base.type} created.`;
+    const zoneSyncResult = base.type === "Controller"
+      ? autoCreateControllerZones(property, base)
+      : { created: [], retired: [], skipped: [] };
+
+    const zoneSyncNotes = [];
+    if (zoneSyncResult.created.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.created.length} zone(s) auto-created`);
+    }
+    if (zoneSyncResult.retired.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.retired.length} excess zone(s) auto-retired`);
+    }
+    if (zoneSyncResult.skipped.length) {
+      zoneSyncNotes.push(
+        `${zoneSyncResult.skipped.length} excess zone(s) not retired (linked assets/programs)`
+      );
+    }
+
+    const createDetails = zoneSyncNotes.length
+      ? `${base.type} created; ${zoneSyncNotes.join("; ")}`
+      : `${base.type} created`;
+    addAudit(property, "Create Asset", base.name, createDetails);
+    els.createMsg.textContent = zoneSyncNotes.length
+      ? `${base.type} created. ${zoneSyncNotes.join(". ")}.`
+      : `${base.type} created.`;
 
     closeAssetModal();
     els.createAssetForm.reset();
@@ -2870,12 +3066,34 @@ function bindEvents() {
       return;
     }
 
-    const next = JSON.stringify(asset);
-    if (prev !== next) {
-      addAudit(property, "Edit Asset", asset.name, `${asset.type} updated`);
+    const zoneSyncResult = asset.type === "Controller"
+      ? autoCreateControllerZones(property, asset)
+      : { created: [], retired: [], skipped: [] };
+
+    const zoneSyncNotes = [];
+    if (zoneSyncResult.created.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.created.length} zone(s) auto-created`);
+    }
+    if (zoneSyncResult.retired.length) {
+      zoneSyncNotes.push(`${zoneSyncResult.retired.length} excess zone(s) auto-retired`);
+    }
+    if (zoneSyncResult.skipped.length) {
+      zoneSyncNotes.push(
+        `${zoneSyncResult.skipped.length} excess zone(s) not retired (linked assets/programs)`
+      );
     }
 
-    els.editMsg.textContent = "Asset saved.";
+    const next = JSON.stringify(asset);
+    if (prev !== next || zoneSyncNotes.length) {
+      const editDetails = zoneSyncNotes.length
+        ? `${asset.type} updated; ${zoneSyncNotes.join("; ")}`
+        : `${asset.type} updated`;
+      addAudit(property, "Edit Asset", asset.name, editDetails);
+    }
+
+    els.editMsg.textContent = zoneSyncNotes.length
+      ? `Asset saved. ${zoneSyncNotes.join(". ")}.`
+      : "Asset saved.";
     closeAssetModal();
     renderPage();
   });
@@ -2927,4 +3145,21 @@ async function init() {
 
 init().catch((error) => {
   console.error("Failed to initialize property record", error);
+});
+
+// Listen for messages from the spatial map iframe
+window.addEventListener("message", (event) => {
+  const msg = event.data;
+  if (!msg || msg.type !== "SPATIAL_ASSET_LOCATION") return;
+  if (typeof msg.lat !== "number" || typeof msg.lon !== "number" || !msg.assetId) return;
+
+  const property = getProperty();
+  if (!property) return;
+  const asset = property.assets.find((a) => a.id === msg.assetId);
+  if (!asset) return;
+
+  asset.lat = msg.lat;
+  asset.lon = msg.lon;
+  saveState();
+  renderPage();
 });

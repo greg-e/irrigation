@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSM Mobile Inspection Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="phone-shell" aria-label="iPhone style mobile frame">
+      <div class="phone-notch" aria-hidden="true"></div>
+
+      <header class="global-header">
+        <div class="brand-row">
+          <p class="brand-kicker">Field Service</p>
+          <span id="sync-pill" class="sync-pill">Synced</span>
+        </div>
+        <h1>Irrigation Service Appointment</h1>
+        <p>FSM-style mobile prototype for technician checkup and checkout.</p>
+      </header>
+
+      <section class="context-card" aria-label="Service appointment context">
+        <div class="context-row">
+          <p class="context-label">Account</p>
+          <p class="context-value">Oak Ridge HOA Campus - Northeast</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">Work Type</p>
+          <p class="context-value">Irrigation - Quarterly</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">Appointment</p>
+          <p class="context-value">SA-004281 / In Progress</p>
+        </div>
+        <div class="context-row">
+          <p class="context-label">System Scope</p>
+          <p id="system-scope" class="context-value">0 controllers / 0 backflows / 0 zones</p>
+        </div>
+        <div class="chip-row">
+          <span class="chip chip-blue">NE</span>
+          <span class="chip chip-neutral">Quarterly</span>
+          <span id="stage-chip" class="chip chip-blue">INSPECTING</span>
+        </div>
+      </section>
+
+      <section id="pending-banner" class="pending-banner" aria-live="polite" hidden>
+        Pending map edits will sync when connection is available.
+      </section>
+
+      <section id="viewport" class="viewport map-canvas">
+        <article class="panel panel-map nav-panel active" data-panel="map">
+          <h2>Property Coverage Map</h2>
+          <p id="map-caption" class="panel-subtitle">Tap zones to represent inspected coverage and issue hotspots.</p>
+          <div class="filter-row">
+            <label class="filter-field">
+              Clock Filter
+              <select id="clock-filter"></select>
+            </label>
+          </div>
+          <div class="system-cards">
+            <section class="system-card">
+              <h4>Controllers</h4>
+              <ul id="controller-list"></ul>
+            </section>
+            <section class="system-card">
+              <h4>Backflows</h4>
+              <ul id="backflow-list"></ul>
+            </section>
+          </div>
+          <div class="legend-row" aria-label="Map legend">
+            <span class="legend-pill legend-ok">Stable</span>
+            <span class="legend-pill legend-alert">Follow-up</span>
+          </div>
+
+          <section class="mobile-map-stage" aria-label="Map stage">
+            <iframe id="mobile-map-frame" class="mobile-map-frame" loading="lazy" title="Property map"></iframe>
+            <div id="map-grid" class="map-grid" role="img" aria-label="Irrigation zone map"></div>
+          </section>
+
+          <section id="map-bottom-sheet" class="map-bottom-sheet peek" aria-label="Map action panel">
+            <header class="sheet-header">
+              <div>
+                <p class="sheet-kicker">Selected Asset</p>
+                <p id="sheet-asset-title" class="sheet-asset-title">No asset selected</p>
+              </div>
+              <div class="sheet-header-actions">
+                <span id="map-save-chip" class="chip chip-neutral">Saved</span>
+                <button id="sheet-toggle" class="btn btn-neutral sheet-toggle" type="button" aria-expanded="false">Expand</button>
+              </div>
+            </header>
+
+            <div class="sheet-peek-actions" aria-label="Pinned quick actions">
+              <button id="quick-edit-details" class="btn btn-neutral" type="button">Edit Details</button>
+              <button id="quick-photo" class="btn btn-neutral" type="button">Photo</button>
+              <button id="quick-notes" class="btn btn-neutral" type="button">Notes</button>
+            </div>
+
+            <div class="sheet-expanded">
+              <div class="map-action-row" aria-label="Geometry actions">
+                <button id="mobile-enter-edit" class="btn btn-brand" type="button">Edit Geometry</button>
+                <button id="mobile-add-point" class="btn btn-neutral" type="button">Add Point</button>
+                <button id="mobile-add-line" class="btn btn-neutral" type="button">Add Line</button>
+                <button id="mobile-add-polygon" class="btn btn-neutral" type="button">Add Polygon</button>
+                <button id="mobile-undo" class="btn btn-neutral" type="button">Undo</button>
+                <button id="mobile-redo" class="btn btn-neutral" type="button">Redo</button>
+              </div>
+              <div class="map-action-row" aria-label="Import and export actions">
+                <button id="mobile-export-kml" class="btn btn-neutral" type="button">Export KML</button>
+                <button id="mobile-import-kml" class="btn btn-neutral" type="button">Import KML</button>
+                <input id="mobile-import-kml-input" type="file" accept=".kml,application/vnd.google-earth.kml+xml" hidden />
+              </div>
+              <p id="mobile-map-message" class="panel-subtitle">Map ready.</p>
+              <ul id="mobile-feature-list" class="mobile-feature-list"></ul>
+            </div>
+          </section>
+        </article>
+
+        <article class="panel panel-assets nav-panel" data-panel="map">
+          <h3>Asset Snapshot</h3>
+          <p id="asset-snapshot" class="panel-subtitle">0 zones flagged. 0 confirmed callouts.</p>
+          <section class="asset-manager">
+            <h4>Add Asset</h4>
+            <form id="asset-form" class="inline-form">
+              <label>
+                Asset Type
+                <select id="asset-type">
+                  <option value="zone">Zone</option>
+                  <option value="controller">Controller</option>
+                  <option value="backflow">Backflow</option>
+                </select>
+              </label>
+              <label>
+                Asset Name
+                <input id="asset-name" type="text" placeholder="Zone 25 / Controller D / Backflow East" />
+              </label>
+              <label>
+                Description
+                <input id="asset-description" type="text" placeholder="Short field description" />
+              </label>
+              <div id="zone-links" class="zone-links">
+                <label>
+                  Zone Clock
+                  <select id="zone-controller"></select>
+                </label>
+                <label>
+                  Zone Backflow
+                  <select id="zone-backflow"></select>
+                </label>
+              </div>
+              <button class="btn btn-brand" type="submit">Add Asset</button>
+            </form>
+
+            <h4>Edit Description</h4>
+            <form id="description-form" class="inline-form">
+              <label>
+                Asset
+                <select id="description-asset"></select>
+              </label>
+              <label>
+                Description
+                <input id="description-input" type="text" placeholder="Update asset description" />
+              </label>
+              <button class="btn btn-neutral" type="submit">Save Description</button>
+            </form>
+          </section>
+        </article>
+
+        <article class="panel panel-a nav-panel" data-panel="checklist">
+          <h2>Required Inspection Questions</h2>
+          <div class="meter-wrap">
+            <div class="meter">
+              <div id="meter-fill" class="meter-fill"></div>
+            </div>
+            <p id="meter-label">0 of 6 answered</p>
+          </div>
+          <ul id="required-list" class="required-list"></ul>
+        </article>
+
+        <article class="panel panel-b nav-panel" data-panel="callouts">
+          <h3>Suggested Repair Callouts</h3>
+          <p class="panel-subtitle">Create and confirm repair recommendations from failed responses.</p>
+          <p id="callout-context-hint" class="context-hint">Select a zone on the map to prefill this form.</p>
+          <ul id="callout-list" class="callout-list"></ul>
+          <form id="callout-form" class="inline-form">
+            <label>
+              Asset
+              <select id="asset-input"></select>
+            </label>
+            <div>
+              <p class="callout-checklist-title">Issue Checklist</p>
+              <div id="issue-checklist" class="callout-checklist">
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Broken Head" checked />
+                  <span>Broken Head</span>
+                  <input type="number" class="issue-count" data-issue="Broken Head" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Clogged Nozzle" />
+                  <span>Clogged Nozzle</span>
+                  <input type="number" class="issue-count" data-issue="Clogged Nozzle" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Lateral Leak" />
+                  <span>Lateral Leak</span>
+                  <input type="number" class="issue-count" data-issue="Lateral Leak" min="1" value="1" />
+                </label>
+                <label class="callout-checklist-row">
+                  <input type="checkbox" class="issue-check" data-issue="Valve Fault" />
+                  <span>Valve Fault</span>
+                  <input type="number" class="issue-count" data-issue="Valve Fault" min="1" value="1" />
+                </label>
+              </div>
+            </div>
+            <label>
+              Severity
+              <select id="severity-input">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+              </select>
+            </label>
+            <button class="btn btn-brand" type="submit">Add Callout</button>
+          </form>
+        </article>
+
+        <article class="panel panel-c nav-panel" data-panel="checkout">
+          <h3>Approvals</h3>
+          <div class="actions wrap">
+            <label class="am-select-wrap">
+              Account Manager
+              <select id="am-name">
+                <option value="">Select AM</option>
+                <option value="Jamie Rivers">Jamie Rivers</option>
+                <option value="Alex Patel">Alex Patel</option>
+                <option value="Morgan Chen">Morgan Chen</option>
+              </select>
+            </label>
+            <button id="toggle-am" class="btn btn-neutral" type="button">Assign / Clear AM</button>
+          </div>
+          <p id="am-status" class="status-line">AM not assigned.</p>
+        </article>
+
+        <article class="panel panel-d nav-panel" data-panel="checkout">
+          <h3>Checkout</h3>
+          <div class="actions">
+            <button id="open-review" class="btn btn-neutral" type="button">Open Review</button>
+            <button id="simulate-submit" class="btn btn-brand" type="button">Submit Inspection</button>
+            <button id="reset-flow" class="btn btn-destructive" type="button">Reset</button>
+          </div>
+          <p id="submit-result" class="submit-result">Waiting for action.</p>
+        </article>
+
+        <article class="panel panel-e nav-panel" data-panel="checkout">
+          <h3>Stage Timeline</h3>
+          <ol id="timeline" class="timeline">
+            <li data-stage="RESOLVED">Resolved</li>
+            <li data-stage="BOOTSTRAP">Bootstrap</li>
+            <li data-stage="INSPECTING" class="active">Inspecting</li>
+            <li data-stage="REVIEW">Review</li>
+            <li data-stage="COMPLETED">Completed</li>
+          </ol>
+        </article>
+
+        <article class="panel panel-feedback nav-panel" data-panel="feedback">
+          <h3>Feedback</h3>
+          <p class="panel-subtitle">Capture quick tester feedback while using this prototype.</p>
+          <form id="feedback-form" class="inline-form">
+            <label>
+              Tester Name
+              <input id="feedback-name" type="text" placeholder="Name" />
+            </label>
+            <label>
+              Persona
+              <select id="feedback-persona">
+                <option value="Technician">Technician</option>
+                <option value="Dispatcher">Dispatcher</option>
+                <option value="Account Manager">Account Manager</option>
+                <option value="Supervisor">Supervisor</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label>
+              Area
+              <select id="feedback-area">
+                <option value="Map">Map</option>
+                <option value="Checklist">Checklist</option>
+                <option value="Callouts">Callouts</option>
+                <option value="Checkout">Checkout</option>
+                <option value="Assets">Assets</option>
+              </select>
+            </label>
+            <label>
+              Rating
+              <select id="feedback-rating">
+                <option value="5">5 - Great</option>
+                <option value="4">4 - Good</option>
+                <option value="3" selected>3 - Okay</option>
+                <option value="2">2 - Needs Work</option>
+                <option value="1">1 - Poor</option>
+              </select>
+            </label>
+            <label>
+              Comments
+              <textarea id="feedback-comments" rows="3" placeholder="What worked or what needs to change?"></textarea>
+            </label>
+            <button class="btn btn-brand" type="submit">Save Feedback</button>
+          </form>
+          <div class="feedback-actions">
+            <button id="copy-feedback" class="btn btn-neutral" type="button">Copy Feedback JSON</button>
+            <button id="clear-feedback" class="btn btn-destructive" type="button">Clear Feedback</button>
+          </div>
+          <p id="feedback-status" class="status-line">No feedback submitted yet.</p>
+          <ul id="feedback-list" class="feedback-list"></ul>
+        </article>
+      </section>
+
+      <nav class="bottom-nav" aria-label="FSM mobile navigation">
+        <button class="nav-btn active" data-tab="map" type="button">
+          <span class="nav-icon" aria-hidden="true">◎</span>
+          <span>Map</span>
+        </button>
+        <button class="nav-btn" data-tab="checklist" type="button">
+          <span class="nav-icon" aria-hidden="true">✓</span>
+          <span>Checklist</span>
+        </button>
+        <button class="nav-btn" data-tab="callouts" type="button">
+          <span class="nav-icon" aria-hidden="true">⚑</span>
+          <span>Callouts</span>
+        </button>
+        <button class="nav-btn" data-tab="checkout" type="button">
+          <span class="nav-icon" aria-hidden="true">▣</span>
+          <span>Checkout</span>
+        </button>
+        <button class="nav-btn" data-tab="feedback" type="button">
+          <span class="nav-icon" aria-hidden="true">✎</span>
+          <span>Feedback</span>
+        </button>
+      </nav>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

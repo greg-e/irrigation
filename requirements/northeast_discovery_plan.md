@@ -6,7 +6,7 @@ This is a material gap. Status: **open**.
 
 **Date:** May 7, 2026
 **Status:** Discovery gap — interviews not yet held
-**Confidence in current design without NE input:** ⚠️ Medium. The custom-object design and question library in [requirements/inspection_form_data_model.md](inspection_form_data_model.md) and [requirements/inspection_question_library.md](inspection_question_library.md) draw on FL (Mike), West Coast (James), CA (Alex). Northeast is unrepresented.
+**Confidence in current design without NE input:** ⚠️ Medium. The custom-object design and question library in [requirements/inspection_form_data_model.md](inspection_form_data_model.md) and [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L20) draw on FL (Mike), West Coast (James), CA (Alex). Northeast is unrepresented.
 
 ---
 
@@ -84,14 +84,14 @@ These are the design decisions most likely to shift once NE is in the room:
 
 | Design Decision | Source | NE Validation Needed |
 |---|---|---|
-| Question Set variants list (8 variants) | [requirements/inspection_question_library.md](inspection_question_library.md) §"Question Set Variants" | Add **"Quarterly Inspection — Northeast"** and **"Winterization — Northeast"** variants if NE flow differs. |
-| Q4.x Backflow questions | [requirements/inspection_question_library.md](inspection_question_library.md) §4 | NE has stricter / state-by-state backflow regs. Question content likely needs expansion. |
-| Q5.x Controller programming | [requirements/inspection_question_library.md](inspection_question_library.md) §5 | Smart-controller mix may differ — confirm whether to capture cloud-platform reference (Hydrawise account, etc.) |
-| Q6.x Zone failure modes | [requirements/inspection_question_library.md](inspection_question_library.md) §6 | NE may have additional or differently-named failure modes (e.g., freeze-damage variants) |
-| Winterization Question Set | [requirements/inspection_question_library.md](inspection_question_library.md) Variants | Currently a stub. Winterization is the **major** seasonal event in NE and needs a real fill-in. |
+| Question Set variants list (8 variants) | [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L120) | Add **"Quarterly Inspection — Northeast"** and **"Winterization — Northeast"** variants if NE flow differs. |
+| Q4.x Backflow questions | [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L125) | NE has stricter / state-by-state backflow regs. Question content likely needs expansion. |
+| Q5.x Controller programming | [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L125) | Smart-controller mix may differ — confirm whether to capture cloud-platform reference (Hydrawise account, etc.) |
+| Q6.x Zone failure modes | [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L125) | NE may have additional or differently-named failure modes (e.g., freeze-damage variants) |
+| Winterization Question Set | [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L125) | Currently a stub. Winterization is the **major** seasonal event in NE and needs a real fill-in. |
 | Pattern C "Suggested Repairs" review screen at checkout | [research/automation_flows_design.md](../research/automation_flows_design.md) Flow 3 / Flow 4 | IrrigationCheckups auto-builds quotes during the checkup, not at checkout. NE techs may expect inline quote-build, not end-of-visit review. |
 | PDF report content + style | [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §9 | Use NE's IrrigationCheckups PDFs as reference benchmark. |
-| Per-zone grid UX (mobile) | [prototype/mobile/ui/fsm_mobile_inspection_standalone.html](../prototype/mobile/ui/fsm_mobile_inspection_standalone.html) | NE will say whether IrrigationCheckups' per-zone UX (which is well-regarded) sets the bar — or if our card-based design is acceptable. |
+| Per-zone grid UX (mobile) | [prototype/mobile/mobile_v3.1.html](../prototype/mobile/mobile_v3.1.html) | NE will say whether IrrigationCheckups' per-zone UX (which is well-regarded) sets the bar — or if our card-based design is acceptable. |
 | GPS site map | [research/spatial_mapping_options.md](../research/spatial_mapping_options.md) | NE actively uses IrrigationCheckups' site map. Confirm utility expectation. |
 | Conservation/water-efficiency audit | [requirements/inspection_form_data_model.md](inspection_form_data_model.md) §11 (out of scope) | Currently deferred. NE may have municipal contracts that require it — could pull this back into scope. |
 
@@ -116,7 +116,7 @@ These are not Phase 2 build items but are flagged so leadership can plan around 
 | 1 | Identify NE Irrigation Manager + 1–2 techs to interview | BA (Greg) + Phase 2 leadership | Open |
 | 2 | Schedule NE discovery session(s) using interview guide above | BA | Open |
 | 3 | Request NE's IrrigationCheckups exports: question content, price book, sample PDFs, site map screenshots | BA via NE manager | Open |
-| 4 | After interviews — update [requirements/inspection_question_library.md](inspection_question_library.md) with NE-specific variants and any new questions/failure modes | BA | Blocked on #2 |
+| 4 | After interviews — update [requirements/fsm_irrigation_requirements.md](fsm_irrigation_requirements.md#L120) with NE-specific variants and any new questions/failure modes | BA | Blocked on #2 |
 | 5 | After interviews — update [requirements/inspection_form_data_model.md](inspection_form_data_model.md) Open Questions section with NE-specific items resolved | BA | Blocked on #2 |
 | 6 | Document NE-specific backflow compliance requirements by state | BA + NE manager | Blocked on #2 |
 | 7 | Decision on historical IrrigationCheckups data — migrate / archive / walk away | Phase 2 sponsor | Blocked on #2 |

@@ -107,6 +107,55 @@ function migratePropertyToHierarchy(property) {
       }
     });
   }
+
+  if (Array.isArray(property.inspections)) {
+    property.inspections = property.inspections.map(normalizeInspectionChecklistSummary);
+  }
+}
+
+function buildChecklistSummary(byAssetType, totalFindings) {
+  if (!totalFindings) return "None";
+  const labels = [
+    ["System", byAssetType.system],
+    ["Source", byAssetType.source],
+    ["Backflow", byAssetType.backflow],
+    ["Controller", byAssetType.controller],
+    ["Zone", byAssetType.zone],
+  ];
+  return labels
+    .filter(([, count]) => Number(count || 0) > 0)
+    .map(([label, count]) => `${label}: ${count}`)
+    .join(" | ");
+}
+
+function normalizeInspectionChecklistSummary(inspection) {
+  const byTypeInput = inspection && typeof inspection.checklistFindingsByAssetType === "object"
+    ? inspection.checklistFindingsByAssetType
+    : null;
+
+  const byAssetType = {
+    system: Number(byTypeInput?.system || 0),
+    source: Number(byTypeInput?.source || 0),
+    backflow: Number(byTypeInput?.backflow || 0),
+    controller: Number(byTypeInput?.controller || 0),
+    zone: Number(byTypeInput?.zone || 0),
+  };
+
+  if (!byTypeInput) {
+    const legacyCalloutCount = Number(inspection.calloutCount || 0);
+    byAssetType.zone = Number.isFinite(legacyCalloutCount) ? Math.max(0, legacyCalloutCount) : 0;
+  }
+
+  const totalFromByType = Object.values(byAssetType).reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0);
+  const providedTotal = Number(inspection.checklistFindingCount);
+  const checklistFindingCount = Number.isFinite(providedTotal) ? Math.max(0, providedTotal) : totalFromByType;
+
+  return {
+    ...inspection,
+    checklistFindingsByAssetType: byAssetType,
+    checklistFindingCount,
+    checklistSummary: inspection.checklistSummary || buildChecklistSummary(byAssetType, checklistFindingCount),
+  };
 }
 
 async function loadState() {
@@ -235,7 +284,7 @@ function renderQueue() {
       const lastAssetUpdate = fmtDateOnly(p.updatedAt);
       const systemName = systemRoot ? systemRoot.name : "No System";
       const systemCell = topAsset
-        ? `<a href="property_record.html?property=${p.id}&asset=${topAsset.id}" target="_blank" rel="noopener">${systemName}</a>`
+        ? `<a href="desktop_v3.1.html?property=${p.id}&asset=${topAsset.id}" target="_blank" rel="noopener">${systemName}</a>`
         : systemName;
       return `<tr>
         <td>${p.branch}</td>
@@ -349,6 +398,7 @@ function renderInspectionsQueue() {
         ? `<span class="status-chip ${statusTheme[r.overallStatus] || ""}">${r.overallStatus}</span>`
         : "—";
       const completionBadge = `<span class="status-chip ${completionTheme[r.completionStatus] || ""}">${r.completionStatus}</span>`;
+      const normalized = normalizeInspectionChecklistSummary(r);
       return `<tr>
         <td>${r.propertyName}</td>
         <td>${r.saNumber}</td>
@@ -356,7 +406,7 @@ function renderInspectionsQueue() {
         <td>${r.inspectionType}</td>
         <td>${r.technician}</td>
         <td>${overallBadge}</td>
-        <td>${r.calloutCount}</td>
+        <td title="${normalized.checklistSummary}">${normalized.checklistFindingCount}</td>
         <td>${completionBadge}</td>
       </tr>`;
     })

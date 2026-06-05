@@ -1,5 +1,10 @@
 import { FEATURE_TYPES, TOOL_MODES } from "./contracts.js";
 
+const DEFAULT_POLYLINE_STROKE = "#0b5cab";
+const DEFAULT_POLYGON_FILL = "#d9ff00";
+const DEFAULT_POLYGON_STROKE = "#334400";
+const DEFAULT_POLYGON_FILL_OPACITY = 0.52;
+
 function toLatLngLiteral(latLng) {
   return { lat: latLng.lat(), lng: latLng.lng() };
 }
@@ -32,6 +37,115 @@ function ensureGoogleMapsLoaded(apiKey) {
   });
 }
 
+function normalizeStatus(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function markerGlyphForAssetType(assetType) {
+  const typeKey = String(assetType || "").trim().toLowerCase();
+  const glyphByType = {
+    system: "S",
+    source: "So",
+    customer: "Cu",
+    backflow: "B",
+    controller: "C",
+    zone: "Z",
+    pump: "P",
+    valve: "V",
+    head: "H",
+    drip: "D",
+  };
+  return glyphByType[typeKey] || "M";
+}
+
+function markerGlyphForFeature(feature) {
+  const typeKey = String(feature?.assetType || "").trim().toLowerCase();
+  if (typeKey !== "zone") {
+    return markerGlyphForAssetType(typeKey);
+  }
+
+  const nameSource = String(feature?.name || "");
+  const idSource = String(feature?.assetId || "");
+  const zoneMatch = nameSource.match(/zone[^0-9]*([0-9]+)/i) || idSource.match(/zone[^0-9]*([0-9]+)/i);
+  if (!zoneMatch) {
+    return "Z";
+  }
+
+  const n = Number(zoneMatch[1]);
+  if (!Number.isFinite(n) || n <= 0) {
+    return "Z";
+  }
+
+  return `Z${n}`;
+}
+
+function markerPaletteForAssetType(assetType) {
+  const typeKey = String(assetType || "").trim().toLowerCase();
+  const paletteByType = {
+    system: { fill: "#334155", stroke: "#ffffff", text: "#f8fafc" },
+    source: { fill: "#0284c7", stroke: "#ffffff", text: "#f8fafc" },
+    customer: { fill: "#2563eb", stroke: "#dbeafe", text: "#f8fafc" },
+    backflow: { fill: "#2563eb", stroke: "#ffffff", text: "#f8fafc" },
+    controller: { fill: "#f59e0b", stroke: "#ffffff", text: "#111827" },
+    zone: { fill: "#16a34a", stroke: "#ffffff", text: "#f8fafc" },
+    pump: { fill: "#0d9488", stroke: "#ffffff", text: "#f8fafc" },
+    valve: { fill: "#f97316", stroke: "#ffffff", text: "#111827" },
+    head: { fill: "#475569", stroke: "#ffffff", text: "#f8fafc" },
+    drip: { fill: "#0891b2", stroke: "#ffffff", text: "#f8fafc" },
+  };
+  return paletteByType[typeKey] || { fill: "#6b7280", stroke: "#ffffff", text: "#f8fafc" };
+}
+
+function applyStatusMarkerPalette(basePalette, assetStatus) {
+  const status = normalizeStatus(assetStatus);
+
+  if (["alert", "critical", "fault", "offline", "failed"].includes(status)) {
+    return { fill: "#dc2626", stroke: "#fee2e2", text: "#ffffff" };
+  }
+
+  if (["maintenance", "pending", "warning"].includes(status)) {
+    return { fill: "#d97706", stroke: "#fef3c7", text: "#111827" };
+  }
+
+  if (["retired", "inactive", "disabled"].includes(status)) {
+    return { fill: "#64748b", stroke: "#cbd5e1", text: "#f8fafc" };
+  }
+
+  return basePalette;
+}
+
+function buildMarkerOptions(feature) {
+  const typeLabel = markerGlyphForFeature(feature);
+  const basePalette = markerPaletteForAssetType(feature.assetType);
+  const palette = applyStatusMarkerPalette(basePalette, feature.assetStatus);
+  const resolvedPalette = {
+    fill: feature?.styleFillColor || palette.fill,
+    stroke: feature?.styleStrokeColor || palette.stroke,
+    text: feature?.styleTextColor || palette.text,
+  };
+  const statusText = feature.assetStatus ? ` (${feature.assetStatus})` : "";
+
+  return {
+    position: feature.geometry,
+    draggable: false,
+    title: `${feature.name || "Component marker"}${statusText}`,
+    label: {
+      text: typeLabel,
+      color: resolvedPalette.text,
+      fontWeight: "800",
+      fontSize: typeLabel.length > 1 ? "10px" : "11px",
+    },
+    icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      fillColor: resolvedPalette.fill,
+      fillOpacity: 0.96,
+      strokeColor: resolvedPalette.stroke,
+      strokeWeight: 2,
+      scale: 11,
+    },
+  };
+}
+
 export class GoogleMapAdapter {
   constructor(rootEl, options) {
     this.rootEl = rootEl;
@@ -42,19 +156,35 @@ export class GoogleMapAdapter {
     this.onFeatureCreated = null;
     this.onFeatureChanged = null;
     this.onFeatureSelected = null;
+    this.onMapBackgroundClick = null;
     this.selectedFeatureId = null;
+    this.suppressNextMapClick = false;
+    this.lastFeatureClickAt = 0;
+    this.resizeObserver = null;
+    this.onWindowResize = null;
+    this.onMapDomClick = null;
+    this.onMapDomPointerUp = null;
+    this.onMapDomTouchEnd = null;
+    this.activeMode = TOOL_MODES.SELECT;
+    this.lastPointerLatLng = null;
+    this.lastDomTapAt = 0;
   }
 
   async init() {
     await ensureGoogleMapsLoaded(this.options.apiKey);
+    const hideMapUiControls = Boolean(this.options.hideMapUiControls);
+    const gestureHandling = this.options.gestureHandling || "auto";
 
     this.map = new google.maps.Map(this.rootEl, {
       center: this.options.center,
       zoom: this.options.zoom,
       mapTypeId: "satellite",
+      gestureHandling,
+      disableDefaultUI: hideMapUiControls,
       streetViewControl: false,
       fullscreenControl: false,
-      mapTypeControl: true,
+      mapTypeControl: !hideMapUiControls,
+      zoomControl: !hideMapUiControls,
     });
 
     this.drawingManager = new google.maps.drawing.DrawingManager({
@@ -64,21 +194,94 @@ export class GoogleMapAdapter {
       polylineOptions: {
         clickable: true,
         editable: false,
-        strokeColor: "#0b5cab",
+        strokeColor: DEFAULT_POLYLINE_STROKE,
         strokeOpacity: 0.9,
-        strokeWeight: 3,
+        strokeWeight: 4,
       },
       polygonOptions: {
         clickable: true,
         editable: false,
-        fillColor: "#0b5cab",
-        fillOpacity: 0.2,
-        strokeColor: "#0b5cab",
-        strokeWeight: 2,
+        fillColor: DEFAULT_POLYGON_FILL,
+        fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+        strokeColor: DEFAULT_POLYGON_STROKE,
+        strokeWeight: 3,
       },
     });
 
     this.drawingManager.setMap(this.map);
+    this.setMode(this.activeMode);
+
+    this.map.addListener("mousemove", (event) => {
+      if (event?.latLng) {
+        this.lastPointerLatLng = event.latLng;
+      }
+    });
+
+    this.map.addListener("click", (event) => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const clickPoint = event?.latLng || this.lastPointerLatLng || this.map?.getCenter?.() || null;
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
+      if (this.suppressNextMapClick) {
+        this.suppressNextMapClick = false;
+        return;
+      }
+
+      // Ignore base-map deselect clicks while actively drawing.
+      if (this.drawingManager?.getDrawingMode()) {
+        return;
+      }
+
+      if (!this.selectedFeatureId) {
+        return;
+      }
+
+      this.selectFeature(null);
+      if (this.onMapBackgroundClick) {
+        this.onMapBackgroundClick();
+      }
+    });
+
+    // Google map click events can be swallowed by internal layers.
+    // Fall back to map DOM clicks so clicking off a component still deselects.
+    const handleMapDomTap = (domEvent) => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const now = Date.now();
+        if (now - this.lastDomTapAt < 220) {
+          return;
+        }
+        this.lastDomTapAt = now;
+        const clickPoint = this.domEventToLatLng(domEvent) || this.lastPointerLatLng || this.map?.getCenter?.() || null;
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
+      const now = Date.now();
+      if (now - this.lastFeatureClickAt < 220) {
+        return;
+      }
+      if (this.drawingManager?.getDrawingMode()) {
+        return;
+      }
+      if (!this.selectedFeatureId) {
+        return;
+      }
+      this.selectFeature(null);
+      if (this.onMapBackgroundClick) {
+        this.onMapBackgroundClick();
+      }
+    };
+    this.onMapDomClick = handleMapDomTap;
+    this.onMapDomPointerUp = handleMapDomTap;
+    this.onMapDomTouchEnd = handleMapDomTap;
+    this.map.getDiv()?.addEventListener("click", this.onMapDomClick, true);
+    this.rootEl?.addEventListener("click", this.onMapDomClick, true);
+    this.map.getDiv()?.addEventListener("pointerup", this.onMapDomPointerUp, true);
+    this.rootEl?.addEventListener("pointerup", this.onMapDomPointerUp, true);
+    this.map.getDiv()?.addEventListener("touchend", this.onMapDomTouchEnd, { passive: true, capture: true });
+    this.rootEl?.addEventListener("touchend", this.onMapDomTouchEnd, { passive: true, capture: true });
 
     google.maps.event.addListener(this.drawingManager, "overlaycomplete", (event) => {
       this.drawingManager.setDrawingMode(null);
@@ -87,9 +290,94 @@ export class GoogleMapAdapter {
         this.onFeatureCreated(feature, event.overlay);
       }
     });
+
+    this.attachResizeHandling();
+    this.syncMapSize();
+  }
+
+  attachResizeHandling() {
+    if (this.resizeObserver || !this.rootEl) return;
+
+    this.onWindowResize = () => this.syncMapSize();
+    window.addEventListener("resize", this.onWindowResize);
+
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver(() => this.syncMapSize());
+      this.resizeObserver.observe(this.rootEl);
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => this.syncMapSize());
+    });
+  }
+
+  syncMapSize() {
+    if (!this.map || !this.rootEl || !window.google?.maps) return;
+
+    const center = this.map.getCenter();
+    google.maps.event.trigger(this.map, "resize");
+    if (center) {
+      this.map.setCenter(center);
+    }
+  }
+
+  domEventToLatLng(domEvent) {
+    if (!domEvent || !this.map || !window.google?.maps) return null;
+
+    const mapDiv = this.map.getDiv?.();
+    const projection = this.map.getProjection?.();
+    const bounds = this.map.getBounds?.();
+    const zoom = this.map.getZoom?.();
+
+    if (!mapDiv || !projection || !bounds || !Number.isFinite(zoom)) {
+      return null;
+    }
+
+    const extractClientPoint = (eventLike) => {
+      if (!eventLike) return null;
+      if (Number.isFinite(eventLike.clientX) && Number.isFinite(eventLike.clientY)) {
+        return { x: eventLike.clientX, y: eventLike.clientY };
+      }
+
+      const changedTouch = eventLike.changedTouches?.[0];
+      if (changedTouch && Number.isFinite(changedTouch.clientX) && Number.isFinite(changedTouch.clientY)) {
+        return { x: changedTouch.clientX, y: changedTouch.clientY };
+      }
+
+      const activeTouch = eventLike.touches?.[0];
+      if (activeTouch && Number.isFinite(activeTouch.clientX) && Number.isFinite(activeTouch.clientY)) {
+        return { x: activeTouch.clientX, y: activeTouch.clientY };
+      }
+
+      return null;
+    };
+
+    const rect = mapDiv.getBoundingClientRect();
+    const clientPoint = extractClientPoint(domEvent);
+    if (!clientPoint) return null;
+
+    const pixelX = clientPoint.x - rect.left;
+    const pixelY = clientPoint.y - rect.top;
+
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    if (!ne || !sw) return null;
+
+    const topRight = projection.fromLatLngToPoint(ne);
+    const bottomLeft = projection.fromLatLngToPoint(sw);
+    if (!topRight || !bottomLeft) return null;
+
+    const scale = Math.pow(2, zoom);
+    const worldPoint = new window.google.maps.Point(
+      pixelX / scale + bottomLeft.x,
+      pixelY / scale + topRight.y
+    );
+
+    return projection.fromPointToLatLng(worldPoint) || null;
   }
 
   setMode(mode) {
+    this.activeMode = mode;
     if (!this.drawingManager) return;
 
     if (mode === TOOL_MODES.SELECT) {
@@ -98,7 +386,9 @@ export class GoogleMapAdapter {
     }
 
     if (mode === TOOL_MODES.MARKER) {
-      this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.MARKER);
+      // Use explicit map/overlay click handling for marker placement to avoid
+      // embedded iframe interactions swallowing DrawingManager marker events.
+      this.drawingManager.setDrawingMode(null);
       return;
     }
 
@@ -121,6 +411,9 @@ export class GoogleMapAdapter {
   }
 
   renderFeatures(features) {
+    if (!window.google?.maps || !this.map) {
+      return;
+    }
     this.clear();
     features.forEach((feature) => {
       this.addFeature(feature);
@@ -133,9 +426,37 @@ export class GoogleMapAdapter {
       return;
     }
     overlay.__featureId = feature.id;
-    overlay.__readOnly = Boolean(feature.isAuto);
+    overlay.__isAuto = Boolean(feature.isAuto);
+    const allowFeatureEditing = this.options?.allowFeatureEditing !== false;
+    const allowAutoFeatureEditing = Boolean(this.options?.allowAutoFeatureEditing);
+    overlay.__autoReadOnly = Boolean(feature.isAuto && !allowAutoFeatureEditing);
+    overlay.__readOnly = !allowFeatureEditing || overlay.__autoReadOnly;
+    if (feature.type === FEATURE_TYPES.POLYGON) {
+      overlay.__baseStyle = {
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYGON_STROKE,
+        fillColor: feature?.stylePolygonFillColor || feature?.styleFillColor || DEFAULT_POLYGON_FILL,
+      };
+    } else if (feature.type === FEATURE_TYPES.POLYLINE) {
+      overlay.__baseStyle = {
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYLINE_STROKE,
+      };
+    } else {
+      overlay.__baseStyle = null;
+    }
 
-    overlay.addListener("click", () => {
+    overlay.addListener("click", (event) => {
+      if (this.activeMode === TOOL_MODES.MARKER) {
+        const clickPoint = event?.latLng || (overlay instanceof google.maps.Marker ? overlay.getPosition() : null);
+        this.createMarkerFeatureAt(clickPoint);
+        return;
+      }
+
+      this.lastFeatureClickAt = Date.now();
+      this.suppressNextMapClick = true;
+      // Clear stale suppression if the paired map click doesn't fire.
+      window.setTimeout(() => {
+        this.suppressNextMapClick = false;
+      }, 120);
       this.selectFeature(feature.id);
       if (this.onFeatureSelected) this.onFeatureSelected(feature.id);
     });
@@ -169,6 +490,34 @@ export class GoogleMapAdapter {
     overlay.setMap(this.map);
   }
 
+  setFeatureEditingEnabled(enabled, allowAutoFeatureEditing) {
+    const nextOptions = { ...(this.options || {}), allowFeatureEditing: Boolean(enabled) };
+    if (typeof allowAutoFeatureEditing === "boolean") {
+      nextOptions.allowAutoFeatureEditing = allowAutoFeatureEditing;
+    }
+    this.options = nextOptions;
+
+    if (this.drawingManager && !enabled) {
+      this.drawingManager.setDrawingMode(null);
+    }
+
+    this.overlaysById.forEach((overlay) => {
+      const autoReadOnly = Boolean(overlay.__isAuto && !this.options.allowAutoFeatureEditing);
+      overlay.__autoReadOnly = autoReadOnly;
+      overlay.__readOnly = !enabled || autoReadOnly;
+
+      if (overlay instanceof google.maps.Marker) {
+        overlay.setDraggable(false);
+      } else if (overlay.setEditable) {
+        overlay.setEditable(false);
+      }
+    });
+
+    if (this.selectedFeatureId) {
+      this.selectFeature(this.selectedFeatureId);
+    }
+  }
+
   selectFeature(featureId) {
     this.selectedFeatureId = featureId;
 
@@ -183,10 +532,24 @@ export class GoogleMapAdapter {
         }
       } else {
         overlay.setEditable(editable);
-        overlay.setOptions({
-          strokeColor: selected ? "#b42318" : "#0b5cab",
-          fillColor: selected ? "#b42318" : "#0b5cab",
-        });
+        if (overlay instanceof google.maps.Polygon) {
+          const baseStyle = overlay.__baseStyle || {
+            strokeColor: DEFAULT_POLYGON_STROKE,
+            fillColor: DEFAULT_POLYGON_FILL,
+          };
+          overlay.setOptions({
+            strokeColor: selected ? "#b42318" : baseStyle.strokeColor,
+            fillColor: selected ? "#b42318" : baseStyle.fillColor,
+            fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+          });
+        } else {
+          const baseStyle = overlay.__baseStyle || {
+            strokeColor: DEFAULT_POLYLINE_STROKE,
+          };
+          overlay.setOptions({
+            strokeColor: selected ? "#b42318" : baseStyle.strokeColor,
+          });
+        }
       }
     });
   }
@@ -202,23 +565,19 @@ export class GoogleMapAdapter {
   }
 
   createOverlay(feature) {
+    if (!window.google?.maps) {
+      return null;
+    }
+
     if (feature.type === FEATURE_TYPES.MARKER) {
-      // Skip rendering lat/lon auto-markers — locations already visible on map
-      if (feature.isLatLon) {
-        return null;
-      }
-      const markerOpts = {
-        position: feature.geometry,
-        draggable: false,
-      };
-      return new google.maps.Marker(markerOpts);
+      return new google.maps.Marker(buildMarkerOptions(feature));
     }
 
     if (feature.type === FEATURE_TYPES.POLYLINE) {
       return new google.maps.Polyline({
         path: feature.geometry.path,
         editable: false,
-        strokeColor: "#0b5cab",
+        strokeColor: feature?.styleStrokeColor || DEFAULT_POLYLINE_STROKE,
         strokeOpacity: 0.9,
         strokeWeight: 3,
       });
@@ -227,14 +586,18 @@ export class GoogleMapAdapter {
     return new google.maps.Polygon({
       path: feature.geometry.path,
       editable: false,
-      fillColor: "#0b5cab",
-      fillOpacity: 0.2,
-      strokeColor: "#0b5cab",
-      strokeWeight: 2,
+      fillColor: feature?.stylePolygonFillColor || feature?.styleFillColor || DEFAULT_POLYGON_FILL,
+      fillOpacity: DEFAULT_POLYGON_FILL_OPACITY,
+      strokeColor: feature?.styleStrokeColor || DEFAULT_POLYGON_STROKE,
+      strokeWeight: 4,
     });
   }
 
   overlayToFeature(overlay, rawType) {
+    if (!window.google?.maps) {
+      return null;
+    }
+
     if (rawType === google.maps.drawing.OverlayType.MARKER) {
       return {
         type: FEATURE_TYPES.MARKER,
@@ -261,5 +624,32 @@ export class GoogleMapAdapter {
     }
 
     return { path: pathToArray(overlay.getPath()) };
+  }
+
+  createMarkerFeatureAt(latLngLike) {
+    if (!latLngLike || !this.onFeatureCreated || !window.google?.maps) {
+      return;
+    }
+
+    const draftFeature = {
+      type: FEATURE_TYPES.MARKER,
+      geometry: toLatLngLiteral(latLngLike),
+      name: "New Component",
+      assetType: "customer",
+      assetStatus: "active",
+    };
+
+    const markerOverlay = new google.maps.Marker({
+      ...buildMarkerOptions(draftFeature),
+      draggable: false,
+    });
+    const markerFeature = this.overlayToFeature(markerOverlay, google.maps.drawing.OverlayType.MARKER);
+    if (!markerFeature) {
+      return;
+    }
+    markerFeature.name = draftFeature.name;
+    markerFeature.assetType = draftFeature.assetType;
+    markerFeature.assetStatus = draftFeature.assetStatus;
+    this.onFeatureCreated(markerFeature, markerOverlay);
   }
 }

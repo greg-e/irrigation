@@ -1,6 +1,6 @@
 > **SUPERSEDED**
-> **Superseded by:** [requirements/irrigation_data_dictionary.md](../irrigation_data_dictionary.md)
-> **Rationale:** Data dictionary (v3, 2026-05-18) absorbed and expanded the inspection form schema into a unified canonical Salesforce object reference.
+> **Superseded by:** [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md)
+> **Rationale:** Standard asset metadata dictionary content is consolidated into the FSM requirements baseline to keep one source of truth.
 > **Decision Log ID:** DL-001
 > **Archived:** 2026-05-18
 > **Owner:** BA (G. Ehrenberg)
@@ -22,7 +22,7 @@ Draft data model for the standardized digital irrigation inspection form capture
 ## Design Principles
 
 1. **Service Appointment is the inspection container.** Per prior decision (`irrigationcheckups_analysis.md` open questions, resolved). Inspection header data lives on SA via custom fields. No separate `System_Checkup__c` object.
-2. **Repair Callouts are Work Order Line Items.** Per `fsm_asset_architecture.md`. Each issue found during inspection = one WOLI with extended custom fields. Re-used here, not redefined.
+2. **Repair callout outputs are captured at inspection level.** Per `fsm_asset_architecture.md`. Findings and callouts do not auto-create one WOLI per issue. Re-used here, not redefined.
 3. **Question responses are a child object.** The standardized question library will evolve (West/East regions, seasonal variants). Hardcoding 30+ booleans onto SA is brittle. A child `Inspection_Response__c` keyed to a question definition supports versioning.
 4. **Photos use native Salesforce Files.** `ContentDocumentLink` on SA, WOLI, or Asset. No custom photo object.
 5. **Internal vs customer-facing notes are separate fields.** Confirmed in June 2 review (Rohit / Michael exchange).
@@ -206,9 +206,9 @@ Groups questions into a form definition tied to a Work Type and/or season. Allow
 
 ---
 
-## 4b. Irrigation Asset Type Model (Canonical)
+## 4b. Irrigation Asset Type Model (Standard)
 
-This section defines the required irrigation asset taxonomy and minimum fields by type. It is the canonical model used by bootstrap mode, asset-scoped question rendering, and callout linkage.
+This section defines the required irrigation asset taxonomy and minimum fields by type. It is the Standard model used by bootstrap mode, asset-scoped question rendering, and callout linkage.
 
 ### 4b.1 Asset Taxonomy and Record Types
 
@@ -228,12 +228,12 @@ Use standard `Asset` with irrigation record types and `Asset_Type__c` as a contr
 
 | Field API Name | Type | Required | Purpose |
 |---|---|---|---|
-| `Asset_Type__c` | Picklist | Yes | Canonical type discriminator |
+| `Asset_Type__c` | Picklist | Yes | Standard type discriminator |
 | `Irrigation_System_Key__c` | Text(80) | No | Groups assets belonging to same irrigation system |
 | `Install_Date__c` | Date | No | Lifecycle reporting |
 | `Location_Description__c` | Text(255) | No | Human-readable location guidance |
-| `Latitude__c` | Number(10,7) | No | Spatial context |
-| `Longitude__c` | Number(10,7) | No | Spatial context |
+| `Latitude__c` | Number(10,7) | No | Map context |
+| `Longitude__c` | Number(10,7) | No | Map context |
 | `Is_Placeholder__c` | Checkbox | Yes (default false) | Marks temporary bootstrap records |
 | `Normalization_Status__c` | Picklist | Yes | Pending / Normalized / Retired |
 | `Last_Inspected_At__c` | DateTime | No | Updated on completed inspections |
@@ -339,7 +339,7 @@ Captures the program schedule(s) running on a Controller — sourced directly fr
 
 ## 5c. Per-Zone Inspection Detail
 
-The per-zone grid on James's report (32 rows × 18 columns) is captured via `Inspection_Response__c` rows with `Asset_Scoped__c = true` and `Asset__c` pointing to each Zone Asset. Each grid column maps to one question in the library — see [requirements/inspection_question_library.md](inspection_question_library.md) Section 6 for the full mapping.
+The per-zone grid on James's report (32 rows × 18 columns) is captured via `Inspection_Response__c` rows with `Asset_Scoped__c = true` and `Asset__c` pointing to each Zone Asset. Each grid column maps to one question in the consolidated requirements doc — see [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120) Section 2 for the full mapping.
 
 Key per-zone data points captured:
 
@@ -352,7 +352,7 @@ Key per-zone data points captured:
 - Repairs made
 - Notes
 
-Each failed checkbox maps deterministically to a `WorkOrderLineItem` callout `Issue_Type__c` value — full mapping in the question library doc.
+Each failed checkbox maps deterministically to a `WorkOrderLineItem` callout `Issue_Type__c` value — full mapping in [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L125).
 
 ---
 
@@ -464,7 +464,7 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 2. **On `ServiceAppointment` checkout (Status → Completed) for irrigation Work Type** → generate internal PDF, generate customer PDF, set `Internal_PDF_Generated_At__c` / `Customer_PDF_Generated_At__c`, queue BV Connect publish if customer is subscribed.
 3. **On `WorkOrderLineItem` insert with `Issue_Type__c` populated and `AssetId` set** → set `Asset.Status = Needs Repair` (existing Flow 2a in `automation_flows_design.md`).
 
-4. **On checkout review confirm** → convert confirmed suggested repairs into AM-owned pending callout WOLIs (not pushed to ExtraWork yet). Require structured description and standardized severity on each confirmed callout.
+4. **On checkout review confirm** → save confirmed suggested repairs as AM-owned pending callout records (not pushed to ExtraWork yet). Require structured description and standardized severity on each confirmed callout.
 
 5. **On checkout complete** → apply staged asset changes from pending-change records. If any apply fails, complete inspection data, mark asset-sync as failed, and raise a clear exception for follow-up.
 
@@ -495,7 +495,7 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 ## 11. Remaining Open Questions
 
 - [ ] Photo annotation depth — caption only, or freehand markup? Freehand markup requires a richer LWC and storage approach.
-- [ ] Where does the question library live for editing — pure admin UI, or a custom LWC editor for the national irrigation lead?
+- [ ] Where does the question library live for editing — pure admin UI, or a custom LWC editor for the national irrigation lead? See [requirements/fsm_irrigation_requirements.md](../fsm_irrigation_requirements.md#L120).
 - [ ] Multi-zone inspection: does each zone get its own SA, or one SA with N zone-scoped responses? Recommend: one SA with N responses to keep scheduling simple.
 - [ ] Tech-level revenue attribution (James's ask) — store `Inspected_By__c` user on SA is sufficient, or also denormalize onto each WOLI for easier roll-up?
 
@@ -505,6 +505,8 @@ Cross-reference with [research/automation_flows_design.md](../research/automatio
 
 - Conservation audit / water savings calculator (deferred per `irrigationcheckups_analysis.md`)
 - E-signature on inspection summary (ExtraWork owns signatures)
-- Spatial pin overlay map (covered separately in `spatial_mapping_options.md`)
+- Map pin overlay map (covered separately in `spatial_mapping_options.md`)
 - ExtraWork integration field-level mapping (covered in `fsm_asset_architecture.md`)
 - BV Connect rendering of customer PDF (separate UX spec)
+
+

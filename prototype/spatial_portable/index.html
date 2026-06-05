@@ -4,12 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spatial Mapping Portable Prototype</title>
-  <!-- Salesforce Lightning Design System -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@salesforce-ux/design-system@latest/assets/styles/salesforce-lightning-design-system.min.css" />
   <link rel="stylesheet" href="styles.css" />
   <script src="config.local.js"></script>
 </head>
 <body class="slds-scope">
+  <script>
+    (function applyEarlyMapOnlyLayoutClass() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("layout") === "map-only") {
+        document.body.classList.add("map-only-layout");
+      }
+    })();
+  </script>
   <main class="slds-box slds-var-m-around_medium">
     <section class="slds-grid slds-var-m-top_medium slds-gutters">
       <aside class="slds-col slds-size_3-of-12 slds-p-around_small">
@@ -24,9 +31,7 @@
                 </span>
               </div>
               <div class="slds-media__body">
-                <h3 class="slds-card__header-title slds-text-heading_small">
-                  System Hierarchy
-                </h3>
+                <h3 class="slds-card__header-title slds-text-heading_small">System Hierarchy</h3>
               </div>
             </div>
           </div>
@@ -131,7 +136,8 @@
   <dialog id="link-dialog" class="slds-modal slds-fade-in-open">
     <div class="slds-modal__container">
       <div class="slds-modal__header">
-        <h2 class="slds-modal__title slds-hyphenate">Link Point To Component</h2>
+        <h2 id="link-dialog-title" class="slds-modal__title slds-hyphenate">Add Asset Marker</h2>
+        <p id="link-dialog-context" class="link-dialog-context">Choose an existing component or create a new one and link this map placement.</p>
         <button id="link-cancel-header" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
           <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 520 520">
             <use href="salesforce-lightning-design-system-icons/utility-sprite/svg/symbols.svg#close"></use>
@@ -141,14 +147,52 @@
       </div>
       <div class="slds-modal__content slds-var-p-around_medium">
         <div class="slds-form-element slds-var-m-bottom_medium">
-          <label class="slds-form-element__label" for="link-component-select">Component</label>
-          <div class="slds-form-element__control">
-            <select id="link-component-select" class="slds-select"></select>
+          <label class="slds-form-element__label" for="link-action-mode">Start With</label>
+          <div class="link-mode-toggle" role="group" aria-label="Start with">
+            <button id="link-mode-link" class="slds-button slds-button_neutral link-mode-btn is-active" type="button" aria-pressed="true">Link Existing</button>
+            <button id="link-mode-new" class="slds-button slds-button_neutral link-mode-btn" type="button" aria-pressed="false">Create New</button>
+          </div>
+          <select id="link-action-mode" class="slds-select slds-hide" aria-hidden="true" tabindex="-1">
+            <option value="link" selected>Link Existing Component</option>
+            <option value="new">Create New Component</option>
+          </select>
+        </div>
+
+        <div id="link-existing-section" class="slds-var-m-vertical_small">
+          <p class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_x-small">Choose a component that does not yet have a map location.</p>
+          <div class="slds-form-element slds-var-m-bottom_small">
+            <label class="slds-form-element__label" for="link-component-select">Component</label>
+            <div class="slds-form-element__control">
+              <select id="link-component-select" class="slds-select"></select>
+            </div>
+          </div>
+        </div>
+
+        <div id="link-new-section" class="slds-var-m-vertical_small slds-hide">
+          <p class="slds-text-body_small slds-text-color_weak slds-var-m-bottom_x-small">Set type and parent. Name is generated automatically.</p>
+          <div class="slds-grid slds-gutters_small slds-wrap">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+              <label class="slds-form-element__label" for="link-create-type">Type</label>
+              <select id="link-create-type" class="slds-select">
+                <option value="controller">Controller</option>
+                <option value="backflow">Backflow</option>
+                <option value="zone" selected>Zone</option>
+              </select>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+              <label class="slds-form-element__label" for="link-create-parent">Parent</label>
+              <select id="link-create-parent" class="slds-select"></select>
+            </div>
+            <div class="slds-col slds-size_1-of-1">
+              <label class="slds-form-element__label" for="link-create-name">Name (auto)</label>
+              <input id="link-create-name" class="slds-input" type="text" readonly />
+            </div>
           </div>
         </div>
       </div>
       <div class="slds-modal__footer slds-grid slds-grid_align-end slds-gap_x-small">
-        <button id="link-skip" class="slds-button slds-button_neutral">Cancel</button>
+        <button id="link-skip" class="slds-button slds-button_neutral">Not Now</button>
+        <button id="link-create-confirm" class="slds-button slds-button_brand slds-hide">Create + Link</button>
         <button id="link-confirm" class="slds-button slds-button_brand">Link Component</button>
       </div>
     </div>

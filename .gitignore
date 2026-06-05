@@ -12,5 +12,15 @@ Thumbs.db
 # Logs
 *.log
 
+# Node / Playwright
+node_modules/
+playwright-report/
+test-results/
+package-lock.json
+
 # Local prototype secrets
 prototype/spatial_portable/config.local.js
+
+# Local icon drops
+salesforce-lightning-design-system-icons (1)/
+icons/

@@ -6,7 +6,7 @@ This project delivers a Salesforce Field Service Management (FSM) feature to cat
 
 ## Core Objectives
 
-- **Asset Catalog**: Track individual irrigation system components (zones, controllers, heads, valves, backflow preventers, etc.) as Salesforce Assets linked to their parent Account (property).
+- **Asset Catalog**: Track Standard irrigation hierarchy assets as Salesforce Assets linked to their parent Account (property): System, Point of Connection, Pump, Backflow, Master Valve, Flow Sensor, Controller, and Zone.
 - **Asset-to-Service Appointment Linkage**: Associate irrigation work type service appointments with specific assets so repair history is captured at the component level.
 - **Estimate Workflow**: Generate estimates (quotes/work orders) directly from a service appointment context, enabling rapid customer review and digital approval so crews can proceed without delays.
 
@@ -42,8 +42,23 @@ All system data is stored and maintained on the **Property Account** record. The
 
 The following irrigation components must be cataloged as discrete Assets under the Property Account, with fields and history tracked at the component level:
 
+#### Systems
+- System identity, install/lifecycle context, and top-level hierarchy anchor
+
+#### Point of Connection
+- Water source type, capacity, notes, and location context
+
+#### Pumps
+- Pump operational context and pressure readings when present on the point of connection
+
 #### Backflows
 - Model, serial number, install date, last test date, test results, compliance status
+
+#### Master Valves
+- Master valve state, operational status, and service history when installed
+
+#### Flow Sensors
+- Flow sensor presence, telemetry/functional status, and diagnostics where available
 
 #### Controllers
 - Make/model, serial number, number of zones supported, install date, connectivity type (WiFi, wired, etc.)
@@ -54,14 +69,8 @@ The following irrigation components must be cataloged as discrete Assets under t
 #### Zones
 - Zone number, description, area served, flow rate, head type, valve association
 
-#### Valves
-- Type (ball, gate, solenoid), zone association, location description, install date, condition
-
-#### Heads
-- Type (rotor, spray, bubbler), model, nozzle size, radius, zone association, location
-
-#### Drip
-- Emitter type, GPH rating, zone association, coverage area
+#### Component Metadata (Non-Hierarchy)
+- Valve, head, drip, and related subcomponent details are captured as metadata on the Standard hierarchy assets rather than separate child assets.
 
 ---
 
@@ -95,3 +104,47 @@ The following irrigation components must be cataloged as discrete Assets under t
 ## Status
 
 In progress — solution design phase.
+
+## Prototype Regression Suite
+
+The workspace includes an automated regression suite for the current V4 mobile prototype state.
+
+- Test framework: Playwright
+- Test file: `tests/regression/mobile-v4.regression.spec.js`
+- Config: `playwright.config.js`
+- Default target: local file URL for `prototype/v4/mobileV4.html`
+
+### Setup
+
+1. Install Node.js 18+.
+2. Install dependencies:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+### Run
+
+```bash
+npm run test:regression
+```
+
+Optional modes:
+
+```bash
+npm run test:regression:headed
+npm run test:regression:ui
+npm run test:regression:report
+```
+
+### Covered Baseline Flows
+
+- MAP control baseline and edit gating state.
+- Map fullscreen toggle, escape exit, and tab-switch exit.
+- Asset Tool Tip metadata suppression regression.
+- Assets dialog to Add Asset sheet stacking flow.
+- Output dialog to Checklist composer stacking flow.
+- Desktop V4 shell smoke checks (tabs and record header).
+- Desktop report shell smoke checks (queue/stat section).
+- Controller program modal open/close smoke checks.
