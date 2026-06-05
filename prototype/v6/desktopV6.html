@@ -1084,7 +1084,7 @@ th {
           </div>
           <div class="slds-page-header__control">
             <div class="slds-button-group">
-              <a href="desktopV5.1.html" class="slds-button slds-button_neutral">Back to Report</a>
+              <a href="desktopV6.html" class="slds-button slds-button_neutral">Back to Report</a>
             </div>
           </div>
         </div>
@@ -25970,6 +25970,9 @@ let state = null;
 let selectedAssetId = null;
 let activeTab = "details";
 let expandedAssets = new Set();
+let desktopMapEmbedLoaded = false;
+
+const DESKTOP_MOBILE_DEMO_BRIDGE_PREFIX = "irrigation-v6-shared-demo";
 
 // URL params provide the desktop record context (property + initially focused asset).
 const params = new URLSearchParams(window.location.search);
@@ -26185,33 +26188,88 @@ function setActiveTab(tabKey) {
   });
 
   if (tabKey === "map") {
-    const frame = els.spatialMapFrame;
-    if (frame) {
-      if (!frame.dataset.loaded) {
-        frame.dataset.loaded = "true";
-        frame.addEventListener("load", pushAssetsToMapFrame, { once: true });
-        frame.src = `mobileV5.1.html?embed=desktop-map&property=${encodeURIComponent(propertyId || "")}&asset=${encodeURIComponent(selectedAssetId || recordAssetIdParam || "")}`;
-      } else {
-        pushAssetsToMapFrame();
-      }
-    }
+    const property = getProperty();
+    const contextAsset = property && selectedAssetId
+      ? property.assets.find((asset) => asset.id === selectedAssetId) || null
+      : null;
+    syncDesktopMobileEmbed(property, contextAsset);
+  }
+}
+
+function getDesktopMobileDemoBridgeKey(propertyIdValue = "") {
+  return `${DESKTOP_MOBILE_DEMO_BRIDGE_PREFIX}:${propertyIdValue || "default"}`;
+}
+
+function getDesktopMobileEmbedSrc(property, contextAsset) {
+  const propertyToken = encodeURIComponent(property?.id || propertyId || "prop-001");
+  const assetToken = encodeURIComponent(contextAsset?.id || selectedAssetId || "");
+  return `mobileV6.html?embed=desktop-map&property=${propertyToken}&asset=${assetToken}`;
+}
+
+function buildDesktopMobileBootstrapPayload(property, contextAsset) {
+  if (!property) return null;
+  return {
+    propertyId: property.id,
+    assetId: contextAsset?.id || selectedAssetId || "",
+    assets: activeAssets(property).map((asset) => cloneJson(asset)),
+    generatedAt: nowIso(),
+  };
+}
+
+function postDesktopMobileBootstrap(payload) {
+  const frame = els.spatialMapFrame;
+  if (!frame || !frame.contentWindow || !payload) return;
+  frame.contentWindow.postMessage(
+    {
+      type: "DESKTOP_IRRIGATION_BOOTSTRAP",
+      payload,
+    },
+    "*"
+  );
+}
+
+function persistDesktopMobileBridgePayload(payload) {
+  if (!payload?.propertyId) return;
+  try {
+    localStorage.setItem(
+      getDesktopMobileDemoBridgeKey(payload.propertyId),
+      JSON.stringify(payload)
+    );
+  } catch (error) {
+    // Ignore storage failures in prototype mode.
+  }
+}
+
+function syncDesktopMobileEmbed(property, contextAsset) {
+  const frame = els.spatialMapFrame;
+  if (!frame || !property) return;
+
+  const payload = buildDesktopMobileBootstrapPayload(property, contextAsset);
+  persistDesktopMobileBridgePayload(payload);
+
+  const nextSrc = getDesktopMobileEmbedSrc(property, contextAsset);
+  if (frame.dataset.embedSrc !== nextSrc) {
+    frame.dataset.embedSrc = nextSrc;
+    desktopMapEmbedLoaded = false;
+    frame.addEventListener(
+      "load",
+      () => {
+        desktopMapEmbedLoaded = true;
+        postDesktopMobileBootstrap(payload);
+      },
+      { once: true }
+    );
+    frame.src = nextSrc;
+    return;
+  }
+
+  if (desktopMapEmbedLoaded) {
+    postDesktopMobileBootstrap(payload);
   }
 }
 
 function pushAssetsToMapFrame() {
-  const frame = els.spatialMapFrame;
-  if (!frame || !frame.contentWindow) return;
-  const property = getProperty();
-  if (!property) return;
-  frame.contentWindow.postMessage(
-    {
-      type: "DESKTOP_IRRIGATION_BOOTSTRAP",
-      propertyId: property.id,
-      assetId: selectedAssetId || recordAssetIdParam || "",
-      assets: property.assets,
-    },
-    "*"
-  );
+  // V6 desktop is intentionally standalone and does not bootstrap a mobile iframe.
 }
 
 function updateRelatedTabVisibility(asset) {
@@ -26466,7 +26524,7 @@ function navigateToRelatedAsset(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  window.location.assign(`desktopV5.1.html?${next.toString()}`);
+  window.location.assign(`desktopV6.html?${next.toString()}`);
 }
 
 function defaultAssetForProperty(property) {
@@ -26494,7 +26552,7 @@ function navigateToProperty(propertyIdToOpen) {
     next.delete("asset");
   }
 
-  window.location.assign(`desktopV5.1.html?${next.toString()}`);
+  window.location.assign(`desktopV6.html?${next.toString()}`);
 }
 
 function getSortedPropertyOptions() {
@@ -27687,7 +27745,7 @@ function assetRecordHref(assetId) {
     next.set("property", propertyId);
   }
   next.set("asset", assetId);
-  return `desktopV5.1.html?${next.toString()}`;
+  return `desktopV6.html?${next.toString()}`;
 }
 
 function getAssetDisplayTitle(asset) {
@@ -28474,6 +28532,7 @@ function renderPage() {
   }
   renderAudit(property);
   renderContextRail(property);
+  syncDesktopMobileEmbed(property, detailAsset);
   saveState();
 }
 
@@ -29289,25 +29348,52 @@ init().catch((error) => {
   console.error("Failed to initialize property record", error);
 });
 
-// Cross-frame contract with embedded spatial map: readiness handshake + location writes.
 window.addEventListener("message", (event) => {
   const msg = event.data;
-  if (msg && msg.type === "DESKTOP_IRRIGATION_READY") {
-    pushAssetsToMapFrame();
+  if (!msg || typeof msg !== "object") return;
+
+  if (msg.type === "DESKTOP_IRRIGATION_READY") {
+    const property = getProperty();
+    if (!property) return;
+    const contextAsset = selectedAssetId
+      ? property.assets.find((asset) => asset.id === selectedAssetId) || null
+      : null;
+    syncDesktopMobileEmbed(property, contextAsset);
     return;
   }
-  if (!msg || msg.type !== "SPATIAL_ASSET_LOCATION") return;
-  if (typeof msg.lat !== "number" || typeof msg.lon !== "number" || !msg.assetId) return;
 
-  const property = getProperty();
-  if (!property) return;
-  const asset = property.assets.find((a) => a.id === msg.assetId);
-  if (!asset) return;
+  if (msg.type === "SPATIAL_ASSET_LOCATION") {
+    const property = getProperty();
+    if (!property || !msg.assetId) return;
+    const asset = property.assets.find((item) => item.id === msg.assetId);
+    if (!asset) return;
 
-  asset.lat = msg.lat;
-  asset.lon = msg.lon;
-  saveState();
-  renderPage();
+    asset.hasMapGeometry = true;
+    if (typeof msg.lat === "number") asset.lat = msg.lat;
+    if (typeof msg.lon === "number") asset.lon = msg.lon;
+    if (typeof msg.mapX === "number") asset.mapX = Number(msg.mapX);
+    if (typeof msg.mapY === "number") asset.mapY = Number(msg.mapY);
+
+    addAudit(property, "Map Update", asset.name, "Geometry updated from mobile map embed");
+    renderPage();
+    return;
+  }
+
+  if (msg.type === "SPATIAL_GEOMETRY_DELETED") {
+    const property = getProperty();
+    if (!property || !msg.assetId) return;
+    const asset = property.assets.find((item) => item.id === msg.assetId);
+    if (!asset) return;
+
+    asset.hasMapGeometry = false;
+    delete asset.lat;
+    delete asset.lon;
+    delete asset.mapX;
+    delete asset.mapY;
+
+    addAudit(property, "Map Update", asset.name, "Geometry removed from mobile map embed");
+    renderPage();
+  }
 });
 
 </script>

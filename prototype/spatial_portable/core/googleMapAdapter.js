@@ -46,6 +46,7 @@ function markerGlyphForAssetType(assetType) {
   const glyphByType = {
     system: "S",
     source: "So",
+    customer: "Cu",
     backflow: "B",
     controller: "C",
     zone: "Z",
@@ -83,6 +84,7 @@ function markerPaletteForAssetType(assetType) {
   const paletteByType = {
     system: { fill: "#334155", stroke: "#ffffff", text: "#f8fafc" },
     source: { fill: "#0284c7", stroke: "#ffffff", text: "#f8fafc" },
+    customer: { fill: "#2563eb", stroke: "#dbeafe", text: "#f8fafc" },
     backflow: { fill: "#2563eb", stroke: "#ffffff", text: "#f8fafc" },
     controller: { fill: "#f59e0b", stroke: "#ffffff", text: "#111827" },
     zone: { fill: "#16a34a", stroke: "#ffffff", text: "#f8fafc" },
@@ -161,8 +163,11 @@ export class GoogleMapAdapter {
     this.resizeObserver = null;
     this.onWindowResize = null;
     this.onMapDomClick = null;
+    this.onMapDomPointerUp = null;
+    this.onMapDomTouchEnd = null;
     this.activeMode = TOOL_MODES.SELECT;
     this.lastPointerLatLng = null;
+    this.lastDomTapAt = 0;
   }
 
   async init() {
@@ -241,9 +246,14 @@ export class GoogleMapAdapter {
 
     // Google map click events can be swallowed by internal layers.
     // Fall back to map DOM clicks so clicking off a component still deselects.
-    this.onMapDomClick = () => {
+    const handleMapDomTap = (domEvent) => {
       if (this.activeMode === TOOL_MODES.MARKER) {
-        const clickPoint = this.lastPointerLatLng || this.map?.getCenter?.() || null;
+        const now = Date.now();
+        if (now - this.lastDomTapAt < 220) {
+          return;
+        }
+        this.lastDomTapAt = now;
+        const clickPoint = this.domEventToLatLng(domEvent) || this.lastPointerLatLng || this.map?.getCenter?.() || null;
         this.createMarkerFeatureAt(clickPoint);
         return;
       }
@@ -263,8 +273,15 @@ export class GoogleMapAdapter {
         this.onMapBackgroundClick();
       }
     };
-    this.map.getDiv()?.addEventListener("click", this.onMapDomClick);
-    this.rootEl?.addEventListener("click", this.onMapDomClick);
+    this.onMapDomClick = handleMapDomTap;
+    this.onMapDomPointerUp = handleMapDomTap;
+    this.onMapDomTouchEnd = handleMapDomTap;
+    this.map.getDiv()?.addEventListener("click", this.onMapDomClick, true);
+    this.rootEl?.addEventListener("click", this.onMapDomClick, true);
+    this.map.getDiv()?.addEventListener("pointerup", this.onMapDomPointerUp, true);
+    this.rootEl?.addEventListener("pointerup", this.onMapDomPointerUp, true);
+    this.map.getDiv()?.addEventListener("touchend", this.onMapDomTouchEnd, { passive: true, capture: true });
+    this.rootEl?.addEventListener("touchend", this.onMapDomTouchEnd, { passive: true, capture: true });
 
     google.maps.event.addListener(this.drawingManager, "overlaycomplete", (event) => {
       this.drawingManager.setDrawingMode(null);
@@ -304,6 +321,61 @@ export class GoogleMapAdapter {
     }
   }
 
+  domEventToLatLng(domEvent) {
+    if (!domEvent || !this.map || !window.google?.maps) return null;
+
+    const mapDiv = this.map.getDiv?.();
+    const projection = this.map.getProjection?.();
+    const bounds = this.map.getBounds?.();
+    const zoom = this.map.getZoom?.();
+
+    if (!mapDiv || !projection || !bounds || !Number.isFinite(zoom)) {
+      return null;
+    }
+
+    const extractClientPoint = (eventLike) => {
+      if (!eventLike) return null;
+      if (Number.isFinite(eventLike.clientX) && Number.isFinite(eventLike.clientY)) {
+        return { x: eventLike.clientX, y: eventLike.clientY };
+      }
+
+      const changedTouch = eventLike.changedTouches?.[0];
+      if (changedTouch && Number.isFinite(changedTouch.clientX) && Number.isFinite(changedTouch.clientY)) {
+        return { x: changedTouch.clientX, y: changedTouch.clientY };
+      }
+
+      const activeTouch = eventLike.touches?.[0];
+      if (activeTouch && Number.isFinite(activeTouch.clientX) && Number.isFinite(activeTouch.clientY)) {
+        return { x: activeTouch.clientX, y: activeTouch.clientY };
+      }
+
+      return null;
+    };
+
+    const rect = mapDiv.getBoundingClientRect();
+    const clientPoint = extractClientPoint(domEvent);
+    if (!clientPoint) return null;
+
+    const pixelX = clientPoint.x - rect.left;
+    const pixelY = clientPoint.y - rect.top;
+
+    const ne = bounds.getNorthEast();
+    const sw = bounds.getSouthWest();
+    if (!ne || !sw) return null;
+
+    const topRight = projection.fromLatLngToPoint(ne);
+    const bottomLeft = projection.fromLatLngToPoint(sw);
+    if (!topRight || !bottomLeft) return null;
+
+    const scale = Math.pow(2, zoom);
+    const worldPoint = new window.google.maps.Point(
+      pixelX / scale + bottomLeft.x,
+      pixelY / scale + topRight.y
+    );
+
+    return projection.fromPointToLatLng(worldPoint) || null;
+  }
+
   setMode(mode) {
     this.activeMode = mode;
     if (!this.drawingManager) return;
@@ -339,6 +411,9 @@ export class GoogleMapAdapter {
   }
 
   renderFeatures(features) {
+    if (!window.google?.maps || !this.map) {
+      return;
+    }
     this.clear();
     features.forEach((feature) => {
       this.addFeature(feature);
@@ -490,6 +565,10 @@ export class GoogleMapAdapter {
   }
 
   createOverlay(feature) {
+    if (!window.google?.maps) {
+      return null;
+    }
+
     if (feature.type === FEATURE_TYPES.MARKER) {
       return new google.maps.Marker(buildMarkerOptions(feature));
     }
@@ -515,6 +594,10 @@ export class GoogleMapAdapter {
   }
 
   overlayToFeature(overlay, rawType) {
+    if (!window.google?.maps) {
+      return null;
+    }
+
     if (rawType === google.maps.drawing.OverlayType.MARKER) {
       return {
         type: FEATURE_TYPES.MARKER,
@@ -544,18 +627,29 @@ export class GoogleMapAdapter {
   }
 
   createMarkerFeatureAt(latLngLike) {
-    if (!latLngLike || !this.onFeatureCreated) {
+    if (!latLngLike || !this.onFeatureCreated || !window.google?.maps) {
       return;
     }
 
+    const draftFeature = {
+      type: FEATURE_TYPES.MARKER,
+      geometry: toLatLngLiteral(latLngLike),
+      name: "New Component",
+      assetType: "customer",
+      assetStatus: "active",
+    };
+
     const markerOverlay = new google.maps.Marker({
-      position: latLngLike,
+      ...buildMarkerOptions(draftFeature),
       draggable: false,
     });
-    const markerFeature = this.overlayToFeature(
-      markerOverlay,
-      google.maps.drawing.OverlayType.MARKER
-    );
+    const markerFeature = this.overlayToFeature(markerOverlay, google.maps.drawing.OverlayType.MARKER);
+    if (!markerFeature) {
+      return;
+    }
+    markerFeature.name = draftFeature.name;
+    markerFeature.assetType = draftFeature.assetType;
+    markerFeature.assetStatus = draftFeature.assetStatus;
     this.onFeatureCreated(markerFeature, markerOverlay);
   }
 }

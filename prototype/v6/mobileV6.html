@@ -940,9 +940,9 @@
     .sheet-body {
       flex: 1;
       overflow-y: auto;
-      padding: 12px;
+      padding: 10px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
       align-content: start;
     }
 
@@ -950,19 +950,29 @@
       border: 1px solid #39414f;
       background: #1f242d;
       border-radius: 10px;
-      padding: 10px;
+      padding: 12px;
     }
 
     .sheet-grid-2 {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 10px;
     }
     
     .detail-metadata-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 10px;
+    }
+
+    @media (min-width: 430px) {
+      .sheet-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .detail-metadata-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
     
     .detail-metadata-item--full {
@@ -1152,7 +1162,7 @@
     }
 
     .sheet-actions .slds-button {
-      min-height: 44px;
+      min-height: 48px;
       justify-content: center;
       transition: transform 140ms ease, background 140ms ease;
     }
@@ -1167,8 +1177,8 @@
     }
 
     .detail-actions-grid {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+      gap: 8px;
       margin-top: 6px;
     }
 
@@ -1182,8 +1192,8 @@
       letter-spacing: 0.01em;
       padding: 0;
       border-radius: 999px;
-      min-height: 42px;
-      min-width: 42px;
+      min-height: 48px;
+      min-width: 48px;
       background: transparent !important;
       border: none !important;
       color: #f3f4f6 !important;
@@ -1216,10 +1226,67 @@
       opacity: 0.98;
     }
 
+    .detail-actions-grid .action-label {
+      display: none;
+      font-size: 0.62rem;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    #asset-create-sheet .sheet-body,
+    #asset-detail-sheet .sheet-body {
+      padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    }
+
+    #asset-create-sheet .slds-form-element + .slds-form-element,
+    #asset-detail-sheet .slds-form-element + .slds-form-element {
+      margin-top: 8px;
+    }
+
+    @media (max-width: 430px) {
+      .detail-actions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .detail-actions-grid .slds-button {
+        min-height: 56px;
+        border-radius: 12px;
+        flex-direction: column;
+        gap: 3px;
+        padding: 6px 2px;
+      }
+
+      .detail-actions-grid .slds-button:hover,
+      .detail-actions-grid .slds-button:focus {
+        transform: none;
+      }
+
+      .detail-actions-grid .action-icon-svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .detail-actions-grid .action-label {
+        display: block;
+      }
+
+      #asset-create-sheet .sheet-actions,
+      #asset-detail-sheet .sheet-actions:not(.detail-actions-grid) {
+        grid-template-columns: 1fr;
+      }
+
+      #asset-create-sheet .sheet-header,
+      #asset-detail-sheet .sheet-header {
+        padding: 10px;
+      }
+    }
+
     @media (max-width: 380px) {
       .detail-actions-grid .slds-button {
-        min-height: 38px;
-        min-width: 38px;
+        min-height: 52px;
+        min-width: 44px;
         font-size: 1rem;
       }
 
@@ -1230,6 +1297,10 @@
       .action-icon-svg {
         width: 18px;
         height: 18px;
+      }
+
+      .detail-actions-grid .action-label {
+        font-size: 0.52rem;
       }
     }
 
@@ -1583,6 +1654,7 @@
       align-items: center;
       justify-content: center;
       justify-self: center;
+      touch-action: manipulation;
     }
 
     .map-control-label-row {
@@ -1600,6 +1672,16 @@
       letter-spacing: 0.01em;
       text-transform: uppercase;
       line-height: 1.1;
+    }
+
+    .map-control-label-row [data-map-control-action] {
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .map-control-label-row [data-map-control-action]:hover {
+      color: #c5d3e6;
     }
 
     .map-control-hint {
@@ -1684,6 +1766,7 @@
       height: 24px;
       display: block;
       margin: 0 auto;
+      pointer-events: none;
     }
 
     .map-bottom-sheet-title {
@@ -3278,521 +3361,6 @@
       }
     }
 
-    body.desktop-map-embed {
-      background: #f3f6f9;
-      overflow: hidden;
-    }
-    body.desktop-map-embed .app-shell {
-      max-width: none;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-    }
-    body.desktop-map-embed .phone-shell {
-      width: 100%;
-      max-width: none;
-      border: none;
-      box-shadow: none;
-      background: #f3f6f9;
-    }
-    body.desktop-map-embed .phone-shell .status-bar,
-    body.desktop-map-embed .phone-shell .mobile-page-header,
-    body.desktop-map-embed .phone-shell .app-tabs,
-    body.desktop-map-embed .phone-shell .divider-green,
-    body.desktop-map-embed .phone-shell .nav-panel:not([data-panel="map"]),
-    body.desktop-map-embed .phone-shell .actions-tray,
-    body.desktop-map-embed .phone-shell .bottom-nav {
-      display: none !important;
-    }
-    body.desktop-map-embed .slds-card,
-    body.desktop-map-embed .slds-box,
-    body.desktop-map-embed .slds-theme_shade {
-      background: #ffffff !important;
-      border-color: #d8dde6 !important;
-      color: #16325c !important;
-      box-shadow: none !important;
-    }
-    body.desktop-map-embed .slds-card__header {
-      border-bottom: 1px solid #e5ebf1 !important;
-    }
-    body.desktop-map-embed .slds-card__body {
-      background: #ffffff !important;
-      color: #16325c !important;
-    }
-    body.desktop-map-embed .slds-card__header-title,
-    body.desktop-map-embed .slds-item_detail,
-    body.desktop-map-embed .slds-text-title,
-    body.desktop-map-embed .slds-form-element__label,
-    body.desktop-map-embed .slds-list_dotted li {
-      color: #2e4057 !important;
-    }
-    body.desktop-map-embed #viewport {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow: auto;
-      padding: 0;
-      background: #f3f6f9;
-    }
-    body.desktop-map-embed #map-workspace-panel {
-      display: flex !important;
-      flex-direction: column;
-      flex: 1;
-      padding: 0;
-      min-height: 0;
-      height: 100%;
-      background: #f3f6f9;
-    }
-    body.desktop-map-embed .gis-map-shell {
-      margin: 0;
-      border: none;
-      border-radius: 0;
-      background: #ffffff;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      box-shadow: none;
-    }
-    body.desktop-map-embed .gis-map-shell .gis-map-titlebar,
-    body.desktop-map-embed .gis-map-shell .gis-status-strip {
-      display: none;
-    }
-    body.desktop-map-embed .gis-status-strip {
-      background: #f8fafc;
-      border-bottom: 1px solid #e1e8f0;
-      color: #52637a;
-      font-size: 0.72rem;
-      padding: 6px 14px;
-    }
-    body.desktop-map-embed .gis-map-canvas {
-      min-height: 0 !important;
-      height: auto !important;
-      flex: 1;
-      max-height: none !important;
-      background: #e9eff5;
-    }
-    body.desktop-map-embed .gis-map-canvas::before {
-      display: none;
-    }
-    body.desktop-map-embed #map-control-panel {
-      margin: 0;
-      border-radius: 0;
-      border: none;
-      background: #ffffff;
-      padding: 14px 16px 16px;
-      box-shadow: none;
-    }
-    body.desktop-map-embed .map-bottom-sheet-title {
-      color: #2e4057;
-      letter-spacing: 0.08em;
-      font-size: 0.7rem;
-      margin-bottom: 8px;
-    }
-    body.desktop-map-embed .map-control-label-row span {
-      color: #4d5f78;
-      font-size: 0.62rem;
-      letter-spacing: 0.02em;
-    }
-    body.desktop-map-embed .map-control-hint {
-      color: #5f6f84;
-      font-size: 0.74rem;
-      margin-top: 8px;
-      line-height: 1.35;
-    }
-    body.desktop-map-embed .map-select-hint {
-      color: #33465f;
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-top: 4px;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .gis-mini-btn {
-      border: 1px solid #8fa6c2;
-      background: #f8fbff;
-      color: #1a385a;
-      border-radius: 10px;
-      box-shadow: none;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .gis-mini-btn:hover {
-      background: #e9f2fb;
-      border-color: #6f8fb3;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-action-icon {
-      filter: brightness(0) saturate(100%) invert(10%) sepia(31%) saturate(1378%) hue-rotate(181deg) brightness(84%) contrast(101%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .gis-mini-btn:focus-visible {
-      outline: 2px solid #0176d3;
-      outline-offset: 2px;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-geometry-btn.active,
-    body.desktop-map-embed .map-sheet-head-actions .map-fullscreen-btn.active {
-      background: #e7f3ff;
-      border-color: #0176d3;
-      color: #014486;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-geometry-btn-danger {
-      background: #fff5f5;
-      border-color: #e2b4b4;
-      color: #8a2b2b;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-geometry-btn-danger:hover {
-      background: #ffecec;
-      border-color: #d29f9f;
-      color: #7a2525;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-geometry-btn:disabled {
-      background: #eef3f8;
-      border-color: #b8c7d9;
-      color: #6f839b;
-      opacity: 1;
-      cursor: not-allowed;
-    }
-    body.desktop-map-embed .map-sheet-head-actions .map-geometry-btn:disabled .map-action-icon {
-      filter: brightness(0) saturate(100%) invert(30%) sepia(17%) saturate(645%) hue-rotate(174deg) brightness(91%) contrast(90%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .gis-selection-actions button {
-      background: #f7f9fc;
-      border: 1px solid #bac8db;
-      color: #1f3f64;
-      box-shadow: 0 1px 2px rgba(9, 30, 66, 0.12);
-      opacity: 1;
-    }
-    body.desktop-map-embed .gis-selection-actions button .map-action-icon {
-      filter: brightness(0) saturate(100%) invert(21%) sepia(30%) saturate(867%) hue-rotate(178deg) brightness(90%) contrast(95%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .gis-selection-actions button .map-action-label {
-      color: #1f3f64;
-    }
-    body.desktop-map-embed .gis-selection-actions button:hover,
-    body.desktop-map-embed .gis-selection-actions button:focus-visible {
-      background: #eaf1f9;
-      border-color: #98aec8;
-      box-shadow: 0 0 0 2px rgba(1, 118, 211, 0.18);
-    }
-    body.desktop-map-embed .fullscreen-sheet {
-      background: #f5f7fa;
-      border-top: 1px solid #d8dde6;
-      color: #16325c;
-    }
-    body.desktop-map-embed .sheet-header {
-      background: #ffffff;
-      border-bottom: 1px solid #d8dde6;
-      padding: 12px 14px;
-    }
-    body.desktop-map-embed .sheet-title {
-      color: #16325c;
-      font-size: 0.9rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-    body.desktop-map-embed .sheet-close {
-      border: 1px solid #c9d3e1;
-      background: #f8fafc;
-      color: #2f4768;
-      border-radius: 8px;
-    }
-    body.desktop-map-embed .sheet-body {
-      padding: 12px;
-      background: #f5f7fa;
-    }
-    body.desktop-map-embed .sheet-section,
-    body.desktop-map-embed .related-collapsible,
-    body.desktop-map-embed .map-bottom-sheet-sections .related-collapsible {
-      border: 1px solid #d8dde6;
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: none;
-    }
-    body.desktop-map-embed .related-collapsible .slds-card__header {
-      background: #ffffff;
-      border-bottom: 1px solid #e5ebf1;
-    }
-    body.desktop-map-embed .related-section-body,
-    body.desktop-map-embed .map-bottom-sheet-sections .related-section-body {
-      background: #ffffff;
-      color: #16325c;
-    }
-    body.desktop-map-embed .section-toggle,
-    body.desktop-map-embed .slds-card__header-title,
-    body.desktop-map-embed .context-meta,
-    body.desktop-map-embed .slds-text-body_small,
-    body.desktop-map-embed .slds-text-color_weak,
-    body.desktop-map-embed .asset-row-title,
-    body.desktop-map-embed .asset-row-meta {
-      color: #2e4057 !important;
-    }
-    body.desktop-map-embed .asset-list-shell,
-    body.desktop-map-embed .map-bottom-sheet-sections .asset-list-shell {
-      border-top: 1px solid #e5ebf1;
-      background: #ffffff;
-    }
-    body.desktop-map-embed .asset-row-button {
-      border: 1px solid #d8dde6;
-      background: #f8fafc;
-    }
-    body.desktop-map-embed .asset-row-button:hover,
-    body.desktop-map-embed .asset-row-button:focus {
-      border-color: #b7c6d8;
-      background: #eef3f8;
-    }
-    body.desktop-map-embed .new-asset-mini {
-      border: 1px solid #9bb2cd !important;
-      background: #edf4fb !important;
-      color: #173a63 !important;
-      border-radius: 8px;
-      padding: 0 10px;
-      min-height: 30px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      line-height: 1;
-      opacity: 1 !important;
-    }
-    body.desktop-map-embed .new-asset-mini:hover,
-    body.desktop-map-embed .new-asset-mini:focus {
-      border-color: #6f8fb3 !important;
-      background: #dfeaf7 !important;
-      color: #123156 !important;
-      outline: none;
-    }
-    body.desktop-map-embed .new-asset-mini[disabled],
-    body.desktop-map-embed .new-asset-mini:disabled {
-      border-color: #bcc8d8 !important;
-      background: #eef3f8 !important;
-      color: #7a8ea7 !important;
-      opacity: 1 !important;
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn {
-      border: 1px solid #96adc8;
-      background: #f3f8fe;
-      color: #1f3f64;
-      width: 46px;
-      min-width: 46px;
-      box-shadow: 0 1px 1px rgba(11, 56, 102, 0.12);
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn .asset-row-location-icon {
-      width: 15px;
-      height: 15px;
-      filter: brightness(0) saturate(100%) invert(12%) sepia(31%) saturate(1326%) hue-rotate(182deg) brightness(84%) contrast(100%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn:hover,
-    body.desktop-map-embed .asset-row-map-focus-btn:focus {
-      border-color: #6f90b5;
-      background: #e3eefb;
-      color: #16385d;
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn:hover .asset-row-location-icon,
-    body.desktop-map-embed .asset-row-map-focus-btn:focus .asset-row-location-icon {
-      filter: brightness(0) saturate(100%) invert(13%) sepia(29%) saturate(1278%) hue-rotate(182deg) brightness(84%) contrast(99%);
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn[disabled],
-    body.desktop-map-embed .asset-row-map-focus-btn:disabled {
-      border-color: #c1cedc;
-      background: #edf2f8;
-      color: #7b8fa7;
-      opacity: 1;
-    }
-    body.desktop-map-embed .asset-row-map-focus-btn[disabled] .asset-row-location-icon,
-    body.desktop-map-embed .asset-row-map-focus-btn:disabled .asset-row-location-icon {
-      filter: brightness(0) saturate(100%) invert(46%) sepia(12%) saturate(524%) hue-rotate(174deg) brightness(94%) contrast(88%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .detail-checklist-row {
-      border: 1px solid #d8dde6;
-      background: #f8fafc;
-    }
-    body.desktop-map-embed .detail-checklist-toggle-wrap,
-    body.desktop-map-embed .detail-checklist-field-label,
-    body.desktop-map-embed .detail-checklist-name {
-      color: #16325c;
-    }
-    body.desktop-map-embed .detail-checklist-state {
-      border: 1px solid #c9d6e5;
-      color: #3d566f;
-      background: #edf3f9;
-    }
-    body.desktop-map-embed .detail-checklist-state.is-active {
-      color: #8a4b04;
-      background: #fff3df;
-      border-color: #e7c28a;
-    }
-    body.desktop-map-embed .detail-checklist-state.is-resolved {
-      color: #135d37;
-      background: #e5f5eb;
-      border-color: #a7d8b8;
-    }
-    body.desktop-map-embed .detail-callout-step {
-      border: 1px solid #c6d3e3;
-      background: #eef3f8;
-      color: #2d4869;
-    }
-    body.desktop-map-embed .detail-callout-step:hover,
-    body.desktop-map-embed .detail-callout-step:focus {
-      border-color: #9fb4ce;
-      background: #e1eaf3;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button {
-      min-height: 42px;
-      border-radius: 999px;
-      border: 1px solid #c9d3e1 !important;
-      background: #f8fafc !important;
-      color: #2f4768 !important;
-      opacity: 1 !important;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button .action-icon-svg {
-      opacity: 1;
-      filter: brightness(0) saturate(100%) invert(23%) sepia(20%) saturate(878%) hue-rotate(175deg) brightness(94%) contrast(90%);
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button:hover,
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button:focus {
-      background: #edf3f9 !important;
-      border-color: #aebfd3 !important;
-      color: #1f3f64 !important;
-      opacity: 1 !important;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .primary-callout {
-      background: #0176d3 !important;
-      border-color: #0176d3 !important;
-      color: #ffffff !important;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .primary-callout .action-icon-svg {
-      filter: brightness(0) invert(1);
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button_destructive {
-      background: #ba0517 !important;
-      border-color: #ba0517 !important;
-      color: #ffffff !important;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button_destructive .action-icon-svg {
-      filter: brightness(0) invert(1);
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button[disabled],
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button:disabled {
-      background: #e5ecf4 !important;
-      border-color: #b9c8da !important;
-      color: #5f7691 !important;
-      opacity: 1 !important;
-      cursor: not-allowed;
-    }
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button[disabled] .action-icon-svg,
-    body.desktop-map-embed #asset-detail-sheet .detail-actions-grid .slds-button:disabled .action-icon-svg {
-      filter: brightness(0) saturate(100%) invert(35%) sepia(18%) saturate(548%) hue-rotate(174deg) brightness(90%) contrast(91%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .checklist-photo-summary,
-    body.desktop-map-embed .checklist-photo-size,
-    body.desktop-map-embed .checklist-photo-empty {
-      color: #63758d;
-    }
-    body.desktop-map-embed .checklist-photo-item {
-      border: 1px solid #d8dde6;
-      background: #f8fafc;
-    }
-    body.desktop-map-embed .checklist-photo-name {
-      color: #16325c;
-    }
-    body.desktop-map-embed .slds-input,
-    body.desktop-map-embed .slds-select,
-    body.desktop-map-embed .slds-textarea {
-      background: #ffffff !important;
-      border-color: #c9d3e1 !important;
-      color: #16325c !important;
-      -webkit-text-fill-color: #16325c !important;
-      caret-color: #16325c !important;
-    }
-    body.desktop-map-embed .slds-select option {
-      color: #16325c;
-      background: #ffffff;
-    }
-    body.desktop-map-embed input:-webkit-autofill,
-    body.desktop-map-embed input:-webkit-autofill:hover,
-    body.desktop-map-embed input:-webkit-autofill:focus,
-    body.desktop-map-embed textarea:-webkit-autofill,
-    body.desktop-map-embed textarea:-webkit-autofill:hover,
-    body.desktop-map-embed textarea:-webkit-autofill:focus,
-    body.desktop-map-embed select:-webkit-autofill,
-    body.desktop-map-embed select:-webkit-autofill:hover,
-    body.desktop-map-embed select:-webkit-autofill:focus {
-      -webkit-text-fill-color: #16325c !important;
-      box-shadow: 0 0 0 1000px #ffffff inset !important;
-    }
-    body.desktop-map-embed .slds-input::placeholder,
-    body.desktop-map-embed .slds-textarea::placeholder {
-      color: #7f8fa4 !important;
-    }
-    body.desktop-map-embed .slds-button_neutral {
-      background: #f8fafc !important;
-      border-color: #c9d3e1 !important;
-      color: #2f4768 !important;
-    }
-    body.desktop-map-embed .slds-button_neutral:hover,
-    body.desktop-map-embed .slds-button_neutral:focus {
-      background: #edf3f9 !important;
-      color: #1f3f64 !important;
-    }
-    body.desktop-map-embed .slds-button_brand {
-      background: #0176d3 !important;
-      border-color: #0176d3 !important;
-      color: #ffffff !important;
-    }
-    body.desktop-map-embed .slds-button_brand:hover,
-    body.desktop-map-embed .slds-button_brand:focus {
-      background: #015fb2 !important;
-      border-color: #015fb2 !important;
-    }
-    body.desktop-map-embed .slds-button_brand[disabled],
-    body.desktop-map-embed .slds-button_brand:disabled {
-      background: #eef2f7 !important;
-      border-color: #d4dce7 !important;
-      color: #75869d !important;
-      opacity: 1 !important;
-    }
-    body.desktop-map-embed .submit-icon-btn[disabled] .submit-icon,
-    body.desktop-map-embed .submit-icon-btn:disabled .submit-icon {
-      /* Keep disabled SVG icons readable on light disabled button surfaces. */
-      filter: brightness(0) saturate(100%) invert(50%) sepia(15%) saturate(432%) hue-rotate(170deg) brightness(95%) contrast(89%);
-      opacity: 1;
-    }
-    body.desktop-map-embed #simulate-submit:not(:disabled) .submit-icon,
-    body.desktop-map-embed #simulate-submit:not([disabled]) .submit-icon {
-      /* Force high-contrast icon on brand blue submit button. */
-      filter: brightness(0) invert(1);
-      opacity: 1;
-    }
-    body.desktop-map-embed #toggle-am .submit-icon {
-      filter: brightness(0) saturate(100%) invert(26%) sepia(27%) saturate(672%) hue-rotate(172deg) brightness(93%) contrast(89%);
-      opacity: 1;
-    }
-    body.desktop-map-embed .submit-actions .slds-button:hover,
-    body.desktop-map-embed .submit-actions .slds-button:focus {
-      color: inherit !important;
-      border-color: inherit !important;
-    }
-    body.desktop-map-embed #simulate-submit:disabled,
-    body.desktop-map-embed #simulate-submit[disabled] {
-      background: #eef2f7 !important;
-      color: #75869d !important;
-      border-color: #d4dce7 !important;
-      opacity: 1 !important;
-      cursor: not-allowed;
-    }
-    body.desktop-map-embed #submit-helper,
-    body.desktop-map-embed #submit-result,
-    body.desktop-map-embed #am-status,
-    body.desktop-map-embed .checklist-photo-empty,
-    body.desktop-map-embed #related-callouts-body li,
-    body.desktop-map-embed #related-callouts-body p {
-      color: #556b86 !important;
-    }
-    body.desktop-map-embed .submit-icon-btn {
-      min-height: 40px;
-    }
-    body.desktop-map-embed #map-bottom-sheet {
-      display: none !important;
-    }
   </style>
 </head>
 <body>
@@ -4008,7 +3576,7 @@
               </div>
             </div>
             <div class="map-control-label-row" aria-hidden="true">
-              <span>Add New</span>
+              <span data-map-control-action="add-marker">Add New</span>
               <span>Edit</span>
               <span>Delete</span>
               <span>Assets</span>
@@ -4188,11 +3756,9 @@
 
           <div class="sheet-section">
             <div class="sheet-actions detail-actions-grid">
-              <button id="detail-create-callout" class="slds-button slds-button_brand primary-callout" type="button" aria-label="Checklist" title="Checklist"><img class="action-icon-svg" data-embedded-icon="utility/task" src="" alt="" aria-hidden="true" /></button>
-              <button id="detail-show-map" class="slds-button slds-button_neutral hidden" type="button" aria-label="Show on map" title="Show on map"><img class="action-icon-svg" data-embedded-icon="utility/location" src="" alt="" aria-hidden="true" /></button>
-              <button id="detail-save" class="slds-button slds-button_neutral" type="button" aria-label="Save" title="Save"><img class="action-icon-svg" data-embedded-icon="utility/save" src="" alt="" aria-hidden="true" /></button>
-              <button id="detail-toggle-status" class="slds-button slds-button_neutral" type="button" aria-label="Toggle status" title="Toggle status"><img id="detail-toggle-status-icon" class="action-icon-svg" data-embedded-icon="utility/toggle_off" src="" alt="" aria-hidden="true" /></button>
-              <button id="detail-remove" class="slds-button slds-button_destructive" type="button" aria-label="Remove" title="Remove"><img class="action-icon-svg" data-embedded-icon="utility/delete" src="" alt="" aria-hidden="true" /></button>
+              <button id="detail-create-callout" class="slds-button slds-button_brand primary-callout" type="button" aria-label="Checklist" title="Checklist"><img class="action-icon-svg" data-embedded-icon="utility/task" src="" alt="" aria-hidden="true" /><span class="action-label">Checklist</span></button>
+              <button id="detail-show-map" class="slds-button slds-button_neutral hidden" type="button" aria-label="Show on map" title="Show on map"><img class="action-icon-svg" data-embedded-icon="utility/location" src="" alt="" aria-hidden="true" /><span class="action-label">Map</span></button>
+              <button id="detail-remove" class="slds-button slds-button_destructive" type="button" aria-label="Remove" title="Remove"><img class="action-icon-svg" data-embedded-icon="utility/delete" src="" alt="" aria-hidden="true" /><span class="action-label">Remove</span></button>
             </div>
           </div>
 
@@ -4240,6 +3806,20 @@
               <div class="slds-form-element__control">
                 <textarea id="detail-notes" class="slds-textarea" rows="3"></textarea>
               </div>
+            </div>
+
+            <div class="slds-form-element slds-m-top_small">
+              <label class="slds-form-element__label">Asset Photos</label>
+              <div class="slds-form-element__control checklist-photo-toolbar">
+                <button id="detail-asset-photo-trigger" class="slds-button slds-button_neutral checklist-photo-trigger" type="button">
+                  <img class="action-icon-svg" data-embedded-icon="utility/photo" src="" alt="" aria-hidden="true" />
+                  <span>Add Photo</span>
+                </button>
+                <span id="detail-asset-photo-summary" class="checklist-photo-summary">No photos attached</span>
+              </div>
+              <input id="detail-asset-photo-input" class="checklist-photo-input" type="file" accept="image/*" capture="environment" multiple />
+              <p style="margin: 6px 0 8px; font-size: 0.74rem; color: #8e9aac;">Capture or attach reference photos for this asset.</p>
+              <ul id="detail-asset-photos-list" class="checklist-photo-list"></ul>
             </div>
             
             <div id="detail-metadata-section" class="slds-m-top_small">
@@ -4603,7 +4183,6 @@ const CHECKLIST_DEFINITIONS_BY_TYPE = {
     { id: "not-winterized-drained", label: "System not winterized/drained?", kind: "boolean", finding: true, dependsOnContext: "winterizationVisit", dependsOnContextValues: [true] },
   ],
   zone: [
-    { id: "minutes-per-zone", label: "Minutes / zone (runtime)", kind: "number" },
     { id: "broken-head", label: "Broken head", kind: "count", finding: true },
     { id: "broken-clogged-nozzle", label: "Broken / clogged nozzle / Bad wiper seal", kind: "count", finding: true },
     { id: "sunken-tilted-head", label: "Sunken / tilted head", kind: "count", finding: true },
@@ -4652,25 +4231,15 @@ const resolverContext = {
   questionSetVersion: "NE-Quarterly-PMI-v3",
 };
 
-// URL flags switch between normal mobile workspace and desktop-embedded map mode.
 const urlParams = new URLSearchParams(window.location.search);
-const DESKTOP_MAP_EMBED = urlParams.get("embed") === "desktop-map";
 const SELF_CONTAINED_PROTOTYPE = urlParams.get("selfContained") === "1";
-const DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID = urlParams.get("property") || "prop-002";
-const DESKTOP_MAP_BOOTSTRAP_ASSET_ID = urlParams.get("asset") || "";
-
-if (DESKTOP_MAP_EMBED) {
-  document.body.classList.add("desktop-map-embed");
-}
 
 const woliSessions = new Map();
 let activeWoliId = "";
 let appMode = "wo";
-const USE_DESKTOP_MAP_BEHAVIOR = false;
 const USE_MAP_FOCUS_MODE = false;
 
 const IRRIGATION_DEMO_STORAGE_PREFIX = "irrigation-v5-demo-session-cleared";
-const DESKTOP_EMBED_STORAGE_PREFIX = "irrigation-v5-desktop-map-session-cleared";
 
 function createEmptyIrrigationSession() {
   return createInitialIrrigationSession();
@@ -4679,94 +4248,6 @@ function createEmptyIrrigationSession() {
 // Separate storage domains keep standalone WOLI sessions from desktop-embed geometry overlays.
 function getIrrigationDemoStorageKey(woliId = "") {
   return `${IRRIGATION_DEMO_STORAGE_PREFIX}:${woliId || "default"}`;
-}
-
-function getDesktopEmbedStorageKey(propertyId = "") {
-  return `${DESKTOP_EMBED_STORAGE_PREFIX}:${propertyId || "default"}`;
-}
-
-function collectSessionGeometryByAssetId(session) {
-  const geometryByAssetId = {};
-  if (!session || typeof session !== "object") return geometryByAssetId;
-
-  const allAssets = [
-    ...(Array.isArray(session.controllers) ? session.controllers : []),
-    ...(Array.isArray(session.backflows) ? session.backflows : []),
-    ...(Array.isArray(session.zones) ? session.zones : []),
-  ];
-
-  allAssets.forEach((asset) => {
-    const id = String(asset?.id || "").trim();
-    if (!id) return;
-    geometryByAssetId[id] = {
-      hasMapGeometry: asset?.hasMapGeometry === true,
-      ...(typeof asset?.lat === "number" ? { lat: asset.lat } : {}),
-      ...(typeof asset?.lon === "number" ? { lon: asset.lon } : {}),
-      ...(typeof asset?.mapX === "number" ? { mapX: Number(asset.mapX) } : {}),
-      ...(typeof asset?.mapY === "number" ? { mapY: Number(asset.mapY) } : {}),
-    };
-  });
-
-  return geometryByAssetId;
-}
-
-function persistDesktopEmbedSession(propertyId = "", session = null) {
-  if (!propertyId || !session) return;
-  try {
-    const payload = {
-      geometryByAssetId: collectSessionGeometryByAssetId(session),
-      persistedAt: new Date().toISOString(),
-    };
-    localStorage.setItem(getDesktopEmbedStorageKey(propertyId), JSON.stringify(payload));
-  } catch (error) {
-    // Ignore prototype storage failures.
-  }
-}
-
-function loadPersistedDesktopGeometry(propertyId = "") {
-  if (!propertyId) return {};
-  try {
-    const raw = localStorage.getItem(getDesktopEmbedStorageKey(propertyId));
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") return {};
-    if (!parsed.geometryByAssetId || typeof parsed.geometryByAssetId !== "object") return {};
-    return parsed.geometryByAssetId;
-  } catch (error) {
-    return {};
-  }
-}
-
-function applyPersistedDesktopGeometry(session, propertyId = "") {
-  if (!session || typeof session !== "object") return;
-  const geometryByAssetId = loadPersistedDesktopGeometry(propertyId);
-  if (!geometryByAssetId || typeof geometryByAssetId !== "object") return;
-
-  const applyToAsset = (asset) => {
-    const id = String(asset?.id || "").trim();
-    if (!id) return;
-    const persisted = geometryByAssetId[id];
-    if (!persisted || typeof persisted !== "object") return;
-
-    if (typeof persisted.hasMapGeometry === "boolean") {
-      asset.hasMapGeometry = persisted.hasMapGeometry;
-      if (persisted.hasMapGeometry === false) {
-        delete asset.lat;
-        delete asset.lon;
-        delete asset.mapX;
-        delete asset.mapY;
-      }
-    }
-
-    if (typeof persisted.lat === "number") asset.lat = persisted.lat;
-    if (typeof persisted.lon === "number") asset.lon = persisted.lon;
-    if (typeof persisted.mapX === "number") asset.mapX = Number(persisted.mapX);
-    if (typeof persisted.mapY === "number") asset.mapY = Number(persisted.mapY);
-  };
-
-  (Array.isArray(session.controllers) ? session.controllers : []).forEach(applyToAsset);
-  (Array.isArray(session.backflows) ? session.backflows : []).forEach(applyToAsset);
-  (Array.isArray(session.zones) ? session.zones : []).forEach(applyToAsset);
 }
 
 function getValidatedIrrigationSession(raw) {
@@ -4811,38 +4292,7 @@ function persistActiveIrrigationSession() {
   const woli = getActiveWoli();
   if (woli && isIrrigationWoli(woli)) {
     persistIrrigationSession(woli.id, state);
-    return;
   }
-
-  if (DESKTOP_MAP_EMBED) {
-    persistDesktopEmbedSession(mapTab.context.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID, state);
-  }
-}
-
-function postDesktopAssetLocationUpdate(asset) {
-  if (!DESKTOP_MAP_EMBED || !asset?.ref?.id || !window.parent || window.parent === window) return;
-  const payload = {
-    type: "SPATIAL_ASSET_LOCATION",
-    assetId: asset.ref.id,
-  };
-  if (typeof asset.ref.lat === "number") payload.lat = asset.ref.lat;
-  if (typeof asset.ref.lon === "number") payload.lon = asset.ref.lon;
-  if (typeof asset.ref.mapX === "number") payload.mapX = asset.ref.mapX;
-  if (typeof asset.ref.mapY === "number") payload.mapY = asset.ref.mapY;
-  window.parent.postMessage(payload, "*");
-}
-
-function postDesktopAssetGeometryDeleted(assetId, deletedCount = 0) {
-  if (!DESKTOP_MAP_EMBED || !assetId || !window.parent || window.parent === window) return;
-  window.parent.postMessage(
-    {
-      type: "SPATIAL_GEOMETRY_DELETED",
-      assetId,
-      deletedCount,
-      success: true,
-    },
-    "*"
-  );
 }
 
 // Authoritative in-memory session state for all renders; persisted opportunistically.
@@ -4923,6 +4373,10 @@ const detailChecklistPhotoTrigger = document.getElementById("detail-checklist-ph
 const detailChecklistPhotoSummary = document.getElementById("detail-checklist-photo-summary");
 const detailChecklistPhotoInput = document.getElementById("detail-checklist-photo-input");
 const detailChecklistPhotosList = document.getElementById("detail-checklist-photos-list");
+const detailAssetPhotoTrigger = document.getElementById("detail-asset-photo-trigger");
+const detailAssetPhotoSummary = document.getElementById("detail-asset-photo-summary");
+const detailAssetPhotoInput = document.getElementById("detail-asset-photo-input");
+const detailAssetPhotosList = document.getElementById("detail-asset-photos-list");
 const detailCreateCallout = document.getElementById("detail-create-callout");
 const detailCalloutSubmit = document.getElementById("detail-callout-submit");
 const detailCalloutCancel = document.getElementById("detail-callout-cancel");
@@ -4945,8 +4399,6 @@ const detailProgramActive   = document.getElementById("detail-program-active");
 const detailProgramSave     = document.getElementById("detail-program-save");
 const detailProgramCancel   = document.getElementById("detail-program-cancel");
 const detailShowMap     = document.getElementById("detail-show-map");
-const detailSave        = document.getElementById("detail-save");
-const detailToggleStatus= document.getElementById("detail-toggle-status");
 const detailRemove      = document.getElementById("detail-remove");
 const assetCreateSheet  = document.getElementById("asset-create-sheet");
 const createSheetClose  = document.getElementById("create-sheet-close");
@@ -5054,7 +4506,6 @@ const mapTab = {
     propertyId: "prop-002",
     workOrderId: "wo-004281",
     mode: "field",
-    desktopBootstrapReady: !DESKTOP_MAP_EMBED,
   },
 };
 
@@ -5721,8 +5172,6 @@ function updateRelatedGuidanceExpansion() {
   if (assetsSection) setSectionCollapsed(assetsSection, false);
   if (calloutsSection) calloutsSection.classList.add("map-first-visible");
 
-  if (USE_DESKTOP_MAP_BEHAVIOR) return;
-
   const session = state;
   const calloutIncomplete = !getCalloutRequirementMet(session);
   const approvalIncomplete = !getApprovalRequirementMet(session);
@@ -5745,204 +5194,6 @@ function getAlertZonesCount()   { return state.zones.filter((z) => z.status === 
 function getFilteredZones() {
   if (state.clockFilter === "ALL") return state.zones;
   return state.zones.filter((z) => z.controller === state.clockFilter);
-}
-
-function normalizeDesktopAssetType(type) {
-  return String(type || "").trim().toLowerCase();
-}
-
-function buildDesktopEmbedPoint(asset, index, controllerIndex = 0) {
-  if (typeof asset?.mapX === "number" && typeof asset?.mapY === "number") {
-    return { x: Number(asset.mapX), y: Number(asset.mapY) };
-  }
-
-  const ringIndex = Number.isFinite(Number(asset?.zoneNumber)) ? Math.max(0, Number(asset.zoneNumber) - 1) : index;
-  const slot = ringIndex % 8;
-  const angle = (Math.PI * 2 * slot) / 8;
-  const anchors = [
-    { x: 48, y: 26 },
-    { x: 68, y: 48 },
-    { x: 40, y: 66 },
-    { x: 58, y: 38 },
-  ];
-  const anchor = anchors[controllerIndex % anchors.length];
-  const radius = 10 + ((ringIndex + controllerIndex) % 4);
-  return {
-    x: Number((anchor.x + radius * Math.cos(angle)).toFixed(2)),
-    y: Number((anchor.y + radius * Math.sin(angle)).toFixed(2)),
-  };
-}
-
-function buildDesktopEmbedProgram(program, zoneName, index) {
-  return {
-    id: program?.id || `desktop-program-${index + 1}`,
-    programName: program?.programName || program?.name || `Program ${index + 1}`,
-    scheduleDays: Array.isArray(program?.scheduleDays) ? [...program.scheduleDays] : [],
-    startTime: program?.startTime || "06:00",
-    zone: zoneName || program?.zone || "",
-    runTimeMinutes: Number.isFinite(Number(program?.runTimeMinutes)) ? Number(program.runTimeMinutes) : 0,
-    seasonalAdjustPct: Number.isFinite(Number(program?.seasonalAdjustPct)) ? Number(program.seasonalAdjustPct) : 0,
-    isActive: program?.isActive !== false,
-  };
-}
-
-function buildDesktopEmbedMetadata(asset, type, parentName = "") {
-  const metadata = {
-    lifecycle_status: asset?.status || "Installed",
-    install_date: asset?.installDate || "",
-    spatial_source: asset?.lat != null || asset?.lon != null ? "GPS" : "Unknown",
-    spatial_confidence: asset?.lat != null || asset?.lon != null ? "High" : "Unknown",
-  };
-
-  if (parentName) metadata.parent = parentName;
-
-  if (type === "controller") {
-    metadata.controller_label = asset?.controllerLabel || "";
-    metadata.total_zones = asset?.totalZones ?? "";
-    metadata.make_model = asset?.makeModel || asset?.controllerMake || "";
-    metadata.connectivity_type = asset?.connectivityType || "";
-    metadata.smart_controller = asset?.isSmartController === true ? "Yes" : asset?.isSmartController === false ? "No" : "";
-    metadata.controller_app_platform = asset?.controllerApp || "";
-  } else if (type === "backflow") {
-    metadata.backflow_type = asset?.backflowType || "";
-    metadata.serial_number = asset?.serialNumber || "";
-    metadata.last_test_date = asset?.lastTestDate || "";
-    metadata.last_test_result = asset?.lastTestResult || "";
-    metadata.next_test_due = asset?.nextTestDue || "";
-    metadata.compliance_status = asset?.complianceStatus || "";
-    metadata.testing_authority = asset?.testingAuthority || "";
-  } else if (type === "zone") {
-    metadata.zone_number = asset?.zoneNumber ?? "";
-    metadata.area_served = asset?.areaServed || asset?.description || "";
-    metadata.flow_rate_gpm = asset?.flowRateGpm ?? "";
-    metadata.distribution_method = asset?.distributionMethod || "";
-    metadata.primary_head_type = asset?.primaryHeadType || "";
-    metadata.lateral_pipe_type = asset?.lateralPipeType || "";
-    metadata.lateral_pipe_size = asset?.lateralPipeSize || "";
-    metadata.solenoid_resistance_ohms = asset?.solenoidResistanceOhms ?? "";
-  }
-
-  return metadata;
-}
-
-function buildDesktopEmbedSession(payload) {
-  const base = createEmptyIrrigationSession();
-  base.hasMap = true;
-  const rawAssets = Array.isArray(payload?.assets) ? payload.assets : [];
-  const activeAssets = rawAssets.filter((asset) => String(asset?.status || "").toLowerCase() !== "retired");
-
-  const controllers = activeAssets.filter((asset) => normalizeDesktopAssetType(asset.type) === "controller");
-  const backflows = activeAssets.filter((asset) => normalizeDesktopAssetType(asset.type) === "backflow");
-  const zones = activeAssets.filter((asset) => normalizeDesktopAssetType(asset.type) === "zone");
-
-  const controllerNameById = new Map();
-  const controllerIndexById = new Map();
-  const backflowNameBySystemId = new Map();
-
-  base.controllers = controllers.map((asset, index) => {
-    const name = asset?.name || `Controller ${index + 1}`;
-    controllerNameById.set(asset.id, name);
-    controllerIndexById.set(asset.id, index);
-    return {
-      id: asset.id,
-      name,
-      model: asset?.makeModel || asset?.controllerMake || "",
-      description: asset?.description || "",
-      zones: [],
-      programs: [],
-      metadata: buildDesktopEmbedMetadata(asset, "controller"),
-      lat: typeof asset?.lat === "number" ? asset.lat : undefined,
-      lon: typeof asset?.lon === "number" ? asset.lon : undefined,
-      mapX: typeof asset?.mapX === "number" ? Number(asset.mapX) : undefined,
-      mapY: typeof asset?.mapY === "number" ? Number(asset.mapY) : undefined,
-      hasMapGeometry: false,
-    };
-  });
-
-  base.backflows = backflows.map((asset, index) => {
-    const name = asset?.name || `Backflow ${index + 1}`;
-    if (asset?.parentId) backflowNameBySystemId.set(asset.parentId, name);
-    return {
-      id: asset.id,
-      name,
-      serial: asset?.serialNumber || "",
-      status: asset?.complianceStatus || asset?.status || "Active",
-      description: asset?.description || "",
-      metadata: buildDesktopEmbedMetadata(asset, "backflow"),
-      lat: typeof asset?.lat === "number" ? asset.lat : undefined,
-      lon: typeof asset?.lon === "number" ? asset.lon : undefined,
-      mapX: typeof asset?.mapX === "number" ? Number(asset.mapX) : undefined,
-      mapY: typeof asset?.mapY === "number" ? Number(asset.mapY) : undefined,
-      hasMapGeometry: false,
-    };
-  });
-
-  const firstBackflowName = base.backflows[0]?.name || "";
-
-  base.zones = zones.map((asset, index) => {
-    const controllerName = controllerNameById.get(asset?.parentId) || base.controllers[0]?.name || "";
-    const controllerAsset = controllers.find((item) => item.id === asset?.parentId) || null;
-    const systemId = controllerAsset?.parentId || asset?.parentId || "";
-    const backflowName = backflowNameBySystemId.get(systemId) || firstBackflowName;
-    const controllerIndex = controllerIndexById.get(asset?.parentId) || 0;
-    const point = buildDesktopEmbedPoint(asset, index, controllerIndex);
-    const label = asset?.zoneNumber != null ? `Zone ${asset.zoneNumber}` : asset?.name || `Zone ${index + 1}`;
-    return {
-      id: asset.id,
-      label,
-      status: String(asset?.status || "ok").toLowerCase() === "alert" ? "alert" : "ok",
-      controllerId: asset?.parentId || "",
-      parentId: asset?.parentId || "",
-      controller: controllerName,
-      backflow: backflowName,
-      description: asset?.description || asset?.areaServed || "",
-      mapX: point.x,
-      mapY: point.y,
-      hasMapGeometry: false,
-      metadata: buildDesktopEmbedMetadata(asset, "zone", controllerName),
-      ...(typeof asset?.lat === "number" ? { lat: asset.lat } : {}),
-      ...(typeof asset?.lon === "number" ? { lon: asset.lon } : {}),
-    };
-  });
-
-  base.controllers.forEach((controller) => {
-    controller.zones = base.zones
-      .filter((zone) => zone.controller === controller.name)
-      .map((zone) => Number(zone.metadata?.zone_number || getZoneNumberFromName(zone.label) || 0))
-      .filter((value) => Number.isFinite(value) && value > 0);
-
-    const sourceAsset = controllers.find((asset) => asset.id === controller.id);
-    controller.programs = Array.isArray(sourceAsset?.programs)
-      ? sourceAsset.programs.map((program, index) => buildDesktopEmbedProgram(program, program?.zoneAssetId ? base.zones.find((zone) => zone.id === program.zoneAssetId)?.label || "" : "", index))
-      : [];
-  });
-
-  return {
-    session: base,
-    selectedKey:
-      payload?.assetId && controllerNameById.has(payload.assetId)
-        ? `controller:${payload.assetId}`
-        : payload?.assetId && base.backflows.some((asset) => asset.id === payload.assetId)
-        ? `backflow:${payload.assetId}`
-        : payload?.assetId && base.zones.some((asset) => asset.id === payload.assetId)
-        ? `zone:${payload.assetId}`
-        : "",
-  };
-}
-
-function applyDesktopEmbedBootstrap(payload) {
-  // Desktop sends property/asset context; mobile synthesizes equivalent session objects.
-  const { session, selectedKey } = buildDesktopEmbedSession(payload);
-  applyPersistedDesktopGeometry(session, payload?.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID);
-  state = session;
-  mapTab.context.propertyId = payload?.propertyId || DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID;
-  mapTab.context.workOrderId = `desktop-${mapTab.context.propertyId}`;
-  mapTab.context.desktopBootstrapReady = true;
-  appMode = "woli";
-  mapTab.selectedKey = selectedKey || "";
-  assetTab.selectedKey = mapTab.selectedKey;
-  renderAll();
-  setActiveTab("map");
 }
 
 function getAllAssets() {
@@ -6336,16 +5587,14 @@ function syncSpatialMapState(options = {}) {
     "*"
   );
 
-  if (selectedAssetId) {
-    spatialMapFrame.contentWindow.postMessage(
-      {
-        type: "SPATIAL_SELECT_ASSET_CONTEXT",
-        assetId: selectedAssetId,
-        shouldFocusMap: Boolean(shouldFocusMap),
-      },
-      "*"
-    );
-  }
+  spatialMapFrame.contentWindow.postMessage(
+    {
+      type: "SPATIAL_SELECT_ASSET_CONTEXT",
+      assetId: selectedAssetId,
+      shouldFocusMap: Boolean(shouldFocusMap),
+    },
+    "*"
+  );
 
   return true;
 }
@@ -6370,14 +5619,6 @@ function pushAssetsToSpatialMapFrameWithRetry() {
 function refreshSpatialMapFrame(options = {}) {
   const shouldResetGeometry = options.resetGeometry === true;
   if (!spatialMapFrame) return;
-
-  if (DESKTOP_MAP_EMBED && !mapTab.context.desktopBootstrapReady) {
-    spatialMapFrame.removeAttribute("src");
-    if (gisStatusStrip) {
-      gisStatusStrip.textContent = "Preparing spatial map...";
-    }
-    return;
-  }
 
   if (SELF_CONTAINED_PROTOTYPE) {
     spatialMapFrame.style.display = "none";
@@ -6647,7 +5888,6 @@ function saveMapCardEdits() {
   }
 
   assetTab.selectedKey = selected.key;
-  postDesktopAssetLocationUpdate(selected);
   persistActiveIrrigationSession();
   setSubmitMessage(`Saved ${nextName}.`, "ok");
   renderAll();
@@ -6769,12 +6009,6 @@ function renderMapGrid() {
   mapGrid.innerHTML = "";
   mapGrid.style.cursor = "default";
   gisMapCanvas.classList.remove("list-mode");
-
-  if (USE_DESKTOP_MAP_BEHAVIOR) {
-    mapGrid.style.display = "none";
-    renderMapSelectionCard();
-    return;
-  }
 
   mapGrid.style.display = "block";
   
@@ -6934,7 +6168,6 @@ function bindMapListActionHandlers(mapGrid) {
       asset.ref.description = notesInput.value;
       if (controllerSelect) asset.ref.controller = controllerSelect.value;
       if (backflowSelect) asset.ref.backflow = backflowSelect.value;
-      postDesktopAssetLocationUpdate(asset);
       persistActiveIrrigationSession();
       renderAssetRegistryList();
       renderCallouts();
@@ -7161,6 +6394,14 @@ function getChecklistPhotoStore(asset) {
   return asset.ref.checklistPhotos;
 }
 
+function getAssetPhotoStore(asset) {
+  if (!asset || !asset.ref) return [];
+  if (!Array.isArray(asset.ref.assetPhotos)) {
+    asset.ref.assetPhotos = [];
+  }
+  return asset.ref.assetPhotos;
+}
+
 function renderDetailChecklistPhotos(asset) {
   if (!detailChecklistPhotosList || !detailChecklistPhotoSummary) return;
   if (!asset) {
@@ -7226,6 +6467,71 @@ function addChecklistPhotos(files) {
   renderWoliOverviewList();
 }
 
+function renderDetailAssetPhotos(asset) {
+  if (!detailAssetPhotosList || !detailAssetPhotoSummary) return;
+  if (!asset) {
+    detailAssetPhotosList.innerHTML = "";
+    detailAssetPhotoSummary.textContent = "No photos attached";
+    return;
+  }
+
+  const photos = getAssetPhotoStore(asset);
+  detailAssetPhotoSummary.textContent = photos.length
+    ? `${photos.length} photo${photos.length === 1 ? "" : "s"} attached`
+    : "No photos attached";
+  if (!photos.length) {
+    detailAssetPhotosList.innerHTML = '<li class="checklist-photo-empty">No photos attached yet.</li>';
+    return;
+  }
+
+  detailAssetPhotosList.innerHTML = photos.map((photo) => `
+    <li class="checklist-photo-item">
+      <div class="checklist-photo-item-main">
+        <img src="${photo.url}" alt="Asset photo" class="checklist-photo-thumb" />
+        <div class="checklist-photo-meta">
+          <p class="checklist-photo-name">${photo.name}</p>
+          <p class="checklist-photo-size">${Math.max(1, Math.round((photo.size || 0) / 1024))} KB</p>
+        </div>
+      </div>
+      <button type="button" class="slds-button slds-button_destructive-text" data-asset-photo-id="${photo.id}" aria-label="Remove photo">Remove</button>
+    </li>
+  `).join("");
+}
+
+function addAssetPhotos(files) {
+  const asset = getActiveDetailAsset();
+  if (!asset) return;
+  const selected = Array.from(files || []).filter((file) => file && /^image\//i.test(String(file.type || "")));
+  if (!selected.length) return;
+
+  const store = getAssetPhotoStore(asset);
+  selected.forEach((file, index) => {
+    store.push({
+      id: `asset-photo-${Date.now()}-${index}`,
+      name: file.name || `asset-photo-${index + 1}.jpg`,
+      size: Number(file.size || 0),
+      addedAt: new Date().toISOString(),
+      url: URL.createObjectURL(file),
+    });
+  });
+
+  trackTouchedAsset(asset.key);
+  if (!Array.isArray(state.visitImprint)) state.visitImprint = [];
+  state.visitImprint.push({
+    assetKey: asset.key,
+    assetName: asset.name,
+    issue: "Asset Photos",
+    before: null,
+    after: { addedCount: selected.length },
+    changedAt: new Date().toISOString(),
+  });
+
+  renderDetailAssetPhotos(asset);
+  setSubmitMessage(`${selected.length} asset photo${selected.length === 1 ? "" : "s"} added for ${asset.name}.`, "ok");
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+}
+
 function removeChecklistPhoto(photoId) {
   const asset = getActiveDetailAsset();
   if (!asset) return;
@@ -7251,6 +6557,35 @@ function removeChecklistPhoto(photoId) {
 
   renderDetailChecklistPhotos(asset);
   setSubmitMessage(`Removed checklist photo from ${asset.name}.`, "warn");
+  updateSubmitEligibility();
+  renderWoliOverviewList();
+}
+
+function removeAssetPhoto(photoId) {
+  const asset = getActiveDetailAsset();
+  if (!asset) return;
+  const store = getAssetPhotoStore(asset);
+  const index = store.findIndex((photo) => photo.id === photoId);
+  if (index < 0) return;
+
+  const [removed] = store.splice(index, 1);
+  if (removed && removed.url) {
+    URL.revokeObjectURL(removed.url);
+  }
+
+  trackTouchedAsset(asset.key);
+  if (!Array.isArray(state.visitImprint)) state.visitImprint = [];
+  state.visitImprint.push({
+    assetKey: asset.key,
+    assetName: asset.name,
+    issue: "Asset Photos",
+    before: { removedPhoto: removed?.name || "" },
+    after: { remainingCount: store.length },
+    changedAt: new Date().toISOString(),
+  });
+
+  renderDetailAssetPhotos(asset);
+  setSubmitMessage(`Removed asset photo from ${asset.name}.`, "warn");
   updateSubmitEligibility();
   renderWoliOverviewList();
 }
@@ -7745,18 +7080,19 @@ function isDetailDirty() {
   return false;
 }
 
-function applyDetailSave() {
+function applyDetailSave(options = {}) {
+  const { rerender = true, showToast = true } = options;
   const asset = getActiveDetailAsset();
   if (!asset) return false;
   const draft = readDetailDraft();
 
   if (!draft.name) {
-    setSubmitMessage("Asset name cannot be blank.", "error");
+    if (showToast) setSubmitMessage("Asset name cannot be blank.", "error");
     return false;
   }
 
   if (draft.name !== asset.name && getAllAssets().some((a) => a.key !== asset.key && a.name.toLowerCase() === draft.name.toLowerCase())) {
-    setSubmitMessage("Asset name already exists.", "error");
+    if (showToast) setSubmitMessage("Asset name already exists.", "error");
     return false;
   }
 
@@ -7795,14 +7131,28 @@ function applyDetailSave() {
   if (!isNaN(nextX)) asset.ref.mapX = Number(nextX.toFixed(2));
   if (!isNaN(nextY)) asset.ref.mapY = Number(nextY.toFixed(2));
 
-  postDesktopAssetLocationUpdate(asset);
   persistActiveIrrigationSession();
-  setSubmitMessage(`Saved ${draft.name}.`, "ok");
-  assetTab.selectedKey = asset.key;
-  mapTab.selectedKey = asset.key;
-  renderAll();
-  openDetailSheet(asset.key, sheetState.detailLaunchTab);
+  if (showToast) setSubmitMessage(`Saved ${draft.name}.`, "ok");
+
+  if (detailContext) {
+    detailContext.textContent = `${getAssetDisplayName(asset)} • ${getAssetTypeLabel(asset.type)} • ${getAssetStatusText(asset)}`;
+  }
+
+  if (rerender) {
+    assetTab.selectedKey = asset.key;
+    mapTab.selectedKey = asset.key;
+    renderAll();
+    openDetailSheet(asset.key, sheetState.detailLaunchTab);
+  }
   return true;
+}
+
+let detailAutosaveTimer = null;
+function queueDetailAutosave() {
+  if (detailAutosaveTimer) clearTimeout(detailAutosaveTimer);
+  detailAutosaveTimer = setTimeout(() => {
+    applyDetailSave({ rerender: false, showToast: false });
+  }, 220);
 }
 
 function closeDetailSheet(force = false, allowChecklistClose = false) {
@@ -7816,34 +7166,12 @@ function closeDetailSheet(force = false, allowChecklistClose = false) {
   }
 
   if (!force && isDetailDirty()) {
-    openDecisionModal(
-      "Unsaved Changes",
-      "Save changes before closing this asset?",
-      [
-        {
-          label: "Save and Close",
-          variant: "slds-button slds-button_brand",
-          onClick: () => {
-            if (applyDetailSave()) closeDetailSheet(true);
-          },
-        },
-        {
-          label: "Discard Changes",
-          variant: "slds-button slds-button_neutral",
-          onClick: () => closeDetailSheet(true),
-        },
-        {
-          label: "Keep Editing",
-          variant: "slds-button slds-button_neutral",
-          onClick: () => {},
-        },
-      ]
-    );
-    return;
+    applyDetailSave({ rerender: false, showToast: false });
   }
 
   assetDetailSheet.classList.add("hidden");
   detailCalloutComposer.classList.add("hidden");
+  renderDetailAssetPhotos(null);
   resetDetailCalloutChecklist();
 }
 
@@ -7867,18 +7195,10 @@ function openDetailSheet(assetKey, launchTab = "details") {
   const pos = getMarkerPosition(asset);
   detailMapX.value = asset.ref.mapX ?? pos.x;
   detailMapY.value = asset.ref.mapY ?? pos.y;
-  detailToggleStatus.disabled = asset.type !== "zone";
   if (detailShowMap) {
     const hasMappedLocation = Boolean(getAssetMapGeometryKind(asset));
     detailShowMap.classList.toggle("hidden", !hasMappedLocation);
     detailShowMap.disabled = !hasMappedLocation;
-  }
-  const detailToggleStatusIcon = document.getElementById("detail-toggle-status-icon");
-  if (detailToggleStatusIcon) {
-    const isOn = asset.type === "zone" && asset.ref.status === "alert";
-    detailToggleStatusIcon.src = isOn
-      ? resolveIconPath("toggle_on", "utility")
-      : resolveIconPath("toggle_off", "utility");
   }
 
   if (asset.type === "zone") {
@@ -7892,6 +7212,7 @@ function openDetailSheet(assetKey, launchTab = "details") {
   renderDetailMetadataFields(asset);
 
   renderDetailPrograms(asset);
+  renderDetailAssetPhotos(asset);
 
   resetDetailCalloutChecklist();
   renderDetailAssetCallouts();
@@ -8077,8 +7398,6 @@ function saveCreateSheet() {
   setSubmitMessage(`${name} added as ${getAssetTypeLabel(type)}.`, "ok");
   closeCreateSheet(true);
   setActiveTab(sheetState.createLaunchTab);
-  const createdAsset = getAllAssets().find((asset) => asset.key === assetTab.selectedKey);
-  postDesktopAssetLocationUpdate(createdAsset);
   persistActiveIrrigationSession();
   renderAll();
 }
@@ -8617,8 +7936,6 @@ if (clockFilter) {
 }
 
 mapGrid.addEventListener("click", (event) => {
-  if (USE_DESKTOP_MAP_BEHAVIOR) return;
-
   const target = event.target instanceof HTMLElement ? event.target : null;
   if (!target) return;
 
@@ -8643,7 +7960,6 @@ gisSelectionClose.addEventListener("click", () => {
 });
 
 gisMapCanvas.addEventListener("click", (event) => {
-  if (USE_DESKTOP_MAP_BEHAVIOR) return;
   if (!state.hasMap) return; // list mode manages its own click state
   const target = event.target instanceof HTMLElement ? event.target : null;
   if (!target) return;
@@ -8835,27 +8151,67 @@ if (mapEditToggle) {
   });
 }
 
-if (mapAddMarker) {
-  mapAddMarker.addEventListener("click", () => {
-    // Start Add New from a neutral state so map taps create/link new geometry.
-    if (mapTab.selectedKey) {
-      mapTab.selectedKey = "";
-      assetTab.selectedKey = "";
-      renderMapAssetPicker();
-      updateMapSheetSelection();
-      renderMapSelectionCard();
-    }
+function activateMapAddMarkerMode() {
+  // Start Add New from a neutral state so map taps create/link new geometry.
+  if (mapTab.selectedKey) {
+    mapTab.selectedKey = "";
+    assetTab.selectedKey = "";
+    renderMapAssetPicker();
+    updateMapSheetSelection();
+    renderMapSelectionCard();
+  }
 
-    if (!mapGeometryState.enabled) {
-      mapGeometryState.enabled = true;
-      if (assetDetailSheet && !assetDetailSheet.classList.contains("hidden")) {
-        closeDetailSheet(true);
-      }
-      gisSelectionCard?.classList.add("hidden");
+  if (!mapGeometryState.enabled) {
+    mapGeometryState.enabled = true;
+    if (assetDetailSheet && !assetDetailSheet.classList.contains("hidden")) {
+      closeDetailSheet(true);
     }
-    setMapGeometryTool("marker");
-    setSubmitMessage("Tap an open area on the map to place a marker. You can then link to an existing component or create a new one.", "ok");
+    gisSelectionCard?.classList.add("hidden");
+  }
+
+  setMapGeometryTool("marker");
+  if (spatialMapFrame?.contentWindow) {
+    spatialMapFrame.contentWindow.postMessage({ type: "SPATIAL_PROMPT_ADD_NEW" }, "*");
+  }
+  setSubmitMessage("Tap an open area on the map to place a marker. You can then link to an existing component or create a new one.", "ok");
+}
+
+if (mapAddMarker) {
+  let lastMapAddMarkerActivationAt = 0;
+  const triggerMapAddMarkerMode = () => {
+    const now = Date.now();
+    if (now - lastMapAddMarkerActivationAt < 220) return;
+    lastMapAddMarkerActivationAt = now;
+    activateMapAddMarkerMode();
+  };
+
+  mapAddMarker.addEventListener("click", () => {
+    triggerMapAddMarkerMode();
   });
+
+  mapAddMarker.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    triggerMapAddMarkerMode();
+  });
+
+  mapAddMarker.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    triggerMapAddMarkerMode();
+  }, { passive: false });
+
+  if (mapControlPanel) {
+    const delegatedActivate = (event) => {
+      const target = event.target instanceof HTMLElement
+        ? event.target.closest("#map-add-marker, [data-map-control-action='add-marker']")
+        : null;
+      if (!target) return;
+      event.preventDefault();
+      triggerMapAddMarkerMode();
+    };
+
+    mapControlPanel.addEventListener("click", delegatedActivate, true);
+    mapControlPanel.addEventListener("pointerdown", delegatedActivate, true);
+  }
 }
 
 if (mapDeleteGeometry) {
@@ -8927,7 +8283,6 @@ if (mapDeleteGeometry) {
     delete selected.ref.lon;
     delete selected.ref.mapX;
     delete selected.ref.mapY;
-    postDesktopAssetGeometryDeleted(selected.ref.id, 1);
     persistActiveIrrigationSession();
     renderMapSelectionCard();
     setSubmitMessage(`Deleted map geometry for ${selected.name}.`, "ok");
@@ -9017,6 +8372,25 @@ function registerSpatialCreatedComponent(rawAsset) {
   return `zone:${zone.id}`;
 }
 
+let spatialCreateSyncTimer = 0;
+
+function scheduleAsyncSpatialCreateSync() {
+  if (spatialCreateSyncTimer) {
+    window.clearTimeout(spatialCreateSyncTimer);
+  }
+
+  spatialCreateSyncTimer = window.setTimeout(() => {
+    spatialCreateSyncTimer = 0;
+    renderMapAssetPicker();
+    updateMapSheetSelection();
+    renderMapSelectionCard();
+    renderAssetRegistryList();
+    renderAssetSnapshot();
+    pushAssetsToSpatialMapFrameWithRetry();
+    persistActiveIrrigationSession();
+  }, 120);
+}
+
 function handleStandaloneSpatialMessage(msg) {
   if (msg.type === "SPATIAL_COMPONENT_CREATED") {
     const createdKey = registerSpatialCreatedComponent(msg.asset || null);
@@ -9027,7 +8401,7 @@ function handleStandaloneSpatialMessage(msg) {
 
     mapTab.selectedKey = createdKey;
     assetTab.selectedKey = createdKey;
-    renderAll();
+    scheduleAsyncSpatialCreateSync();
     setSubmitMessage("Created new component from map and linked geometry.", "ok");
     return;
   }
@@ -9093,7 +8467,6 @@ function handleStandaloneSpatialMessage(msg) {
       delete asset.ref.lon;
       delete asset.ref.mapX;
       delete asset.ref.mapY;
-      postDesktopAssetGeometryDeleted(asset.ref.id, deletedCount);
     }
     if (deletedCount > 0) {
       setSubmitMessage(`Deleted ${deletedCount} map item(s) for ${assetName}.`, "ok");
@@ -9133,20 +8506,12 @@ function handleStandaloneSpatialMessage(msg) {
   if (typeof msg.lon === "number") asset.ref.lon = msg.lon;
   if (typeof msg.mapX === "number") asset.ref.mapX = Number(msg.mapX.toFixed(2));
   if (typeof msg.mapY === "number") asset.ref.mapY = Number(msg.mapY.toFixed(2));
-  if (DESKTOP_MAP_EMBED && window.parent && window.parent !== window) {
-    window.parent.postMessage(msg, "*");
-  }
   persistActiveIrrigationSession();
 }
 
 window.addEventListener("message", (event) => {
   const msg = event.data;
   if (!msg) return;
-
-  if (msg.type === "DESKTOP_IRRIGATION_BOOTSTRAP") {
-    applyDesktopEmbedBootstrap(msg);
-    return;
-  }
 
   if (SELF_CONTAINED_PROTOTYPE) return;
   handleStandaloneSpatialMessage(msg);
@@ -9166,17 +8531,22 @@ detailSheetClose.addEventListener("click", () => {
   closeDetailSheet(false, true);
 });
 
-detailSave.addEventListener("click", () => {
-  applyDetailSave();
+[detailName, detailNotes, detailMapX, detailMapY].forEach((node) => {
+  node?.addEventListener("input", queueDetailAutosave);
 });
 
-detailToggleStatus.addEventListener("click", () => {
-  const asset = getActiveDetailAsset();
-  if (!asset || asset.type !== "zone") return;
-  asset.ref.status = asset.ref.status === "alert" ? "ok" : "alert";
-  setSubmitMessage(asset.ref.status === "alert" ? `${asset.name} flagged for follow-up.` : `${asset.name} marked stable.`, "warn");
-  renderAll();
-  openDetailSheet(asset.key, sheetState.detailLaunchTab);
+[detailController, detailBackflow].forEach((node) => {
+  node?.addEventListener("change", () => applyDetailSave({ rerender: false, showToast: false }));
+});
+
+detailMetadataFields?.addEventListener("input", (event) => {
+  if (!event.target || !event.target.matches("[data-meta-key]")) return;
+  queueDetailAutosave();
+});
+
+detailMetadataFields?.addEventListener("change", (event) => {
+  if (!event.target || !event.target.matches("[data-meta-key]")) return;
+  applyDetailSave({ rerender: false, showToast: false });
 });
 
 detailShowMap?.addEventListener("click", () => {
@@ -9211,7 +8581,7 @@ detailCreateCallout.addEventListener("click", () => {
 
   closeDecisionModal();
   if (isDetailDirty()) {
-    const saved = applyDetailSave();
+    const saved = applyDetailSave({ rerender: false, showToast: false });
     if (!saved) return;
   }
   proceed();
@@ -9401,12 +8771,31 @@ detailChecklistPhotoTrigger?.addEventListener("click", () => {
   detailChecklistPhotoInput?.click();
 });
 
+detailAssetPhotoInput?.addEventListener("change", (event) => {
+  const input = event.target instanceof HTMLInputElement ? event.target : null;
+  if (!input) return;
+  addAssetPhotos(input.files);
+  input.value = "";
+});
+
+detailAssetPhotoTrigger?.addEventListener("click", () => {
+  detailAssetPhotoInput?.click();
+});
+
 detailChecklistPhotosList?.addEventListener("click", (event) => {
   const button = event.target instanceof HTMLElement ? event.target.closest("button[data-photo-id]") : null;
   if (!button) return;
   const photoId = button.getAttribute("data-photo-id") || "";
   if (!photoId) return;
   removeChecklistPhoto(photoId);
+});
+
+detailAssetPhotosList?.addEventListener("click", (event) => {
+  const button = event.target instanceof HTMLElement ? event.target.closest("button[data-asset-photo-id]") : null;
+  if (!button) return;
+  const photoId = button.getAttribute("data-asset-photo-id") || "";
+  if (!photoId) return;
+  removeAssetPhoto(photoId);
 });
 
 detailRemove.addEventListener("click", () => {
@@ -9617,16 +9006,7 @@ setStage("INSPECTING");
 setSubmitMessage("Complex campus system loaded.", "warn");
 assetTab.selectedKey = "";
 mapTab.selectedKey = "";
-if (DESKTOP_MAP_EMBED) {
-  appMode = "woli";
-  mapTab.context.propertyId = DESKTOP_MAP_BOOTSTRAP_PROPERTY_ID;
-  setActiveTab("map");
-  if (window.parent && window.parent !== window) {
-    window.parent.postMessage({ type: "DESKTOP_IRRIGATION_READY" }, "*");
-  }
-} else {
-  setActiveTab("overview");
-}
+setActiveTab("overview");
 renderAll();
   </script>
 </body>

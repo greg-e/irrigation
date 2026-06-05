@@ -128,8 +128,7 @@ This section defines the prototype-driven metadata baseline for each irrigation 
 | `Asset Type` | Yes | Must be `Backflow`. |
 | `Parent` | Yes | Parent is the Point of Connection. |
 | `Backflow Type` | Yes | Examples: RPZ, DCV, PVB, Other. |
-| `Backflow Size` | No |  |
-
+| `Backflow Size` | No | |
 | `Serial Number` | No | Useful for compliance tracking. |
 | `Last Test Date` | No | Compliance history. |
 | `Last Test Result` | No | Options in prototype: Pass, Fail, Not Tested. |

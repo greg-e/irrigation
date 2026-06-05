@@ -58,6 +58,10 @@ const state = {
   tool: TOOL_MODES.SELECT,
   selectedFeatureId: null,
   selectedAssetId: null,
+  forcePromptForNextMarker: false,
+  pendingMarkerCreation: false,
+  addNewTapCaptureLayer: null,
+  addNewTapCaptureArmed: false,
   lastFeatureSelectionAt: 0,
   hasAppliedSystemZoom: false,
   features: [],
@@ -82,6 +86,105 @@ const mapAdapter = new GoogleMapAdapter(document.getElementById("map-root"), {
 
 function setStatus(message) {
   ui.status.textContent = message;
+}
+
+function renderMapFeaturesWhenReady(retriesLeft = 12) {
+  if (!mapAdapter?.map || !window.google?.maps) {
+    if (retriesLeft > 0) {
+      window.setTimeout(() => renderMapFeaturesWhenReady(retriesLeft - 1), 150);
+    }
+    return false;
+  }
+
+  mapAdapter.renderFeatures(state.features);
+  return true;
+}
+
+function createMarkerWhenReady(latLngLike, retriesLeft = 10) {
+  if (!latLngLike) {
+    setStatus("Map is not ready yet. Try Add New again.");
+    return false;
+  }
+
+  if (!mapAdapter?.map || !window.google?.maps) {
+    if (retriesLeft > 0) {
+      window.setTimeout(() => createMarkerWhenReady(latLngLike, retriesLeft - 1), 120);
+    } else {
+      setStatus("Map is still loading. Tap Add New again.");
+    }
+    return false;
+  }
+
+  mapAdapter.createMarkerFeatureAt(latLngLike);
+  return true;
+}
+
+function ensureAddNewTapCaptureLayer() {
+  const mapRoot = mapAdapter?.rootEl || document.getElementById("map-root");
+  if (!mapRoot) return null;
+
+  if (state.addNewTapCaptureLayer) {
+    const existingLayer = state.addNewTapCaptureLayer;
+    if (!existingLayer.isConnected) {
+      state.addNewTapCaptureLayer = null;
+    } else {
+      if (existingLayer.parentElement !== mapRoot) {
+        mapRoot.appendChild(existingLayer);
+      }
+      return existingLayer;
+    }
+  }
+
+  const domLayer = mapRoot.querySelector(".add-new-tap-capture");
+  if (domLayer) {
+    state.addNewTapCaptureLayer = domLayer;
+    return domLayer;
+  }
+
+  const layer = document.createElement("button");
+  layer.type = "button";
+  layer.className = "add-new-tap-capture hidden";
+  layer.setAttribute("aria-label", "Tap map to place marker");
+  layer.tabIndex = -1;
+
+  const onCaptureTap = (event) => {
+    if (!state.addNewTapCaptureArmed) return;
+    event.preventDefault();
+    event.stopPropagation();
+
+    setAddNewTapCaptureArmed(false);
+
+    const clickPoint =
+      mapAdapter.domEventToLatLng(event) ||
+      mapAdapter.lastPointerLatLng ||
+      mapAdapter.map?.getCenter?.() ||
+      null;
+
+    if (!clickPoint) {
+      setStatus("Map is not ready yet. Try Add New again.");
+      return;
+    }
+
+    const created = createMarkerWhenReady(clickPoint);
+    if (!created) {
+      setAddNewTapCaptureArmed(true);
+    }
+  };
+
+  layer.addEventListener("click", onCaptureTap);
+  layer.addEventListener("pointerup", onCaptureTap);
+  layer.addEventListener("touchend", onCaptureTap, { passive: false });
+
+  mapRoot.appendChild(layer);
+  state.addNewTapCaptureLayer = layer;
+  return layer;
+}
+
+function setAddNewTapCaptureArmed(armed) {
+  state.addNewTapCaptureArmed = Boolean(armed);
+  const layer = ensureAddNewTapCaptureLayer();
+  if (!layer) return;
+  layer.classList.toggle("hidden", !state.addNewTapCaptureArmed);
 }
 
 function setGeometryEditingEnabled(enabled) {
@@ -382,6 +485,108 @@ function escapeHtml(value) {
 function assetRecordUrl(assetId) {
   if (!context.propertyId || !assetId) return "#";
   return `../desktop/desktop_v3.1.html?property=${encodeURIComponent(context.propertyId)}&asset=${encodeURIComponent(assetId)}`;
+}
+
+function normalizeAssetToken(value) {
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function normalizeFeatureAssetType(value) {
+  const raw = String(value || "").trim().toLowerCase();
+  if (!raw) return "";
+  if (raw === "sprinklerzone") return "zone";
+  if (raw === "clock") return "controller";
+  return raw;
+}
+
+function resolveAssetIdForFeature(feature) {
+  if (!feature) return "";
+
+  const existingAssetId = String(feature.assetId || "").trim();
+  if (existingAssetId && assetById(existingAssetId)) {
+    return existingAssetId;
+  }
+
+  const normalizedType = normalizeFeatureAssetType(feature.assetType);
+  const normalizedName = normalizeAssetToken(feature.name);
+  if (!normalizedName) return "";
+
+  const candidates = state.assets.filter((asset) => {
+    if (!asset) return false;
+    const assetType = normalizeFeatureAssetType(asset.type);
+    if (normalizedType && assetType && assetType !== normalizedType) return false;
+    return true;
+  });
+
+  const exact = candidates.find((asset) => {
+    const nameToken = normalizeAssetToken(asset.name || asset.label);
+    return nameToken && nameToken === normalizedName;
+  });
+  if (exact) return exact.id;
+
+  const fuzzy = candidates.find((asset) => {
+    const nameToken = normalizeAssetToken(asset.name || asset.label);
+    if (!nameToken) return false;
+    return (
+      nameToken.endsWith(normalizedName) ||
+      normalizedName.endsWith(nameToken) ||
+      nameToken.includes(normalizedName) ||
+      normalizedName.includes(nameToken)
+    );
+  });
+
+  return fuzzy?.id || "";
+}
+
+function ensureFeatureAssetLinks(features) {
+  return (features || []).map((feature) => {
+    if (!feature) return feature;
+    if (feature.assetId && assetById(feature.assetId)) return feature;
+
+    const resolvedAssetId = resolveAssetIdForFeature(feature);
+    if (!resolvedAssetId) return feature;
+
+    const linkedAsset = assetById(resolvedAssetId);
+    return {
+      ...feature,
+      assetId: resolvedAssetId,
+      assetType: linkedAsset?.type || feature.assetType,
+      assetStatus: linkedAsset?.status || feature.assetStatus,
+      name: linkedAsset?.name || linkedAsset?.label || feature.name,
+    };
+  });
+}
+
+function pruneOrphanUserFeatures(features) {
+  let removedOrphans = 0;
+  const cleaned = (features || []).filter((feature) => {
+    if (!feature || feature.isAuto) return true;
+    const assetId = String(feature.assetId || "").trim();
+    if (assetId && assetById(assetId)) return true;
+    removedOrphans += 1;
+    return false;
+  });
+
+  return {
+    cleanedFeatures: dedupeFeaturesById(cleaned),
+    removedOrphans,
+  };
+}
+
+function pruneDraftCustomerFeatures(features) {
+  let removedDrafts = 0;
+  const cleaned = (features || []).filter((feature) => {
+    if (!feature || feature.isAuto) return true;
+    const typeKey = String(feature.assetType || "").trim().toLowerCase();
+    if (typeKey !== "customer") return true;
+    removedDrafts += 1;
+    return false;
+  });
+
+  return {
+    cleanedFeatures: dedupeFeaturesById(cleaned),
+    removedDrafts,
+  };
 }
 
 function normalizeFeatureNames(features) {
@@ -1288,6 +1493,10 @@ function getHiddenAutoStorageKey() {
   return `spatial-demo-v5-cleared-hidden-auto-${context.propertyId}`;
 }
 
+function getLinkMigrationStorageKey() {
+  return `spatial-demo-v5-link-migrated-${context.propertyId}`;
+}
+
 function saveToLocalStorage() {
   try {
     const userFeatures = state.features.filter((feature) => !feature.isAuto);
@@ -1308,6 +1517,75 @@ function loadFromLocalStorage() {
   } catch (error) {
     console.warn("localStorage load failed:", error);
     return null;
+  }
+}
+
+function hasLinkMigrationRun() {
+  try {
+    return localStorage.getItem(getLinkMigrationStorageKey()) === "1";
+  } catch (error) {
+    console.warn("localStorage link-migration read failed:", error);
+    return false;
+  }
+}
+
+function markLinkMigrationComplete() {
+  try {
+    localStorage.setItem(getLinkMigrationStorageKey(), "1");
+  } catch (error) {
+    console.warn("localStorage link-migration write failed:", error);
+  }
+}
+
+function persistLinkedUserFeaturesIfNeeded(originalUserFeatures, linkedFeatures) {
+  if (hasLinkMigrationRun()) return;
+
+  const originalById = new Map(
+    (originalUserFeatures || [])
+      .filter((feature) => feature && feature.id && !feature.isAuto)
+      .map((feature) => [feature.id, feature])
+  );
+
+  if (!originalById.size) {
+    markLinkMigrationComplete();
+    return;
+  }
+
+  const linkedUserFeatures = dedupeFeaturesById(
+    (linkedFeatures || []).filter((feature) => feature && !feature.isAuto)
+  );
+
+  const repairedAny = linkedUserFeatures.some((feature) => {
+    const original = originalById.get(feature.id);
+    if (!original) return false;
+
+    const originalAssetId = String(original.assetId || "").trim();
+    const nextAssetId = String(feature.assetId || "").trim();
+    return !originalAssetId && Boolean(nextAssetId);
+  });
+
+  if (!repairedAny) {
+    markLinkMigrationComplete();
+    return;
+  }
+
+  try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(linkedUserFeatures));
+    markLinkMigrationComplete();
+    setStatus("Updated saved map links for legacy markers.");
+  } catch (error) {
+    console.warn("localStorage link-migration save failed:", error);
+  }
+}
+
+function persistUserFeaturesSnapshot(features) {
+  try {
+    const userFeatures = dedupeFeaturesById(
+      (features || []).filter((feature) => feature && !feature.isAuto)
+    );
+    localStorage.setItem(getStorageKey(), JSON.stringify(userFeatures));
+  } catch (error) {
+    console.warn("localStorage user-feature snapshot save failed:", error);
   }
 }
 
@@ -1374,15 +1652,26 @@ async function loadFeatures() {
     storedFeatures && storedFeatures.length > 0 ? storedFeatures : seededUserFeatures;
 
   const mergedFeatures = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
+  const linkedFeatures = ensureFeatureAssetLinks(mergedFeatures);
+  const { cleanedFeatures, removedOrphans } = pruneOrphanUserFeatures(linkedFeatures);
+  const { cleanedFeatures: withoutDrafts, removedDrafts } = pruneDraftCustomerFeatures(cleanedFeatures);
+  persistLinkedUserFeaturesIfNeeded(userFeatures, linkedFeatures);
+  if (removedOrphans > 0 || removedDrafts > 0) {
+    persistUserFeaturesSnapshot(withoutDrafts);
+  }
   state.features = applyFeatureVisualStyling(
-    normalizeFeatureNames(filterFeaturesForLayout(mergedFeatures))
+    normalizeFeatureNames(filterFeaturesForLayout(withoutDrafts))
   );
   state.selectedFeatureId = null;
   state.selectedAssetId = null;
-  mapAdapter.renderFeatures(state.features);
+  renderMapFeaturesWhenReady();
   renderFeatureList();
+  const cleanupNotes = [
+    removedOrphans > 0 ? `removed ${removedOrphans} orphan marker(s)` : "",
+    removedDrafts > 0 ? `removed ${removedDrafts} draft marker(s)` : "",
+  ].filter(Boolean);
   setStatus(
-    `Loaded ${userFeatures.length} user feature(s) and ${autoFeatures.length} simulated placement(s).`
+    `Loaded ${userFeatures.length} user feature(s) and ${autoFeatures.length} simulated placement(s)${cleanupNotes.length ? ` · ${cleanupNotes.join(" · ")}` : ""}.`
   );
 }
 
@@ -1588,27 +1877,7 @@ async function start() {
   if (mapRootEl) {
     mapRootEl.addEventListener("click", () => {
       if (state.tool === TOOL_MODES.MARKER) {
-        const beforeCount = state.features.length;
-        // Fallback for embedded map click paths where Google click events can be dropped.
-        window.setTimeout(() => {
-          if (state.tool !== TOOL_MODES.MARKER) return;
-          if (state.features.length !== beforeCount) return;
-
-          const center = mapAdapter.map?.getCenter?.();
-          if (!center || !window.google?.maps?.Marker || !mapAdapter.onFeatureCreated) {
-            return;
-          }
-
-          const markerOverlay = new window.google.maps.Marker({
-            position: center,
-            draggable: false,
-          });
-          const markerFeature = mapAdapter.overlayToFeature(
-            markerOverlay,
-            window.google.maps.drawing.OverlayType.MARKER
-          );
-          mapAdapter.onFeatureCreated(markerFeature, markerOverlay);
-        }, 120);
+        // Marker creation must come from the map click coordinate itself.
         return;
       }
 
@@ -1671,14 +1940,35 @@ async function start() {
   };
 
   mapAdapter.onFeatureCreated = async (draftFeature, overlay) => {
+    setAddNewTapCaptureArmed(false);
+
+    if (!geometryEditingEnabled && layoutMode === "map-only" && state.tool === TOOL_MODES.MARKER) {
+      // In embedded map-only flows, Add New can arrive before explicit edit-mode sync.
+      // Self-heal by enabling editing when marker creation is requested.
+      setGeometryEditingEnabled(true);
+    }
+
     if (!geometryEditingEnabled) {
       if (overlay?.setMap) overlay.setMap(null);
       setStatus("Enable edit mode first to create map geometry.");
       return;
     }
 
+    if (state.pendingMarkerCreation) {
+      if (overlay?.setMap) overlay.setMap(null);
+      return;
+    }
+
+    state.pendingMarkerCreation = true;
+
+    try {
+
     // Only auto-link when a component is actively selected in the current map context.
+    // In neutral Add New mode, always prompt so the user can create/link explicitly.
     let linkedAssetId = state.selectedAssetId || "";
+    if (state.forcePromptForNextMarker) {
+      linkedAssetId = "";
+    }
 
     if (!linkedAssetId) {
       const selectedComponentId = await promptComponentLink(linkedAssetId, draftFeature);
@@ -1689,6 +1979,8 @@ async function start() {
       }
       linkedAssetId = selectedComponentId;
     }
+
+    state.forcePromptForNextMarker = false;
 
     const created = await api.upsertFeature(context, {
       ...draftFeature,
@@ -1708,9 +2000,13 @@ async function start() {
     renderFeatureList();
     setTool(TOOL_MODES.SELECT);
     setStatus(`Created ${created.name}.`);
+    } finally {
+      state.pendingMarkerCreation = false;
+    }
   };
 
   await mapAdapter.init();
+  ensureAddNewTapCaptureLayer();
   await loadFeatures();
   syncLatLonFeatures();
 
@@ -1803,13 +2099,46 @@ window.addEventListener("message", async (event) => {
       requestedTool === TOOL_MODES.POLYLINE
         ? requestedTool
         : TOOL_MODES.SELECT;
+
+    if (layoutMode === "map-only" && nextTool === TOOL_MODES.MARKER) {
+      if (!geometryEditingEnabled) {
+        setGeometryEditingEnabled(true);
+      }
+      state.forcePromptForNextMarker = true;
+      setAddNewTapCaptureArmed(true);
+      setStatus("Add New armed. Tap on the map to place a marker.");
+    } else {
+      setAddNewTapCaptureArmed(false);
+    }
+
     setTool(nextTool);
+    return;
+  }
+
+  if (msg.type === "SPATIAL_PROMPT_ADD_NEW") {
+    if (layoutMode === "map-only" && !geometryEditingEnabled) {
+      setGeometryEditingEnabled(true);
+    }
+    setTool(TOOL_MODES.MARKER);
+    state.forcePromptForNextMarker = true;
+    setAddNewTapCaptureArmed(true);
+    setStatus("Add New armed. Tap on the map to place a marker.");
     return;
   }
 
   if (msg.type === "SPATIAL_SELECT_ASSET_CONTEXT") {
     const assetId = String(msg.assetId || "").trim();
-    if (!assetId) return;
+    if (!assetId) {
+      state.selectedAssetId = null;
+      state.selectedFeatureId = null;
+      state.forcePromptForNextMarker = true;
+      mapAdapter.selectFeature(null);
+      updateActionButtons();
+      renderFeatureList();
+      setStatus("No component selected.");
+      return;
+    }
+    state.forcePromptForNextMarker = false;
     selectAssetContext(assetId, { shouldFocusMap: msg.shouldFocusMap !== false, selectionSource: "sync" });
     return;
   }
@@ -1858,8 +2187,16 @@ window.addEventListener("message", async (event) => {
       : seededUserFeatures;
 
   state.features = dedupeFeaturesById([...autoFeatures, ...userFeatures]);
+  state.features = ensureFeatureAssetLinks(state.features);
+  const cleanupResult = pruneOrphanUserFeatures(state.features);
+  const draftCleanupResult = pruneDraftCustomerFeatures(cleanupResult.cleanedFeatures);
+  state.features = draftCleanupResult.cleanedFeatures;
+  persistLinkedUserFeaturesIfNeeded(userFeatures, state.features);
+  if (cleanupResult.removedOrphans > 0 || draftCleanupResult.removedDrafts > 0) {
+    persistUserFeaturesSnapshot(state.features);
+  }
   state.features = applyFeatureVisualStyling(normalizeFeatureNames(state.features));
-  mapAdapter.renderFeatures(state.features);
+  renderMapFeaturesWhenReady();
   syncLatLonFeatures();
 
   // Center map on system if it has lat/lon

@@ -9,6 +9,14 @@
   <script src="config.local.js"></script>
 </head>
 <body class="slds-scope">
+  <script>
+    (function applyEarlyMapOnlyLayoutClass() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("layout") === "map-only") {
+        document.body.classList.add("map-only-layout");
+      }
+    })();
+  </script>
   <main class="slds-box slds-var-m-around_medium">
     <section class="slds-grid slds-var-m-top_medium slds-gutters">
       <aside class="slds-col slds-size_3-of-12 slds-p-around_small">

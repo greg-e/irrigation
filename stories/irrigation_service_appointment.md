@@ -2,7 +2,7 @@
 
 ## Job Story
 
-The business needs irrigation Service Appointment inspection execution to capture findings that may become customer-facing work, the need is for the Service Appointment workflow in FSM to drive structured inspection capture and controlled confirmation of actionable outputs for AM review, to output complete and auditable inspection outcomes that are ready for handoff without losing asset context.
+The business needs irrigation Service Appointment inspection execution to capture findings that may become customer-facing work, the need is for the Service Appointment workflow in FSM to drive structured checklist output capture and controlled confirmation of actionable outputs for AM review, to output complete and auditable inspection outcomes that are ready for handoff without losing asset context.
 
 ## Business Value
 
@@ -26,12 +26,15 @@ This story covers irrigation inspection requirements executed from FSM Service A
 ```text
 Account / Property
 └── System
-    └── Source
-        └── Backflow
-            └── Controller
-                ├── Programs
-                ├── Zone 1
-                └── Zone 2
+    └── Point of Connection (Source)
+        ├── Pump
+        ├── Backflow
+        ├── Master Valve
+        ├── Flow Sensor
+        └── Controller
+            ├── Programs
+            ├── Zone 1
+            └── Zone 2
 ```
 
 ## Service Appointment and Pending Callout Model
@@ -81,3 +84,4 @@ Account / Property
 - requirements/prdV4.md
 - requirements/current_state.md
 - requirements/decision_log.md
+- prototype/v5/mobileV5.1.html

@@ -3947,7 +3947,6 @@
                 <div class="gis-selection-actions">
                   <button type="button" data-map-action="open-edit" aria-label="Open Asset" title="Open Asset"><span class="map-action-hit"><img class="map-action-icon" data-embedded-icon="utility/edit" src="" alt="" aria-hidden="true" /><span class="map-action-label">Open Asset</span></span></button>
                   <button type="button" data-map-action="save" aria-label="Save" title="Save"><span class="map-action-hit"><img class="map-action-icon" data-embedded-icon="utility/save" src="" alt="" aria-hidden="true" /><span class="map-action-label">Save</span></span></button>
-                  <button type="button" data-map-action="callout" aria-label="Open Checklist" title="Open Checklist"><span class="map-action-hit"><img class="map-action-icon" data-embedded-icon="utility/task" src="" alt="" aria-hidden="true" /><span class="map-action-label">Open Checklist</span></span></button>
                   <button type="button" data-map-action="remove" aria-label="Remove" title="Remove"><span class="map-action-hit"><img class="map-action-icon" data-embedded-icon="utility/delete" src="" alt="" aria-hidden="true" /><span class="map-action-label">Remove</span></span></button>
                 </div>
                 <div id="gis-selection-fields" class="gis-selection-fields hidden"></div>
@@ -7024,7 +7023,6 @@ function renderMapSelectionCard() {
   gisSelectionFields.classList.add("hidden");
 
   const saveBtn = gisSelectionCard.querySelector('[data-map-action="save"]');
-  const checklistBtn = gisSelectionCard.querySelector('[data-map-action="callout"]');
   const fullEditBtn = gisSelectionCard.querySelector('[data-map-action="open-edit"]');
   const removeBtn = gisSelectionCard.querySelector('[data-map-action="remove"]');
 
@@ -7036,7 +7034,6 @@ function renderMapSelectionCard() {
 
   setCardActionState(saveBtn, false, false);
   setCardActionState(removeBtn, false, false);
-  setCardActionState(checklistBtn, true, true);
   setCardActionState(fullEditBtn, true, true);
 
   gisSelectionCard.classList.remove("hidden");
@@ -8260,9 +8257,7 @@ function renderCallouts() {
         <span style="font-size: 0.75rem; color: #706e6b;">${timeAgo}</span>
       </div>
       <div style="font-size: 0.9rem; color: #f2f4f8; font-weight: 500; margin: 2px 0 2px;">${row.issue}</div>
-      <div style="display: flex; justify-content: flex-end; margin-top: 2px;">
-        <button type="button" class="slds-button slds-button_neutral" data-callout-asset-key="${row.assetKey}" style="font-size: 0.72rem; min-height: 28px; padding: 0 10px;">Open Checklist</button>
-      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 2px;"></div>
     `;
     calloutList.appendChild(item);
   });
@@ -8586,14 +8581,6 @@ assetList.addEventListener("click", (event) => {
   renderMapAssetPicker();
   updateMapSheetSelection();
   openDetailSheet(assetKey, "map");
-});
-
-calloutList?.addEventListener("click", (event) => {
-  const button = event.target instanceof HTMLElement ? event.target.closest("button[data-callout-asset-key]") : null;
-  if (!button) return;
-  const assetKey = button.getAttribute("data-callout-asset-key") || "";
-  if (!assetKey) return;
-  openChecklistForAsset(assetKey, "map", "map");
 });
 
 if (mapAssetPicker) {

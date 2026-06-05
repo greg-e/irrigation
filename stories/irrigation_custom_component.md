@@ -2,7 +2,7 @@
 
 ## Job Story
 
-When users need to manage irrigation setup and execute mobile WOLI inspections in one workspace, I want a custom Lightning Web Component that combines desktop record management with a mobile WOLI runtime, so I can keep asset context, checklist output, and submission gating in one connected flow.
+When users need to manage irrigation setup and execute mobile WOLI inspections in one workspace, I want a custom Lightning Web Component that combines desktop record management with a mobile WOLI runtime using the current requirements hierarchy and checklist model, so I can keep asset context, checklist output, and submission gating in one connected flow.
 
 ## Business Value
 
@@ -31,14 +31,17 @@ This story covers the custom LWC irrigation workspace experience, including:
 ```text
 Account / Property
 └── System
-    └── Source
-        └── Backflow
-            └── Controller
-                ├── Zone 1
-                └── Zone 2
+    └── Point of Connection (Source)
+        ├── Pump
+        ├── Backflow
+        ├── Master Valve
+        ├── Flow Sensor
+        └── Controller
+            ├── Zone 1
+            └── Zone 2
 ```
 
-Component variants such as Valve, Head, and Drip Emitter Group are handled as map-linked component variants where applicable.
+Component variants such as Valve, Head, and Drip Emitter Group are handled as zone-linked component metadata or map-linked variants where applicable.
 
 ## Component Model
 
@@ -48,7 +51,7 @@ Component variants such as Valve, Head, and Drip Emitter Group are handled as ma
 - Mobile responsibility boundary: inspection execution, checklist output capture, callout recording, and submit gating.
 - Salesforce remains the system of record for assets, checklist findings, callouts, and map metadata.
 - Mobile interaction model: map-first with bottom sheet as the primary control surface.
-- System boundary: Service Appointment or WOLI completion and Asset checklist callout recording are executed in this Irrigation Custom Component flow.
+- System boundary: Service Appointment or WOLI completion and checklist output recording are executed in this Irrigation Custom Component flow.
 
 ## Platform Boundaries
 
@@ -97,25 +100,26 @@ When a mobile user completes irrigation inspection work, I want checklist output
 5. Desktop supports hierarchy-compliant asset management, controller program management, and property pivot navigation.
 6. Desktop and mobile both support related irrigation asset add and edit flows within the shared component.
 7. Map locations for related assets are added and updated within desktop and mobile channels.
-8. Mobile checklist content is organized by asset type for system, source, backflow, controller, and zone contexts, with map-linked variants where applicable.
+8. Mobile checklist content is organized by asset type for system, source/point-of-connection, backflow, controller, and zone contexts, including source-context pump checks and conditional branches defined by visit context.
 9. Required response types are captured successfully, including boolean, count, number, select, and text.
 10. Findings include resolved-on-visit outcomes and display dependent prompts where applicable.
 11. Asset-level evidence includes both photo attachment and photo removal outcomes.
 12. Checklist outcomes persist at the asset visit level with enough detail for summary and downstream handoff.
 13. The summary surface reflects captured checklist status and prevents submission when completion rules are not met.
-14. Submission remains unavailable until required checklist output and AM assignment requirements are satisfied.
+14. Submission remains unavailable until required checklist output policy and AM assignment requirements are satisfied, including zero-touch reason code plus note when no asset checklist values were changed.
 15. Successful submit transitions the irrigation WOLI to COMPLETED and presents next-step routing options.
-16. Non-irrigation WOLIs remain visible in overview but are blocked from irrigation submit flow and routed to standard FSM handling.
-17. Working context is preserved across tab switches, panel changes, and responsive layout changes.
-18. Geometry interaction outcomes include selected-asset map context, edit mode entry, and asset creation where workflow permits.
-19. Confirmed findings are recorded as Asset checklist callouts within this component experience using shared callout rules.
-20. FSM Mobile execution meets field-usage expectations for speed, clarity, and low-friction navigation.
+16. Completed irrigation WOLIs support reopen back to active execution state with persisted session context.
+17. Non-irrigation WOLIs remain visible in overview but are blocked from irrigation submit flow and routed to standard FSM handling.
+18. Working context is preserved across tab switches, panel changes, and responsive layout changes.
+19. Geometry interaction outcomes include selected-asset map context, edit mode entry, and asset creation where workflow permits.
+20. Checklist findings and summary output remain auditable and available for downstream pending-callout/handoff workflows.
+21. FSM Mobile execution meets field-usage expectations for speed, clarity, and low-friction navigation.
 
 ## Notes
 
 - This story is for the custom customer inspection component surface, not the underlying OOTB asset record model.
 - This story is the shared component boundary for setup/location authoring and WOLI execution, with desktop and mobile responsibilities explicitly split.
-- The component should align to the map-first and checklist-output behavior already defined in the responsive map LWC and V4.1 mobile runtime requirements.
+- The component should align to the map-first and checklist-output behavior demonstrated in v5.1 desktop/mobile prototypes.
 - This story assumes the OOTB Asset hierarchy remains the durable context model while the custom LWC provides the interaction layer.
 - Detailed provider choice for the embedded map remains gated between Mapbox GL JS and Google Maps JavaScript API.
 
@@ -125,3 +129,5 @@ When a mobile user completes irrigation inspection work, I want checklist output
 - requirements/fsm_irrigation_requirements.md
 - requirements/map_lwc_responsive_v1_first_pass.md
 - requirements/prdV4.md
+- prototype/v5/desktopV5.1.html
+- prototype/v5/mobileV5.1.html
